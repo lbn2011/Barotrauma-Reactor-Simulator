@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Barotrauma related files
+*.barotrauma
+save/**
+campaign/**
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
