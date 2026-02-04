@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-  reactorStore,
-  toggleReactorDrain,
-  setReactorDrainFlowRate,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    toggleReactorDrain,
+    setReactorDrainFlowRate,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let reactorDrain: any;

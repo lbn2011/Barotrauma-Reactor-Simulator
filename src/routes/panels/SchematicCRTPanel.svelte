@@ -1,7 +1,5 @@
 <script lang="ts">
-  import {
-  reactorStore,
-} from '../../lib/stores/reactorStore';
+  import { reactorStore } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let crtDiagram: any;

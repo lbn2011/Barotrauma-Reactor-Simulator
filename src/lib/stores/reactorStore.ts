@@ -333,73 +333,97 @@ export function updateReactorState() {
   reactorStore.update((state) => {
     if (!state.isRunning) return state;
 
+    // 创建新状态对象，避免直接修改原状态
+    const newState = JSON.parse(JSON.stringify(state));
+
     // 更新模拟时间
-    state.simulationTime += 1;
+    newState.simulationTime += 1;
 
     // 模拟功率变化
     const powerDifference =
-      state.powerRegulation.targetPower - state.powerRegulation.powerLevel;
-    state.powerRegulation.powerLevel += powerDifference * 0.05;
+      newState.powerRegulation.targetPower -
+      newState.powerRegulation.powerLevel;
+    newState.powerRegulation.powerLevel += powerDifference * 0.05;
 
     // 模拟控制棒影响
-    state.powerRegulation.reactivity = (50 - state.controlRods.position) * 0.02;
-    state.powerRegulation.powerLevel += state.powerRegulation.reactivity * 0.1;
+    newState.powerRegulation.reactivity =
+      (50 - newState.controlRods.position) * 0.02;
+    newState.powerRegulation.powerLevel +=
+      newState.powerRegulation.reactivity * 0.1;
 
     // 限制功率范围
-    state.powerRegulation.powerLevel = Math.max(
+    newState.powerRegulation.powerLevel = Math.max(
       0,
-      Math.min(100, state.powerRegulation.powerLevel)
+      Math.min(100, newState.powerRegulation.powerLevel)
     );
 
     // 模拟堆芯温度和压力
-    state.core.temperature = 250 + state.powerRegulation.powerLevel * 0.8;
-    state.core.pressure = 6.5 + state.powerRegulation.powerLevel * 0.01;
+    newState.core.temperature = 250 + newState.powerRegulation.powerLevel * 0.8;
+    newState.core.pressure = 6.5 + newState.powerRegulation.powerLevel * 0.01;
 
     // 更新数据趋势
-    if (state.simulationTime % 5 === 0) {
-      state.trends.timePoints.push(state.simulationTime);
-      state.trends.powerData.push(state.powerRegulation.powerLevel);
-      state.trends.temperatureData.push(state.core.temperature);
-      state.trends.pressureData.push(state.core.pressure);
+    if (newState.simulationTime % 5 === 0) {
+      // 创建新的趋势数组，避免直接修改原数组
+      newState.trends = {
+        timePoints: [...newState.trends.timePoints, newState.simulationTime],
+        powerData: [
+          ...newState.trends.powerData,
+          newState.powerRegulation.powerLevel,
+        ],
+        temperatureData: [
+          ...newState.trends.temperatureData,
+          newState.core.temperature,
+        ],
+        pressureData: [...newState.trends.pressureData, newState.core.pressure],
+      };
 
       // 限制数据点数量
-      if (state.trends.timePoints.length > 100) {
-        state.trends.timePoints.shift();
-        state.trends.powerData.shift();
-        state.trends.temperatureData.shift();
-        state.trends.pressureData.shift();
+      if (newState.trends.timePoints.length > 100) {
+        newState.trends.timePoints.shift();
+        newState.trends.powerData.shift();
+        newState.trends.temperatureData.shift();
+        newState.trends.pressureData.shift();
       }
     }
 
     // 模拟警报
-    if (state.core.temperature > 320) {
-      state.alarms.active = true;
-      if (!state.alarms.messages.includes('CORE TEMPERATURE HIGH')) {
-        state.alarms.messages.push('CORE TEMPERATURE HIGH');
+    if (newState.core.temperature > 320) {
+      newState.alarms.active = true;
+      if (!newState.alarms.messages.includes('CORE TEMPERATURE HIGH')) {
+        newState.alarms.messages = [
+          ...newState.alarms.messages,
+          'CORE TEMPERATURE HIGH',
+        ];
       }
     }
 
-    if (state.core.pressure > 7.5) {
-      state.alarms.active = true;
-      if (!state.alarms.messages.includes('CORE PRESSURE HIGH')) {
-        state.alarms.messages.push('CORE PRESSURE HIGH');
+    if (newState.core.pressure > 7.5) {
+      newState.alarms.active = true;
+      if (!newState.alarms.messages.includes('CORE PRESSURE HIGH')) {
+        newState.alarms.messages = [
+          ...newState.alarms.messages,
+          'CORE PRESSURE HIGH',
+        ];
       }
     }
 
     // 添加操作日志
-    if (state.simulationTime % 10 === 0) {
-      state.logs.push({
-        timestamp: Date.now(),
-        message: `Power level: ${state.powerRegulation.powerLevel.toFixed(1)}%, Core temp: ${state.core.temperature.toFixed(1)}°C`,
-      });
+    if (newState.simulationTime % 10 === 0) {
+      newState.logs = [
+        ...newState.logs,
+        {
+          timestamp: Date.now(),
+          message: `Power level: ${newState.powerRegulation.powerLevel.toFixed(1)}%, Core temp: ${newState.core.temperature.toFixed(1)}°C`,
+        },
+      ];
 
       // 限制日志数量
-      if (state.logs.length > 50) {
-        state.logs.shift();
+      if (newState.logs.length > 50) {
+        newState.logs.shift();
       }
     }
 
-    return state;
+    return newState;
   });
 }
 

@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-  reactorStore,
-  setDeaeratorPressure,
-  setDeaeratorLevel,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    setDeaeratorPressure,
+    setDeaeratorLevel,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let deaerator: any;

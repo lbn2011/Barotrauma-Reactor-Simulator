@@ -1,27 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import { reactorStore } from '../../lib/stores/reactorStore';
-  import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-  } from 'chart.js';
-
-  // 注册Chart.js组件
-  ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend
-  );
 
   // 订阅状态
   let trends: {
@@ -36,8 +15,11 @@
     updateChartData();
   });
 
-  let chart: ChartJS | null = null;
+  let chart: any = null;
   let chartCanvas: HTMLCanvasElement | null = null;
+  let ChartJS: any = null;
+  let isChartLoaded: boolean = false;
+  let isLoading: boolean = false;
 
   // 图表配置
   const chartOptions = {
@@ -63,9 +45,54 @@
     },
   };
 
+  // 懒加载Chart.js
+  async function loadChartJS() {
+    if (isChartLoaded) return;
+
+    isLoading = true;
+    try {
+      const chartModule = await import('chart.js');
+      const {
+        Chart,
+        CategoryScale,
+        LinearScale,
+        PointElement,
+        LineElement,
+        Title,
+        Tooltip,
+        Legend,
+      } = chartModule;
+
+      // 注册Chart.js组件
+      Chart.register(
+        CategoryScale,
+        LinearScale,
+        PointElement,
+        LineElement,
+        Title,
+        Tooltip,
+        Legend
+      );
+
+      ChartJS = Chart;
+      isChartLoaded = true;
+    } catch (error) {
+      console.error('Failed to load Chart.js:', error);
+    } finally {
+      isLoading = false;
+    }
+  }
+
   // 更新图表数据
-  function updateChartData() {
+  async function updateChartData() {
     if (!chartCanvas || !trends) return;
+
+    // 确保Chart.js已加载
+    if (!isChartLoaded) {
+      await loadChartJS();
+    }
+
+    if (!ChartJS) return;
 
     const chartData = {
       labels: trends.timePoints.map((t) => `t=${t}`),
@@ -109,7 +136,8 @@
     }
   }
 
-  onMount(() => {
+  onMount(async () => {
+    await loadChartJS();
     updateChartData();
   });
 
@@ -139,6 +167,7 @@
   .chart-container {
     height: 500px;
     margin-bottom: 2rem;
+    position: relative;
   }
 
   .chart-controls {
@@ -222,6 +251,46 @@
     color: #e0e0e0;
     line-height: 1.5;
   }
+
+  .chart-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(30, 30, 30, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    z-index: 10;
+  }
+
+  .chart-loading .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #333;
+    border-top: 3px solid #00bcd4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+
+  .chart-loading p {
+    color: #00bcd4;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 </style>
 
 <div class="panel-container">
@@ -234,6 +303,12 @@
   </div>
 
   <div class="chart-container">
+    {#if isLoading}
+      <div class="chart-loading">
+        <div class="loading-spinner"></div>
+        <p>加载图表库中...</p>
+      </div>
+    {/if}
     <canvas bind:this={chartCanvas}></canvas>
   </div>
 

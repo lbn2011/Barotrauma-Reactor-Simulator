@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-  reactorStore,
-  toggleMakeUpWater,
-  setMakeUpWaterFlowRate,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    toggleMakeUpWater,
+    setMakeUpWaterFlowRate,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let makeUpWater: any;

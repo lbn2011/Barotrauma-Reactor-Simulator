@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-  reactorStore,
-  toggleReactorFeedPump,
-  setReactorFeedPumpFlowRate,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    toggleReactorFeedPump,
+    setReactorFeedPumpFlowRate,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let reactorFeedPumps: any;

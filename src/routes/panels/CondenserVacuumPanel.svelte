@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-  reactorStore,
-  toggleCondenserVacuum,
-  setCondenserVacuumLevel,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    toggleCondenserVacuum,
+    setCondenserVacuumLevel,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let condenserVacuum: any;

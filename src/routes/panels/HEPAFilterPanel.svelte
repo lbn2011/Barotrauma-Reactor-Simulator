@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-  reactorStore,
-  toggleHepaFilters,
-  setHepaFilterEfficiency,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    toggleHepaFilters,
+    setHepaFilterEfficiency,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let hepaFilters: any;

@@ -1,8 +1,8 @@
 <script lang="ts">
   import {
-  reactorStore,
-  setCondenserHotwellLevel,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    setCondenserHotwellLevel,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let condenserHotwell: any;

@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-  reactorStore,
-  toggleSteamDump,
-  setSteamDumpCapacity,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    toggleSteamDump,
+    setSteamDumpCapacity,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let steamDump: any;

@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-  reactorStore,
-  toggleCoreCoolingPump,
-  setCoreCoolingPumpFlowRate,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    toggleCoreCoolingPump,
+    setCoreCoolingPumpFlowRate,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let coreCoolingPump: any;

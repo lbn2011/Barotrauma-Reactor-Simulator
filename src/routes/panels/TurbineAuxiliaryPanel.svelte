@@ -1,10 +1,10 @@
 <script lang="ts">
   import {
-  reactorStore,
-  setLubricationOilPressure,
-  setLubricationOilTemperature,
-  setSealOilPressure,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    setLubricationOilPressure,
+    setLubricationOilTemperature,
+    setSealOilPressure,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let turbineAuxiliary: any;

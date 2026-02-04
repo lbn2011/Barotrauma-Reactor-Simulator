@@ -1,30 +1,12 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
+  import type { ComponentType } from 'svelte';
   import Overview from './routes/Overview.svelte';
-  import ControlRodPanel from './routes/panels/ControlRodPanel.svelte';
-  import PowerControlPanel from './routes/panels/PowerControlPanel.svelte';
-  import RecirculationPumpPanel from './routes/panels/RecirculationPumpPanel.svelte';
-  import EmergencyCoolingPumpPanel from './routes/panels/EmergencyCoolingPumpPanel.svelte';
-  import DrainControlPanel from './routes/panels/DrainControlPanel.svelte';
-  import OfflineCoolingPumpPanel from './routes/panels/OfflineCoolingPumpPanel.svelte';
-  import TurbineControlPanel from './routes/panels/TurbineControlPanel.svelte';
-  import DeaeratorSteamPanel from './routes/panels/DeaeratorSteamPanel.svelte';
-  import CondenserVacuumPanel from './routes/panels/CondenserVacuumPanel.svelte';
-  import SteamExhaustPanel from './routes/panels/SteamExhaustPanel.svelte';
-  import TurbineAuxiliaryPanel from './routes/panels/TurbineAuxiliaryPanel.svelte';
-  import HotwellLevelPanel from './routes/panels/HotwellLevelPanel.svelte';
-  import CondenserCirculationPumpPanel from './routes/panels/CondenserCirculationPumpPanel.svelte';
-  import MakeupWaterPanel from './routes/panels/MakeupWaterPanel.svelte';
-  import FeedwaterPumpPanel from './routes/panels/FeedwaterPumpPanel.svelte';
-  import DataTrendPanel from './routes/panels/DataTrendPanel.svelte';
-  import HEPAFilterPanel from './routes/panels/HEPAFilterPanel.svelte';
-  import AlarmCRTPanel from './routes/panels/AlarmCRTPanel.svelte';
-  import SchematicCRTPanel from './routes/panels/SchematicCRTPanel.svelte';
-  import CondensateSystemPanel from './routes/panels/CondensateSystemPanel.svelte';
   import { reactorStore, updateReactorState } from './lib/stores/reactorStore';
 
   let currentView: string = 'overview';
   let sidebarOpen: boolean = true;
+  let currentComponent: ComponentType | null = null;
 
   // 模拟更新定时器
   let updateInterval: number;
@@ -47,6 +29,43 @@
   // 切换侧边栏
   function toggleSidebar() {
     sidebarOpen = !sidebarOpen;
+  }
+
+  // 动态导入组件
+  async function loadComponent(panel: string) {
+    if (panel === 'overview') {
+      return Overview;
+    }
+
+    const panelMap: Record<string, string> = {
+      panel1: './routes/panels/ControlRodPanel.svelte',
+      panel2: './routes/panels/PowerControlPanel.svelte',
+      panel3: './routes/panels/RecirculationPumpPanel.svelte',
+      panel5: './routes/panels/EmergencyCoolingPumpPanel.svelte',
+      panel7: './routes/panels/DrainControlPanel.svelte',
+      panel8: './routes/panels/OfflineCoolingPumpPanel.svelte',
+      panel9: './routes/panels/TurbineControlPanel.svelte',
+      panel10: './routes/panels/DeaeratorSteamPanel.svelte',
+      panel11: './routes/panels/CondenserVacuumPanel.svelte',
+      panel12: './routes/panels/SteamExhaustPanel.svelte',
+      panel13: './routes/panels/TurbineAuxiliaryPanel.svelte',
+      panel14: './routes/panels/HotwellLevelPanel.svelte',
+      panel15: './routes/panels/CondenserCirculationPumpPanel.svelte',
+      panel16: './routes/panels/MakeupWaterPanel.svelte',
+      panel17: './routes/panels/FeedwaterPumpPanel.svelte',
+      panel18: './routes/panels/DataTrendPanel.svelte',
+      panel19: './routes/panels/HEPAFilterPanel.svelte',
+      panel20: './routes/panels/AlarmCRTPanel.svelte',
+      panel21: './routes/panels/SchematicCRTPanel.svelte',
+      panel22: './routes/panels/CondensateSystemPanel.svelte',
+    };
+
+    const modulePath = panelMap[panel];
+    if (modulePath) {
+      const module = await import(modulePath);
+      return module.default;
+    }
+    return null;
   }
 </script>
 
@@ -156,6 +175,50 @@
 
   .sidebar.collapsed .sidebar-title {
     display: none;
+  }
+
+  .loading-state,
+  .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    text-align: center;
+  }
+
+  .loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #333;
+    border-top: 4px solid #00bcd4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .loading-state p {
+    color: #00bcd4;
+    font-size: 1.1rem;
+  }
+
+  .error-state h2 {
+    color: #ff4757;
+    margin-bottom: 1rem;
+  }
+
+  .error-state p {
+    color: #e0e0e0;
+    max-width: 600px;
   }
 </style>
 
@@ -365,49 +428,25 @@
   <main class="main-content">
     {#if currentView === 'overview'}
       <Overview />
-    {:else if currentView === 'panel1'}
-      <ControlRodPanel />
-    {:else if currentView === 'panel2'}
-      <PowerControlPanel />
-    {:else if currentView === 'panel3'}
-      <RecirculationPumpPanel />
-    {:else if currentView === 'panel5'}
-      <EmergencyCoolingPumpPanel />
-    {:else if currentView === 'panel7'}
-      <DrainControlPanel />
-    {:else if currentView === 'panel8'}
-      <OfflineCoolingPumpPanel />
-    {:else if currentView === 'panel9'}
-      <TurbineControlPanel />
-    {:else if currentView === 'panel10'}
-      <DeaeratorSteamPanel />
-    {:else if currentView === 'panel11'}
-      <CondenserVacuumPanel />
-    {:else if currentView === 'panel12'}
-      <SteamExhaustPanel />
-    {:else if currentView === 'panel13'}
-      <TurbineAuxiliaryPanel />
-    {:else if currentView === 'panel14'}
-      <HotwellLevelPanel />
-    {:else if currentView === 'panel15'}
-      <CondenserCirculationPumpPanel />
-    {:else if currentView === 'panel16'}
-      <MakeupWaterPanel />
-    {:else if currentView === 'panel17'}
-      <FeedwaterPumpPanel />
-    {:else if currentView === 'panel18'}
-      <DataTrendPanel />
-    {:else if currentView === 'panel19'}
-      <HEPAFilterPanel />
-    {:else if currentView === 'panel20'}
-      <AlarmCRTPanel />
-    {:else if currentView === 'panel21'}
-      <SchematicCRTPanel />
-    {:else if currentView === 'panel22'}
-      <CondensateSystemPanel />
     {:else}
-      <h2>控制面板 {currentView.replace('panel', '')}</h2>
-      <p>控制面板 {currentView.replace('panel', '')} 内容</p>
+      {#await loadComponent(currentView)}
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>加载控制面板中...</p>
+        </div>
+      {:then Component}
+        {#if Component}
+          <Component />
+        {:else}
+          <h2>控制面板 {currentView.replace('panel', '')}</h2>
+          <p>控制面板 {currentView.replace('panel', '')} 内容</p>
+        {/if}
+      {:catch error}
+        <div class="error-state">
+          <h2>加载错误</h2>
+          <p>无法加载控制面板: {error.message}</p>
+        </div>
+      {/await}
     {/if}
   </main>
 </div>

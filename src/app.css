@@ -1,5 +1,5 @@
 /* Tailwind CSS v4 - Import the new CSS engine */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Custom CSS variables for the theme */
 :root {

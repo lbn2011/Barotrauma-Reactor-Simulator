@@ -1,3 +1,5 @@
+import js from '@eslint/js';
+
 export default [
   // 忽略文件
   {
@@ -12,7 +14,8 @@ export default [
     ],
   },
 
-  // 通用配置
+  // JavaScript/TypeScript 配置
+  js.configs.recommended,
   {
     languageOptions: {
       ecmaVersion: 'latest',
@@ -46,5 +49,10 @@ export default [
       'no-trailing-spaces': 'error',
       'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0 }],
     },
+  },
+
+  // Svelte 配置 - 忽略 Svelte 文件，因为它们需要特殊配置
+  {
+    ignores: ['**/*.svelte'],
   },
 ];

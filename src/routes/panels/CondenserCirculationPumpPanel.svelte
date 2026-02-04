@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-  reactorStore,
-  toggleCondenserCirculationPump,
-  setCondenserCirculationPumpFlowRate,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    toggleCondenserCirculationPump,
+    setCondenserCirculationPumpFlowRate,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let condenserCirculationPumps: any;

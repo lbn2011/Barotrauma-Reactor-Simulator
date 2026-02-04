@@ -1,10 +1,10 @@
 <script lang="ts">
   import {
-  reactorStore,
-  toggleCondensateSystem,
-  setCondensateSystemFlowRate,
-  setCondensateSystemTemperature,
-} from '../../lib/stores/reactorStore';
+    reactorStore,
+    toggleCondensateSystem,
+    setCondensateSystemFlowRate,
+    setCondensateSystemTemperature,
+  } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
   let condensateSystem: any;
