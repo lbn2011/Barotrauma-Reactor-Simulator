@@ -1,0 +1,20 @@
+name = "barotrauma-reactor-simulator"
+compatibility_date = "2026-02-04"
+
+[env.production]
+account_id = "your-account-id"
+workers_dev = true
+compatibility_date = "2026-02-04"
+
+[vars]
+ENVIRONMENT = "production"
+
+# 如果你需要绑定 KV namespaces, D1 databases, R2 buckets 等，请取消下面的注释并配置
+# [[env.production.kv_namespaces]]
+# binding = "MY_KV_NAMESPACE"
+# id = "your-kv-namespace-id"
+
+# [[env.production.d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = "your-database-id"
