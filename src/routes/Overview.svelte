@@ -24,6 +24,7 @@
   };
   let core: { temperature: number; pressure: number; waterLevel: number };
   let powerRegulation: { powerLevel: number; targetPower: number };
+  let controlRods: { position: number; insertionSpeed: number };
 
   const unsubscribe = reactorStore.subscribe((state) => {
     isRunning = state.isRunning;
@@ -36,11 +37,14 @@
     crtDiagram = state.crtDiagram;
     core = state.core;
     powerRegulation = state.powerRegulation;
+    controlRods = state.controlRods;
   });
 
   // 图表相关
   let chart: Chart | null = null;
   let chartCanvas: HTMLCanvasElement | null = null;
+  let controlRodChart: Chart | null = null;
+  let controlRodChartCanvas: HTMLCanvasElement | null = null;
 
   // 存档功能
   let saveCode: string = '';
@@ -96,6 +100,28 @@
   // 每2秒更新一次图表
   let chartUpdateInterval: number;
 
+  // 更新控制棒图表数据
+  function updateControlRodChart() {
+    if (!controlRodChart) return;
+
+    const position = controlRods?.position || 50;
+    const remaining = 100 - position;
+    
+    // 更新数据集
+    controlRodChart.data.datasets[0].data = [position, remaining];
+    controlRodChart.data.datasets[0].backgroundColor = [
+      position > 75 ? 'rgba(255, 99, 132, 0.8)' :    // 高插入深度时红色
+      position > 50 ? 'rgba(255, 165, 0, 0.8)' :     // 中等插入深度时橙色
+                    'rgba(54, 162, 235, 0.8)',      // 低插入深度时蓝色
+      'rgba(200, 200, 200, 0.2)'                     // 剩余部分灰色
+    ];
+    
+    if (controlRodChart.options.plugins && controlRodChart.options.plugins.title) {
+      controlRodChart.options.plugins.title.text = `控制棒状态 - 位置: ${position.toFixed(1)}%`;
+    }
+    controlRodChart.update();
+  }
+
   onMount(() => {
     if (chartCanvas) {
       chart = new Chart(chartCanvas, {
@@ -125,7 +151,47 @@
       });
     }
 
+    // 初始化控制棒状态图表
+    if (controlRodChartCanvas) {
+      controlRodChart = new Chart(controlRodChartCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: ['插入深度', '剩余'],
+          datasets: [{
+            data: [50, 50], // 默认50%插入
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.8)',  // 插入部分红色
+              'rgba(200, 200, 200, 0.2)'   // 剩余部分灰色
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(200, 200, 200, 0.5)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '70%', // 创建甜甜圈效果
+          plugins: {
+            title: {
+              display: true,
+              text: '控制棒状态 - 位置: 50.0%'
+            },
+            legend: {
+              position: 'bottom' as const,
+            }
+          } as any,
+          circumference: 180, // 半圆仪表盘
+          rotation: 270
+        }
+      });
+    }
+
     chartUpdateInterval = window.setInterval(updateChartData, 2000);
+    // 每秒更新控制棒图表
+    setInterval(updateControlRodChart, 1000);
   });
 
   // 清理订阅
@@ -134,6 +200,9 @@
     clearInterval(chartUpdateInterval);
     if (chart) {
       chart.destroy();
+    }
+    if (controlRodChart) {
+      controlRodChart.destroy();
     }
   });
 </script>
@@ -226,6 +295,11 @@
 
   .chart-container {
     height: 400px;
+    margin-top: 1rem;
+  }
+
+  .chart-container-sm {
+    height: 300px;
     margin-top: 1rem;
   }
 
@@ -419,6 +493,18 @@
     <h2>18. 数据趋势图</h2>
     <div class="chart-container">
       <canvas bind:this={chartCanvas}></canvas>
+    </div>
+  </div>
+
+  <!-- 控制棒状态图表 -->
+  <div class="overview-card">
+    <h2>1. 控制棒状态</h2>
+    <div class="chart-container-sm">
+      <canvas bind:this={controlRodChartCanvas}></canvas>
+    </div>
+    <div class="param-item" style="margin-top: 1rem; text-align: center;">
+      <div class="param-label">插入速度</div>
+      <div class="param-value">{controlRods?.insertionSpeed?.toFixed(2) || 0} %/s</div>
     </div>
   </div>
 
