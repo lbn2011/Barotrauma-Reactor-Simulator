@@ -11,6 +11,9 @@ export default [
       'pnpm-lock.yaml',
       'package-lock.json',
       'yarn.lock',
+      '.svelte-kit/',  // 排除 SvelteKit 生成的目录
+      '.svelte-kit/**/*',
+      'src/**/*.js',   // 排除可能的 JS 文件
     ],
   },
 
@@ -54,5 +57,5 @@ export default [
   // Svelte 配置 - 忽略 Svelte 文件，因为它们需要特殊配置
   {
     ignores: ['**/*.svelte'],
-  },
+  }
 ];

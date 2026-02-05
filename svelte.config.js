@@ -5,7 +5,9 @@ const config = {
   extensions: ['.svelte'],
 
   kit: {
-    adapter: adapter(),
+    adapter: adapter({
+      // 使用默认配置，让适配器自动生成 wrangler.toml
+    }),
     alias: {
       '$lib': 'src/lib',
       '$lib/*': 'src/lib/*',
@@ -20,10 +22,6 @@ const config = {
       lib: 'src/lib',
       assets: 'static'
     }
-  },
-
-  vitePlugin: {
-    inspector: true
   }
 };
 
