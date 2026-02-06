@@ -13,7 +13,7 @@ compatibility_flags = ["nodejs_compat"]
 ENVIRONMENT = "production"
 
 [assets]
-directory = "./.svelte-kit/cloudflare"
+directory = "./.svelte-kit/cloudflare/static"
 binding = "ASSETS"
 
 # 如果你需要绑定 KV namespaces, D1 databases, R2 buckets 等，请取消下面的注释并配置
