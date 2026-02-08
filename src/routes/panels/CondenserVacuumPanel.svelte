@@ -113,6 +113,7 @@
     border-radius: 4px;
     background: #333;
     outline: none;
+    appearance: none;
     -webkit-appearance: none;
   }
 

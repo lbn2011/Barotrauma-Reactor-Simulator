@@ -103,3 +103,5 @@ docs/_build/
  ehthumbs.db
  Desktop.ini
  desktop.ini
+
+ *.har

@@ -1,13 +1,13 @@
 name = "barotrauma-reactor-simulator"
 main = "./.svelte-kit/cloudflare/_worker.js"
-compatibility_date = "2026-02-06"
+compatibility_date = "2026-02-08"
 workers_dev = false
 route = "lbnaxx.de5.net/*"
 
 [env.production]
 account_id = "lbn20011@outlook.com"
 workers_dev = false
-compatibility_date = "2026-02-06"
+compatibility_date = "2026-02-08"
 compatibility_flags = ["nodejs_compat"]
 route = "lbnaxx.de5.net/*"
 
