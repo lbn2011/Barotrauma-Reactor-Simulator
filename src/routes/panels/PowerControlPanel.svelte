@@ -1,5 +1,8 @@
 <script lang="ts">
   import { reactorStore, setTargetPower } from '../../lib/stores/reactorStore';
+  import { Card, CardContent } from '../../lib/components/ui/card';
+  import { Button } from '../../lib/components/ui/button';
+  import { Slider } from '../../lib/components/ui/slider';
 
   // 订阅状态
   let powerRegulation: {
@@ -15,10 +18,8 @@
   });
 
   // 处理目标功率变化
-  function handleTargetPowerChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    const power = parseFloat(target.value);
-    setTargetPower(power);
+  function handleTargetPowerChange() {
+    // 由于reactorStore是响应式的，powerRegulation.targetPower会自动更新
   }
 
   // 快速操作按钮
@@ -27,334 +28,98 @@
   }
 </script>
 
-<style>
-  .panel-container {
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    padding: 2rem;
-    border: 1px solid #333;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
+<div class="bg-background border border-border rounded-lg p-8 shadow-md">
+  <h1 class="text-2xl font-bold text-primary mb-8">2. 反应堆功率调节面板</h1>
 
-  .panel-title {
-    margin-top: 0;
-    margin-bottom: 2rem;
-    color: #00bcd4;
-    font-size: 1.5rem;
-  }
+  <div class="mb-8">
+    <h2 class="text-lg font-semibold text-foreground mb-4">功率水平调节</h2>
 
-  .power-section {
-    margin-bottom: 2rem;
-  }
-
-  .section-title {
-    margin-bottom: 1rem;
-    color: #e0e0e0;
-    font-size: 1.1rem;
-  }
-
-  .power-control {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .slider-container {
-    position: relative;
-    margin: 2rem 0;
-  }
-
-  input[type='range'] {
-    width: 100%;
-    height: 8px;
-    border-radius: 4px;
-    background: #333;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #00bcd4;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  input[type='range']::-webkit-slider-thumb:hover {
-    background: #00acc1;
-    transform: scale(1.1);
-  }
-
-  input[type='range']::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #00bcd4;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-  }
-
-  input[type='range']::-moz-range-thumb:hover {
-    background: #00acc1;
-    transform: scale(1.1);
-  }
-
-  .power-values {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
-  }
-
-  .value-card {
-    background-color: #121212;
-    border-radius: 6px;
-    padding: 1.5rem;
-    border: 1px solid #333;
-  }
-
-  .value-label {
-    font-size: 0.9rem;
-    color: #aaa;
-    margin-bottom: 0.5rem;
-  }
-
-  .value-display {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #e0e0e0;
-  }
-
-  .value-display.target {
-    color: #00bcd4;
-  }
-
-  .quick-controls {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .quick-btn {
-    padding: 1rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #333;
-    color: #e0e0e0;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all 0.2s;
-  }
-
-  .quick-btn:hover {
-    background-color: #444;
-    transform: translateY(-2px);
-  }
-
-  .quick-btn:active {
-    transform: translateY(0);
-  }
-
-  .status-indicators {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
-
-  .indicator-card {
-    background-color: #121212;
-    border-radius: 6px;
-    padding: 1.5rem;
-    border: 1px solid #333;
-  }
-
-  .indicator-label {
-    font-size: 0.9rem;
-    color: #aaa;
-    margin-bottom: 0.5rem;
-  }
-
-  .indicator-value {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #e0e0e0;
-  }
-
-  .reactivity-positive {
-    color: #f44336;
-  }
-
-  .reactivity-negative {
-    color: #4caf50;
-  }
-
-  .power-diagram {
-    margin: 2rem 0;
-    padding: 2rem;
-    background-color: #121212;
-    border-radius: 6px;
-    border: 1px solid #333;
-  }
-
-  .diagram-title {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: #00bcd4;
-  }
-
-  .power-gauge {
-    position: relative;
-    width: 300px;
-    height: 150px;
-    margin: 0 auto;
-  }
-
-  .gauge-background {
-    position: absolute;
-    width: 300px;
-    height: 150px;
-    border-radius: 150px 150px 0 0;
-    background-color: #333;
-    overflow: hidden;
-  }
-
-  .gauge-scale {
-    position: absolute;
-    width: 300px;
-    height: 150px;
-    border-radius: 150px 150px 0 0;
-    background: conic-gradient(
-      #4caf50 0deg 180deg,
-      #ffeb3b 180deg 270deg,
-      #f44336 270deg 360deg
-    );
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-    transform: rotate(180deg);
-    transform-origin: center bottom;
-  }
-
-  .gauge-mask {
-    position: absolute;
-    bottom: 0;
-    width: 260px;
-    height: 130px;
-    background-color: #121212;
-    border-radius: 130px 130px 0 0;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .gauge-needle {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 4px;
-    height: 120px;
-    background-color: #00bcd4;
-    transform-origin: bottom center;
-    transform: translateX(-50%) rotate(calc(var(--angle, 0) * 1deg));
-    transition: transform 0.5s ease;
-    border-radius: 4px 4px 0 0;
-  }
-
-  .gauge-center {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    background-color: #00bcd4;
-    border-radius: 50%;
-    transform: translateX(-50%);
-  }
-
-  .gauge-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
-    padding: 0 20px;
-    font-size: 0.8rem;
-    color: #aaa;
-  }
-</style>
-
-<div class="panel-container">
-  <h1 class="panel-title">2. 反应堆功率调节面板</h1>
-
-  <div class="power-section">
-    <h2 class="section-title">功率水平调节</h2>
-
-    <div class="power-control">
-      <div class="slider-container">
+    <div class="flex flex-col gap-4">
+      <div class="my-8">
         <input
           type="range"
           min="0"
           max="100"
           step="1"
           value={powerRegulation.targetPower}
-          on:input={handleTargetPowerChange}
+          on:input={(e) => setTargetPower(parseFloat((e.target as HTMLInputElement).value))}
+          class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
         />
       </div>
 
-      <div class="power-values">
-        <div class="value-card">
-          <div class="value-label">当前功率水平</div>
-          <div class="value-display">
-            {powerRegulation.powerLevel?.toFixed(1)}%
-          </div>
-        </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <Card class="bg-card border-border hover:border-primary/50 transition-all duration-300">
+          <CardContent class="p-6">
+            <div class="text-sm text-muted-foreground mb-2">当前功率水平</div>
+            <div class="text-2xl font-bold text-foreground">
+              {powerRegulation.powerLevel?.toFixed(1)}%
+            </div>
+          </CardContent>
+        </Card>
 
-        <div class="value-card">
-          <div class="value-label">目标功率水平</div>
-          <div class="value-display target">
-            {powerRegulation.targetPower?.toFixed(1)}%
-          </div>
-        </div>
+        <Card class="bg-card border-border hover:border-primary/50 transition-all duration-300">
+          <CardContent class="p-6">
+            <div class="text-sm text-muted-foreground mb-2">目标功率水平</div>
+            <div class="text-2xl font-bold text-primary">
+              {powerRegulation.targetPower?.toFixed(1)}%
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <div class="quick-controls">
-        <button class="quick-btn" on:click={() => setPowerQuickly(0)}>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-8">
+        <Button 
+          variant="secondary" 
+          class="py-4 hover:bg-secondary/80 transition-all duration-300"
+          onclick={() => setPowerQuickly(0)}
+        >
           0%
-        </button>
-        <button class="quick-btn" on:click={() => setPowerQuickly(25)}>
+        </Button>
+        <Button 
+          variant="secondary" 
+          class="py-4 hover:bg-secondary/80 transition-all duration-300"
+          onclick={() => setPowerQuickly(25)}
+        >
           25%
-        </button>
-        <button class="quick-btn" on:click={() => setPowerQuickly(50)}>
+        </Button>
+        <Button 
+          variant="secondary" 
+          class="py-4 hover:bg-secondary/80 transition-all duration-300"
+          onclick={() => setPowerQuickly(50)}
+        >
           50%
-        </button>
-        <button class="quick-btn" on:click={() => setPowerQuickly(75)}>
+        </Button>
+        <Button 
+          variant="secondary" 
+          class="py-4 hover:bg-secondary/80 transition-all duration-300"
+          onclick={() => setPowerQuickly(75)}
+        >
           75%
-        </button>
-        <button class="quick-btn" on:click={() => setPowerQuickly(100)}>
+        </Button>
+        <Button 
+          variant="secondary" 
+          class="py-4 hover:bg-secondary/80 transition-all duration-300"
+          onclick={() => setPowerQuickly(100)}
+        >
           100%
-        </button>
+        </Button>
       </div>
     </div>
   </div>
 
-  <div class="power-diagram">
-    <h3 class="diagram-title">功率水平指示器</h3>
-    <div class="power-gauge">
-      <div class="gauge-background"></div>
-      <div class="gauge-scale"></div>
-      <div class="gauge-mask"></div>
+  <div class="bg-card border border-border rounded-lg p-6 my-8 hover:border-primary/50 transition-all duration-300">
+    <h3 class="text-center text-lg font-semibold text-primary mb-6">功率水平指示器</h3>
+    <div class="relative w-[300px] h-[150px] mx-auto">
+      <div class="absolute inset-0 rounded-t-[150px] bg-muted overflow-hidden"></div>
+      <div class="absolute inset-0 rounded-t-[150px] bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 transform rotate-180"></div>
+      <div class="absolute bottom-0 left-1/2 w-[260px] h-[130px] bg-card rounded-t-[130px] -translate-x-1/2"></div>
       <div
-        class="gauge-needle"
-        style="--angle: {powerRegulation.powerLevel
-          ? powerRegulation.powerLevel * 1.8
-          : 0}"
+        class="absolute bottom-0 left-1/2 w-[4px] h-[120px] bg-primary transform -translate-x-1/2 transition-transform duration-500 ease"
+        style="transform-origin: bottom center; transform: translateX(-50%) rotate(calc(var(--angle, 0) * 1deg));"
+        style:--angle={powerRegulation.powerLevel ? powerRegulation.powerLevel * 1.8 : 0}
       ></div>
-      <div class="gauge-center"></div>
-      <div class="gauge-labels">
+      <div class="absolute bottom-4 left-1/2 w-[12px] h-[12px] bg-primary rounded-full -translate-x-1/2"></div>
+      <div class="flex justify-between mt-4 px-5 text-xs text-muted-foreground">
         <span>0%</span>
         <span>50%</span>
         <span>100%</span>
@@ -362,45 +127,43 @@
     </div>
   </div>
 
-  <div class="status-indicators">
-    <div class="indicator-card">
-      <div class="indicator-label">反应性</div>
-      <div
-        class={`indicator-value ${powerRegulation.reactivity > 0 ? 'reactivity-positive' : 'reactivity-negative'}`}
-      >
-        {powerRegulation.reactivity?.toFixed(2)}
-      </div>
-    </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    <Card class="bg-card border-border hover:border-primary/50 transition-all duration-300">
+      <CardContent class="p-6">
+        <div class="text-sm text-muted-foreground mb-2">反应性</div>
+        <div class={`text-xl font-bold ${powerRegulation.reactivity > 0 ? 'text-red-500' : 'text-green-500'}`}>
+          {powerRegulation.reactivity?.toFixed(2)}
+        </div>
+      </CardContent>
+    </Card>
 
-    <div class="indicator-card">
-      <div class="indicator-label">堆芯温度</div>
-      <div class="indicator-value">{core.temperature?.toFixed(1)}°C</div>
-    </div>
+    <Card class="bg-card border-border hover:border-primary/50 transition-all duration-300">
+      <CardContent class="p-6">
+        <div class="text-sm text-muted-foreground mb-2">堆芯温度</div>
+        <div class="text-xl font-bold text-foreground">{core.temperature?.toFixed(1)}°C</div>
+      </CardContent>
+    </Card>
 
-    <div class="indicator-card">
-      <div class="indicator-label">堆芯压力</div>
-      <div class="indicator-value">{core.pressure?.toFixed(2)} MPa</div>
-    </div>
+    <Card class="bg-card border-border hover:border-primary/50 transition-all duration-300">
+      <CardContent class="p-6">
+        <div class="text-sm text-muted-foreground mb-2">堆芯压力</div>
+        <div class="text-xl font-bold text-foreground">{core.pressure?.toFixed(2)} MPa</div>
+      </CardContent>
+    </Card>
   </div>
 
-  <div class="power-section" style="margin-top: 3rem;">
-    <h2 class="section-title">操作说明</h2>
-    <div
-      style="background-color: #121212; padding: 1.5rem; border-radius: 6px; border: 1px solid #333;"
-    >
-      <ul style="margin: 0; padding-left: 1.5rem; color: #e0e0e0;">
-        <li style="margin-bottom: 0.5rem;">功率水平范围: 0% 到 100%</li>
-        <li style="margin-bottom: 0.5rem;">
-          调节目标功率后，反应堆会逐渐调整到该功率水平
-        </li>
-        <li style="margin-bottom: 0.5rem;">
-          功率水平影响堆芯温度和压力，功率越高温度和压力越大
-        </li>
-        <li style="margin-bottom: 0.5rem;">
-          正常运行时，功率水平通常保持在 30-70% 之间
-        </li>
-        <li>功率水平的变化会受到控制棒位置的影响</li>
-      </ul>
-    </div>
+  <div class="mt-12">
+    <h2 class="text-lg font-semibold text-foreground mb-4">操作说明</h2>
+    <Card class="bg-card border-border hover:border-primary/50 transition-all duration-300">
+      <CardContent class="p-6">
+        <ul class="list-disc pl-6 text-foreground space-y-2">
+          <li>功率水平范围: 0% 到 100%</li>
+          <li>调节目标功率后，反应堆会逐渐调整到该功率水平</li>
+          <li>功率水平影响堆芯温度和压力，功率越高温度和压力越大</li>
+          <li>正常运行时，功率水平通常保持在 30-70% 之间</li>
+          <li>功率水平的变化会受到控制棒位置的影响</li>
+        </ul>
+      </CardContent>
+    </Card>
   </div>
 </div>

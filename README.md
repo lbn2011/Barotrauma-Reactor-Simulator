@@ -4,16 +4,19 @@
 
 ## 功能特性
 
+- **现代化 UI 组件**：使用 shadcn-svelte 组件库提供美观一致的界面
 - **全面的反应堆监控**：实时监控功率、温度、压力等关键参数
 - **多面板控制系统**：包括控制棒、功率调节、循环泵、应急冷却等多个控制面板
 - **数据可视化**：使用 Chart.js 实现趋势图和实时数据展示
 - **自动化警报系统**：自动监测异常状况并发出警报
 - **存档/加载功能**：保存和恢复模拟器状态
 - **响应式设计**：支持不同屏幕尺寸的设备
+- **优雅的动效**：使用 Tailwind CSS 实现平滑的过渡动画和悬停效果
 
 ## 技术栈
 
 - **前端框架**：SvelteKit 5
+- **UI 组件库**：shadcn-svelte
 - **样式**：Tailwind CSS
 - **图表库**：Chart.js
 - **部署平台**：Cloudflare Workers
@@ -26,6 +29,20 @@
 
 - Node.js (版本 18 或更高)
 - pnpm (推荐) 或 npm
+
+### 初始化 shadcn-svelte
+
+如果需要添加新的 shadcn-svelte 组件，请按照以下步骤操作：
+
+1. 初始化 shadcn-svelte 配置：
+   ```bash
+   npx shadcn-svelte init
+   ```
+
+2. 安装所需的组件：
+   ```bash
+   npx shadcn-svelte add button card input slider
+   ```
 
 ### 本地开发
 
@@ -108,6 +125,12 @@ src/
 │   ├── SaveEditor.svelte  # 存档编辑器
 │   └── +page.svelte       # 主页路由
 ├── lib/                   # 共享库和工具函数
+│   ├── components/        # 可复用组件
+│   │   └── ui/            # shadcn-svelte UI 组件
+│   │       ├── button/
+│   │       ├── card/
+│   │       ├── slider/
+│   │       └── ...        # 更多组件
 │   └── stores/            # Svelte stores
 │       └── reactorStore.ts # 反应堆状态管理
 ├── app.html              # 应用主 HTML 模板
@@ -178,8 +201,23 @@ binding = "ASSETS"
 要在应用中添加新面板：
 
 1. 在 `src/routes/panels/` 目录下创建新的 Svelte 组件
-2. 在 `App.svelte` 文件中的 `panelMap` 对象中注册新面板
-3. 在侧边栏导航中添加相应的按钮
+2. 在组件中使用 shadcn-svelte UI 组件增强界面：
+   ```svelte
+   <script>
+     import { Card, CardContent } from '$lib/components/ui/card';
+     import { Button } from '$lib/components/ui/button';
+     import { Slider } from '$lib/components/ui/slider';
+   </script>
+   
+   <Card>
+     <CardContent>
+       <Slider min={0} max={100} value={[50]} />
+       <Button>操作按钮</Button>
+     </CardContent>
+   </Card>
+   ```
+3. 在 `App.svelte` 文件中的 `panelMap` 对象中注册新面板
+4. 在侧边栏导航中添加相应的按钮
 
 ### 状态管理
 
@@ -193,11 +231,28 @@ binding = "ASSETS"
 
 ### 自定义主题
 
-应用使用 Tailwind CSS 进行样式设计，主要颜色方案包括：
+应用使用 Tailwind CSS 和 shadcn-svelte 组件库进行样式设计，主要颜色方案包括：
 
 - 主色：#00bcd4 (青色)
 - 背景色：#121212 (深灰)
 - 边框色：#333 (中灰)
+
+#### 使用 shadcn-svelte 组件
+
+要添加新的 shadcn-svelte 组件：
+
+1. 使用 CLI 安装组件：
+   ```bash
+   npx shadcn-svelte add [component-name]
+   ```
+
+2. 在组件中导入并使用：
+   ```svelte
+   import { Button } from '$lib/components/ui/button';
+   import { Card, CardContent } from '$lib/components/ui/card';
+   ```
+
+3. 遵循 Tailwind CSS 的实用优先样式方法，利用预设的样式类和变体。
 
 ## 故障排除
 
@@ -217,11 +272,24 @@ binding = "ASSETS"
    - 检查账户权限
    - 验证域名配置
 
+4. **shadcn-svelte 组件问题**
+   - 如果组件无法渲染，请检查组件导入路径是否正确
+   - 确保在 `components.json` 中正确配置了组件库
+   - 验证 Tailwind CSS 配置是否正确集成
+
+5. **Tailwind CSS 样式问题**
+   - 如果样式未生效，请运行 `npx tailwindcss -i ./src/app.pcss -o ./static/tailwind.css --watch` 重新生成样式
+   - 检查 `tailwind.config.js` 是否包含了正确的路径
+   - 确认组件类名拼写是否正确
+
 ### 性能优化
 
 - 使用 Svelte 的内置优化
 - 合理使用 store 订阅避免不必要的重渲染
 - 懒加载大型组件
+- 利用 Tailwind CSS 的 JIT 模式减少 CSS 包大小
+- 按需导入 shadcn-svelte 组件以减少打包体积
+- 使用 Svelte 5 的反应性语法优化组件更新
 
 ## 贡献
 
@@ -244,6 +312,8 @@ binding = "ASSETS"
 - 感谢 SvelteKit 团队提供的优秀框架
 - 感谢 Cloudflare 提供的 Workers 平台
 - 感谢 Barotrauma 游戏及其社区
+- 感谢 shadcn-svelte 团队提供的高质量 UI 组件库
+- 感谢 Tailwind CSS 团队提供的实用优先 CSS 框架
 
 ## 支持
 
