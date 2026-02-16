@@ -35,6 +35,7 @@
 如果需要添加新的 shadcn-svelte 组件，请按照以下步骤操作：
 
 1. 初始化 shadcn-svelte 配置：
+
    ```bash
    npx shadcn-svelte init
    ```
@@ -47,12 +48,14 @@
 ### 本地开发
 
 1. 克隆仓库：
+
    ```bash
    git clone <repository-url>
    cd barotrauma-reactor-simulator
    ```
 
 2. 安装依赖：
+
    ```bash
    pnpm install
    # 或者如果你使用 npm
@@ -60,6 +63,7 @@
    ```
 
 3. 启动开发服务器：
+
    ```bash
    pnpm dev
    # 或者
@@ -95,11 +99,13 @@ npm run preview
 ### 部署步骤
 
 1. 确保已安装 wrangler CLI：
+
    ```bash
    npm install -g wrangler
    ```
 
 2. 登录到 Cloudflare：
+
    ```bash
    wrangler login
    ```
@@ -140,30 +146,37 @@ src/
 ## 控制面板说明
 
 ### 1. 反应堆控制棒面板
+
 - 控制反应堆的核裂变过程
 - 调节控制棒插入深度以控制反应性
 
 ### 2. 功率调节面板
+
 - 监控和调节反应堆功率输出
 - 设置目标功率水平
 
 ### 3. 再循环泵面板
+
 - 控制主循环回路的泵送系统
 - 调节冷却剂流量
 
 ### 4. 应急冷却泵面板
+
 - 在紧急情况下激活备用冷却系统
 - 确保反应堆安全
 
 ### 5. 汽轮机控制面板
+
 - 控制蒸汽涡轮发电机
 - 调节电力输出
 
 ### 6. 除氧器控制面板
+
 - 管理给水系统中的氧气去除
 - 防止系统腐蚀
 
 ### 7. 数据趋势图面板
+
 - 显示历史数据趋势
 - 分析反应堆性能
 
@@ -202,13 +215,14 @@ binding = "ASSETS"
 
 1. 在 `src/routes/panels/` 目录下创建新的 Svelte 组件
 2. 在组件中使用 shadcn-svelte UI 组件增强界面：
+
    ```svelte
    <script>
      import { Card, CardContent } from '$lib/components/ui/card';
      import { Button } from '$lib/components/ui/button';
      import { Slider } from '$lib/components/ui/slider';
    </script>
-   
+
    <Card>
      <CardContent>
        <Slider min={0} max={100} value={[50]} />
@@ -216,6 +230,7 @@ binding = "ASSETS"
      </CardContent>
    </Card>
    ```
+
 3. 在 `App.svelte` 文件中的 `panelMap` 对象中注册新面板
 4. 在侧边栏导航中添加相应的按钮
 
@@ -242,14 +257,15 @@ binding = "ASSETS"
 要添加新的 shadcn-svelte 组件：
 
 1. 使用 CLI 安装组件：
+
    ```bash
    npx shadcn-svelte add [component-name]
    ```
 
 2. 在组件中导入并使用：
+
    ```svelte
-   import { Button } from '$lib/components/ui/button';
-   import { Card, CardContent } from '$lib/components/ui/card';
+   import {Button} from '$lib/components/ui/button'; import {(Card, CardContent)} from '$lib/components/ui/card';
    ```
 
 3. 遵循 Tailwind CSS 的实用优先样式方法，利用预设的样式类和变体。

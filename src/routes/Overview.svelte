@@ -9,6 +9,16 @@
     loadState,
   } from '../lib/stores/reactorStore';
   import Chart from 'chart.js/auto';
+  import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+  } from '../lib/components/ui/card';
+  import { Button } from '../lib/components/ui/button';
+  import { Input } from '../lib/components/ui/input';
 
   // 订阅状态
   let isRunning: boolean;
@@ -23,8 +33,31 @@
     systemStatus: Record<string, string>;
   };
   let core: { temperature: number; pressure: number; waterLevel: number };
-  let powerRegulation: { powerLevel: number; targetPower: number };
+  let powerRegulation: {
+    powerLevel: number;
+    targetPower: number;
+    reactivity: number;
+  };
   let controlRods: { position: number; insertionSpeed: number };
+  let physics: {
+    masses: {
+      M_reactor: number;
+      M_condenser: number;
+      M_deaerator: number;
+    };
+    neutron: {
+      Xe: number;
+      I: number;
+      φ: number;
+      Σ_f: number;
+    };
+    reactivity: {
+      void: number;
+      xenon: number;
+      controlRod: number;
+      total: number;
+    };
+  };
 
   const unsubscribe = reactorStore.subscribe((state) => {
     isRunning = state.isRunning;
@@ -38,6 +71,7 @@
     core = state.core;
     powerRegulation = state.powerRegulation;
     controlRods = state.controlRods;
+    physics = state.physics;
   });
 
   // 图表相关
@@ -106,17 +140,22 @@
 
     const position = controlRods?.position || 50;
     const remaining = 100 - position;
-    
+
     // 更新数据集
     controlRodChart.data.datasets[0].data = [position, remaining];
     controlRodChart.data.datasets[0].backgroundColor = [
-      position > 75 ? 'rgba(255, 99, 132, 0.8)' :    // 高插入深度时红色
-      position > 50 ? 'rgba(255, 165, 0, 0.8)' :     // 中等插入深度时橙色
-                    'rgba(54, 162, 235, 0.8)',      // 低插入深度时蓝色
-      'rgba(200, 200, 200, 0.2)'                     // 剩余部分灰色
+      position > 75
+        ? 'rgba(255, 99, 132, 0.8)' // 高插入深度时红色
+        : position > 50
+          ? 'rgba(255, 165, 0, 0.8)' // 中等插入深度时橙色
+          : 'rgba(54, 162, 235, 0.8)', // 低插入深度时蓝色
+      'rgba(200, 200, 200, 0.2)', // 剩余部分灰色
     ];
-    
-    if (controlRodChart.options.plugins && controlRodChart.options.plugins.title) {
+
+    if (
+      controlRodChart.options.plugins &&
+      controlRodChart.options.plugins.title
+    ) {
       controlRodChart.options.plugins.title.text = `控制棒状态 - 位置: ${position.toFixed(1)}%`;
     }
     controlRodChart.update();
@@ -157,18 +196,20 @@
         type: 'doughnut',
         data: {
           labels: ['插入深度', '剩余'],
-          datasets: [{
-            data: [50, 50], // 默认50%插入
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.8)',  // 插入部分红色
-              'rgba(200, 200, 200, 0.2)'   // 剩余部分灰色
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(200, 200, 200, 0.5)'
-            ],
-            borderWidth: 1
-          }]
+          datasets: [
+            {
+              data: [50, 50], // 默认50%插入
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.8)', // 插入部分红色
+                'rgba(200, 200, 200, 0.2)', // 剩余部分灰色
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(200, 200, 200, 0.5)',
+              ],
+              borderWidth: 1,
+            },
+          ],
         },
         options: {
           responsive: true,
@@ -177,15 +218,15 @@
           plugins: {
             title: {
               display: true,
-              text: '控制棒状态 - 位置: 50.0%'
+              text: '控制棒状态 - 位置: 50.0%',
             },
             legend: {
               position: 'bottom' as const,
-            }
+            },
           } as any,
           circumference: 180, // 半圆仪表盘
-          rotation: 270
-        }
+          rotation: 270,
+        },
       });
     }
 
@@ -208,77 +249,19 @@
 </script>
 
 <style>
-  .overview-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
+  .chart-container {
+    height: 400px;
+    margin-top: 1rem;
   }
 
-  .overview-card {
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    padding: 1.5rem;
-    border: 1px solid #333;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  .overview-card h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    color: #00bcd4;
-    font-size: 1.2rem;
-  }
-
-  .control-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.2s;
-  }
-
-  .btn-primary {
-    background-color: #00bcd4;
-    color: #121212;
-  }
-
-  .btn-primary:hover {
-    background-color: #00acc1;
-  }
-
-  .btn-secondary {
-    background-color: #333;
-    color: #e0e0e0;
-  }
-
-  .btn-secondary:hover {
-    background-color: #444;
-  }
-
-  .btn-danger {
-    background-color: #f44336;
-    color: white;
-  }
-
-  .btn-danger:hover {
-    background-color: #e53935;
+  .chart-container-sm {
+    height: 300px;
+    margin-top: 1rem;
   }
 
   .logs-container {
     max-height: 300px;
     overflow-y: auto;
-    background-color: #121212;
-    border-radius: 4px;
-    padding: 1rem;
     font-family: monospace;
     font-size: 0.9rem;
   }
@@ -293,59 +276,11 @@
     border-bottom: none;
   }
 
-  .chart-container {
-    height: 400px;
-    margin-top: 1rem;
-  }
-
-  .chart-container-sm {
-    height: 300px;
-    margin-top: 1rem;
-  }
-
-  .alarms-container {
-    background-color: #121212;
-    border-radius: 4px;
-    padding: 1rem;
-  }
-
-  .alarm-message {
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    background-color: rgba(244, 67, 54, 0.2);
-    border-left: 4px solid #f44336;
-    border-radius: 4px;
-  }
-
-  .crt-diagram {
-    background-color: #121212;
-    border-radius: 4px;
-    padding: 1rem;
-  }
-
   .system-status {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     margin-top: 1rem;
-  }
-
-  .status-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .status-value {
-    font-weight: 600;
-  }
-
-  .status-online {
-    color: #4caf50;
-  }
-
-  .status-offline {
-    color: #f44336;
   }
 
   .core-params {
@@ -359,44 +294,32 @@
     text-align: center;
   }
 
-  .param-value {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0.5rem 0;
-  }
-
   .param-label {
     font-size: 0.9rem;
     color: #aaa;
   }
 
-  .save-load-container {
-    margin-top: 1rem;
-  }
-
-  .input-group {
-    margin-bottom: 1rem;
-  }
-
-  .input-group label {
-    display: block;
-    margin-bottom: 0.5rem;
+  .param-value {
+    font-size: 1.5rem;
     font-weight: 600;
   }
 
-  .input-group input {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #121212;
-    border: 1px solid #333;
-    border-radius: 4px;
-    color: #e0e0e0;
-    font-family: monospace;
+  .status-online {
+    color: #4caf50;
   }
 
-  .input-group input:focus {
-    outline: none;
-    border-color: #00bcd4;
+  .status-offline {
+    color: #f44336;
+  }
+
+  .status-value {
+    font-weight: 600;
+  }
+
+  .alarm-message {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
   }
 
   .load-message {
@@ -405,176 +328,319 @@
     border-radius: 4px;
     font-weight: 600;
   }
-
-  .load-message.success {
-    background-color: rgba(76, 175, 80, 0.2);
-    color: #4caf50;
-  }
-
-  .load-message.error {
-    background-color: rgba(244, 67, 54, 0.2);
-    color: #f44336;
-  }
 </style>
 
-<div class="overview-container">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
   <!-- 模拟控制 -->
-  <div class="overview-card" style="grid-column: 1 / -1;">
-    <h2>模拟控制</h2>
-    <div class="control-buttons">
-      {#if !isRunning}
-        <button class="btn btn-primary" on:click={startSimulation}>
-          启动模拟
-        </button>
-      {:else}
-        <button class="btn btn-secondary" on:click={stopSimulation}>
-          停止模拟
-        </button>
-      {/if}
-      <button class="btn btn-danger" on:click={resetSimulation}>
-        重置模拟
-      </button>
-    </div>
-
-    <!-- 核心参数 -->
-    <div class="core-params">
-      <div class="param-item">
-        <div class="param-label">功率水平</div>
-        <div class="param-value">{powerRegulation.powerLevel?.toFixed(1)}%</div>
-      </div>
-      <div class="param-item">
-        <div class="param-label">堆芯温度</div>
-        <div class="param-value">{core.temperature?.toFixed(1)}°C</div>
-      </div>
-      <div class="param-item">
-        <div class="param-label">堆芯压力</div>
-        <div class="param-value">{core.pressure?.toFixed(2)} MPa</div>
-      </div>
-    </div>
-
-    <!-- 存档功能 -->
-    <div class="save-load-container">
-      <h3>存档管理</h3>
-      <div class="control-buttons">
-        <button class="btn btn-secondary" on:click={handleSave}>
-          保存状态
-        </button>
-      </div>
-      <div class="input-group">
-        <label for="saveCode">存档码</label>
-        <input type="text" id="saveCode" bind:value={saveCode} readonly />
-      </div>
-      <div class="input-group">
-        <label for="loadCode">加载存档</label>
-        <input
-          type="text"
-          id="loadCode"
-          bind:value={loadCode}
-          placeholder="输入存档码"
-        />
-      </div>
-      <div class="control-buttons">
-        <button class="btn btn-secondary" on:click={handleLoad}>
-          加载状态
-        </button>
-      </div>
-      {#if loadMessage}
-        <div
-          class={`load-message ${loadMessage.includes('成功') ? 'success' : 'error'}`}
+  <Card class="lg:col-span-3">
+    <CardHeader>
+      <CardTitle class="text-cyan-400">模拟控制</CardTitle>
+      <CardDescription>控制模拟的启动、停止和重置</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div class="flex flex-wrap gap-4 mb-6">
+        {#if !isRunning}
+          <Button
+            class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold"
+            on:click={startSimulation}
+          >
+            启动模拟
+          </Button>
+        {:else}
+          <Button
+            class="bg-gray-700 hover:bg-gray-600 text-white"
+            on:click={stopSimulation}
+          >
+            停止模拟
+          </Button>
+        {/if}
+        <Button
+          class="bg-red-600 hover:bg-red-700 text-white"
+          on:click={resetSimulation}
         >
-          {loadMessage}
-        </div>
-      {/if}
-    </div>
-  </div>
+          重置模拟
+        </Button>
+      </div>
 
-  <!-- 数据趋势图 -->
-  <div class="overview-card" style="grid-column: 1 / -1;">
-    <h2>18. 数据趋势图</h2>
-    <div class="chart-container">
-      <canvas bind:this={chartCanvas}></canvas>
-    </div>
-  </div>
-
-  <!-- 控制棒状态图表 -->
-  <div class="overview-card">
-    <h2>1. 控制棒状态</h2>
-    <div class="chart-container-sm">
-      <canvas bind:this={controlRodChartCanvas}></canvas>
-    </div>
-    <div class="param-item" style="margin-top: 1rem; text-align: center;">
-      <div class="param-label">插入速度</div>
-      <div class="param-value">{controlRods?.insertionSpeed?.toFixed(2) || 0} %/s</div>
-    </div>
-  </div>
-
-  <!-- 操作日志 -->
-  <div class="overview-card">
-    <h2>操作日志</h2>
-    <div class="logs-container">
-      {#if logs && logs.length > 0}
-        {#each logs.slice().reverse() as log}
-          <div class="log-entry">
-            [{new Date(log.timestamp).toLocaleTimeString()}] {log.message}
+      <!-- 核心参数 -->
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="text-center p-4 bg-gray-800 rounded-lg">
+          <div class="text-sm text-gray-400">功率水平</div>
+          <div class="text-2xl font-bold text-cyan-400">
+            {powerRegulation?.powerLevel?.toFixed(1)}%
           </div>
-        {/each}
-      {:else}
-        <div class="log-entry">无操作日志</div>
-      {/if}
-    </div>
-  </div>
-
-  <!-- 警报CRT -->
-  <div class="overview-card">
-    <h2>20. 警报CRT</h2>
-    <div class="alarms-container">
-      {#if alarms && alarms.active && alarms.messages && alarms.messages.length > 0}
-        {#each alarms.messages as message}
-          <div class="alarm-message">
-            {message}
-          </div>
-        {/each}
-      {:else}
-        <div
-          class="alarm-message"
-          style="background-color: rgba(76, 175, 80, 0.2); border-left-color: #4caf50;"
-        >
-          无活动警报
         </div>
-      {/if}
-    </div>
-  </div>
-
-  <!-- CRT示意图 -->
-  <div class="overview-card">
-    <h2>21. CRT示意图</h2>
-    <div class="crt-diagram">
-      <div class="status-item">
-        <span>反应堆状态:</span>
-        <span
-          class="status-value {crtDiagram?.reactorStatus === 'NORMAL'
-            ? 'status-online'
-            : 'status-offline'}"
-        >
-          {crtDiagram?.reactorStatus}
-        </span>
+        <div class="text-center p-4 bg-gray-800 rounded-lg">
+          <div class="text-sm text-gray-400">堆芯温度</div>
+          <div class="text-2xl font-bold text-red-400">
+            {core?.temperature?.toFixed(1)}°C
+          </div>
+        </div>
+        <div class="text-center p-4 bg-gray-800 rounded-lg">
+          <div class="text-sm text-gray-400">堆芯压力</div>
+          <div class="text-2xl font-bold text-blue-400">
+            {core?.pressure?.toFixed(2)} MPa
+          </div>
+        </div>
       </div>
-      <div class="system-status">
-        {#if crtDiagram?.systemStatus}
-          {#each Object.entries(crtDiagram.systemStatus) as [system, status]}
-            <div class="status-item">
-              <span>{system}:</span>
-              <span
-                class="status-value {status === 'ONLINE'
-                  ? 'status-online'
-                  : 'status-offline'}"
-              >
-                {status}
-              </span>
-            </div>
-          {/each}
+
+      <!-- 反应性参数 -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="text-center p-4 bg-gray-800 rounded-lg">
+          <div class="text-sm text-gray-400">总反应性</div>
+          <div class="text-xl font-bold text-purple-400">
+            {physics?.reactivity?.total?.toFixed(4)}
+          </div>
+        </div>
+        <div class="text-center p-4 bg-gray-800 rounded-lg">
+          <div class="text-sm text-gray-400">水位</div>
+          <div class="text-xl font-bold text-green-400">
+            {core?.waterLevel?.toFixed(1)}%
+          </div>
+        </div>
+      </div>
+
+      <!-- 存档功能 -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold text-gray-300">存档管理</h3>
+        <div class="flex gap-4">
+          <Button
+            class="bg-gray-700 hover:bg-gray-600 text-white"
+            on:click={handleSave}
+          >
+            保存状态
+          </Button>
+          <Button
+            class="bg-gray-700 hover:bg-gray-600 text-white"
+            on:click={handleLoad}
+          >
+            加载状态
+          </Button>
+        </div>
+        <div class="space-y-2">
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1"
+              >存档码</label
+            >
+            <Input
+              type="text"
+              bind:value={saveCode}
+              readonly
+              class="bg-gray-900 border-gray-700 text-gray-300 font-mono"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1"
+              >加载存档</label
+            >
+            <Input
+              type="text"
+              bind:value={loadCode}
+              placeholder="输入存档码"
+              class="bg-gray-900 border-gray-700 text-gray-300 font-mono"
+            />
+          </div>
+        </div>
+        {#if loadMessage}
+          <div
+            class={`${loadMessage.includes('成功') ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'} p-3 rounded-lg font-semibold`}
+          >
+            {loadMessage}
+          </div>
         {/if}
       </div>
-    </div>
-  </div>
+    </CardContent>
+  </Card>
+
+  <!-- 数据趋势图 -->
+  <Card class="lg:col-span-3">
+    <CardHeader>
+      <CardTitle class="text-cyan-400">数据趋势图</CardTitle>
+      <CardDescription>实时监控反应堆关键参数的变化趋势</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div class="chart-container">
+        <canvas bind:this={chartCanvas}></canvas>
+      </div>
+    </CardContent>
+  </Card>
+
+  <!-- 控制棒状态图表 -->
+  <Card>
+    <CardHeader>
+      <CardTitle class="text-cyan-400">控制棒状态</CardTitle>
+      <CardDescription>监控控制棒的位置和状态</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div class="chart-container-sm">
+        <canvas bind:this={controlRodChartCanvas}></canvas>
+      </div>
+      <div class="text-center mt-4">
+        <div class="text-sm text-gray-400">插入速度</div>
+        <div class="text-xl font-bold text-cyan-400">
+          {controlRods?.insertionSpeed?.toFixed(2) || 0} %/s
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+
+  <!-- 物理模型参数 -->
+  <Card>
+    <CardHeader>
+      <CardTitle class="text-cyan-400">物理模型参数</CardTitle>
+      <CardDescription>监控反应堆的物理状态</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400">氙-135浓度:</span>
+          <span class="font-mono text-purple-400"
+            >{physics?.neutron?.Xe?.toFixed(6)}</span
+          >
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400">碘-135浓度:</span>
+          <span class="font-mono text-purple-400"
+            >{physics?.neutron?.I?.toFixed(6)}</span
+          >
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400">中子通量:</span>
+          <span class="font-mono text-yellow-400"
+            >{physics?.neutron?.φ?.toExponential(2)}</span
+          >
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400">空泡反应性:</span>
+          <span class="font-mono text-blue-400"
+            >{physics?.reactivity?.void?.toFixed(6)}</span
+          >
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400">氙中毒反应性:</span>
+          <span class="font-mono text-blue-400"
+            >{physics?.reactivity?.xenon?.toFixed(6)}</span
+          >
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400">控制棒反应性:</span>
+          <span class="font-mono text-blue-400"
+            >{physics?.reactivity?.controlRod?.toFixed(6)}</span
+          >
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+
+  <!-- 操作日志 -->
+  <Card>
+    <CardHeader>
+      <CardTitle class="text-cyan-400">操作日志</CardTitle>
+      <CardDescription>查看系统的操作历史</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div class="logs-container bg-gray-900 p-4 rounded-lg">
+        {#if logs && logs.length > 0}
+          {#each logs.slice().reverse() as log}
+            <div class="log-entry">
+              [{new Date(log.timestamp).toLocaleTimeString()}] {log.message}
+            </div>
+          {/each}
+        {:else}
+          <div class="log-entry">无操作日志</div>
+        {/if}
+      </div>
+    </CardContent>
+  </Card>
+
+  <!-- 警报CRT -->
+  <Card>
+    <CardHeader>
+      <CardTitle class="text-cyan-400">警报CRT</CardTitle>
+      <CardDescription>监控系统的警报状态</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div class="space-y-2">
+        {#if alarms && alarms.active && alarms.messages && alarms.messages.length > 0}
+          {#each alarms.messages as message}
+            <div class="alarm-message bg-red-900/30 border-l-4 border-red-500">
+              {message}
+            </div>
+          {/each}
+        {:else}
+          <div
+            class="alarm-message bg-green-900/30 border-l-4 border-green-500"
+          >
+            无活动警报
+          </div>
+        {/if}
+      </div>
+    </CardContent>
+  </Card>
+
+  <!-- CRT示意图 -->
+  <Card>
+    <CardHeader>
+      <CardTitle class="text-cyan-400">系统状态概览</CardTitle>
+      <CardDescription>查看各系统的运行状态</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div class="space-y-4">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400">反应堆状态:</span>
+          <span
+            class={`font-semibold ${crtDiagram?.reactorStatus === 'NORMAL' ? 'text-green-400' : 'text-red-400'}`}
+          >
+            {crtDiagram?.reactorStatus}
+          </span>
+        </div>
+        <div class="system-status">
+          {#if crtDiagram?.systemStatus}
+            {#each Object.entries(crtDiagram.systemStatus) as [system, status]}
+              <div class="flex justify-between items-center">
+                <span class="text-gray-400">{system}:</span>
+                <span
+                  class={`font-semibold ${status === 'ONLINE' ? 'text-green-400' : 'text-red-400'}`}
+                >
+                  {status}
+                </span>
+              </div>
+            {/each}
+          {/if}
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+
+  <!-- 功率调节状态 -->
+  <Card>
+    <CardHeader>
+      <CardTitle class="text-cyan-400">功率调节状态</CardTitle>
+      <CardDescription>监控功率调节系统的运行状态</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400">当前功率:</span>
+          <span class="font-bold text-yellow-400"
+            >{powerRegulation?.powerLevel?.toFixed(1)}%</span
+          >
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400">目标功率:</span>
+          <span class="font-bold text-blue-400"
+            >{powerRegulation?.targetPower?.toFixed(1)}%</span
+          >
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400">功率偏差:</span>
+          <span class="font-bold text-purple-400"
+            >{(
+              powerRegulation?.targetPower - powerRegulation?.powerLevel
+            )?.toFixed(1)}%</span
+          >
+        </div>
+      </div>
+    </CardContent>
+  </Card>
 </div>

@@ -1,4 +1,12 @@
 import { writable, type Writable } from 'svelte/store';
+import { getDefaultXenonParameters } from '../../models/neutron/xenonPoisoning';
+import {
+  calculateFlowResistance,
+  calculateReynoldsNumber,
+  calculatePumpPerformance,
+  calculateFrictionCoefficient,
+} from '../../models/thermal/flowResistance';
+import { workerManager } from '../../workers/workerManager';
 
 // 定义反应堆状态类型
 export interface ReactorState {
@@ -166,6 +174,86 @@ export interface ReactorState {
     waterLevel: number; // 水位（0-100%）
   };
 
+  // 物理模型参数
+  physics: {
+    masses: {
+      M_reactor: number; // 反应堆内水的质量
+      M_condenser: number; // 凝汽器内水的质量
+      M_deaerator: number; // 除氧器内水的质量
+    };
+
+    neutron: {
+      Xe: number; // 氙-135浓度
+      I: number; // 碘-135浓度
+      φ: number; // 中子通量
+      Σ_f: number; // 裂变截面
+    };
+
+    reactivity: {
+      void: number; // 空泡反应性
+      xenon: number; // 氙中毒反应性
+      controlRod: number; // 控制棒反应性
+      total: number; // 总反应性
+    };
+
+    thermal: {
+      flow: {
+        reynoldsNumber: number; // 雷诺数
+        flowRegime: 'laminar' | 'turbulent' | 'transition'; // 流动状态
+        frictionCoefficient: number; // 摩擦系数
+        pressureDrop: number; // 压降
+      };
+      pumpPerformance: {
+        head: number; // 扬程
+        power: number; // 功率
+        efficiency: number; // 效率
+      };
+    };
+  };
+
+  // 汽轮机旁路系统
+  steamBypass: {
+    status: boolean; // 状态
+    bypassPosition: number; // 旁路阀位置（0-100%）
+    bypassFlow: number; // 旁路流量
+    bypassCapacity: number; // 旁路容量
+    pressureSetpoint: number; // 压力设定点
+  };
+
+  // 堆芯冷却剂净化系统
+  corePurification: {
+    status: boolean; // 状态
+    flowRate: number; // 流量
+    efficiency: number; // 净化效率
+    impurityConcentration: number; // 杂质浓度
+    maxImpurityConcentration: number; // 最大杂质浓度
+    warningLevel: 'normal' | 'warning' | 'alarm'; // 警告级别
+  };
+
+  // 三冲量水位控制系统
+  threeImpulseLevelControl: {
+    waterLevelSetpoint: number; // 水位设定点
+    adjustedFeedwaterFlow: number; // 调整后的给水流量
+    levelError: number; // 水位误差
+    flowError: number; // 流量误差
+    waterLevelStatus:
+      | 'normal'
+      | 'low'
+      | 'high'
+      | 'critical_low'
+      | 'critical_high'; // 水位状态
+    alarm: boolean; // 警报
+  };
+
+  // 故障模拟系统
+  faultSimulation: {
+    activeFaults: any[]; // 活跃故障
+    systemReliability: number; // 系统可靠性
+    riskLevel: 'low' | 'medium' | 'high' | 'critical'; // 风险级别
+    recommendedActions: string[]; // 推荐操作
+    maintenanceLevel: number; // 维护水平
+  };
+
   // 操作日志
   logs: {
     timestamp: number;
@@ -322,14 +410,84 @@ const initialState: ReactorState = {
     waterLevel: 70,
   },
 
+  physics: {
+    masses: {
+      M_reactor: 100000, // 100吨
+      M_condenser: 50000, // 50吨
+      M_deaerator: 30000, // 30吨
+    },
+    neutron: {
+      Xe: 0,
+      I: 0,
+      φ: 1e13, // 中子通量
+      Σ_f: 1e-22, // 裂变截面
+    },
+    reactivity: {
+      void: 0,
+      xenon: 0,
+      controlRod: 0,
+      total: 0,
+    },
+    thermal: {
+      flow: {
+        reynoldsNumber: 1e4, // 雷诺数
+        flowRegime: 'turbulent', // 流动状态
+        frictionCoefficient: 0.02, // 摩擦系数
+        pressureDrop: 1000, // 压降
+      },
+      pumpPerformance: {
+        head: 50, // 扬程
+        power: 10000, // 功率
+        efficiency: 0.8, // 效率
+      },
+    },
+  },
+
+  steamBypass: {
+    status: false,
+    bypassPosition: 0,
+    bypassFlow: 0,
+    bypassCapacity: 0,
+    pressureSetpoint: 7.0,
+  },
+
+  corePurification: {
+    status: true,
+    flowRate: 50000, // 50,000 kg/h
+    efficiency: 95,
+    impurityConcentration: 10, // 10 ppb
+    maxImpurityConcentration: 100, // 100 ppb
+    warningLevel: 'normal',
+  },
+
+  threeImpulseLevelControl: {
+    waterLevelSetpoint: 70, // 70%
+    adjustedFeedwaterFlow: 65000, // 65,000 kg/h
+    levelError: 0,
+    flowError: 0,
+    waterLevelStatus: 'normal',
+    alarm: false,
+  },
+
+  faultSimulation: {
+    activeFaults: [],
+    systemReliability: 1.0,
+    riskLevel: 'low',
+    recommendedActions: ['继续正常运行', '保持定期维护'],
+    maintenanceLevel: 90, // 90%
+  },
+
   logs: [],
 };
 
 // 创建store
 export const reactorStore: Writable<ReactorState> = writable(initialState);
 
+// 初始化Worker
+workerManager.initialize();
+
 // 模拟更新函数
-export function updateReactorState() {
+export async function updateReactorState() {
   reactorStore.update((state) => {
     if (!state.isRunning) return state;
 
@@ -339,92 +497,375 @@ export function updateReactorState() {
     // 更新模拟时间
     newState.simulationTime += 1;
 
-    // 模拟功率变化
-    const powerDifference =
-      newState.powerRegulation.targetPower -
-      newState.powerRegulation.powerLevel;
-    newState.powerRegulation.powerLevel += powerDifference * 0.05;
-
-    // 模拟控制棒影响
-    newState.powerRegulation.reactivity =
-      (50 - newState.controlRods.position) * 0.02;
-    newState.powerRegulation.powerLevel +=
-      newState.powerRegulation.reactivity * 0.1;
-
-    // 限制功率范围
-    newState.powerRegulation.powerLevel = Math.max(
-      0,
-      Math.min(100, newState.powerRegulation.powerLevel)
-    );
-
-    // 模拟堆芯温度和压力
-    newState.core.temperature = 250 + newState.powerRegulation.powerLevel * 0.8;
-    newState.core.pressure = 6.5 + newState.powerRegulation.powerLevel * 0.01;
-
-    // 更新数据趋势
-    if (newState.simulationTime % 5 === 0) {
-      // 创建新的趋势数组，避免直接修改原数组
-      newState.trends = {
-        timePoints: [...newState.trends.timePoints, newState.simulationTime],
-        powerData: [
-          ...newState.trends.powerData,
-          newState.powerRegulation.powerLevel,
-        ],
-        temperatureData: [
-          ...newState.trends.temperatureData,
-          newState.core.temperature,
-        ],
-        pressureData: [...newState.trends.pressureData, newState.core.pressure],
-      };
-
-      // 限制数据点数量
-      if (newState.trends.timePoints.length > 100) {
-        newState.trends.timePoints.shift();
-        newState.trends.powerData.shift();
-        newState.trends.temperatureData.shift();
-        newState.trends.pressureData.shift();
-      }
-    }
-
-    // 模拟警报
-    if (newState.core.temperature > 320) {
-      newState.alarms.active = true;
-      if (!newState.alarms.messages.includes('CORE TEMPERATURE HIGH')) {
-        newState.alarms.messages = [
-          ...newState.alarms.messages,
-          'CORE TEMPERATURE HIGH',
-        ];
-      }
-    }
-
-    if (newState.core.pressure > 7.5) {
-      newState.alarms.active = true;
-      if (!newState.alarms.messages.includes('CORE PRESSURE HIGH')) {
-        newState.alarms.messages = [
-          ...newState.alarms.messages,
-          'CORE PRESSURE HIGH',
-        ];
-      }
-    }
-
-    // 添加操作日志
-    if (newState.simulationTime % 10 === 0) {
-      newState.logs = [
-        ...newState.logs,
-        {
-          timestamp: Date.now(),
-          message: `Power level: ${newState.powerRegulation.powerLevel.toFixed(1)}%, Core temp: ${newState.core.temperature.toFixed(1)}°C`,
-        },
-      ];
-
-      // 限制日志数量
-      if (newState.logs.length > 50) {
-        newState.logs.shift();
-      }
-    }
-
     return newState;
   });
+
+  // 异步计算物理模型
+  try {
+    const currentState = await new Promise<ReactorState>((resolve) => {
+      const unsubscribe = reactorStore.subscribe((state) => {
+        resolve(state);
+        unsubscribe();
+      });
+    });
+
+    if (!currentState.isRunning) return;
+
+    // 获取默认参数
+    const xenonParams = getDefaultXenonParameters();
+
+    // 准备计算参数
+    const reactorCoreInput = {
+      // 反应堆参数
+      P_nuclear: currentState.powerRegulation.powerLevel * 30, // 转换为MW
+      M_reactor: currentState.physics.masses.M_reactor,
+      M_condenser: currentState.physics.masses.M_condenser,
+      M_deaerator: currentState.physics.masses.M_deaerator,
+
+      // 流量参数
+      m_feedwater: currentState.reactorFeedPumps.pump1.status
+        ? currentState.reactorFeedPumps.pump1.flowRate * 100
+        : 0 + currentState.reactorFeedPumps.pump2.status
+          ? currentState.reactorFeedPumps.pump2.flowRate * 100
+          : 0,
+      m_steam: currentState.powerRegulation.powerLevel * 100,
+      m_condensate: currentState.condensateSystem.status
+        ? currentState.condensateSystem.flowRate * 100
+        : 0,
+      m_cooling: 1000,
+      m_steam_heating: 500,
+      m_feedwater_out: currentState.reactorFeedPumps.pump1.status
+        ? currentState.reactorFeedPumps.pump1.flowRate * 100
+        : 0 + currentState.reactorFeedPumps.pump2.status
+          ? currentState.reactorFeedPumps.pump2.flowRate * 100
+          : 0,
+
+      // 热工参数
+      η_thermal: 0.33,
+      m_coolant: currentState.recirculationPumps.pump1.status
+        ? currentState.recirculationPumps.pump1.speed * 1000
+        : 0 + currentState.recirculationPumps.pump2.status
+          ? currentState.recirculationPumps.pump2.speed * 1000
+          : 0,
+      c_p: 4.186, // 水的比热容
+      h_inlet: 2800, // 蒸汽焓
+      h_outlet: 2200, // 给水焓
+      η_turbine: 0.85,
+      η_generator: 0.95,
+
+      // 中子物理参数
+      α_void: 4.7e-5, // 正空泡系数
+      Δα: 0.01, // 空泡份额变化
+      τ_delay: 10, // 10秒延迟
+      Xe: currentState.physics.neutron.Xe,
+      I: currentState.physics.neutron.I,
+      λ_Xe: xenonParams.λ_Xe,
+      λ_I: xenonParams.λ_I,
+      σ_Xe: xenonParams.σ_Xe,
+      φ: currentState.physics.neutron.φ,
+      γ_Xe: xenonParams.γ_Xe,
+      γ_I: xenonParams.γ_I,
+      Σ_f: currentState.physics.neutron.Σ_f,
+
+      // 控制棒参数
+      ρ_max: 0.1,
+      z: (100 - currentState.controlRods.position) * 0.01 * 4, // 假设控制棒长度为4米
+      L: 4,
+      ρ_graphite_effect: 0.05,
+
+      // 汽轮机参数
+      turbineStatus: currentState.turbine.status,
+      steamPressure: currentState.core.pressure,
+      pressureSetpoint: currentState.steamBypass.pressureSetpoint,
+      maxPressure: 8.5,
+      steamFlowMax: 3000, // 3000 kg/s
+      currentBypassPosition: currentState.steamBypass.bypassPosition,
+
+      // 净化系统参数
+      filterEfficiency: 0.95,
+      purificationFlow: currentState.corePurification.flowRate,
+      maxPurificationFlow: 100000,
+      impurityConcentration:
+        currentState.corePurification.impurityConcentration,
+      maxImpurityConcentration:
+        currentState.corePurification.maxImpurityConcentration,
+      purificationSystemStatus: currentState.corePurification.status,
+
+      // 三冲量水位控制参数
+      waterLevel: currentState.core.waterLevel,
+      waterLevelSetpoint:
+        currentState.threeImpulseLevelControl.waterLevelSetpoint,
+      steamFlow: currentState.powerRegulation.powerLevel * 100,
+      feedwaterFlow: currentState.reactorFeedPumps.pump1.status
+        ? currentState.reactorFeedPumps.pump1.flowRate * 100
+        : 0 + currentState.reactorFeedPumps.pump2.status
+          ? currentState.reactorFeedPumps.pump2.flowRate * 100
+          : 0,
+
+      // 故障模拟参数
+      operatingTime: currentState.simulationTime,
+      componentStatus: {
+        pump1: currentState.recirculationPumps.pump1.status,
+        pump2: currentState.recirculationPumps.pump2.status,
+        feedpump1: currentState.reactorFeedPumps.pump1.status,
+        feedpump2: currentState.reactorFeedPumps.pump2.status,
+        turbine: currentState.turbine.status,
+      },
+      environmentalFactors: {
+        temperature: currentState.core.temperature,
+        vibration: 0.05,
+        humidity: 50,
+      },
+      maintenanceLevel: currentState.faultSimulation.maintenanceLevel,
+      currentFaults: currentState.faultSimulation.activeFaults,
+
+      // 时间参数
+      dt: 1,
+    };
+
+    // 使用Worker计算反应堆核心模型
+    const reactorCoreResult =
+      await workerManager.calculateReactorCore(reactorCoreInput);
+
+    // 计算流动阻力和泵性能
+    const flowRate = currentState.recirculationPumps.pump1.status
+      ? currentState.recirculationPumps.pump1.speed * 0.01
+      : 0 + currentState.recirculationPumps.pump2.status
+        ? currentState.recirculationPumps.pump2.speed * 0.01
+        : 0;
+    const fluidDensity = 998; // 水的密度
+    const fluidViscosity = 1e-3; // 水的动力粘度
+    const pipeDiameter = 0.5; // 管道直径
+    const pipeLength = 100; // 管道长度
+    const pipeRoughness = 0.0001; // 管道粗糙度
+    const pumpEfficiency = 0.8; // 泵效率
+    const gravity = 9.81; // 重力加速度
+
+    // 计算流速
+    const pipeArea = Math.PI * Math.pow(pipeDiameter / 2, 2);
+    const flowVelocity = flowRate / pipeArea;
+
+    // 计算雷诺数
+    const reynoldsResult = calculateReynoldsNumber({
+      ρ: fluidDensity,
+      v: flowVelocity,
+      D: pipeDiameter,
+      μ: fluidViscosity,
+    });
+
+    // 计算摩擦系数
+    const frictionCoeff = calculateFrictionCoefficient(
+      reynoldsResult.Re,
+      pipeRoughness,
+      pipeDiameter
+    );
+
+    // 计算流动阻力
+    const flowResistanceResult = calculateFlowResistance({
+      f: frictionCoeff,
+      L: pipeLength,
+      D: pipeDiameter,
+      ρ: fluidDensity,
+      v: flowVelocity,
+    });
+
+    // 计算泵性能
+    const pumpPerformanceResult = calculatePumpPerformance({
+      H_max: 100,
+      k: 1000,
+      Q: flowRate,
+      ρ: fluidDensity,
+      g: gravity,
+      η_pump: pumpEfficiency,
+    });
+
+    // 更新状态
+    reactorStore.update((state) => {
+      if (!state.isRunning) return state;
+
+      const newState = JSON.parse(JSON.stringify(state));
+
+      // 更新质量参数
+      newState.physics.masses = reactorCoreResult.massBalance.newMasses;
+
+      // 更新中子物理参数
+      newState.physics.neutron.Xe =
+        reactorCoreResult.neutronPhysics.xenonPoisoning.Xe_new;
+      newState.physics.neutron.I =
+        reactorCoreResult.neutronPhysics.xenonPoisoning.I_new;
+
+      // 更新反应性参数
+      newState.physics.reactivity.void =
+        reactorCoreResult.neutronPhysics.voidCoefficient.ρ_void;
+      newState.physics.reactivity.xenon =
+        reactorCoreResult.neutronPhysics.xenonPoisoning.ρ_Xe;
+      newState.physics.reactivity.controlRod =
+        reactorCoreResult.neutronPhysics.controlRod.ρ_rod;
+      newState.physics.reactivity.total = reactorCoreResult.totalReactivity;
+
+      // 更新热工参数
+      newState.physics.thermal.flow.reynoldsNumber = reynoldsResult.Re;
+      newState.physics.thermal.flow.flowRegime = reynoldsResult.flowRegime;
+      newState.physics.thermal.flow.frictionCoefficient = frictionCoeff;
+      newState.physics.thermal.flow.pressureDrop = flowResistanceResult.ΔP;
+      newState.physics.thermal.pumpPerformance.head = pumpPerformanceResult.H;
+      newState.physics.thermal.pumpPerformance.power =
+        pumpPerformanceResult.P_pump;
+      newState.physics.thermal.pumpPerformance.efficiency = pumpEfficiency;
+
+      // 更新汽轮机旁路系统
+      newState.steamBypass = {
+        ...newState.steamBypass,
+        bypassPosition: reactorCoreResult.steamBypass.bypassPosition,
+        bypassFlow: reactorCoreResult.steamBypass.bypassFlow,
+        bypassCapacity: reactorCoreResult.steamBypass.bypassCapacity,
+        status: reactorCoreResult.steamBypass.isActive,
+      };
+
+      // 更新堆芯冷却剂净化系统
+      newState.corePurification = {
+        ...newState.corePurification,
+        efficiency:
+          reactorCoreResult.corePurification.purificationEfficiency * 100,
+        impurityConcentration:
+          reactorCoreResult.corePurification.filteredImpurityConcentration,
+        warningLevel: reactorCoreResult.corePurification.warningLevel,
+      };
+
+      // 更新三冲量水位控制系统
+      newState.threeImpulseLevelControl = {
+        ...newState.threeImpulseLevelControl,
+        adjustedFeedwaterFlow:
+          reactorCoreResult.threeImpulseLevelControl.adjustedFeedwaterFlow,
+        levelError: reactorCoreResult.threeImpulseLevelControl.levelError,
+        flowError: reactorCoreResult.threeImpulseLevelControl.flowError,
+        waterLevelStatus:
+          reactorCoreResult.threeImpulseLevelControl.waterLevelStatus,
+        alarm: reactorCoreResult.threeImpulseLevelControl.alarm,
+      };
+
+      // 更新故障模拟系统
+      newState.faultSimulation = {
+        ...newState.faultSimulation,
+        activeFaults: reactorCoreResult.faultSimulation.activeFaults,
+        systemReliability: reactorCoreResult.faultSimulation.systemReliability,
+        riskLevel: reactorCoreResult.faultSimulation.riskLevel,
+        recommendedActions:
+          reactorCoreResult.faultSimulation.recommendedActions,
+      };
+
+      // 更新功率
+      newState.powerRegulation.powerLevel = reactorCoreResult.newPower / 30;
+      newState.powerRegulation.reactivity = reactorCoreResult.totalReactivity;
+
+      // 限制功率范围
+      newState.powerRegulation.powerLevel = Math.max(
+        0,
+        Math.min(100, newState.powerRegulation.powerLevel)
+      );
+
+      // 模拟堆芯温度和压力
+      newState.core.temperature =
+        250 + newState.powerRegulation.powerLevel * 0.8;
+      newState.core.pressure = 6.5 + newState.powerRegulation.powerLevel * 0.01;
+
+      // 更新数据趋势
+      if (newState.simulationTime % 5 === 0) {
+        // 创建新的趋势数组，避免直接修改原数组
+        newState.trends = {
+          timePoints: [...newState.trends.timePoints, newState.simulationTime],
+          powerData: [
+            ...newState.trends.powerData,
+            newState.powerRegulation.powerLevel,
+          ],
+          temperatureData: [
+            ...newState.trends.temperatureData,
+            newState.core.temperature,
+          ],
+          pressureData: [
+            ...newState.trends.pressureData,
+            newState.core.pressure,
+          ],
+        };
+
+        // 限制数据点数量
+        if (newState.trends.timePoints.length > 100) {
+          newState.trends.timePoints.shift();
+          newState.trends.powerData.shift();
+          newState.trends.temperatureData.shift();
+          newState.trends.pressureData.shift();
+        }
+      }
+
+      // 模拟警报
+      if (newState.core.temperature > 320) {
+        newState.alarms.active = true;
+        if (!newState.alarms.messages.includes('CORE TEMPERATURE HIGH')) {
+          newState.alarms.messages = [
+            ...newState.alarms.messages,
+            'CORE TEMPERATURE HIGH',
+          ];
+        }
+      }
+
+      if (newState.core.pressure > 7.5) {
+        newState.alarms.active = true;
+        if (!newState.alarms.messages.includes('CORE PRESSURE HIGH')) {
+          newState.alarms.messages = [
+            ...newState.alarms.messages,
+            'CORE PRESSURE HIGH',
+          ];
+        }
+      }
+
+      // 三冲量水位控制系统警报
+      if (newState.threeImpulseLevelControl.alarm) {
+        newState.alarms.active = true;
+        const levelStatus = newState.threeImpulseLevelControl.waterLevelStatus;
+        const alarmMessage = `WATER LEVEL ${levelStatus.toUpperCase()}`;
+        if (!newState.alarms.messages.includes(alarmMessage)) {
+          newState.alarms.messages = [
+            ...newState.alarms.messages,
+            alarmMessage,
+          ];
+        }
+      }
+
+      // 故障模拟系统警报
+      if (reactorCoreResult.faultSimulation.newFaults.length > 0) {
+        newState.alarms.active = true;
+        reactorCoreResult.faultSimulation.newFaults.forEach((fault: any) => {
+          const alarmMessage = `FAULT: ${fault.description}`;
+          if (!newState.alarms.messages.includes(alarmMessage)) {
+            newState.alarms.messages = [
+              ...newState.alarms.messages,
+              alarmMessage,
+            ];
+          }
+        });
+      }
+
+      // 添加操作日志
+      if (newState.simulationTime % 10 === 0) {
+        newState.logs = [
+          ...newState.logs,
+          {
+            timestamp: Date.now(),
+            message: `Power level: ${newState.powerRegulation.powerLevel.toFixed(1)}%, Core temp: ${newState.core.temperature.toFixed(1)}°C, Reactivity: ${newState.physics.reactivity.total.toFixed(4)}, Flow regime: ${newState.physics.thermal.flow.flowRegime}, Pressure drop: ${(newState.physics.thermal.flow.pressureDrop / 1000).toFixed(2)} kPa, Bypass position: ${newState.steamBypass.bypassPosition.toFixed(1)}%, Purification efficiency: ${newState.corePurification.efficiency.toFixed(1)}%, Water level status: ${newState.threeImpulseLevelControl.waterLevelStatus}, Risk level: ${newState.faultSimulation.riskLevel}`,
+          },
+        ];
+
+        // 限制日志数量
+        if (newState.logs.length > 50) {
+          newState.logs.shift();
+        }
+      }
+
+      return newState;
+    });
+  } catch (error) {
+    console.error('Error in updateReactorState:', error);
+  }
 }
 
 // 控制模拟的函数
@@ -854,6 +1295,70 @@ export function setCondensateSystemTemperature(temperature: number) {
     condensateSystem: {
       ...state.condensateSystem,
       temperature: Math.max(0, temperature),
+    },
+  }));
+}
+
+// 汽轮机旁路系统控制函数
+export function toggleSteamBypass() {
+  reactorStore.update((state) => ({
+    ...state,
+    steamBypass: {
+      ...state.steamBypass,
+      status: !state.steamBypass.status,
+    },
+  }));
+}
+
+export function setSteamBypassPressureSetpoint(pressureSetpoint: number) {
+  reactorStore.update((state) => ({
+    ...state,
+    steamBypass: {
+      ...state.steamBypass,
+      pressureSetpoint: Math.max(6.0, Math.min(8.0, pressureSetpoint)),
+    },
+  }));
+}
+
+// 堆芯冷却剂净化系统控制函数
+export function toggleCorePurification() {
+  reactorStore.update((state) => ({
+    ...state,
+    corePurification: {
+      ...state.corePurification,
+      status: !state.corePurification.status,
+    },
+  }));
+}
+
+export function setCorePurificationFlowRate(flowRate: number) {
+  reactorStore.update((state) => ({
+    ...state,
+    corePurification: {
+      ...state.corePurification,
+      flowRate: Math.max(0, Math.min(100000, flowRate)),
+    },
+  }));
+}
+
+// 三冲量水位控制系统控制函数
+export function setWaterLevelSetpoint(setpoint: number) {
+  reactorStore.update((state) => ({
+    ...state,
+    threeImpulseLevelControl: {
+      ...state.threeImpulseLevelControl,
+      waterLevelSetpoint: Math.max(45, Math.min(90, setpoint)),
+    },
+  }));
+}
+
+// 故障模拟系统控制函数
+export function setMaintenanceLevel(level: number) {
+  reactorStore.update((state) => ({
+    ...state,
+    faultSimulation: {
+      ...state.faultSimulation,
+      maintenanceLevel: Math.max(0, Math.min(100, level)),
     },
   }));
 }

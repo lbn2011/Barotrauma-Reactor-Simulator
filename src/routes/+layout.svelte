@@ -147,11 +147,7 @@
     </div>
 
     <div class="nav-menu">
-      <a
-        href="/"
-        class="nav-item"
-        class:active={$page.url.pathname === '/'}
-      >
+      <a href="/" class="nav-item" class:active={$page.url.pathname === '/'}>
         <span class="nav-icon">📊</span>
         <span class="nav-text">概述</span>
       </a>
@@ -267,7 +263,8 @@
       <a
         href="/panels/condenser-circulation-pump"
         class="nav-item"
-        class:active={$page.url.pathname === '/panels/condenser-circulation-pump'}
+        class:active={$page.url.pathname ===
+          '/panels/condenser-circulation-pump'}
       >
         <span class="nav-icon">🌊</span>
         <span class="nav-text">15. 循环水泵</span>

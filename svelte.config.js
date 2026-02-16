@@ -5,18 +5,17 @@ const config = {
   extensions: ['.svelte'],
 
   kit: {
-    adapter: adapter({
-    }),
+    adapter: adapter({}),
     alias: {
-      '$lib': 'src/lib',
+      $lib: 'src/lib',
       '$lib/*': 'src/lib/*',
-      '$routes': 'src/routes',
+      $routes: 'src/routes',
       '$routes/*': 'src/routes/*',
-      '$assets': 'src/assets',
+      $assets: 'src/assets',
       '$assets/*': 'src/assets/*',
     },
-    appDir: 'internal'
-  }
+    appDir: 'internal',
+  },
 };
 
 export default config;

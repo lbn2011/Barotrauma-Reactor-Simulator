@@ -1,6 +1,7 @@
 # CHRNOBYL RBMK-1000模拟器详细分析报告
 
 ## 目录
+
 1. [反应堆核心控制逻辑](#一反应堆核心控制逻辑)
 2. [控制棒系统详细实现](#二控制棒系统详细实现)
 3. [给水系统完整控制流程](#三给水系统完整控制流程)
@@ -19,32 +20,32 @@
 
 #### 关键DLL函数
 
-| 函数名 | 功能说明 |
-|--------|----------|
-| `GETMK()` | 获取反应堆功率水平 |
-| `GETFLX()` | 获取中子通量 |
-| `GETXE(ref short I)` | 获取氙和碘浓度（I=1为氙，I=2为碘） |
-| `GETTHR(ref float lPARAM)` | 获取热功率分布（25个区域） |
-| `GETROD(ref short I, ref short j)` | 获取控制棒位置 |
-| `SETROD(ref float X, ref short I, ref short j, ref short k)` | 设置控制棒位置 |
-| `GETERR()` | 获取控制误差 |
-| `GETSPT()` | 获取功率设定点 |
-| `SETSPT(ref float X, ref short I)` | 设置功率设定点 |
-| `SETAUT(ref short I)` | 设置自动控制模式 |
-| `TRIPIT(ref short IVAL, ref short I)` | 触发停堆 |
+| 函数名                                                       | 功能说明                           |
+| ------------------------------------------------------------ | ---------------------------------- |
+| `GETMK()`                                                    | 获取反应堆功率水平                 |
+| `GETFLX()`                                                   | 获取中子通量                       |
+| `GETXE(ref short I)`                                         | 获取氙和碘浓度（I=1为氙，I=2为碘） |
+| `GETTHR(ref float lPARAM)`                                   | 获取热功率分布（25个区域）         |
+| `GETROD(ref short I, ref short j)`                           | 获取控制棒位置                     |
+| `SETROD(ref float X, ref short I, ref short j, ref short k)` | 设置控制棒位置                     |
+| `GETERR()`                                                   | 获取控制误差                       |
+| `GETSPT()`                                                   | 获取功率设定点                     |
+| `SETSPT(ref float X, ref short I)`                           | 设置功率设定点                     |
+| `SETAUT(ref short I)`                                        | 设置自动控制模式                   |
+| `TRIPIT(ref short IVAL, ref short I)`                        | 触发停堆                           |
 
 #### 核心变量
 
-| 变量名 | 类型 | 说明 |
-|--------|------|------|
-| `MKVALUE` | float | 反应堆功率值 |
-| `FLX` | float | 中子通量 |
-| `XEN` | float | 氙浓度 |
-| `IOD` | float | 碘浓度 |
-| `RXRATE` | float | 反应堆功率变化率 |
-| `RXERR` | float | 反应堆控制误差 |
-| `AVGRAT` | float | 平均功率变化率 |
-| `AVGERR` | float | 平均控制误差 |
+| 变量名    | 类型  | 说明             |
+| --------- | ----- | ---------------- |
+| `MKVALUE` | float | 反应堆功率值     |
+| `FLX`     | float | 中子通量         |
+| `XEN`     | float | 氙浓度           |
+| `IOD`     | float | 碘浓度           |
+| `RXRATE`  | float | 反应堆功率变化率 |
+| `RXERR`   | float | 反应堆控制误差   |
+| `AVGRAT`  | float | 平均功率变化率   |
+| `AVGERR`  | float | 平均控制误差     |
 
 #### 1.2 反应堆控制显示（disp_rx_control）
 
@@ -143,12 +144,12 @@ private void Spin1_SpinUp(object sender, EventArgs e)
 
 #### 控制棒参数
 
-| 参数 | 值/范围 | 说明 |
-|------|----------|------|
-| 网格布局 | 5×5 | 25个控制棒组 |
-| 位置范围 | 0-1 | 0=完全插入，1=完全抽出 |
-| 移动速度 | 0.01步长/点击 | 精细调整步长 |
-| 支持操作 | 拖拽 | 燃料更换模拟 |
+| 参数     | 值/范围       | 说明                   |
+| -------- | ------------- | ---------------------- |
+| 网格布局 | 5×5           | 25个控制棒组           |
+| 位置范围 | 0-1           | 0=完全插入，1=完全抽出 |
+| 移动速度 | 0.01步长/点击 | 精细调整步长           |
+| 支持操作 | 拖拽          | 燃料更换模拟           |
 
 #### 安全互锁
 
@@ -214,12 +215,12 @@ private void Command1_Click(object eventSender, EventArgs eventArgs)
 
 #### 给水系统组件
 
-| 组件 | 数量 | 编号范围 | 说明 |
-|------|------|----------|------|
-| 主给水泵 | 6台 | 0-5 | 对应泵索引6-11 |
-| 隔离阀 | 每台泵2个 | 进出口 | 流量控制 |
-| 流量控制 | Spin1 | ±0.005步长 | 微调流量 |
-| 水位控制 | Text1 | 手动输入 | 直接设定 |
+| 组件     | 数量      | 编号范围   | 说明           |
+| -------- | --------- | ---------- | -------------- |
+| 主给水泵 | 6台       | 0-5        | 对应泵索引6-11 |
+| 隔离阀   | 每台泵2个 | 进出口     | 流量控制       |
+| 流量控制 | Spin1     | ±0.005步长 | 微调流量       |
+| 水位控制 | Text1     | 手动输入   | 直接设定       |
 
 #### 安全检查
 
@@ -305,12 +306,12 @@ private void Command3_Click(object eventSender, EventArgs eventArgs)
 
 #### 关键控制参数
 
-| 参数 | 索引 | 范围 | 说明 |
-|------|------|------|------|
-| 转速控制 | I=10 | 0-1 | 对应0-100%负荷 |
-| 负荷控制 | I=4 | 0-9000步长 | 每步900kW |
-| 自动控制 | I=1 | 0/1 | 启用/禁用自动调速器 |
-| 超速保护 | - | 3000RPM | 额定转速的超速保护 |
+| 参数     | 索引 | 范围       | 说明                |
+| -------- | ---- | ---------- | ------------------- |
+| 转速控制 | I=10 | 0-1        | 对应0-100%负荷      |
+| 负荷控制 | I=4  | 0-9000步长 | 每步900kW           |
+| 自动控制 | I=1  | 0/1        | 启用/禁用自动调速器 |
+| 超速保护 | -    | 3000RPM    | 额定转速的超速保护  |
 
 #### 实时显示
 
@@ -367,11 +368,11 @@ private void Image5_Click(object eventSender, EventArgs eventArgs)
 }
 ```
 
-| 设备 | 索引 | 功能 |
-|------|------|------|
+| 设备     | 索引 | 功能        |
+| -------- | ---- | ----------- |
 | 润滑油泵 | I=12 | 主/备用切换 |
 | 冷却水泵 | I=13 | 主/备用切换 |
-| 真空泵 | I=14 | 主/备用切换 |
+| 真空泵   | I=14 | 主/备用切换 |
 | 密封水泵 | I=15 | 主/备用切换 |
 
 ### 4.3 汽轮机参数监控（turbine_0.cs）
@@ -411,12 +412,12 @@ private void Image1_MouseDown(object eventSender, MouseEventArgs eventArgs)
 }
 ```
 
-| 系统 | 索引 | 功能 |
-|------|------|------|
-| 高压注水泵 | I=14 | 主/备用切换 |
-| 低压注水泵 | I=15 | 主/备用切换 |
-| 应急冷却泵 | I=16 | 主/备用切换 |
-| 安全注水阀 | I=17-19 | 独立控制 |
+| 系统       | 索引    | 功能        |
+| ---------- | ------- | ----------- |
+| 高压注水泵 | I=14    | 主/备用切换 |
+| 低压注水泵 | I=15    | 主/备用切换 |
+| 应急冷却泵 | I=16    | 主/备用切换 |
+| 安全注水阀 | I=17-19 | 独立控制    |
 
 #### 安全功能
 
@@ -452,10 +453,10 @@ private void Command3_Click(object eventSender, EventArgs eventArgs)
 }
 ```
 
-| 功能 | 按钮 | 说明 |
-|------|------|------|
-| 报警确认 | Command1 | 确认所有报警 |
-| 报警静音 | Command2 | 静音报警声音 |
+| 功能       | 按钮     | 说明           |
+| ---------- | -------- | -------------- |
+| 报警确认   | Command1 | 确认所有报警   |
+| 报警静音   | Command2 | 静音报警声音   |
 | 报警最小化 | Command3 | 最小化报警窗口 |
 
 #### 报警显示
@@ -538,10 +539,10 @@ public static short check_4_malf(ref short j, ref Form frm)
 public static extern short SETMAL(ref short n, ref short id);
 ```
 
-| 参数 | 说明 |
-|------|------|
-| n | 故障编号 |
-| id | 故障类型（0=设置故障，1=获取修复费用，2=修复） |
+| 参数 | 说明                                           |
+| ---- | ---------------------------------------------- |
+| n    | 故障编号                                       |
+| id   | 故障类型（0=设置故障，1=获取修复费用，2=修复） |
 
 ### 6.2 应急程序
 
@@ -574,30 +575,30 @@ public static extern short SETMAL(ref short n, ref short id);
 
 #### 面板映射表
 
-| 面板编号 | 面板名称 | 对应文件 | 窗口类 | 尺寸 | 功能说明 |
-|----------|----------|----------|--------|------|----------|
-| 1 | 反应堆控制棒 | REACT_ROD.cs | REACT_ROD | 434×426 | 控制棒位置和燃料管理 |
-| 2 | 反应堆功率调节 | RX_CONTROL.cs | RX_CONTROL | 276×314 | 功率设定和自动控制 |
-| 3 | 再循环泵A | maincp1.cs | maincp1 | 220×270 | 回路1再循环泵控制 |
-| 4 | 再循环泵B | maincp2.cs | maincp2 | 220×269 | 回路2再循环泵控制 |
-| 5 | 应急冷却泵A | ECC_CONTROL.cs | ECC_CONTROL | 265×380 | ECCS泵控制 |
-| 6 | 应急冷却泵B | SD_COOLING.cs | SD_COOLING | 386×246 | 堆芯离线冷却 |
-| 7 | 反应堆排水控制 | Drain_ctrl.cs | Drain_ctrl | 225×109 | 排水阀控制 |
-| 8 | 堆芯离线冷却泵 | SD_COOLING.cs | SD_COOLING | 386×246 | 离线冷却泵控制 |
-| 9 | 汽轮机控制 | turbine_s_ctrl.cs | turbine_s_ctrl | 454×347 | 汽轮机转速和负荷 |
-| 10 | 除氧器蒸汽控制 | deaer_P_CTRL.cs | deaer_P_CTRL | 266×145 | 除氧器压力控制 |
-| 11 | 凝汽器真空系统 | cndsr_v.cs | cndsr_v | 215×139 | 真空泵和蒸汽喷射 |
-| 12 | 蒸汽排汽控制 | bypass_0.cs | bypass_0 | 197×123 | 蒸汽旁路控制 |
-| 13 | 汽轮机辅助系统 | turb_aux.cs | turb_aux | 193×246 | 润滑油、冷却水等 |
-| 14 | 凝汽器热井液位 | HOTW_LEVEL_CTRL.cs | HOTW_LEVEL_CTRL | 368×115 | 热井水位控制 |
-| 15 | 凝汽器循环水泵 | CNDSR_0.cs | CNDSR_0 | - | 循环水泵控制 |
-| 16 | 补水系统 | COND_MAKEUP.cs | COND_MAKEUP | 233×195 | 凝结水补水 |
-| 17 | 反应堆给水泵 | feed_pmp.cs | feed_pmp | 247×506 | 给水泵和流量控制 |
-| 18 | 数据趋势图 | TRENDSv.cs | TRENDSv | - | 实时趋势显示 |
-| 19 | HEPA过滤器控制 | HEPA_FLTR.cs | HEPA_FLTR | 244×177 | 通风过滤系统 |
-| 20 | 警报CRT | ALARMS.cs | ALARMS | 328×244 | 报警显示和处理 |
-| 21 | CRT示意图 | SCEMAT_0.cs | SCEMAT_0 | - | 系统流程图 |
-| 22 | 凝结水系统 | DEaer_L_CTRL.cs | deaer_L_CTRL | 431×265 | 凝结水流量控制 |
+| 面板编号 | 面板名称       | 对应文件           | 窗口类          | 尺寸    | 功能说明             |
+| -------- | -------------- | ------------------ | --------------- | ------- | -------------------- |
+| 1        | 反应堆控制棒   | REACT_ROD.cs       | REACT_ROD       | 434×426 | 控制棒位置和燃料管理 |
+| 2        | 反应堆功率调节 | RX_CONTROL.cs      | RX_CONTROL      | 276×314 | 功率设定和自动控制   |
+| 3        | 再循环泵A      | maincp1.cs         | maincp1         | 220×270 | 回路1再循环泵控制    |
+| 4        | 再循环泵B      | maincp2.cs         | maincp2         | 220×269 | 回路2再循环泵控制    |
+| 5        | 应急冷却泵A    | ECC_CONTROL.cs     | ECC_CONTROL     | 265×380 | ECCS泵控制           |
+| 6        | 应急冷却泵B    | SD_COOLING.cs      | SD_COOLING      | 386×246 | 堆芯离线冷却         |
+| 7        | 反应堆排水控制 | Drain_ctrl.cs      | Drain_ctrl      | 225×109 | 排水阀控制           |
+| 8        | 堆芯离线冷却泵 | SD_COOLING.cs      | SD_COOLING      | 386×246 | 离线冷却泵控制       |
+| 9        | 汽轮机控制     | turbine_s_ctrl.cs  | turbine_s_ctrl  | 454×347 | 汽轮机转速和负荷     |
+| 10       | 除氧器蒸汽控制 | deaer_P_CTRL.cs    | deaer_P_CTRL    | 266×145 | 除氧器压力控制       |
+| 11       | 凝汽器真空系统 | cndsr_v.cs         | cndsr_v         | 215×139 | 真空泵和蒸汽喷射     |
+| 12       | 蒸汽排汽控制   | bypass_0.cs        | bypass_0        | 197×123 | 蒸汽旁路控制         |
+| 13       | 汽轮机辅助系统 | turb_aux.cs        | turb_aux        | 193×246 | 润滑油、冷却水等     |
+| 14       | 凝汽器热井液位 | HOTW_LEVEL_CTRL.cs | HOTW_LEVEL_CTRL | 368×115 | 热井水位控制         |
+| 15       | 凝汽器循环水泵 | CNDSR_0.cs         | CNDSR_0         | -       | 循环水泵控制         |
+| 16       | 补水系统       | COND_MAKEUP.cs     | COND_MAKEUP     | 233×195 | 凝结水补水           |
+| 17       | 反应堆给水泵   | feed_pmp.cs        | feed_pmp        | 247×506 | 给水泵和流量控制     |
+| 18       | 数据趋势图     | TRENDSv.cs         | TRENDSv         | -       | 实时趋势显示         |
+| 19       | HEPA过滤器控制 | HEPA_FLTR.cs       | HEPA_FLTR       | 244×177 | 通风过滤系统         |
+| 20       | 警报CRT        | ALARMS.cs          | ALARMS          | 328×244 | 报警显示和处理       |
+| 21       | CRT示意图      | SCEMAT_0.cs        | SCEMAT_0        | -       | 系统流程图           |
+| 22       | 凝结水系统     | DEaer_L_CTRL.cs    | deaer_L_CTRL    | 431×265 | 凝结水流量控制       |
 
 #### 面板启动机制
 
@@ -664,12 +665,12 @@ private static extern float GETROD(ref short I, ref short j);
 private static extern void SETROD(ref float X, ref short I, ref short j, ref short k);
 ```
 
-| 参数 | 说明 |
-|------|------|
-| I | 控制棒列索引（0-4） |
-| j | 控制棒行索引（0-4） |
-| X | 控制棒位置（0=完全插入，1=完全抽出） |
-| k | 操作类型（0=手动，1=自动，2=微调，3=选择，4=紧急） |
+| 参数 | 说明                                               |
+| ---- | -------------------------------------------------- |
+| I    | 控制棒列索引（0-4）                                |
+| j    | 控制棒行索引（0-4）                                |
+| X    | 控制棒位置（0=完全插入，1=完全抽出）               |
+| k    | 操作类型（0=手动，1=自动，2=微调，3=选择，4=紧急） |
 
 **2. 紧急插入（AZ-5）**
 
@@ -746,12 +747,12 @@ private void Image2_DragDrop(object eventSender, DragEventArgs eventArgs)
 
 #### 控制棒系统参数
 
-| 参数 | 值 | 说明 |
-|------|-----|------|
-| 控制棒数量 | 25组 | 5×5网格布局 |
-| 位置范围 | 0-1 | 0=完全插入，1=完全抽出 |
-| 微调步长 | 0.01 | 每次点击移动量 |
-| 支持操作 | 拖拽 | 燃料更换模拟 |
+| 参数       | 值   | 说明                   |
+| ---------- | ---- | ---------------------- |
+| 控制棒数量 | 25组 | 5×5网格布局            |
+| 位置范围   | 0-1  | 0=完全插入，1=完全抽出 |
+| 微调步长   | 0.01 | 每次点击移动量         |
+| 支持操作   | 拖拽 | 燃料更换模拟           |
 
 ### 7.3 反应堆功率调节面板（RX_CONTROL.cs）
 
@@ -815,11 +816,11 @@ private void Command1_Click(object eventSender, EventArgs eventArgs)
 
 #### 功率调节参数
 
-| 参数 | 值 | 说明 |
-|------|-----|------|
-| 设定点范围 | 0-100% | 反应堆功率百分比 |
-| 微调步长 | 0.005-0.05 | 根据选择器变化 |
-| 自动控制 | 开/关 | 自动调节功率 |
+| 参数       | 值         | 说明             |
+| ---------- | ---------- | ---------------- |
+| 设定点范围 | 0-100%     | 反应堆功率百分比 |
+| 微调步长   | 0.005-0.05 | 根据选择器变化   |
+| 自动控制   | 开/关      | 自动调节功率     |
 
 ### 7.4 反应堆再循环泵（maincp1.cs & maincp2.cs）
 
@@ -888,10 +889,10 @@ private static extern void SETINL(ref short I, ref short j);
 private static extern void SETDIS(ref short I, ref short j);
 ```
 
-| 参数 | 说明 |
-|------|------|
-| I | 阀门索引 |
-| j | 阀门状态（0=关闭，1=打开） |
+| 参数 | 说明                       |
+| ---- | -------------------------- |
+| I    | 阀门索引                   |
+| j    | 阀门状态（0=关闭，1=打开） |
 
 **3. 流量调节**
 
@@ -915,11 +916,11 @@ private void Spin1_SpinUp()
 
 #### 再循环泵参数
 
-| 参数 | 值 | 说明 |
-|------|-----|------|
-| 泵数量 | 每回路3台 | maincp1和maincp2各3台 |
-| 流量调节 | ±0.02步长 | 通过Spin控制 |
-| 阀门控制 | 进口/出口 | SETINL/SETDIS |
+| 参数     | 值        | 说明                  |
+| -------- | --------- | --------------------- |
+| 泵数量   | 每回路3台 | maincp1和maincp2各3台 |
+| 流量调节 | ±0.02步长 | 通过Spin控制          |
+| 阀门控制 | 进口/出口 | SETINL/SETDIS         |
 
 ### 7.5 应急冷却泵系统（ECC_CONTROL.cs & SD_COOLING.cs）
 
@@ -1027,13 +1028,13 @@ private void Image1_MouseDown(object eventSender, MouseEventArgs eventArgs)
 
 #### ECCS参数
 
-| 参数 | 值 | 说明 |
-|------|-----|------|
-| 高压注水泵 | I=20 | 主/备用切换 |
-| 低压注水泵 | I=21 | 主/备用切换 |
-| 安全注水阀 | I=22 | 主/备用切换 |
-| 应急冷却泵 | I=23 | 主/备用切换 |
-| 设定点调整 | ±50 | 通过Spin控制 |
+| 参数       | 值   | 说明         |
+| ---------- | ---- | ------------ |
+| 高压注水泵 | I=20 | 主/备用切换  |
+| 低压注水泵 | I=21 | 主/备用切换  |
+| 安全注水阀 | I=22 | 主/备用切换  |
+| 应急冷却泵 | I=23 | 主/备用切换  |
+| 设定点调整 | ±50  | 通过Spin控制 |
 
 ### 7.6 汽轮机控制系统（turbine_s_ctrl.cs）
 
@@ -1101,11 +1102,11 @@ private void Command3_Click(object eventSender, EventArgs eventArgs)
 
 #### 汽轮机参数
 
-| 参数 | 索引 | 范围 | 说明 |
-|------|------|------|------|
-| 转速控制 | I=10 | 0-1 | 对应0-100%负荷 |
-| 负荷控制 | I=4 | 0-9000步长 | 每步900kW |
-| 自动控制 | I=1 | 0/1 | 启用/禁用自动调速器 |
+| 参数     | 索引 | 范围       | 说明                |
+| -------- | ---- | ---------- | ------------------- |
+| 转速控制 | I=10 | 0-1        | 对应0-100%负荷      |
+| 负荷控制 | I=4  | 0-9000步长 | 每步900kW           |
+| 自动控制 | I=1  | 0/1        | 启用/禁用自动调速器 |
 
 ### 7.7 凝汽器系统（cndsr_v.cs）
 
@@ -1139,10 +1140,10 @@ private void Command5_Click(object eventSender, EventArgs eventArgs)
 
 #### 凝汽器参数
 
-| 参数 | 索引 | 说明 |
-|------|------|------|
-| 真空泵A | I=0 | 主/备用切换 |
-| 真空泵B | I=1 | 主/备用切换 |
+| 参数    | 索引 | 说明        |
+| ------- | ---- | ----------- |
+| 真空泵A | I=0  | 主/备用切换 |
+| 真空泵B | I=1  | 主/备用切换 |
 
 ### 7.8 给水系统（feed_pmp.cs）
 
@@ -1263,12 +1264,12 @@ private void Spin1_SpinUp(object sender, EventArgs e)
 
 #### 给水系统参数
 
-| 参数 | 值 | 说明 |
-|------|-----|------|
-| 主给水泵 | 6台 | 对应泵索引6-11 |
-| 隔离阀 | 每台泵2个 | 进出口 |
-| 流量控制 | ±0.005步长 | 微调流量 |
-| 水位控制 | Text1 | 手动输入 |
+| 参数     | 值         | 说明           |
+| -------- | ---------- | -------------- |
+| 主给水泵 | 6台        | 对应泵索引6-11 |
+| 隔离阀   | 每台泵2个  | 进出口         |
+| 流量控制 | ±0.005步长 | 微调流量       |
+| 水位控制 | Text1      | 手动输入       |
 
 ### 7.9 HEPA过滤器控制（HEPA_FLTR.cs）
 
@@ -1320,8 +1321,8 @@ private void Image3_MouseDown(object eventSender, MouseEventArgs eventArgs)
 
 #### HEPA过滤器参数
 
-| 参数 | 值 | 说明 |
-|------|-----|------|
+| 参数    | 值  | 说明        |
+| ------- | --- | ----------- |
 | 过滤器A | I=1 | 主/备用切换 |
 | 过滤器B | I=4 | 主/备用切换 |
 
@@ -1394,11 +1395,11 @@ private void Picture1_DoubleClick(object eventSender, EventArgs eventArgs)
 
 #### 趋势图参数
 
-| 参数 | 值 | 说明 |
-|------|-----|------|
-| 趋势笔数 | 10 | 最多10条趋势线 |
-| 更新频率 | 实时 | 由模型定时器控制 |
-| 选择器 | trend_select | 双击打开选择器 |
+| 参数     | 值           | 说明             |
+| -------- | ------------ | ---------------- |
+| 趋势笔数 | 10           | 最多10条趋势线   |
+| 更新频率 | 实时         | 由模型定时器控制 |
+| 选择器   | trend_select | 双击打开选择器   |
 
 ---
 
@@ -1476,23 +1477,23 @@ chrnob_32.dll (物理模型)
 
 #### 可控制参数
 
-| 控制项 | 控制方式 | 参数范围 | 功能说明 |
-|--------|----------|----------|----------|
-| 控制棒位置 | Spin1上/下 | 0-100%，步长0.01 | 单根控制棒精细调整 |
-| 紧急插入AZ-5 | Command1按钮 | - | 所有控制棒快速插入 |
-| 燃料更换 | Command2按钮 | - | 模拟燃料更换操作 |
-| 控制棒组移动 | Spin2上/下 | 0-100%，步长0.01 | 整组控制棒调整 |
+| 控制项       | 控制方式     | 参数范围         | 功能说明           |
+| ------------ | ------------ | ---------------- | ------------------ |
+| 控制棒位置   | Spin1上/下   | 0-100%，步长0.01 | 单根控制棒精细调整 |
+| 紧急插入AZ-5 | Command1按钮 | -                | 所有控制棒快速插入 |
+| 燃料更换     | Command2按钮 | -                | 模拟燃料更换操作   |
+| 控制棒组移动 | Spin2上/下   | 0-100%，步长0.01 | 整组控制棒调整     |
 
 #### 显示数据
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 控制棒位置 | GETROD(I,j) | ##0.0% | 25组控制棒位置 |
-| 燃料温度 | chltmp[I,j] | 温度单位 | 燃料通道温度 |
-| 热功率 | THRZONE[n] | ##0.0% | 各区域热功率分布 |
-| 燃料燃耗 | GETBUN(I,j) | ###0.0% | 燃料燃耗百分比 |
-| 燃料束号 | GETBUN(I,j) | #0 | 燃料束编号 |
-| 总功率 | GETMK() | ##0.00 | 反应堆总功率 |
+| 显示项     | 数据来源    | 显示格式 | 说明             |
+| ---------- | ----------- | -------- | ---------------- |
+| 控制棒位置 | GETROD(I,j) | ##0.0%   | 25组控制棒位置   |
+| 燃料温度   | chltmp[I,j] | 温度单位 | 燃料通道温度     |
+| 热功率     | THRZONE[n]  | ##0.0%   | 各区域热功率分布 |
+| 燃料燃耗   | GETBUN(I,j) | ###0.0%  | 燃料燃耗百分比   |
+| 燃料束号   | GETBUN(I,j) | #0       | 燃料束编号       |
+| 总功率     | GETMK()     | ##0.00   | 反应堆总功率     |
 
 #### 状态指示
 
@@ -1530,27 +1531,27 @@ MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label14.Text = "# " + Support.Format
 
 #### 可控制参数
 
-| 控制项 | 控制方式 | 参数范围 | 功能说明 |
-|--------|----------|----------|----------|
-| 功率设定点 | Spin1上/下 | 0-100%，步长0.005 | 设定反应堆功率 |
-| 自动控制 | Image2按钮 | ON/OFF | 启用/禁用自动控制 |
-| 停堆 | Image3按钮 | - | 触发反应堆停堆 |
-| 轴向偏移控制 | Image4按钮 | ON/OFF | 控制轴向功率分布 |
+| 控制项       | 控制方式   | 参数范围          | 功能说明          |
+| ------------ | ---------- | ----------------- | ----------------- |
+| 功率设定点   | Spin1上/下 | 0-100%，步长0.005 | 设定反应堆功率    |
+| 自动控制     | Image2按钮 | ON/OFF            | 启用/禁用自动控制 |
+| 停堆         | Image3按钮 | -                 | 触发反应堆停堆    |
+| 轴向偏移控制 | Image4按钮 | ON/OFF            | 控制轴向功率分布  |
 
 #### 显示数据
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 功率变化率 | AVGRAT/maxiterates | ##0.0% | 反应堆功率变化率 |
-| 热功率 | avgchp | ##0.0% | 平均热功率 |
-| 中子通量 | FLX | ##0.0% | 中子通量百分比 |
-| 中子通量对数 | log10(FLX) | 0.00 | 中子通量对数值 |
-| 燃料燃耗 | GETBUN(-1,-1) | ##0.0% | 平均燃料燃耗 |
-| 功率设定点 | GETSPT() | ##0.0% | 当前功率设定点 |
-| 控制误差 | AVGERR/maxiterates | ##0.0% | 自动控制误差 |
-| 自动控制状态 | GETAUT(1) | ON/OFF | 自动控制开关状态 |
-| 轴向偏移状态 | GETAUT(2) | ON/OFF | 轴向偏移控制状态 |
-| 停堆状态 | GETAUT(3) | ON/OFF | 停堆状态 |
+| 显示项       | 数据来源           | 显示格式 | 说明             |
+| ------------ | ------------------ | -------- | ---------------- |
+| 功率变化率   | AVGRAT/maxiterates | ##0.0%   | 反应堆功率变化率 |
+| 热功率       | avgchp             | ##0.0%   | 平均热功率       |
+| 中子通量     | FLX                | ##0.0%   | 中子通量百分比   |
+| 中子通量对数 | log10(FLX)         | 0.00     | 中子通量对数值   |
+| 燃料燃耗     | GETBUN(-1,-1)      | ##0.0%   | 平均燃料燃耗     |
+| 功率设定点   | GETSPT()           | ##0.0%   | 当前功率设定点   |
+| 控制误差     | AVGERR/maxiterates | ##0.0%   | 自动控制误差     |
+| 自动控制状态 | GETAUT(1)          | ON/OFF   | 自动控制开关状态 |
+| 轴向偏移状态 | GETAUT(2)          | ON/OFF   | 轴向偏移控制状态 |
+| 停堆状态     | GETAUT(3)          | ON/OFF   | 停堆状态         |
 
 #### 关键代码
 
@@ -1559,24 +1560,24 @@ public static void disp_rx_control()
 {
     // 显示功率变化率
     MyProject.Forms.MainForm.CBStatic.RX_CONTROL.Label5.Text = Support.Format(AVGRAT / (float)GLOBALRX.maxiterates, "##0.0%");
-    
+
     // 显示热功率
     MyProject.Forms.MainForm.CBStatic.RX_CONTROL.Label7.Text = Support.Format(avgchp, "##0.0%");
-    
+
     // 显示中子通量
     MyProject.Forms.MainForm.CBStatic.RX_CONTROL.Label9.Text = Support.Format(FLX, "##0.0%");
-    
+
     // 显示中子通量对数
     MyProject.Forms.MainForm.CBStatic.RX_CONTROL.Label16.Text = Support.Format(Math.Log((double)FLX + 1E-10) / Math.Log(10.0), "0.00");
-    
+
     // 显示燃料燃耗
     short I = -1;
     short j = -1;
     MyProject.Forms.MainForm.CBStatic.RX_CONTROL.Label19.Text = Support.Format(GETBUN(ref I, ref j), "##0.0%");
-    
+
     // 显示功率设定点
     MyProject.Forms.MainForm.CBStatic.RX_CONTROL.Label4.Text = Support.Format(GETSPT(), "##0.0%");
-    
+
     // 显示控制误差
     MyProject.Forms.MainForm.CBStatic.RX_CONTROL.Label3.Text = Support.Format(AVGERR / (float)GLOBALRX.maxiterates, "##0.0%");
 }
@@ -1588,21 +1589,21 @@ public static void disp_rx_control()
 
 #### 可控制参数
 
-| 控制项 | 控制方式 | 参数范围 | 功能说明 |
-|--------|----------|----------|----------|
-| 泵启动/停止 | Command1按钮 | ON/OFF | 每台泵独立控制 |
-| 入口阀 | Command1按钮 | OPEN/CLOSE | 入口阀门控制 |
-| 出口阀 | Command1按钮 | OPEN/CLOSE | 出口阀门控制 |
-| 流量微调 | Spin1上/下 | ±0.02步长 | 流量精细调整 |
+| 控制项      | 控制方式     | 参数范围   | 功能说明       |
+| ----------- | ------------ | ---------- | -------------- |
+| 泵启动/停止 | Command1按钮 | ON/OFF     | 每台泵独立控制 |
+| 入口阀      | Command1按钮 | OPEN/CLOSE | 入口阀门控制   |
+| 出口阀      | Command1按钮 | OPEN/CLOSE | 出口阀门控制   |
+| 流量微调    | Spin1上/下   | ±0.02步长  | 流量精细调整   |
 
 #### 显示数据
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 入口阀开度 | PMPVLV[0-5] | ##0.0% | 入口阀门开度 |
-| 出口阀开度 | PMPVLV[6-11] | ##0.0% | 出口阀门开度 |
-| 总流量 | CIRFLO[0/1] | 流量单位 | 回路总流量 |
-| 泵状态 | GETPMP(I,j) | ON/OFF | 泵运行状态 |
+| 显示项     | 数据来源     | 显示格式 | 说明         |
+| ---------- | ------------ | -------- | ------------ |
+| 入口阀开度 | PMPVLV[0-5]  | ##0.0%   | 入口阀门开度 |
+| 出口阀开度 | PMPVLV[6-11] | ##0.0%   | 出口阀门开度 |
+| 总流量     | CIRFLO[0/1]  | 流量单位 | 回路总流量   |
+| 泵状态     | GETPMP(I,j)  | ON/OFF   | 泵运行状态   |
 
 #### 关键代码
 
@@ -1623,25 +1624,25 @@ MyProject.Forms.MainForm.CBStatic.maincp1.Label10.Text = UNITSMDI.FLOWOUT1(ref C
 
 #### 可控制参数
 
-| 控制项 | 控制方式 | 参数范围 | 功能说明 |
-|--------|----------|----------|----------|
+| 控制项     | 控制方式   | 参数范围   | 功能说明     |
+| ---------- | ---------- | ---------- | ------------ |
 | 高压注水泵 | Image2按钮 | START/STOP | 高压注水系统 |
 | 低压注水泵 | Image3按钮 | START/STOP | 低压注水系统 |
 | 安全注水阀 | Image4按钮 | OPEN/CLOSE | 安全注水控制 |
 | 应急冷却泵 | Image6按钮 | START/STOP | 应急冷却系统 |
-| 设定点调整 | Spin1上/下 | ±50 | 注水流量设定 |
+| 设定点调整 | Spin1上/下 | ±50        | 注水流量设定 |
 
 #### 显示数据
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| ECC冷却流量 | GETECC(4,0,0) | 流量单位 | 应急冷却流量 |
-| 高压注水流量 | GETECC(4,0,1) | 流量单位 | 高压注水流量 |
-| 低压注水流量 | GETECC(4,0,2) | 流量单位 | 低压注水流量 |
-| 安全注水阀开度 | GETECC(4,0,4) | ##0.0% | 安全注水阀开度 |
+| 显示项         | 数据来源      | 显示格式 | 说明           |
+| -------------- | ------------- | -------- | -------------- |
+| ECC冷却流量    | GETECC(4,0,0) | 流量单位 | 应急冷却流量   |
+| 高压注水流量   | GETECC(4,0,1) | 流量单位 | 高压注水流量   |
+| 低压注水流量   | GETECC(4,0,2) | 流量单位 | 低压注水流量   |
+| 安全注水阀开度 | GETECC(4,0,4) | ##0.0%   | 安全注水阀开度 |
 | 应急冷却泵流量 | GETECC(4,0,3) | 流量单位 | 应急冷却泵流量 |
-| 泵转速 | GETECC(6,0,0) | ####0. | 泵转速 |
-| 泵流量 | GETECC(6,0,1) | ####0. | 泵流量 |
+| 泵转速         | GETECC(6,0,0) | ####0.   | 泵转速         |
+| 泵流量         | GETECC(6,0,1) | ####0.   | 泵流量         |
 
 #### 关键代码
 
@@ -1674,29 +1675,29 @@ MyProject.Forms.MainForm.CBStatic.ECC_CONTROL.Label1[5].Text = UNITSMDI.FLOWOUT1
 
 #### 可控制参数
 
-| 控制项 | 控制方式 | 参数范围 | 功能说明 |
-|--------|----------|----------|----------|
-| 汽轮机转速 | Spin1上/下 | 0-9000步长 | 转速设定（每步900kW） |
-| 负荷控制 | Spin2上/下 | 0-100% | 发电机负荷 |
-| 压力设定点 | Text1输入 | 压力单位 | 蒸汽压力设定 |
-| 自动调速器 | Image2按钮 | ON/OFF | 自动调速控制 |
-| 阀门选择 | Image3按钮 | MAIN/STARTUP | 主阀/启动阀 |
-| 发电机断路器 | Image4按钮 | OPEN/CLOSE | 发电机并网 |
-| 盘车装置 | Image5按钮 | ON/OFF | 汽轮机盘车 |
+| 控制项       | 控制方式   | 参数范围     | 功能说明              |
+| ------------ | ---------- | ------------ | --------------------- |
+| 汽轮机转速   | Spin1上/下 | 0-9000步长   | 转速设定（每步900kW） |
+| 负荷控制     | Spin2上/下 | 0-100%       | 发电机负荷            |
+| 压力设定点   | Text1输入  | 压力单位     | 蒸汽压力设定          |
+| 自动调速器   | Image2按钮 | ON/OFF       | 自动调速控制          |
+| 阀门选择     | Image3按钮 | MAIN/STARTUP | 主阀/启动阀           |
+| 发电机断路器 | Image4按钮 | OPEN/CLOSE   | 发电机并网            |
+| 盘车装置     | Image5按钮 | ON/OFF       | 汽轮机盘车            |
 
 #### 显示数据
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 汽轮机转速 | GETTRB(4,X) | ###0.0 RPM | 汽轮机实际转速 |
-| 负荷百分比 | GETTRB(1,X) | ##0.0% | 发电机负荷 |
-| 蒸汽压力 | GETTRB(3,X) | 压力单位 | 蒸汽压力 |
-| 蒸汽温度 | GETTRB(2,X) | ##0.0% | 蒸汽温度 |
-| 鼓筒压力 | GETDRM(0,X) | 压力单位 | 蒸汽鼓筒压力 |
-| 差胀 | GETTRB(16,X) | 差胀单位 | 汽轮机差胀 |
-| 振动 | GETTRB(41,X) | ##0.0% | 振动水平 |
-| 阀门控制信号 | GETTRB(15,X) | ##0.0 | 阀门开度信号 |
-| 发电机负荷 | GETTRB(9,X) | ##0.0% | 实际发电机负荷 |
+| 显示项       | 数据来源     | 显示格式   | 说明           |
+| ------------ | ------------ | ---------- | -------------- |
+| 汽轮机转速   | GETTRB(4,X)  | ###0.0 RPM | 汽轮机实际转速 |
+| 负荷百分比   | GETTRB(1,X)  | ##0.0%     | 发电机负荷     |
+| 蒸汽压力     | GETTRB(3,X)  | 压力单位   | 蒸汽压力       |
+| 蒸汽温度     | GETTRB(2,X)  | ##0.0%     | 蒸汽温度       |
+| 鼓筒压力     | GETDRM(0,X)  | 压力单位   | 蒸汽鼓筒压力   |
+| 差胀         | GETTRB(16,X) | 差胀单位   | 汽轮机差胀     |
+| 振动         | GETTRB(41,X) | ##0.0%     | 振动水平       |
+| 阀门控制信号 | GETTRB(15,X) | ##0.0      | 阀门开度信号   |
+| 发电机负荷   | GETTRB(9,X)  | ##0.0%     | 实际发电机负荷 |
 
 #### 仪表显示
 
@@ -1744,21 +1745,21 @@ MyProject.Forms.MainForm.CBStatic.turbine_s_ctrl._Gauge2_0.Value = Conversion.In
 
 #### 可控制参数
 
-| 控制项 | 控制方式 | 参数范围 | 功能说明 |
-|--------|----------|----------|----------|
-| 真空泵 | Image2按钮 | ON/OFF | 主真空泵控制 |
-| 备用真空泵 | Image3按钮 | ON/OFF | 备用真空泵控制 |
-| 蒸汽喷射器 | Image4按钮 | ON/OFF | 蒸汽喷射器控制 |
+| 控制项     | 控制方式   | 参数范围 | 功能说明       |
+| ---------- | ---------- | -------- | -------------- |
+| 真空泵     | Image2按钮 | ON/OFF   | 主真空泵控制   |
+| 备用真空泵 | Image3按钮 | ON/OFF   | 备用真空泵控制 |
+| 蒸汽喷射器 | Image4按钮 | ON/OFF   | 蒸汽喷射器控制 |
 
 #### 显示数据
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 凝汽器压力 | GETCND(0,X) | 压力单位 | 凝汽器真空度 |
-| 凝汽器温度 | GETCND(1,X) | 温度单位 | 凝汽器温度 |
-| 蒸汽喷射流量 | GETCND(29,X) | 流量单位 | 蒸汽喷射流量 |
-| 真空泵状态 | GETCND(21,X) | ON/OFF | 真空泵运行状态 |
-| 蒸汽喷射器状态 | GETCND(22,X) | ON/OFF | 蒸汽喷射器状态 |
+| 显示项         | 数据来源     | 显示格式 | 说明           |
+| -------------- | ------------ | -------- | -------------- |
+| 凝汽器压力     | GETCND(0,X)  | 压力单位 | 凝汽器真空度   |
+| 凝汽器温度     | GETCND(1,X)  | 温度单位 | 凝汽器温度     |
+| 蒸汽喷射流量   | GETCND(29,X) | 流量单位 | 蒸汽喷射流量   |
+| 真空泵状态     | GETCND(21,X) | ON/OFF   | 真空泵运行状态 |
+| 蒸汽喷射器状态 | GETCND(22,X) | ON/OFF   | 蒸汽喷射器状态 |
 
 #### 关键代码
 
@@ -1793,32 +1794,32 @@ if ((double)GETCND(ref I) > 0.5)
 
 #### 可控制参数
 
-| 控制项 | 控制方式 | 参数范围 | 功能说明 |
-|--------|----------|----------|----------|
-| 给水泵启动/停止 | Command1按钮 | ON/OFF | 每台泵独立控制 |
-| 入口阀 | Command1按钮 | OPEN/CLOSE | 入口阀门控制 |
-| 出口阀 | Command1按钮 | OPEN/CLOSE | 出口阀门控制 |
-| 主给水阀 | Command2按钮 | OPEN/CLOSE | 主给水阀控制 |
-| 启动阀 | Command3按钮 | OPEN/CLOSE | 启动阀控制 |
-| 三元件控制 | Command4按钮 | OPEN/CLOSE | 三元件控制阀 |
-| 水位设定点 | Text1输入 | 水位单位 | 鼓筒水位设定 |
-| 自动/手动 | Image5按钮 | AUTO/MAN | 水位控制模式 |
+| 控制项          | 控制方式     | 参数范围   | 功能说明       |
+| --------------- | ------------ | ---------- | -------------- |
+| 给水泵启动/停止 | Command1按钮 | ON/OFF     | 每台泵独立控制 |
+| 入口阀          | Command1按钮 | OPEN/CLOSE | 入口阀门控制   |
+| 出口阀          | Command1按钮 | OPEN/CLOSE | 出口阀门控制   |
+| 主给水阀        | Command2按钮 | OPEN/CLOSE | 主给水阀控制   |
+| 启动阀          | Command3按钮 | OPEN/CLOSE | 启动阀控制     |
+| 三元件控制      | Command4按钮 | OPEN/CLOSE | 三元件控制阀   |
+| 水位设定点      | Text1输入    | 水位单位   | 鼓筒水位设定   |
+| 自动/手动       | Image5按钮   | AUTO/MAN   | 水位控制模式   |
 
 #### 显示数据
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 给水流量 | GETFED(1) | 流量单位 | 总给水流量 |
-| 蒸汽流量 | GETFED(2) | 流量单位 | 蒸汽流量 |
-| 鼓筒水位 | GETFED(3) | 水位单位 | 鼓筒水位 |
-| 鼓筒温度 | GETFED(4) | 温度单位 | 鼓筒温度 |
-| 鼓筒压力 | GETFED(5) | 压力单位 | 鼓筒压力 |
-| 水位设定点 | GETFED(13) | 水位单位 | 水位设定点 |
-| 主给水阀开度 | GETFED(6) | ##0.0% | 主给水阀开度 |
-| 启动阀开度 | GETFED(7) | ##0.0% | 启动阀开度 |
-| 三元件阀开度 | GETFED(8) | ##0.0% | 三元件阀开度 |
-| 隔离阀开度 | GETISO(I,j) | 00.0% | 各泵隔离阀开度 |
-| 泵流量 | GETFED(I) | ##0.0% | 各泵流量 |
+| 显示项       | 数据来源    | 显示格式 | 说明           |
+| ------------ | ----------- | -------- | -------------- |
+| 给水流量     | GETFED(1)   | 流量单位 | 总给水流量     |
+| 蒸汽流量     | GETFED(2)   | 流量单位 | 蒸汽流量       |
+| 鼓筒水位     | GETFED(3)   | 水位单位 | 鼓筒水位       |
+| 鼓筒温度     | GETFED(4)   | 温度单位 | 鼓筒温度       |
+| 鼓筒压力     | GETFED(5)   | 压力单位 | 鼓筒压力       |
+| 水位设定点   | GETFED(13)  | 水位单位 | 水位设定点     |
+| 主给水阀开度 | GETFED(6)   | ##0.0%   | 主给水阀开度   |
+| 启动阀开度   | GETFED(7)   | ##0.0%   | 启动阀开度     |
+| 三元件阀开度 | GETFED(8)   | ##0.0%   | 三元件阀开度   |
+| 隔离阀开度   | GETISO(I,j) | 00.0%    | 各泵隔离阀开度 |
+| 泵流量       | GETFED(I)   | ##0.0%   | 各泵流量       |
 
 #### 关键代码
 
@@ -1860,25 +1861,26 @@ MyProject.Forms.MainForm.CBStatic.feed_pmp.Label3[num].Text = Support.Format(GET
 
 #### 可控制参数
 
-| 控制项 | 控制方式 | 参数范围 | 功能说明 |
-|--------|----------|----------|----------|
-| 趋势选择 | 双击打开选择器 | 最多10条 | 选择要显示的趋势 |
-| 趋势偏移 | Spin1上/下 | ±1 | 调整趋势线垂直偏移 |
-| 趋势显示 | Picture1双击 | ON/OFF | 显示/隐藏趋势图 |
+| 控制项   | 控制方式       | 参数范围 | 功能说明           |
+| -------- | -------------- | -------- | ------------------ |
+| 趋势选择 | 双击打开选择器 | 最多10条 | 选择要显示的趋势   |
+| 趋势偏移 | Spin1上/下     | ±1       | 调整趋势线垂直偏移 |
+| 趋势显示 | Picture1双击   | ON/OFF   | 显示/隐藏趋势图    |
 
 #### 显示数据
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
+| 显示项     | 数据来源                | 显示格式 | 说明           |
+| ---------- | ----------------------- | -------- | -------------- |
 | 趋势线1-10 | GETYS(GR,XD,XM,LY1,LY2) | 实时曲线 | 最多10条趋势线 |
-| 趋势名称 | GTPNAM(n,lp) | 文本 | 趋势参数名称 |
-| 趋势单位 | GTPUNI(n,lp) | 文本 | 趋势参数单位 |
-| 趋势颜色 | GETPCL(GR) | RGB | 趋势线颜色 |
-| 趋势参数 | GETPPX(I) | 参数ID | 趋势参数编号 |
+| 趋势名称   | GTPNAM(n,lp)            | 文本     | 趋势参数名称   |
+| 趋势单位   | GTPUNI(n,lp)            | 文本     | 趋势参数单位   |
+| 趋势颜色   | GETPCL(GR)              | RGB      | 趋势线颜色     |
+| 趋势参数   | GETPPX(I)               | 参数ID   | 趋势参数编号   |
 
 #### 可选趋势参数（最多30个）
 
 通过`trend_select`面板选择，包括但不限于：
+
 - 反应堆功率
 - 中子通量
 - 控制棒位置
@@ -1927,17 +1929,17 @@ GTPUNI(ref n, ref lp);
 
 #### 可控制参数
 
-| 控制项 | 控制方式 | 参数范围 | 功能说明 |
-|--------|----------|----------|----------|
+| 控制项 | 控制方式   | 参数范围   | 功能说明     |
+| ------ | ---------- | ---------- | ------------ |
 | 通风阀 | Image2按钮 | OPEN/CLOSE | 主通风阀控制 |
-| 旁路阀 | Image3按钮 | OPEN/CLOSE | 旁路阀控制 |
+| 旁路阀 | Image3按钮 | OPEN/CLOSE | 旁路阀控制   |
 
 #### 显示数据
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 通风流量 | GETHEP(1,X) | 流量单位 | 通风流量 |
-| 旁路流量 | GETHEP(2,X) | 流量单位 | 旁路流量 |
+| 显示项   | 数据来源    | 显示格式 | 说明         |
+| -------- | ----------- | -------- | ------------ |
+| 通风流量 | GETHEP(1,X) | 流量单位 | 通风流量     |
+| 旁路流量 | GETHEP(2,X) | 流量单位 | 旁路流量     |
 | 入口辐射 | GETHEP(0,X) | 辐射单位 | 入口辐射水平 |
 | 出口辐射 | GETHEP(3,X) | 辐射单位 | 出口辐射水平 |
 
@@ -1962,26 +1964,26 @@ MyProject.Forms.MainForm.CBStatic.HEPA_FLTR.Label4[2].Text = UNITSMDI.FLOWOUT1(r
 
 #### 可控制参数
 
-| 控制项 | 控制方式 | 参数范围 | 功能说明 |
-|--------|----------|----------|----------|
-| 蒸汽压力控制 | Image1按钮 | AUTO/MAN | 压力控制模式 |
-| 水位控制 | Image2按钮 | AUTO/MAN | 水位控制模式 |
-| 再生流量阀 | Image3按钮 | OPEN/CLOSE | 再生流量控制 |
-| 补水流量阀 | Image4按钮 | OPEN/CLOSE | 补水流量控制 |
+| 控制项       | 控制方式   | 参数范围   | 功能说明     |
+| ------------ | ---------- | ---------- | ------------ |
+| 蒸汽压力控制 | Image1按钮 | AUTO/MAN   | 压力控制模式 |
+| 水位控制     | Image2按钮 | AUTO/MAN   | 水位控制模式 |
+| 再生流量阀   | Image3按钮 | OPEN/CLOSE | 再生流量控制 |
+| 补水流量阀   | Image4按钮 | OPEN/CLOSE | 补水流量控制 |
 
 #### 显示数据
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 除氧器温度 | GETDAR(4,X) | 温度单位 | 除氧器温度 |
-| 除氧器压力 | GETDAR(5,X) | 压力单位 | 除氧器压力 |
-| 除氧器水位 | GETDAR(3,X) | 水位单位 | 除氧器水位 |
-| 给水流量 | GETFED(1) | 流量单位 | 给水流量 |
-| 蒸汽流量 | GETDAR(8,X) | 流量单位 | 蒸汽流量 |
-| 补水流量 | GETDAR(18,X) | 流量单位 | 补水流量 |
-| 再生流量 | GETDAR(1,X) | 流量单位 | 再生流量 |
-| 补水流量 | GETDAR(7,X) | 流量单位 | 补水流量 |
-| 水位设定点 | GETDAR(9,X) | 水位单位 | 水位设定点 |
+| 显示项     | 数据来源     | 显示格式 | 说明       |
+| ---------- | ------------ | -------- | ---------- |
+| 除氧器温度 | GETDAR(4,X)  | 温度单位 | 除氧器温度 |
+| 除氧器压力 | GETDAR(5,X)  | 压力单位 | 除氧器压力 |
+| 除氧器水位 | GETDAR(3,X)  | 水位单位 | 除氧器水位 |
+| 给水流量   | GETFED(1)    | 流量单位 | 给水流量   |
+| 蒸汽流量   | GETDAR(8,X)  | 流量单位 | 蒸汽流量   |
+| 补水流量   | GETDAR(18,X) | 流量单位 | 补水流量   |
+| 再生流量   | GETDAR(1,X)  | 流量单位 | 再生流量   |
+| 补水流量   | GETDAR(7,X)  | 流量单位 | 补水流量   |
+| 水位设定点 | GETDAR(9,X)  | 水位单位 | 水位设定点 |
 
 #### 关键代码
 
@@ -2009,39 +2011,39 @@ MyProject.Forms.MainForm.CBStatic.DEAER_0.Label1[3].Text = UNITSMDI.LEVLOUT1(ref
 
 #### 排水控制面板（Drain_ctrl.cs）
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 排水流量 | GETFED(6) | 流量单位 | 排水流量 |
-| 排水阀开度 | GETFED(14) | ##0.0% | 排水阀开度 |
+| 显示项     | 数据来源   | 显示格式 | 说明       |
+| ---------- | ---------- | -------- | ---------- |
+| 排水流量   | GETFED(6)  | 流量单位 | 排水流量   |
+| 排水阀开度 | GETFED(14) | ##0.0%   | 排水阀开度 |
 | 水位设定点 | GETFED(13) | 水位单位 | 水位设定点 |
 
 #### 凝汽器热井液位控制（HOTW_LEVEL_CTRL.cs）
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
+| 显示项   | 数据来源    | 显示格式 | 说明     |
+| -------- | ----------- | -------- | -------- |
 | 热井水位 | GETCND(2,X) | 水位单位 | 热井水位 |
 | 热井温度 | GETCND(3,X) | 温度单位 | 热井温度 |
 | 热井压力 | GETCND(4,X) | 压力单位 | 热井压力 |
 
 #### 补水系统（COND_MAKEUP.cs）
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 补水流量 | GETDAR(24,X) | ##0.0% | 补水流量 |
-| 补水阀开度 | GETDAR(25,X) | ##0.0% | 补水阀开度 |
+| 显示项     | 数据来源     | 显示格式 | 说明       |
+| ---------- | ------------ | -------- | ---------- |
+| 补水流量   | GETDAR(24,X) | ##0.0%   | 补水流量   |
+| 补水阀开度 | GETDAR(25,X) | ##0.0%   | 补水阀开度 |
 | 凝结水流量 | GETDAR(28,X) | 流量单位 | 凝结水流量 |
 
 #### 汽轮机辅助系统（turb_aux.cs）
 
-| 显示项 | 数据来源 | 显示格式 | 说明 |
-|--------|----------|----------|------|
-| 润滑油压力 | GETTRB(37,X) | 压力单位 | 润滑油压力 |
-| 冷却水压力 | GETTRB(38,X) | 压力单位 | 冷却水压力 |
-| 密封水压力 | GETTRB(39,X) | 压力单位 | 密封水压力 |
-| 盘车状态 | GETTRB(33,X) | ON/OFF | 盘车装置状态 |
-| 顶轴油泵 | GETTRB(34,X) | ON/OFF | 顶轴油泵状态 |
-| 排汽阀 | GETTRB(35,X) | ON/OFF | 排汽阀状态 |
-| 疏水阀 | GETTRB(36,X) | ON/OFF | 疏水阀状态 |
+| 显示项     | 数据来源     | 显示格式 | 说明         |
+| ---------- | ------------ | -------- | ------------ |
+| 润滑油压力 | GETTRB(37,X) | 压力单位 | 润滑油压力   |
+| 冷却水压力 | GETTRB(38,X) | 压力单位 | 冷却水压力   |
+| 密封水压力 | GETTRB(39,X) | 压力单位 | 密封水压力   |
+| 盘车状态   | GETTRB(33,X) | ON/OFF   | 盘车装置状态 |
+| 顶轴油泵   | GETTRB(34,X) | ON/OFF   | 顶轴油泵状态 |
+| 排汽阀     | GETTRB(35,X) | ON/OFF   | 排汽阀状态   |
+| 疏水阀     | GETTRB(36,X) | ON/OFF   | 疏水阀状态   |
 
 ---
 
@@ -2049,42 +2051,42 @@ MyProject.Forms.MainForm.CBStatic.DEAER_0.Label1[3].Text = UNITSMDI.LEVLOUT1(ref
 
 ### DLL函数接口
 
-| 函数名 | 功能说明 | 返回值 |
-|--------|----------|--------|
-| `GETMK()` | 获取反应堆功率 | float |
-| `GETFLX()` | 获取中子通量 | float |
-| `GETXE(ref short I)` | 获取氙/碘浓度 | float |
-| `GETTHR(ref float lPARAM)` | 获取热功率分布 | void |
-| `GETROD(ref short I, ref short j)` | 获取控制棒位置 | float |
-| `GETERR()` | 获取控制误差 | float |
-| `GETSPT()` | 获取功率设定点 | float |
-| `GETAUT(ref short I)` | 获取自动控制状态 | short |
-| `GETFED(ref short I)` | 获取给水系统参数 | float |
-| `GETISO(ref short I, ref short j)` | 获取隔离阀开度 | float |
-| `GETCND(ref short I)` | 获取凝汽器参数 | float |
-| `GETTRB(ref float X, ref short I)` | 获取汽轮机参数 | short |
-| `GETECC(ref short id, ref short I, ref short j, ref float lPARAM)` | 获取ECC参数 | void |
-| `GETDAR(ref float X, ref short I)` | 获取除氧器参数 | short |
-| `GETDRM(ref short I)` | 获取鼓筒参数 | float |
-| `GETPCL(ref short GR)` | 获取趋势颜色 | short |
-| `GETPPX(ref short I)` | 获取趋势参数 | short |
-| `GETYS(ref short GR, ref short XD, ref short XM, ref short LY1, ref short LY2)` | 获取趋势数据 | short |
-| `GTPNAM(ref short n, ref string lp)` | 获取趋势名称 | void |
-| `GTPUNI(ref short n, ref string lp)` | 获取趋势单位 | void |
+| 函数名                                                                          | 功能说明         | 返回值 |
+| ------------------------------------------------------------------------------- | ---------------- | ------ |
+| `GETMK()`                                                                       | 获取反应堆功率   | float  |
+| `GETFLX()`                                                                      | 获取中子通量     | float  |
+| `GETXE(ref short I)`                                                            | 获取氙/碘浓度    | float  |
+| `GETTHR(ref float lPARAM)`                                                      | 获取热功率分布   | void   |
+| `GETROD(ref short I, ref short j)`                                              | 获取控制棒位置   | float  |
+| `GETERR()`                                                                      | 获取控制误差     | float  |
+| `GETSPT()`                                                                      | 获取功率设定点   | float  |
+| `GETAUT(ref short I)`                                                           | 获取自动控制状态 | short  |
+| `GETFED(ref short I)`                                                           | 获取给水系统参数 | float  |
+| `GETISO(ref short I, ref short j)`                                              | 获取隔离阀开度   | float  |
+| `GETCND(ref short I)`                                                           | 获取凝汽器参数   | float  |
+| `GETTRB(ref float X, ref short I)`                                              | 获取汽轮机参数   | short  |
+| `GETECC(ref short id, ref short I, ref short j, ref float lPARAM)`              | 获取ECC参数      | void   |
+| `GETDAR(ref float X, ref short I)`                                              | 获取除氧器参数   | short  |
+| `GETDRM(ref short I)`                                                           | 获取鼓筒参数     | float  |
+| `GETPCL(ref short GR)`                                                          | 获取趋势颜色     | short  |
+| `GETPPX(ref short I)`                                                           | 获取趋势参数     | short  |
+| `GETYS(ref short GR, ref short XD, ref short XM, ref short LY1, ref short LY2)` | 获取趋势数据     | short  |
+| `GTPNAM(ref short n, ref string lp)`                                            | 获取趋势名称     | void   |
+| `GTPUNI(ref short n, ref string lp)`                                            | 获取趋势单位     | void   |
 
 ### 单位转换函数
 
-| 函数名 | 功能说明 | 输入/输出 |
-|--------|----------|----------|
-| `UNITSMDI.FLOWOUT1(ref float F)` | 流量输出格式化 | float → string |
-| `UNITSMDI.FLOWOUT2(ref float F)` | 流量输出格式化2 | float → string |
-| `UNITSMDI.FLOWOUT3(ref float F)` | 流量输出格式化3 | float → string |
-| `UNITSMDI.PRESSOUT2(ref float P)` | 压力输出格式化 | float → string |
+| 函数名                            | 功能说明        | 输入/输出      |
+| --------------------------------- | --------------- | -------------- |
+| `UNITSMDI.FLOWOUT1(ref float F)`  | 流量输出格式化  | float → string |
+| `UNITSMDI.FLOWOUT2(ref float F)`  | 流量输出格式化2 | float → string |
+| `UNITSMDI.FLOWOUT3(ref float F)`  | 流量输出格式化3 | float → string |
+| `UNITSMDI.PRESSOUT2(ref float P)` | 压力输出格式化  | float → string |
 | `UNITSMDI.PRESSOUT3(ref float P)` | 压力输出格式化3 | float → string |
-| `UNITSMDI.TEMPOUT(ref float T)` | 温度输出格式化 | float → string |
-| `UNITSMDI.LEVLOUT1(ref float L)` | 水位输出格式化 | float → string |
-| `UNITSMDI.LENTOUT1(ref float L)` | 长度输出格式化 | float → string |
-| `UNITSMDI.LENTOUT2(ref float L)` | 长度输出格式化2 | float → string |
+| `UNITSMDI.TEMPOUT(ref float T)`   | 温度输出格式化  | float → string |
+| `UNITSMDI.LEVLOUT1(ref float L)`  | 水位输出格式化  | float → string |
+| `UNITSMDI.LENTOUT1(ref float L)`  | 长度输出格式化  | float → string |
+| `UNITSMDI.LENTOUT2(ref float L)`  | 长度输出格式化2 | float → string |
 
 ---
 
@@ -2132,12 +2134,12 @@ private PictureBoxArray _Image6;
 
 `Image4` 数组包含5种不同的燃料状态图标，用于显示每个燃料通道的状态：
 
-| 图标索引 | 燃料状态 | 颜色 | 燃耗条件 |
-|----------|----------|------|----------|
-| Image4[0] | 新燃料 | 绿色 | bUN > 9.0% |
-| Image4[1] | 无燃料 | 灰色 | bUN == 0.0% |
-| Image4[2] | 正常燃料 | 蓝色 | 2.0% < bUN ≤ 7.0% |
-| Image4[3] | 高燃耗燃料 | 红色 | 7.0% ≤ bUN ≤ 9.0% |
+| 图标索引  | 燃料状态   | 颜色     | 燃耗条件           |
+| --------- | ---------- | -------- | ------------------ |
+| Image4[0] | 新燃料     | 绿色     | bUN > 9.0%         |
+| Image4[1] | 无燃料     | 灰色     | bUN == 0.0%        |
+| Image4[2] | 正常燃料   | 蓝色     | 2.0% < bUN ≤ 7.0%  |
+| Image4[3] | 高燃耗燃料 | 红色     | 7.0% ≤ bUN ≤ 9.0%  |
 | Image4[4] | 燃料更换中 | 特殊图标 | FULRUP[num5] ≥ 0.1 |
 
 #### 燃料状态判断逻辑
@@ -2151,28 +2153,28 @@ if ((double)FULRUP[num5] < 0.1)  // 不在燃料更换中
 {
     if ((double)bUN > 9.0)  // 新燃料
     {
-        MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image2[num5].Image = 
+        MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image2[num5].Image =
             MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image4[0].Image;
     }
     else if ((double)bUN >= 7.0)  // 高燃耗燃料
     {
-        MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image2[num5].Image = 
+        MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image2[num5].Image =
             MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image4[3].Image;
     }
     else if ((double)bUN > 2.0)  // 正常燃料
     {
-        MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image2[num5].Image = 
+        MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image2[num5].Image =
             MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image4[2].Image;
     }
     else if ((double)bUN == 0.0)  // 无燃料
     {
-        MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image2[num5].Image = 
+        MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image2[num5].Image =
             MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image4[1].Image;
     }
 }
 else  // 燃料更换中
 {
-    MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image2[num5].Image = 
+    MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image2[num5].Image =
         MyProject.Forms.MainForm.CBStatic.REACT_ROD.Image4[4].Image;
 }
 ```
@@ -2223,14 +2225,14 @@ else
 
 ```csharp
 // 燃料监控或目标燃料高亮
-if ((((short)(0 - ((GLOBALRX.fuel_target == num5) ? 1 : 0)) & GLOBALRX.fuel_new_flag) | 
+if ((((short)(0 - ((GLOBALRX.fuel_target == num5) ? 1 : 0)) & GLOBALRX.fuel_new_flag) |
     (GLOBALRX.fuel_monitor_flag & (short)(0 - ((GLOBALRX.fuel_monitor == num5) ? 1 : 0)))) != 0)
 {
-    MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label1[num5].BackColor = 
+    MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label1[num5].BackColor =
         ColorTranslator.FromOle(Information.QBColor(9));  // 浅蓝色高亮
-    MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label2[num5].BackColor = 
+    MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label2[num5].BackColor =
         ColorTranslator.FromOle(Information.QBColor(9));
-    MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label3[num5].BackColor = 
+    MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label3[num5].BackColor =
         ColorTranslator.FromOle(Information.QBColor(9));
 }
 ```
@@ -2244,11 +2246,11 @@ if ((((short)(0 - ((GLOBALRX.fuel_target == num5) ? 1 : 0)) & GLOBALRX.fuel_new_
 - **Label3**：热功率分布（THRZONE[num5]）
 
 ```csharp
-MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label1[num5].Text = 
+MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label1[num5].Text =
     Support.Format(chlrod[I2, j], "##0.0%");
-MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label2[num5].Text = 
+MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label2[num5].Text =
     UNITSMDI.TEMPOUT(ref chltmp[I2, j]);
-MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label3[num5].Text = 
+MyProject.Forms.MainForm.CBStatic.REACT_ROD.Label3[num5].Text =
     Support.Format(THRZONE[num5], "##0.0%");
 ```
 
@@ -2280,19 +2282,19 @@ private PictureBoxArray _Label1;
 
 #### 设备状态图标映射
 
-| Picture索引 | 设备名称 | 状态判断函数 | 图标数组 | 状态条件 |
-|------------|----------|--------------|----------|----------|
-| 0-2 | 再循环泵A | CIRPMP[num] | Image1 | >0.5运行，否则停止 |
-| 3-5 | 给水泵 | GETFED(I) | Image2 | >0.5运行，否则停止 |
-| 6-8 | 凝汽器 | GETCND(I) | Image3 | >0.5运行，否则停止 |
-| 9-11 | 凝汽器 | GETCND(I) | Image1 | >0.5运行，否则停止 |
-| 12 | ECC安全注水 | GETECC() | Image8 | valu[7]>0.5激活 |
-| 13 | ECC高压注水 | GETECC() | Image4 | valu[5]>0.5激活 |
-| 14 | ECC低压注水 | GETECC() | Image5 | valu[6]>0.5激活 |
-| 15 | 除氧器再生阀 | GETDAR(22) | Image4 | >0.5打开 |
-| 16 | 除氧器补水阀 | GETDAR(23) | Image5 | >0.5打开 |
-| 19 | 堆芯离线冷却泵1 | GETSDC(1) | Image6 | PMPVLV[0]>0.5运行 |
-| 20 | 堆芯离线冷却泵2 | GETSDC(2) | Image7 | PMPVLV[0]>0.5运行 |
+| Picture索引 | 设备名称        | 状态判断函数 | 图标数组 | 状态条件           |
+| ----------- | --------------- | ------------ | -------- | ------------------ |
+| 0-2         | 再循环泵A       | CIRPMP[num]  | Image1   | >0.5运行，否则停止 |
+| 3-5         | 给水泵          | GETFED(I)    | Image2   | >0.5运行，否则停止 |
+| 6-8         | 凝汽器          | GETCND(I)    | Image3   | >0.5运行，否则停止 |
+| 9-11        | 凝汽器          | GETCND(I)    | Image1   | >0.5运行，否则停止 |
+| 12          | ECC安全注水     | GETECC()     | Image8   | valu[7]>0.5激活    |
+| 13          | ECC高压注水     | GETECC()     | Image4   | valu[5]>0.5激活    |
+| 14          | ECC低压注水     | GETECC()     | Image5   | valu[6]>0.5激活    |
+| 15          | 除氧器再生阀    | GETDAR(22)   | Image4   | >0.5打开           |
+| 16          | 除氧器补水阀    | GETDAR(23)   | Image5   | >0.5打开           |
+| 19          | 堆芯离线冷却泵1 | GETSDC(1)    | Image6   | PMPVLV[0]>0.5运行  |
+| 20          | 堆芯离线冷却泵2 | GETSDC(2)    | Image7   | PMPVLV[0]>0.5运行  |
 
 #### 图标切换逻辑
 
@@ -2305,13 +2307,13 @@ for (num = 0; num <= 2; num++)
     if ((double)CIRPMP[num] > 0.5)
     {
         // 运行状态：显示Image1[1]
-        MyProject.Forms.MainForm.CBStatic.SCEMAT_0.Picture1[num].Image = 
+        MyProject.Forms.MainForm.CBStatic.SCEMAT_0.Picture1[num].Image =
             MyProject.Forms.MainForm.CBStatic.SCEMAT_0.Image1[1].Image;
     }
     else
     {
         // 停止状态：显示Image1[0]
-        MyProject.Forms.MainForm.CBStatic.SCEMAT_0.Picture1[num].Image = 
+        MyProject.Forms.MainForm.CBStatic.SCEMAT_0.Picture1[num].Image =
             MyProject.Forms.MainForm.CBStatic.SCEMAT_0.Image1[0].Image;
     }
 }
@@ -2321,41 +2323,41 @@ for (num = 0; num <= 2; num++)
 
 Label1数组显示33个不同的参数：
 
-| Label索引 | 参数名称 | 数据来源 | 显示格式 |
-|-----------|----------|----------|----------|
-| 0 | 鼓筒水位1 | GETDRM(2) | 水位单位 |
-| 1 | 鼓筒水位2 | GETDRM(2) | 水位单位 |
-| 2 | 除氧器水位 | GETDAR(23) | 水位单位 |
-| 3 | 凝汽器水位 | GETCND(34) | 水位单位 |
-| 4 | 堆芯温度1 | SDTEMP[0] | 温度单位 |
-| 5 | 堆芯温度2 | SDTEMP[1] | 温度单位 |
-| 6 | 堆芯温度3 | SDTEMP[0] | 温度单位 |
-| 7 | 堆芯温度4 | SDTEMP[1] | 温度单位 |
-| 8 | 鼓筒压力 | GETDRM(0) | 压力单位 |
-| 9 | 鼓筒温度 | GETDRM(1) | 温度单位 |
-| 10 | 蒸汽流量 | GETDRM(3) | 流量单位 |
-| 11 | 给水流量 | GETDRM(4) | 流量单位 |
-| 12 | 蒸汽流量 | GETDRM(4) | 流量单位 |
-| 13 | 汽轮机转速 | GETTRB(9) | ###0 RPM |
-| 14 | 汽轮机功率 | GETTRB(15) | ###0 MW |
-| 15 | ECC流量 | GETECC(4,0,0) | 流量单位 |
-| 16 | ECC总流量 | valu[1]+valu[2] | 流量单位 |
-| 17 | 除氧器参数1 | GETDAR(24) | ##0.0% |
-| 18 | 除氧器参数2 | GETDAR(25) | ##0.0% |
-| 19 | 除氧器流量1 | GETDAR(20) | 流量单位 |
-| 20 | 除氧器流量2 | GETDAR(21) | 流量单位 |
-| 21 | HEPA过滤效率 | HEPAGT(3) | ##0.00% |
-| 22 | 给水流量 | GETFED(1) | 流量单位 |
-| 23 | 除氧器流量 | GETDAR(17) | 流量单位 |
-| 24 | 凝汽器流量 | GETCND(29) | 流量单位 |
-| 25 | 蒸汽流量 | GETTRB(10) | 流量单位 |
-| 26 | 除氧器流量 | GETDAR(8) | 流量单位 |
-| 27 | 给水流量 | GETFED(6) | 流量单位 |
-| 28 | 离子交换器1 | IXCLGT(6) | ##0.00% |
-| 29 | 离子交换器2 | IXCLGT(15) | ##0.00% |
-| 30 | 再生流量1 | IXCLGT(3) | REGEN或流量 |
-| 31 | 再生流量2 | IXCLGT(4) | REGEN或流量 |
-| 32 | 凝汽器真空 | GETCND(23) | 压力单位 |
+| Label索引 | 参数名称     | 数据来源        | 显示格式    |
+| --------- | ------------ | --------------- | ----------- |
+| 0         | 鼓筒水位1    | GETDRM(2)       | 水位单位    |
+| 1         | 鼓筒水位2    | GETDRM(2)       | 水位单位    |
+| 2         | 除氧器水位   | GETDAR(23)      | 水位单位    |
+| 3         | 凝汽器水位   | GETCND(34)      | 水位单位    |
+| 4         | 堆芯温度1    | SDTEMP[0]       | 温度单位    |
+| 5         | 堆芯温度2    | SDTEMP[1]       | 温度单位    |
+| 6         | 堆芯温度3    | SDTEMP[0]       | 温度单位    |
+| 7         | 堆芯温度4    | SDTEMP[1]       | 温度单位    |
+| 8         | 鼓筒压力     | GETDRM(0)       | 压力单位    |
+| 9         | 鼓筒温度     | GETDRM(1)       | 温度单位    |
+| 10        | 蒸汽流量     | GETDRM(3)       | 流量单位    |
+| 11        | 给水流量     | GETDRM(4)       | 流量单位    |
+| 12        | 蒸汽流量     | GETDRM(4)       | 流量单位    |
+| 13        | 汽轮机转速   | GETTRB(9)       | ###0 RPM    |
+| 14        | 汽轮机功率   | GETTRB(15)      | ###0 MW     |
+| 15        | ECC流量      | GETECC(4,0,0)   | 流量单位    |
+| 16        | ECC总流量    | valu[1]+valu[2] | 流量单位    |
+| 17        | 除氧器参数1  | GETDAR(24)      | ##0.0%      |
+| 18        | 除氧器参数2  | GETDAR(25)      | ##0.0%      |
+| 19        | 除氧器流量1  | GETDAR(20)      | 流量单位    |
+| 20        | 除氧器流量2  | GETDAR(21)      | 流量单位    |
+| 21        | HEPA过滤效率 | HEPAGT(3)       | ##0.00%     |
+| 22        | 给水流量     | GETFED(1)       | 流量单位    |
+| 23        | 除氧器流量   | GETDAR(17)      | 流量单位    |
+| 24        | 凝汽器流量   | GETCND(29)      | 流量单位    |
+| 25        | 蒸汽流量     | GETTRB(10)      | 流量单位    |
+| 26        | 除氧器流量   | GETDAR(8)       | 流量单位    |
+| 27        | 给水流量     | GETFED(6)       | 流量单位    |
+| 28        | 离子交换器1  | IXCLGT(6)       | ##0.00%     |
+| 29        | 离子交换器2  | IXCLGT(15)      | ##0.00%     |
+| 30        | 再生流量1    | IXCLGT(3)       | REGEN或流量 |
+| 31        | 再生流量2    | IXCLGT(4)       | REGEN或流量 |
+| 32        | 凝汽器真空   | GETCND(23)      | 压力单位    |
 
 #### 特殊显示逻辑
 
@@ -2400,23 +2402,28 @@ public static void disp_scemat_0()
 ##### 控制元素
 
 **Spin2_0/Spin2_1**：功率设定点调整滑条
+
 - SpinUp：增加功率设定点（+0.005到+0.095）
 - SpinDown：减少功率设定点（-0.005到-0.095）
 - 调用函数：`PROCMDI.SETSPT(ref X, ref I)`
 
 **Image2_0/Image2_1**：自动控制模式切换
+
 - 点击切换自动/手动模式
 - 调用函数：`SETAUT(ref I)`
 
 **Image3_0/Image3_1**：停堆按钮
+
 - 点击执行停堆操作
 - 调用函数：`STTCOR(ref I)`
 
 **Image4_0/Image4_1**：紧急停堆按钮
+
 - 点击执行紧急停堆
 - 调用函数：`PROCMDI.TRIPIT(ref IVAL, ref I)`
 
 **Command1_0/Command1_1**：停堆按钮
+
 - 点击执行停堆操作
 - 调用函数：`PROCMDI.TRIPIT(ref IVAL, ref I)`
 
@@ -2432,19 +2439,23 @@ public static void disp_scemat_0()
 ##### 控制元素
 
 **Spin1**：流量微调滑条
+
 - SpinUp：增加流量（+0.02）
 - SpinDown：减少流量（-0.02）
 - 调用函数：`SETTRM(ref X, ref I)`
 
 **Command1[0-5]**：泵启动/停止按钮
+
 - 控制泵的启动和停止
 - 调用函数：`SETPMP(ref I2, ref index2)`
 
 **Command1[6-11]**：入口阀控制按钮
+
 - 控制入口阀的打开/关闭
 - 调用函数：`SETINL(ref I, ref I2)`
 
 **Command1[12-17]**：排放阀控制按钮
+
 - 控制排放阀的打开/关闭
 - 调用函数：`SETDIS(ref I, ref I2)`
 
@@ -2460,27 +2471,33 @@ public static void disp_scemat_0()
 ##### 控制元素
 
 **Spin1**：流量设定点调整滑条
+
 - SpinUp：增加流量设定
 - SpinDown：减少流量设定
 - 调用函数：`SETECC(ref X, ref I)`
 
 **Image2**：高压注水泵控制
+
 - 点击控制高压注水泵
 - 调用函数：`SETECC(ref I, ref I2, ref I3, ref X)`
 
 **Image3**：低压注水泵控制
+
 - 点击控制低压注水泵
 - 调用函数：`SETECC(ref I, ref I2, ref I3, ref X)`
 
 **Image4**：安全注水阀控制
+
 - 点击控制安全注水阀
 - 调用函数：`SETECC(ref I, ref I2, ref I3, ref X)`
 
 **Image5**：应急冷却泵控制
+
 - 点击控制应急冷却泵
 - 调用函数：`GETSDC(ref j, ref PMPVLV[0])`
 
 **Image6**：堆芯离线冷却泵1控制
+
 - 点击控制堆芯离线冷却泵1
 - 调用函数：`GETSDC(ref j, ref PMPVLV[0])`
 
@@ -2496,39 +2513,48 @@ public static void disp_scemat_0()
 ##### 控制元素
 
 **Spin1**：转速/负荷控制滑条
+
 - SpinUp：增加转速/负荷
 - SpinDown：减少转速/负荷
 - 调用函数：`SETTRB(ref X, ref I)`
 
 **Command1**：汽轮机启动/停止按钮
+
 - 控制汽轮机的启动和停止
 - 调用函数：`SETTRB(ref X, ref I)`
 
 **Command2**：负荷控制按钮
+
 - 调整汽轮机负荷
 - 调用函数：`SETTRB(ref X, ref I)`
 
 **Command3**：压力设定按钮
+
 - 设定蒸汽压力
 - 调用函数：`SETTRB(ref X, ref I)`
 
 **Command4**：自动调速器按钮
+
 - 启用/禁用自动调速器
 - 调用函数：`SETTRB(ref X, ref I)`
 
 **Command5**：排汽阀控制按钮
+
 - 控制排汽阀的打开/关闭
 - 调用函数：`SETTRB(ref X, ref I)`
 
 **Command6**：疏水阀控制按钮
+
 - 控制疏水阀的打开/关闭
 - 调用函数：`SETTRB(ref X, ref I)`
 
 **Command7**：辅助系统控制按钮
+
 - 控制润滑油、冷却水、密封水系统
 - 调用函数：`SETTRB(ref X, ref I)`
 
 **Command8**：紧急停机按钮
+
 - 执行紧急停机
 - 调用函数：`SETTRB(ref X, ref I)`
 
@@ -2544,10 +2570,12 @@ public static void disp_scemat_0()
 ##### 控制元素
 
 **Command4[0-1]**：真空泵控制按钮
+
 - 控制主真空泵和备用真空泵
 - 调用函数：`SETCND(ref I, ref X)`
 
 **Command5[0-1]**：蒸汽喷射器控制按钮
+
 - 控制蒸汽喷射器的启动/停止
 - 调用函数：`SETCND(ref I, ref X)`
 
@@ -2563,31 +2591,38 @@ public static void disp_scemat_0()
 ##### 控制元素
 
 **Spin1**：给水流量设定滑条
+
 - SpinUp：增加给水流量
 - SpinDown：减少给水流量
 - 调用函数：`SETFED(ref X, ref I)`
 
 **Command1[0-5]**：主给水泵启动/停止按钮
+
 - 控制6台主给水泵的启动和停止
 - 调用函数：`SETFED(ref X, ref I)`
 
 **Command2[0-5]**：给水泵隔离阀控制按钮
+
 - 控制每台泵的2个隔离阀
 - 调用函数：`SETISO(ref I, ref j)`
 
 **Command3[0-5]**：主给水阀控制按钮
+
 - 控制主给水阀的打开/关闭
 - 调用函数：`SETFED(ref X, ref I)`
 
 **Command4[0-1]**：启动阀控制按钮
+
 - 控制启动阀的打开/关闭
 - 调用函数：`SETFED(ref X, ref I)`
 
 **Command5[0-1]**：三元件控制按钮
+
 - 启用/禁用三元件控制
 - 调用函数：`SETFED(ref X, ref I)`
 
 **Command6**：紧急停泵按钮
+
 - 执行紧急停泵操作
 - 调用函数：`SETFED(ref X, ref I)`
 
@@ -2603,21 +2638,25 @@ public static void disp_scemat_0()
 ##### 控制元素
 
 **Spin1**：蒸汽压力控制滑条
+
 - SpinUp：增加蒸汽压力设定
 - SpinDown：减少蒸汽压力设定
 - 调用函数：`SETDAR(ref X, ref I)`
 
 **Spin2**：水位控制滑条
+
 - SpinUp：增加水位设定
 - SpinDown：减少水位设定
 - 调用函数：`SETDAR(ref X, ref I)`
 
 **Spin3**：再生/补水流量控制滑条
+
 - SpinUp：增加流量
 - SpinDown：减少流量
 - 调用函数：`SETDAR(ref X, ref I)`
 
 **Command1[0-1]**：再生/补水阀控制按钮
+
 - 控制再生阀和补水阀的打开/关闭
 - 调用函数：`SETDAR(ref X, ref I)`
 
@@ -2633,11 +2672,13 @@ public static void disp_scemat_0()
 ##### 控制元素
 
 **Picture1**：趋势图显示区域
+
 - 双击打开趋势选择器
 - 最多显示10条趋势线
 - 调用函数：`trend_select.ShowDialog()`
 
 **Command2**：趋势图控制按钮
+
 - 控制趋势图的显示/隐藏
 - 调用函数：`GETYS(GR,XD,XM,LY1,LY2)`
 
@@ -2653,10 +2694,12 @@ public static void disp_scemat_0()
 ##### 控制元素
 
 **Image2[0-1]**：通风阀控制按钮
+
 - 点击控制通风阀的打开/关闭
 - 调用函数：`SETHPA(ref I, ref X)`
 
 **Image3[0-1]**：旁路阀控制按钮
+
 - 点击控制旁路阀的打开/关闭
 - 调用函数：`SETHPA(ref I, ref X)`
 
@@ -2672,20 +2715,24 @@ public static void disp_scemat_0()
 ##### 控制元素
 
 **Spin1**：控制棒位置调整滑条
+
 - SpinUp：提升控制棒（+0.01）
 - SpinDown：插入控制棒（-0.01）
 - 调用函数：`SETROD(ref X, ref I, ref j, ref k)`
 
 **Spin2**：控制棒组调整滑条
+
 - SpinUp：提升整组控制棒（+0.01）
 - SpinDown：插入整组控制棒（-0.01）
 - 调用函数：`SETROD(ref X, ref I, ref j, ref k)`
 
 **Command1**：紧急插入AZ-5按钮
+
 - 点击执行所有控制棒快速插入
 - 调用函数：`SETROD(ref X, ref I, ref j, ref k)`
 
 **Command2**：燃料更换按钮
+
 - 点击模拟燃料更换操作
 - 调用函数：`GETBUN(ref I, ref j)`
 
@@ -2719,6 +2766,7 @@ public static void disp_scemat_0()
 **功能**：连续调整参数值
 **操作方式**：SpinUp增加，SpinDown减少
 **常见用途**：
+
 - 功率设定点调整
 - 流量微调
 - 转速/负荷控制
@@ -2731,6 +2779,7 @@ public static void disp_scemat_0()
 **功能**：开关控制、模式切换、紧急操作
 **操作方式**：单击执行操作
 **常见用途**：
+
 - 设备启动/停止
 - 阀门打开/关闭
 - 自动/手动模式切换
@@ -2742,6 +2791,7 @@ public static void disp_scemat_0()
 **功能**：可视化控制、状态切换
 **操作方式**：单击或MouseDown事件
 **常见用途**：
+
 - 设备状态切换（运行/停止）
 - 阀门控制（打开/关闭）
 - 模式选择
@@ -2752,6 +2802,7 @@ public static void disp_scemat_0()
 **功能**：打开选择器或详细信息
 **操作方式**：DoubleClick事件
 **常见用途**：
+
 - 趋势选择器
 - 参数配置
 
@@ -2763,6 +2814,7 @@ public static void disp_scemat_0()
 
 **功能**：显示数值、文本、状态
 **显示内容**：
+
 - 工艺参数（流量、温度、压力、转速等）
 - 设备状态（运行/停止、打开/关闭）
 - 报警信息
@@ -2772,6 +2824,7 @@ public static void disp_scemat_0()
 
 **功能**：显示图标、状态指示
 **显示内容**：
+
 - 设备运行状态图标
 - 阀门状态图标
 - 燃料状态图标
@@ -2782,6 +2835,7 @@ public static void disp_scemat_0()
 
 **功能**：容器、分组显示
 **显示内容**：
+
 - 堆芯示意图
 - 系统流程图
 - 控制区域分组
@@ -2835,16 +2889,16 @@ private LabelArray _Label9;
 
 #### 显示参数
 
-| 标签索引 | 参数名称 | DLL函数 | 单位 | 说明 |
-|----------|----------|---------|------|------|
-| Label9[0] | 再循环流量 | CIRFLO[0] | kg/s | 回路1再循环流量 |
-| Label9[1] | 再循环流量 | CIRFLO[1] | kg/s | 回路2再循环流量 |
-| Label9[2] | 堆芯温度 | GETCOR(0,0,2) | °C | 堆芯区域2温度 |
-| Label9[3] | 堆芯温度 | GETCOR(0,0,3) | °C | 堆芯区域3温度 |
-| Label9[4] | 控制棒位置 | 1-GETCOR(0,0,3) | % | 控制棒位置（抽出百分比） |
-| Label9[5] | 控制棒位置 | 1-GETCOR(0,0,4) | % | 控制棒位置（抽出百分比） |
-| Label9[6] | 平均热功率 | avgchp | MW | 堆芯平均热功率 |
-| Label9[7] | 氙浓度 | XEN/32 | % | 堆芯氙浓度 |
+| 标签索引  | 参数名称   | DLL函数         | 单位 | 说明                     |
+| --------- | ---------- | --------------- | ---- | ------------------------ |
+| Label9[0] | 再循环流量 | CIRFLO[0]       | kg/s | 回路1再循环流量          |
+| Label9[1] | 再循环流量 | CIRFLO[1]       | kg/s | 回路2再循环流量          |
+| Label9[2] | 堆芯温度   | GETCOR(0,0,2)   | °C   | 堆芯区域2温度            |
+| Label9[3] | 堆芯温度   | GETCOR(0,0,3)   | °C   | 堆芯区域3温度            |
+| Label9[4] | 控制棒位置 | 1-GETCOR(0,0,3) | %    | 控制棒位置（抽出百分比） |
+| Label9[5] | 控制棒位置 | 1-GETCOR(0,0,4) | %    | 控制棒位置（抽出百分比） |
+| Label9[6] | 平均热功率 | avgchp          | MW   | 堆芯平均热功率           |
+| Label9[7] | 氙浓度     | XEN/32          | %    | 堆芯氙浓度               |
 
 #### 显示更新函数
 
@@ -2900,10 +2954,10 @@ public static void DISP_REACTR_0()
 
 #### DLL函数说明
 
-| 函数名 | 参数 | 返回值 | 说明 |
-|--------|------|--------|------|
-| `GETCOR(ref short I, ref short j, ref short D)` | I=0, j=0, D=区域编号 | float | 获取堆芯指定区域的温度或控制棒位置 |
-| `CIRFLO[num]` | num=0或1 | float | 获取再循环流量（全局变量） |
+| 函数名                                          | 参数                 | 返回值 | 说明                               |
+| ----------------------------------------------- | -------------------- | ------ | ---------------------------------- |
+| `GETCOR(ref short I, ref short j, ref short D)` | I=0, j=0, D=区域编号 | float  | 获取堆芯指定区域的温度或控制棒位置 |
+| `CIRFLO[num]`                                   | num=0或1             | float  | 获取再循环流量（全局变量）         |
 
 ---
 
@@ -2923,18 +2977,18 @@ private LabelArray _Label3;
 
 #### 显示参数
 
-| 标签索引 | 参数名称 | DLL函数 | 单位 | 说明 |
-|----------|----------|---------|------|------|
-| Label3[0] | 汽包压力 | GETDRM(0) | MPa | 汽包压力 |
-| Label3[1] | 汽包温度 | GETDRM(1) | °C | 汽包温度 |
-| Label3[2] | 汽包水位 | GETDRM(2) | m | 汽包水位 |
-| Label3[3] | 汽包蒸汽流量 | GETDRM(3) | kg/s | 汽包蒸汽流量 |
-| Label3[4] | 汽包给水流量 | GETDRM(4) | kg/s | 汽包给水流量 |
-| Label3[5] | 给水泵状态 | GETFED(0) | % | 给水泵运行状态 |
-| Label3[6] | 给水泵流量 | GETFED(1) | kg/s | 给水泵流量 |
-| Label3[7] | 给水泵流量 | GETFED(6) | kg/s | 给水泵流量 |
-| Label3[8] | 给水泵状态 | GETFED(10) | % | 给水泵运行状态 |
-| Label3[9] | 给水泵状态 | GETFED(14) | % | 给水泵运行状态 |
+| 标签索引  | 参数名称     | DLL函数    | 单位 | 说明           |
+| --------- | ------------ | ---------- | ---- | -------------- |
+| Label3[0] | 汽包压力     | GETDRM(0)  | MPa  | 汽包压力       |
+| Label3[1] | 汽包温度     | GETDRM(1)  | °C   | 汽包温度       |
+| Label3[2] | 汽包水位     | GETDRM(2)  | m    | 汽包水位       |
+| Label3[3] | 汽包蒸汽流量 | GETDRM(3)  | kg/s | 汽包蒸汽流量   |
+| Label3[4] | 汽包给水流量 | GETDRM(4)  | kg/s | 汽包给水流量   |
+| Label3[5] | 给水泵状态   | GETFED(0)  | %    | 给水泵运行状态 |
+| Label3[6] | 给水泵流量   | GETFED(1)  | kg/s | 给水泵流量     |
+| Label3[7] | 给水泵流量   | GETFED(6)  | kg/s | 给水泵流量     |
+| Label3[8] | 给水泵状态   | GETFED(10) | %    | 给水泵运行状态 |
+| Label3[9] | 给水泵状态   | GETFED(14) | %    | 给水泵运行状态 |
 
 #### 显示更新函数
 
@@ -2983,10 +3037,10 @@ public static void DISP_FEEDSYS_0()
 
 #### DLL函数说明
 
-| 函数名 | 参数 | 返回值 | 说明 |
-|--------|------|--------|------|
-| `GETDRM(ref short I)` | I=0-4 | float | 获取汽包参数（压力、温度、水位、流量） |
-| `GETFED(ref short I)` | I=0,1,6,10,14 | float | 获取给水泵参数（状态、流量） |
+| 函数名                | 参数          | 返回值 | 说明                                   |
+| --------------------- | ------------- | ------ | -------------------------------------- |
+| `GETDRM(ref short I)` | I=0-4         | float  | 获取汽包参数（压力、温度、水位、流量） |
+| `GETFED(ref short I)` | I=0,1,6,10,14 | float  | 获取给水泵参数（状态、流量）           |
 
 ---
 
@@ -3003,17 +3057,17 @@ private LabelArray _Label1;
 
 #### 显示参数
 
-| 标签索引 | 参数名称 | DLL函数 | 单位 | 说明 |
-|----------|----------|---------|------|------|
-| Label1[0] | 主蒸汽压力 | GETTRB(13) | MPa | 主蒸汽压力 |
-| Label1[1] | 主蒸汽温度 | GETTRB(14) | °C | 主蒸汽温度 |
-| Label1[2] | 高压缸排汽温度 | GETTRB(17) | °C | 高压缸排汽温度 |
-| Label1[3] | 中压缸排汽温度 | GETTRB(18) | °C | 中压缸排汽温度 |
-| Label1[4] | 低压缸排汽温度 | GETTRB(19) | °C | 低压缸排汽温度 |
-| Label1[5] | 汽轮机长度 | GETTRB(16) | m | 汽轮机长度 |
-| Label1[6] | 给水流量 | GETTRB(10) | kg/s | 给水流量 |
-| Label1[7] | 负荷百分比 | GETTRB(41) | % | 汽轮机负荷百分比 |
-| Label1[8] | 蒸汽流量 | GETTRB(12) | kg/s | 蒸汽流量 |
+| 标签索引  | 参数名称       | DLL函数    | 单位 | 说明             |
+| --------- | -------------- | ---------- | ---- | ---------------- |
+| Label1[0] | 主蒸汽压力     | GETTRB(13) | MPa  | 主蒸汽压力       |
+| Label1[1] | 主蒸汽温度     | GETTRB(14) | °C   | 主蒸汽温度       |
+| Label1[2] | 高压缸排汽温度 | GETTRB(17) | °C   | 高压缸排汽温度   |
+| Label1[3] | 中压缸排汽温度 | GETTRB(18) | °C   | 中压缸排汽温度   |
+| Label1[4] | 低压缸排汽温度 | GETTRB(19) | °C   | 低压缸排汽温度   |
+| Label1[5] | 汽轮机长度     | GETTRB(16) | m    | 汽轮机长度       |
+| Label1[6] | 给水流量       | GETTRB(10) | kg/s | 给水流量         |
+| Label1[7] | 负荷百分比     | GETTRB(41) | %    | 汽轮机负荷百分比 |
+| Label1[8] | 蒸汽流量       | GETTRB(12) | kg/s | 蒸汽流量         |
 
 #### 显示更新函数
 
@@ -3053,9 +3107,9 @@ public static void disp_turb_0()
 
 #### DLL函数说明
 
-| 函数名 | 参数 | 返回值 | 说明 |
-|--------|------|--------|------|
-| `GETTRB(ref float X, ref short I)` | I=10,12,13,14,16,17,18,19,41 | float | 获取汽轮机参数（流量、压力、温度、长度、负荷） |
+| 函数名                             | 参数                         | 返回值 | 说明                                           |
+| ---------------------------------- | ---------------------------- | ------ | ---------------------------------------------- |
+| `GETTRB(ref float X, ref short I)` | I=10,12,13,14,16,17,18,19,41 | float  | 获取汽轮机参数（流量、压力、温度、长度、负荷） |
 
 ---
 
@@ -3072,17 +3126,17 @@ private LabelArray _Label1;
 
 #### 显示参数
 
-| 标签索引 | 参数名称 | DLL函数 | 单位 | 说明 |
-|----------|----------|---------|------|------|
-| Label1[0] | 凝结水流量 | GETDAR(9) | kg/s | 凝结水流量 |
-| Label1[1] | 抽汽流量 | GETDAR(8) | kg/s | 抽汽流量 |
-| Label1[2] | 除氧器压力 | GETDAR(5) | MPa | 除氧器压力 |
-| Label1[3] | 除氧器水位 | GETDAR(3) | m | 除氧器水位 |
-| Label1[4] | 除氧器温度 | GETDAR(4) | °C | 除氧器温度 |
-| Label1[5] | 给水流量 | GETFED(1) | kg/s | 给水流量 |
-| Label1[6] | 除氧器出口流量 | GETDAR(7) | kg/s | 除氧器出口流量 |
-| Label1[8] | 补水流量 | GETDAR(17) | kg/s | 补水流量 |
-| Label1[9] | 蒸汽流量 | GETDAR(18) | kg/s | 蒸汽流量 |
+| 标签索引  | 参数名称       | DLL函数    | 单位 | 说明           |
+| --------- | -------------- | ---------- | ---- | -------------- |
+| Label1[0] | 凝结水流量     | GETDAR(9)  | kg/s | 凝结水流量     |
+| Label1[1] | 抽汽流量       | GETDAR(8)  | kg/s | 抽汽流量       |
+| Label1[2] | 除氧器压力     | GETDAR(5)  | MPa  | 除氧器压力     |
+| Label1[3] | 除氧器水位     | GETDAR(3)  | m    | 除氧器水位     |
+| Label1[4] | 除氧器温度     | GETDAR(4)  | °C   | 除氧器温度     |
+| Label1[5] | 给水流量       | GETFED(1)  | kg/s | 给水流量       |
+| Label1[6] | 除氧器出口流量 | GETDAR(7)  | kg/s | 除氧器出口流量 |
+| Label1[8] | 补水流量       | GETDAR(17) | kg/s | 补水流量       |
+| Label1[9] | 蒸汽流量       | GETDAR(18) | kg/s | 蒸汽流量       |
 
 #### 显示更新函数
 
@@ -3123,10 +3177,10 @@ public static void DISP_DEAER_0()
 
 #### DLL函数说明
 
-| 函数名 | 参数 | 返回值 | 说明 |
-|--------|------|--------|------|
-| `GETDAR(ref float X, ref short I)` | I=3,4,5,7,8,9,17,18 | float | 获取除氧器参数（水位、温度、压力、流量） |
-| `GETFED(ref short I)` | I=1 | float | 获取给水流量 |
+| 函数名                             | 参数                | 返回值 | 说明                                     |
+| ---------------------------------- | ------------------- | ------ | ---------------------------------------- |
+| `GETDAR(ref float X, ref short I)` | I=3,4,5,7,8,9,17,18 | float  | 获取除氧器参数（水位、温度、压力、流量） |
+| `GETFED(ref short I)`              | I=1                 | float  | 获取给水流量                             |
 
 ---
 
@@ -3146,14 +3200,14 @@ private LabelArray _Label10;
 
 #### 显示参数
 
-| 标签索引 | 参数名称 | DLL函数 | 单位 | 说明 |
-|----------|----------|---------|------|------|
-| Label10[0] | 凝汽器压力 | GETCND(0) | kPa | 凝汽器压力 |
-| Label10[1] | 凝汽器温度 | GETCND(1) | °C | 凝汽器温度 |
-| Label10[2] | 循环水流量 | GETCND(23) | kg/s | 循环水流量 |
-| Label10[3] | 凝汽器温度 | GETCND(4) | °C | 凝汽器温度 |
-| Label10[4] | 凝汽器温度 | GETCND(5) | °C | 凝汽器温度 |
-| Label4[0-3] | 循环水泵状态 | GETCND(6-9) | - | 循环水泵运行状态（颜色指示） |
+| 标签索引    | 参数名称     | DLL函数     | 单位 | 说明                         |
+| ----------- | ------------ | ----------- | ---- | ---------------------------- |
+| Label10[0]  | 凝汽器压力   | GETCND(0)   | kPa  | 凝汽器压力                   |
+| Label10[1]  | 凝汽器温度   | GETCND(1)   | °C   | 凝汽器温度                   |
+| Label10[2]  | 循环水流量   | GETCND(23)  | kg/s | 循环水流量                   |
+| Label10[3]  | 凝汽器温度   | GETCND(4)   | °C   | 凝汽器温度                   |
+| Label10[4]  | 凝汽器温度   | GETCND(5)   | °C   | 凝汽器温度                   |
+| Label4[0-3] | 循环水泵状态 | GETCND(6-9) | -    | 循环水泵运行状态（颜色指示） |
 
 #### 显示更新函数
 
@@ -3210,9 +3264,9 @@ public static void DISP_CNDSR_0()
 
 #### DLL函数说明
 
-| 函数名 | 参数 | 返回值 | 说明 |
-|--------|------|--------|------|
-| `GETCND(ref short I)` | I=0,1,4,5,6,7,8,9,23 | float | 获取凝汽器参数（压力、温度、泵状态、流量） |
+| 函数名                | 参数                 | 返回值 | 说明                                       |
+| --------------------- | -------------------- | ------ | ------------------------------------------ |
+| `GETCND(ref short I)` | I=0,1,4,5,6,7,8,9,23 | float  | 获取凝汽器参数（压力、温度、泵状态、流量） |
 
 ---
 
@@ -3235,20 +3289,20 @@ private PictureBoxArray _Image5;
 
 #### 显示参数
 
-| 标签索引 | 参数名称 | DLL函数 | 单位 | 说明 |
-|----------|----------|---------|------|------|
-| Label1[0] | 润滑油压力 | GETTRB(37) | MPa | 润滑油压力 |
-| Label1[1] | 冷却水压力 | GETTRB(38) | MPa | 冷却水压力 |
-| Label1[2] | 密封水压力 | GETTRB(39) | MPa | 密封水压力 |
+| 标签索引  | 参数名称   | DLL函数    | 单位 | 说明       |
+| --------- | ---------- | ---------- | ---- | ---------- |
+| Label1[0] | 润滑油压力 | GETTRB(37) | MPa  | 润滑油压力 |
+| Label1[1] | 冷却水压力 | GETTRB(38) | MPa  | 冷却水压力 |
+| Label1[2] | 密封水压力 | GETTRB(39) | MPa  | 密封水压力 |
 
 #### 状态指示
 
-| 图标数组 | 设备 | DLL函数 | 状态 |
-|----------|------|---------|------|
-| Image2 | 润滑油泵 | GETTRB(33) | 1=运行，0=停止 |
-| Image3 | 冷却水泵 | GETTRB(34) | 1=运行，0=停止 |
-| Image4 | 真空泵 | GETTRB(35) | 1=运行，0=停止 |
-| Image5 | 密封水泵 | GETTRB(36) | 1=运行，0=停止 |
+| 图标数组 | 设备     | DLL函数    | 状态           |
+| -------- | -------- | ---------- | -------------- |
+| Image2   | 润滑油泵 | GETTRB(33) | 1=运行，0=停止 |
+| Image3   | 冷却水泵 | GETTRB(34) | 1=运行，0=停止 |
+| Image4   | 真空泵   | GETTRB(35) | 1=运行，0=停止 |
+| Image5   | 密封水泵 | GETTRB(36) | 1=运行，0=停止 |
 
 #### 显示更新函数
 
@@ -3295,9 +3349,9 @@ public static void disp_turb_aux()
 
 #### DLL函数说明
 
-| 函数名 | 参数 | 返回值 | 说明 |
-|--------|------|--------|------|
-| `GETTRB(ref float X, ref short I)` | I=33-39 | float | 获取汽轮机辅助系统参数（泵状态、压力） |
+| 函数名                             | 参数    | 返回值 | 说明                                   |
+| ---------------------------------- | ------- | ------ | -------------------------------------- |
+| `GETTRB(ref float X, ref short I)` | I=33-39 | float  | 获取汽轮机辅助系统参数（泵状态、压力） |
 
 ---
 
@@ -3350,13 +3404,13 @@ public static void disp_turb_aux()
 
 #### 显示参数分类
 
-| 参数类型 | 显示方式 | 示例 |
-|----------|----------|------|
-| 压力 | Label.Text + 单位转换 | 主蒸汽压力：15.5 MPa |
-| 温度 | Label.Text + 单位转换 | 主蒸汽温度：280 °C |
-| 流量 | Label.Text + 单位转换 | 给水流量：500 kg/s |
-| 水位 | Label.Text + 单位转换 | 汽包水位：3.5 m |
-| 百分比 | Label.Text + 格式化 | 控制棒位置：75.0% |
-| 状态 | PictureBox.Image + 颜色 | 泵运行/停止图标 |
+| 参数类型 | 显示方式                | 示例                 |
+| -------- | ----------------------- | -------------------- |
+| 压力     | Label.Text + 单位转换   | 主蒸汽压力：15.5 MPa |
+| 温度     | Label.Text + 单位转换   | 主蒸汽温度：280 °C   |
+| 流量     | Label.Text + 单位转换   | 给水流量：500 kg/s   |
+| 水位     | Label.Text + 单位转换   | 汽包水位：3.5 m      |
+| 百分比   | Label.Text + 格式化     | 控制棒位置：75.0%    |
+| 状态     | PictureBox.Image + 颜色 | 泵运行/停止图标      |
 
 这种设计确保了所有辅助面板具有一致的显示风格和用户体验，同时通过DLL接口实现了与物理模型的实时数据交互。

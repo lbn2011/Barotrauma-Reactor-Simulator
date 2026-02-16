@@ -20,13 +20,13 @@
       // 尝试解码 Base64 并解析 JSON
       const decoded = atob(saveCodeInput.trim());
       const state = JSON.parse(decoded);
-      
+
       // 验证是否为有效的反应堆状态
       if (typeof state === 'object' && state !== null) {
         parsedState = state;
         errorMessage = '';
         successMessage = '存档码解析成功！';
-        
+
         // 3秒后清除成功消息
         setTimeout(() => {
           successMessage = '';
@@ -54,7 +54,7 @@
       saveCodeInput = encoded;
       errorMessage = '';
       successMessage = '存档码编码成功！';
-      
+
       // 3秒后清除成功消息
       setTimeout(() => {
         successMessage = '';
@@ -72,7 +72,7 @@
       try {
         await navigator.clipboard.writeText(saveCodeInput);
         successMessage = '存档码已复制到剪贴板！';
-        
+
         // 3秒后清除成功消息
         setTimeout(() => {
           successMessage = '';
@@ -95,17 +95,17 @@
   // 更新数值参数的安全函数
   function updateValue(path: string, value: any) {
     if (!parsedState) return;
-    
+
     const parts = path.split('.');
     let current: any = parsedState;
-    
+
     for (let i = 0; i < parts.length - 1; i++) {
       if (!current[parts[i]]) {
         current[parts[i]] = {};
       }
       current = current[parts[i]];
     }
-    
+
     const lastPart = parts[parts.length - 1];
     if (typeof value === 'string') {
       // 如果是字符串，尝试转换为适当类型
@@ -130,17 +130,21 @@
   // 获取嵌套值的安全函数
   function getValue(path: string, defaultValue: any = '') {
     if (!parsedState) return defaultValue;
-    
+
     const parts = path.split('.');
     let current: any = parsedState;
-    
+
     for (const part of parts) {
-      if (current === null || current === undefined || typeof current !== 'object') {
+      if (
+        current === null ||
+        current === undefined ||
+        typeof current !== 'object'
+      ) {
         return defaultValue;
       }
       current = current[part];
     }
-    
+
     return current !== undefined ? current : defaultValue;
   }
 </script>
@@ -253,8 +257,6 @@
     border: 1px solid #f44336;
   }
 
-
-
   .parameter-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -317,329 +319,515 @@
 
 <div class="save-editor-container">
   <h1>存档码编辑器</h1>
-  
+
   <div class="save-editor-card">
     <h2>导入存档码</h2>
-    
+
     <div class="input-group">
       <label for="saveCodeInput">存档码</label>
-      <textarea 
-        id="saveCodeInput" 
-        bind:value={saveCodeInput} 
+      <textarea
+        id="saveCodeInput"
+        bind:value={saveCodeInput}
         placeholder="在此粘贴您的存档码..."
       ></textarea>
     </div>
-    
+
     <div class="button-group">
-      <button class="btn btn-primary" on:click={parseSaveCode}>解析存档码</button>
-      <button class="btn btn-secondary" on:click={encodeSaveCode}>编码存档码</button>
-      <button class="btn btn-secondary" on:click={copyToClipboard}>复制存档码</button>
+      <button class="btn btn-primary" on:click={parseSaveCode}
+        >解析存档码</button
+      >
+      <button class="btn btn-secondary" on:click={encodeSaveCode}
+        >编码存档码</button
+      >
+      <button class="btn btn-secondary" on:click={copyToClipboard}
+        >复制存档码</button
+      >
       <button class="btn btn-danger" on:click={resetForm}>重置</button>
     </div>
-    
+
     {#if errorMessage}
       <div class="message error">{errorMessage}</div>
     {/if}
-    
+
     {#if successMessage}
       <div class="message success">{successMessage}</div>
     {/if}
   </div>
-  
+
   {#if parsedState}
     <div class="save-editor-card">
       <h2>模拟信息</h2>
-      
+
       <div class="simulation-info">
         <div class="info-item">
           <div class="info-label">运行状态</div>
-          <div class="info-value">{getValue('isRunning') ? '运行中' : '已停止'}</div>
+          <div class="info-value">
+            {getValue('isRunning') ? '运行中' : '已停止'}
+          </div>
         </div>
-        
+
         <div class="info-item">
           <div class="info-label">模拟时间</div>
           <div class="info-value">{getValue('simulationTime', 0)} 秒</div>
         </div>
-        
+
         <div class="info-item">
           <div class="info-label">功率水平</div>
-          <div class="info-value">{getValue('powerRegulation.powerLevel', 0)?.toFixed(1) || 0}%</div>
+          <div class="info-value">
+            {getValue('powerRegulation.powerLevel', 0)?.toFixed(1) || 0}%
+          </div>
         </div>
-        
+
         <div class="info-item">
           <div class="info-label">堆芯温度</div>
-          <div class="info-value">{getValue('core.temperature', 0)?.toFixed(1) || 0}°C</div>
+          <div class="info-value">
+            {getValue('core.temperature', 0)?.toFixed(1) || 0}°C
+          </div>
         </div>
-        
+
         <div class="info-item">
           <div class="info-label">堆芯压力</div>
-          <div class="info-value">{getValue('core.pressure', 0)?.toFixed(2) || 0} MPa</div>
+          <div class="info-value">
+            {getValue('core.pressure', 0)?.toFixed(2) || 0} MPa
+          </div>
         </div>
-        
+
         <div class="info-item">
           <div class="info-label">控制棒位置</div>
-          <div class="info-value">{getValue('controlRods.position', 0)?.toFixed(1) || 0}%</div>
+          <div class="info-value">
+            {getValue('controlRods.position', 0)?.toFixed(1) || 0}%
+          </div>
         </div>
       </div>
     </div>
-    
+
     <div class="save-editor-card">
       <h2>编辑参数</h2>
-      
+
       <div class="parameter-grid">
         <!-- 基本模拟参数 -->
         <div class="parameter-item">
-          <label for="isRunning" class="parameter-label">运行状态 (isRunning)</label>
-          <select 
+          <label for="isRunning" class="parameter-label"
+            >运行状态 (isRunning)</label
+          >
+          <select
             id="isRunning"
-            class="parameter-value" 
-            on:change={(e) => updateValue('isRunning', (e.target as HTMLSelectElement).value)}
+            class="parameter-value"
+            on:change={(e) =>
+              updateValue('isRunning', (e.target as HTMLSelectElement).value)}
             value={getValue('isRunning', false)}
           >
-            <option value="true" selected={getValue('isRunning', false) === true}>运行中</option>
-            <option value="false" selected={getValue('isRunning', false) === false}>已停止</option>
+            <option
+              value="true"
+              selected={getValue('isRunning', false) === true}>运行中</option
+            >
+            <option
+              value="false"
+              selected={getValue('isRunning', false) === false}>已停止</option
+            >
           </select>
         </div>
-        
+
         <div class="parameter-item">
-          <label for="simulationTime" class="parameter-label">模拟时间 (simulationTime)</label>
-          <input 
-            id="simulationTime"
-            type="number" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('simulationTime', (e.target as HTMLInputElement).value)}
-            value={getValue('simulationTime', 0)}
+          <label for="simulationTime" class="parameter-label"
+            >模拟时间 (simulationTime)</label
           >
+          <input
+            id="simulationTime"
+            type="number"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'simulationTime',
+                (e.target as HTMLInputElement).value
+              )}
+            value={getValue('simulationTime', 0)}
+          />
         </div>
-        
+
         <!-- 控制棒参数 -->
         <div class="parameter-item">
-          <label for="controlRodsPosition" class="parameter-label">控制棒位置 (0-100%)</label>
-          <input 
-            id="controlRodsPosition"
-            type="range" 
-            min="0" 
-            max="100" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('controlRods.position', (e.target as HTMLInputElement).value)}
-            value={getValue('controlRods.position', 50)}
+          <label for="controlRodsPosition" class="parameter-label"
+            >控制棒位置 (0-100%)</label
           >
+          <input
+            id="controlRodsPosition"
+            type="range"
+            min="0"
+            max="100"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'controlRods.position',
+                (e.target as HTMLInputElement).value
+              )}
+            value={getValue('controlRods.position', 50)}
+          />
           <div>{getValue('controlRods.position', 50)?.toFixed(1) || 0}%</div>
         </div>
-        
+
         <!-- 功率调节参数 -->
         <div class="parameter-item">
-          <label for="powerLevel" class="parameter-label">当前功率 (0-100%)</label>
-          <input 
+          <label for="powerLevel" class="parameter-label"
+            >当前功率 (0-100%)</label
+          >
+          <input
             id="powerLevel"
-            type="range" 
-            min="0" 
-            max="100" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('powerRegulation.powerLevel', (e.target as HTMLInputElement).value)}
+            type="range"
+            min="0"
+            max="100"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'powerRegulation.powerLevel',
+                (e.target as HTMLInputElement).value
+              )}
             value={getValue('powerRegulation.powerLevel', 50)}
-          >
-          <div>{getValue('powerRegulation.powerLevel', 50)?.toFixed(1) || 0}%</div>
+          />
+          <div>
+            {getValue('powerRegulation.powerLevel', 50)?.toFixed(1) || 0}%
+          </div>
         </div>
-        
+
         <div class="parameter-item">
-          <label for="targetPower" class="parameter-label">目标功率 (0-100%)</label>
-          <input 
-            id="targetPower"
-            type="range" 
-            min="0" 
-            max="100" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('powerRegulation.targetPower', (e.target as HTMLInputElement).value)}
-            value={getValue('powerRegulation.targetPower', 50)}
+          <label for="targetPower" class="parameter-label"
+            >目标功率 (0-100%)</label
           >
-          <div>{getValue('powerRegulation.targetPower', 50)?.toFixed(1) || 0}%</div>
+          <input
+            id="targetPower"
+            type="range"
+            min="0"
+            max="100"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'powerRegulation.targetPower',
+                (e.target as HTMLInputElement).value
+              )}
+            value={getValue('powerRegulation.targetPower', 50)}
+          />
+          <div>
+            {getValue('powerRegulation.targetPower', 50)?.toFixed(1) || 0}%
+          </div>
         </div>
-        
+
         <!-- 核心参数 -->
         <div class="parameter-item">
-          <label for="coreTemperature" class="parameter-label">堆芯温度 (°C)</label>
-          <input 
+          <label for="coreTemperature" class="parameter-label"
+            >堆芯温度 (°C)</label
+          >
+          <input
             id="coreTemperature"
-            type="number" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('core.temperature', (e.target as HTMLInputElement).value)}
+            type="number"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'core.temperature',
+                (e.target as HTMLInputElement).value
+              )}
             value={getValue('core.temperature', 280)}
-          >
+          />
         </div>
-        
+
         <div class="parameter-item">
-          <label for="corePressure" class="parameter-label">堆芯压力 (MPa)</label>
-          <input 
+          <label for="corePressure" class="parameter-label"
+            >堆芯压力 (MPa)</label
+          >
+          <input
             id="corePressure"
-            type="number" 
-            step="0.01" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('core.pressure', (e.target as HTMLInputElement).value)}
+            type="number"
+            step="0.01"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'core.pressure',
+                (e.target as HTMLInputElement).value
+              )}
             value={getValue('core.pressure', 7.0)}
-          >
+          />
         </div>
-        
+
         <div class="parameter-item">
-          <label for="coreWaterLevel" class="parameter-label">堆芯水位 (0-100%)</label>
-          <input 
-            id="coreWaterLevel"
-            type="range" 
-            min="0" 
-            max="100" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('core.waterLevel', (e.target as HTMLInputElement).value)}
-            value={getValue('core.waterLevel', 70)}
+          <label for="coreWaterLevel" class="parameter-label"
+            >堆芯水位 (0-100%)</label
           >
+          <input
+            id="coreWaterLevel"
+            type="range"
+            min="0"
+            max="100"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'core.waterLevel',
+                (e.target as HTMLInputElement).value
+              )}
+            value={getValue('core.waterLevel', 70)}
+          />
           <div>{getValue('core.waterLevel', 70)?.toFixed(1) || 0}%</div>
         </div>
-        
+
         <!-- 再循环泵参数 -->
         <div class="parameter-item">
-          <label for="recircPump1Status" class="parameter-label">再循环泵1状态</label>
-          <select 
+          <label for="recircPump1Status" class="parameter-label"
+            >再循环泵1状态</label
+          >
+          <select
             id="recircPump1Status"
-            class="parameter-value" 
-            on:change={(e) => updateValue('recirculationPumps.pump1.status', (e.target as HTMLSelectElement).value)}
+            class="parameter-value"
+            on:change={(e) =>
+              updateValue(
+                'recirculationPumps.pump1.status',
+                (e.target as HTMLSelectElement).value
+              )}
             value={getValue('recirculationPumps.pump1.status', true)}
           >
-            <option value="true" selected={getValue('recirculationPumps.pump1.status', true) === true}>开启</option>
-            <option value="false" selected={getValue('recirculationPumps.pump1.status', true) === false}>关闭</option>
+            <option
+              value="true"
+              selected={getValue('recirculationPumps.pump1.status', true) ===
+                true}>开启</option
+            >
+            <option
+              value="false"
+              selected={getValue('recirculationPumps.pump1.status', true) ===
+                false}>关闭</option
+            >
           </select>
         </div>
-        
+
         <div class="parameter-item">
-          <label for="recircPump1Speed" class="parameter-label">再循环泵1转速 (0-100%)</label>
-          <input 
-            id="recircPump1Speed"
-            type="range" 
-            min="0" 
-            max="100" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('recirculationPumps.pump1.speed', (e.target as HTMLInputElement).value)}
-            value={getValue('recirculationPumps.pump1.speed', 70)}
+          <label for="recircPump1Speed" class="parameter-label"
+            >再循环泵1转速 (0-100%)</label
           >
-          <div>{getValue('recirculationPumps.pump1.speed', 70)?.toFixed(1) || 0}%</div>
+          <input
+            id="recircPump1Speed"
+            type="range"
+            min="0"
+            max="100"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'recirculationPumps.pump1.speed',
+                (e.target as HTMLInputElement).value
+              )}
+            value={getValue('recirculationPumps.pump1.speed', 70)}
+          />
+          <div>
+            {getValue('recirculationPumps.pump1.speed', 70)?.toFixed(1) || 0}%
+          </div>
         </div>
-        
+
         <div class="parameter-item">
-          <label for="recircPump2Status" class="parameter-label">再循环泵2状态</label>
-          <select 
+          <label for="recircPump2Status" class="parameter-label"
+            >再循环泵2状态</label
+          >
+          <select
             id="recircPump2Status"
-            class="parameter-value" 
-            on:change={(e) => updateValue('recirculationPumps.pump2.status', (e.target as HTMLSelectElement).value)}
+            class="parameter-value"
+            on:change={(e) =>
+              updateValue(
+                'recirculationPumps.pump2.status',
+                (e.target as HTMLSelectElement).value
+              )}
             value={getValue('recirculationPumps.pump2.status', true)}
           >
-            <option value="true" selected={getValue('recirculationPumps.pump2.status', true) === true}>开启</option>
-            <option value="false" selected={getValue('recirculationPumps.pump2.status', true) === false}>关闭</option>
+            <option
+              value="true"
+              selected={getValue('recirculationPumps.pump2.status', true) ===
+                true}>开启</option
+            >
+            <option
+              value="false"
+              selected={getValue('recirculationPumps.pump2.status', true) ===
+                false}>关闭</option
+            >
           </select>
         </div>
-        
+
         <div class="parameter-item">
-          <label for="recircPump2Speed" class="parameter-label">再循环泵2转速 (0-100%)</label>
-          <input 
-            id="recircPump2Speed"
-            type="range" 
-            min="0" 
-            max="100" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('recirculationPumps.pump2.speed', (e.target as HTMLInputElement).value)}
-            value={getValue('recirculationPumps.pump2.speed', 70)}
+          <label for="recircPump2Speed" class="parameter-label"
+            >再循环泵2转速 (0-100%)</label
           >
-          <div>{getValue('recirculationPumps.pump2.speed', 70)?.toFixed(1) || 0}%</div>
+          <input
+            id="recircPump2Speed"
+            type="range"
+            min="0"
+            max="100"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'recirculationPumps.pump2.speed',
+                (e.target as HTMLInputElement).value
+              )}
+            value={getValue('recirculationPumps.pump2.speed', 70)}
+          />
+          <div>
+            {getValue('recirculationPumps.pump2.speed', 70)?.toFixed(1) || 0}%
+          </div>
         </div>
-        
+
         <!-- 应急冷却泵参数 -->
         <div class="parameter-item">
-          <label for="emergCoolPump1Status" class="parameter-label">应急冷却泵1状态</label>
-          <select 
+          <label for="emergCoolPump1Status" class="parameter-label"
+            >应急冷却泵1状态</label
+          >
+          <select
             id="emergCoolPump1Status"
-            class="parameter-value" 
-            on:change={(e) => updateValue('emergencyCoolingPumps.pump1.status', (e.target as HTMLSelectElement).value)}
+            class="parameter-value"
+            on:change={(e) =>
+              updateValue(
+                'emergencyCoolingPumps.pump1.status',
+                (e.target as HTMLSelectElement).value
+              )}
             value={getValue('emergencyCoolingPumps.pump1.status', false)}
           >
-            <option value="true" selected={getValue('emergencyCoolingPumps.pump1.status', false) === true}>开启</option>
-            <option value="false" selected={getValue('emergencyCoolingPumps.pump1.status', false) === false}>关闭</option>
+            <option
+              value="true"
+              selected={getValue(
+                'emergencyCoolingPumps.pump1.status',
+                false
+              ) === true}>开启</option
+            >
+            <option
+              value="false"
+              selected={getValue(
+                'emergencyCoolingPumps.pump1.status',
+                false
+              ) === false}>关闭</option
+            >
           </select>
         </div>
-        
+
         <div class="parameter-item">
-          <label for="emergCoolPump1Flow" class="parameter-label">应急冷却泵1流量 (0-100%)</label>
-          <input 
-            id="emergCoolPump1Flow"
-            type="range" 
-            min="0" 
-            max="100" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('emergencyCoolingPumps.pump1.flowRate', (e.target as HTMLInputElement).value)}
-            value={getValue('emergencyCoolingPumps.pump1.flowRate', 0)}
+          <label for="emergCoolPump1Flow" class="parameter-label"
+            >应急冷却泵1流量 (0-100%)</label
           >
-          <div>{getValue('emergencyCoolingPumps.pump1.flowRate', 0)?.toFixed(1) || 0}%</div>
+          <input
+            id="emergCoolPump1Flow"
+            type="range"
+            min="0"
+            max="100"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'emergencyCoolingPumps.pump1.flowRate',
+                (e.target as HTMLInputElement).value
+              )}
+            value={getValue('emergencyCoolingPumps.pump1.flowRate', 0)}
+          />
+          <div>
+            {getValue('emergencyCoolingPumps.pump1.flowRate', 0)?.toFixed(1) ||
+              0}%
+          </div>
         </div>
-        
+
         <div class="parameter-item">
-          <label for="emergCoolPump2Status" class="parameter-label">应急冷却泵2状态</label>
-          <select 
+          <label for="emergCoolPump2Status" class="parameter-label"
+            >应急冷却泵2状态</label
+          >
+          <select
             id="emergCoolPump2Status"
-            class="parameter-value" 
-            on:change={(e) => updateValue('emergencyCoolingPumps.pump2.status', (e.target as HTMLSelectElement).value)}
+            class="parameter-value"
+            on:change={(e) =>
+              updateValue(
+                'emergencyCoolingPumps.pump2.status',
+                (e.target as HTMLSelectElement).value
+              )}
             value={getValue('emergencyCoolingPumps.pump2.status', false)}
           >
-            <option value="true" selected={getValue('emergencyCoolingPumps.pump2.status', false) === true}>开启</option>
-            <option value="false" selected={getValue('emergencyCoolingPumps.pump2.status', false) === false}>关闭</option>
+            <option
+              value="true"
+              selected={getValue(
+                'emergencyCoolingPumps.pump2.status',
+                false
+              ) === true}>开启</option
+            >
+            <option
+              value="false"
+              selected={getValue(
+                'emergencyCoolingPumps.pump2.status',
+                false
+              ) === false}>关闭</option
+            >
           </select>
         </div>
-        
+
         <div class="parameter-item">
-          <label for="emergCoolPump2Flow" class="parameter-label">应急冷却泵2流量 (0-100%)</label>
-          <input 
-            id="emergCoolPump2Flow"
-            type="range" 
-            min="0" 
-            max="100" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('emergencyCoolingPumps.pump2.flowRate', (e.target as HTMLInputElement).value)}
-            value={getValue('emergencyCoolingPumps.pump2.flowRate', 0)}
+          <label for="emergCoolPump2Flow" class="parameter-label"
+            >应急冷却泵2流量 (0-100%)</label
           >
-          <div>{getValue('emergencyCoolingPumps.pump2.flowRate', 0)?.toFixed(1) || 0}%</div>
+          <input
+            id="emergCoolPump2Flow"
+            type="range"
+            min="0"
+            max="100"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue(
+                'emergencyCoolingPumps.pump2.flowRate',
+                (e.target as HTMLInputElement).value
+              )}
+            value={getValue('emergencyCoolingPumps.pump2.flowRate', 0)}
+          />
+          <div>
+            {getValue('emergencyCoolingPumps.pump2.flowRate', 0)?.toFixed(1) ||
+              0}%
+          </div>
         </div>
-        
+
         <!-- 汽轮机参数 -->
         <div class="parameter-item">
           <label for="turbineStatus" class="parameter-label">汽轮机状态</label>
-          <select 
+          <select
             id="turbineStatus"
-            class="parameter-value" 
-            on:change={(e) => updateValue('turbine.status', (e.target as HTMLSelectElement).value)}
+            class="parameter-value"
+            on:change={(e) =>
+              updateValue(
+                'turbine.status',
+                (e.target as HTMLSelectElement).value
+              )}
             value={getValue('turbine.status', true)}
           >
-            <option value="true" selected={getValue('turbine.status', true) === true}>开启</option>
-            <option value="false" selected={getValue('turbine.status', true) === false}>关闭</option>
+            <option
+              value="true"
+              selected={getValue('turbine.status', true) === true}>开启</option
+            >
+            <option
+              value="false"
+              selected={getValue('turbine.status', true) === false}>关闭</option
+            >
           </select>
         </div>
-        
+
         <div class="parameter-item">
-          <label for="turbineLoad" class="parameter-label">汽轮机负载 (0-100%)</label>
-          <input 
-            id="turbineLoad"
-            type="range" 
-            min="0" 
-            max="100" 
-            class="parameter-value" 
-            on:input={(e) => updateValue('turbine.load', (e.target as HTMLInputElement).value)}
-            value={getValue('turbine.load', 50)}
+          <label for="turbineLoad" class="parameter-label"
+            >汽轮机负载 (0-100%)</label
           >
+          <input
+            id="turbineLoad"
+            type="range"
+            min="0"
+            max="100"
+            class="parameter-value"
+            on:input={(e) =>
+              updateValue('turbine.load', (e.target as HTMLInputElement).value)}
+            value={getValue('turbine.load', 50)}
+          />
           <div>{getValue('turbine.load', 50)?.toFixed(1) || 0}%</div>
         </div>
       </div>
     </div>
-    
+
     <div class="save-editor-card">
       <h2>操作</h2>
-      
+
       <div class="button-group">
-        <button class="btn btn-primary" on:click={encodeSaveCode}>生成新存档码</button>
-        <button class="btn btn-secondary" on:click={copyToClipboard}>复制存档码</button>
+        <button class="btn btn-primary" on:click={encodeSaveCode}
+          >生成新存档码</button
+        >
+        <button class="btn btn-secondary" on:click={copyToClipboard}
+          >复制存档码</button
+        >
       </div>
     </div>
   {/if}
