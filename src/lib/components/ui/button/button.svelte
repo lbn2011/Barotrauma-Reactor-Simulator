@@ -77,7 +77,7 @@
     tabindex={disabled ? -1 : undefined}
     {...restProps}
   >
-    {children}
+    {@render children?.()}
   </a>
 {:else}
   <button
@@ -88,6 +88,6 @@
     {disabled}
     {...restProps}
   >
-    {children}
+    {@render children?.()}
   </button>
 {/if}
