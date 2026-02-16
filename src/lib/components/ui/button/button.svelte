@@ -40,11 +40,16 @@
   export type ButtonVariant = VariantProps<typeof buttonVariants>['variant'];
   export type ButtonSize = VariantProps<typeof buttonVariants>['size'];
 
-  export type ButtonProps = WithElementRef<HTMLButtonAttributes> &
-    WithElementRef<HTMLAnchorAttributes> & {
+  export type ButtonProps = {
       variant?: ButtonVariant;
       size?: ButtonSize;
-    };
+      class?: string;
+      href?: string;
+      type?: 'button' | 'submit' | 'reset';
+      disabled?: boolean;
+      ref?: HTMLElement | null;
+      children?: any;
+    } & Record<string, any>;
 </script>
 
 <script lang="ts">
@@ -72,7 +77,7 @@
     tabindex={disabled ? -1 : undefined}
     {...restProps}
   >
-    {@render children?.()}
+    {children}
   </a>
 {:else}
   <button
@@ -83,6 +88,6 @@
     {disabled}
     {...restProps}
   >
-    {@render children?.()}
+    {children}
   </button>
 {/if}

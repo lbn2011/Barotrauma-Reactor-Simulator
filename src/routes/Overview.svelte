@@ -419,10 +419,11 @@
         </div>
         <div class="space-y-2">
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-1"
+            <label for="save-code" class="block text-sm font-medium text-gray-400 mb-1"
               >存档码</label
             >
             <Input
+              id="save-code"
               type="text"
               bind:value={saveCode}
               readonly
@@ -430,10 +431,11 @@
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-1"
+            <label for="load-code" class="block text-sm font-medium text-gray-400 mb-1"
               >加载存档</label
             >
             <Input
+              id="load-code"
               type="text"
               bind:value={loadCode}
               placeholder="输入存档码"
