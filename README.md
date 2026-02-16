@@ -547,17 +547,7 @@ binding = "ASSETS"
 ### v1.2.0 (计划)
 - 添加多语言支持
 - 实现更复杂的故障场景
-- 增加教学模式
 - 改进性能和用户体验
-
-## 相关资源
-
-- [Barotrauma 游戏官方网站](https://barotrauma.io/)
-- [RBMK-1000 反应堆技术文档](https://en.wikipedia.org/wiki/RBMK)
-- [Chernobyl 事故分析](https://www.world-nuclear.org/information-library/safety-and-security/safety-of-plants/chernobyl-accident.aspx)
-- [SvelteKit 文档](https://kit.svelte.dev/docs)
-- [shadcn-svelte 文档](https://shadcn-svelte.com/docs)
-- [Tailwind CSS 文档](https://tailwindcss.com/docs)
 
 ---
 
