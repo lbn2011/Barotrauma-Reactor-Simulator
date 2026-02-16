@@ -27,6 +27,7 @@ export default [
         browser: true,
         node: true,
         module: true,
+        console: true,
       },
     },
     rules: {

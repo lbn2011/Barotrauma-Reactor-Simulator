@@ -11,7 +11,12 @@ interface ThreeImpulseLevelControlOutput {
   adjustedFeedwaterFlow: number; // 调整后的给水流量
   levelError: number; // 水位误差
   flowError: number; // 流量误差
-  waterLevelStatus: 'normal' | 'low' | 'high' | 'critical_low' | 'critical_high'; // 水位状态
+  waterLevelStatus:
+    | 'normal'
+    | 'low'
+    | 'high'
+    | 'critical_low'
+    | 'critical_high'; // 水位状态
   alarm: boolean; // 警报状态
 }
 
@@ -31,10 +36,16 @@ export function calculateThreeImpulseLevelControl(
 
   // 三冲量水位控制公式（简化版）
   // 这里使用简化的控制算法，实际应用中可能需要更复杂的PID控制
-  const adjustedFeedwaterFlow = input.feedwaterFlow + levelError * 0.5 + flowError * 0.3;
+  const adjustedFeedwaterFlow =
+    input.feedwaterFlow + levelError * 0.5 + flowError * 0.3;
 
   // 确定水位状态
-  let waterLevelStatus: 'normal' | 'low' | 'high' | 'critical_low' | 'critical_high' = 'normal';
+  let waterLevelStatus:
+    | 'normal'
+    | 'low'
+    | 'high'
+    | 'critical_low'
+    | 'critical_high' = 'normal';
   let alarm = false;
 
   if (input.waterLevel < input.waterLevelSetpoint * 0.7) {
@@ -98,7 +109,10 @@ export function calculateWaterLevelStatus(
       status: 'alarm',
       message: 'LOW WATER LEVEL ALARM',
     };
-  } else if (waterLevel > waterLevelSetpoint * 1.1 || waterLevel < waterLevelSetpoint * 0.9) {
+  } else if (
+    waterLevel > waterLevelSetpoint * 1.1 ||
+    waterLevel < waterLevelSetpoint * 0.9
+  ) {
     return {
       status: 'warning',
       message: 'WATER LEVEL WARNING',

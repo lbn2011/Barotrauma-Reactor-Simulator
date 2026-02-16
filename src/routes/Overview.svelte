@@ -419,8 +419,9 @@
         </div>
         <div class="space-y-2">
           <div>
-            <label for="save-code" class="block text-sm font-medium text-gray-400 mb-1"
-              >存档码</label
+            <label
+              for="save-code"
+              class="block text-sm font-medium text-gray-400 mb-1">存档码</label
             >
             <Input
               id="save-code"
@@ -431,7 +432,9 @@
             />
           </div>
           <div>
-            <label for="load-code" class="block text-sm font-medium text-gray-400 mb-1"
+            <label
+              for="load-code"
+              class="block text-sm font-medium text-gray-400 mb-1"
               >加载存档</label
             >
             <Input

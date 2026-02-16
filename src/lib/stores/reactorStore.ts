@@ -6,6 +6,11 @@ import {
   calculatePumpPerformance,
   calculateFrictionCoefficient,
 } from '../../models/thermal/flowResistance';
+import {
+  triggerSpecificFault,
+  repairFault,
+  type Fault,
+} from '../../models/systems/faultSimulation';
 import { workerManager } from '../../workers/workerManager';
 
 // 定义反应堆状态类型
@@ -18,6 +23,16 @@ export interface ReactorState {
   controlRods: {
     position: number; // 控制棒位置（0-100%）
     insertionSpeed: number; // 插入速度
+    rods: Array<
+      Array<{
+        // 25组控制棒（5x5网格）
+        position: number; // 单根控制棒位置
+        status: 'normal' | 'fault' | 'maintenance'; // 控制棒状态
+        type: 'control' | 'shutdown' | 'automatic'; // 控制棒类型
+      }>
+    >;
+    emergencyInsertion: boolean; // 紧急插入状态
+    autoMode: boolean; // 自动控制模式
   };
 
   // 2. 反应堆功率调节面板
@@ -25,6 +40,13 @@ export interface ReactorState {
     powerLevel: number; // 功率水平（0-100%）
     targetPower: number; // 目标功率
     reactivity: number; // 反应性
+    powerRate: number; // 功率变化率
+    neutronFlux: number; // 中子通量
+    neutronFluxLog: number; // 中子通量对数
+    controlError: number; // 控制误差
+    automaticControl: boolean; // 自动控制模式
+    axialOffsetControl: boolean; // 轴向偏移控制
+    powerSetpoint: number; // 功率设定点
   };
 
   // 3/4. 反应堆再循环泵
@@ -68,6 +90,16 @@ export interface ReactorState {
     status: boolean;
     load: number; // 负载（0-100%）
     speed: number; // 转速
+    speedSetpoint: number; // 转速设定点
+    loadSetpoint: number; // 负荷设定点
+    steamPressure: number; // 蒸汽压力
+    steamTemperature: number; // 蒸汽温度
+    exhaustPressure: number; // 排汽压力
+    exhaustTemperature: number; // 排汽温度
+    valvePosition: number; // 阀门位置（0-100%）
+    automaticControl: boolean; // 自动控制模式
+    tripStatus: boolean; // 跳闸状态
+    tripReason: string; // 跳闸原因
   };
 
   // 10. 除氧器蒸汽控制
@@ -127,10 +159,66 @@ export interface ReactorState {
     pump1: {
       status: boolean;
       flowRate: number;
+      pressure: number;
+      temperature: number;
+      vibration: number;
+      statusText: string;
     };
     pump2: {
       status: boolean;
       flowRate: number;
+      pressure: number;
+      temperature: number;
+      vibration: number;
+      statusText: string;
+    };
+  };
+
+  // 给水系统扩展
+  feedwaterSystem: {
+    // 隔离阀
+    isolationValves: {
+      pump1Inlet: {
+        status: boolean;
+        position: number;
+      };
+      pump1Outlet: {
+        status: boolean;
+        position: number;
+      };
+      pump2Inlet: {
+        status: boolean;
+        position: number;
+      };
+      pump2Outlet: {
+        status: boolean;
+        position: number;
+      };
+    };
+    // 给水加热器
+    heaters: {
+      heater1: {
+        status: boolean;
+        inletTemperature: number;
+        outletTemperature: number;
+        steamPressure: number;
+        flowRate: number;
+      };
+      heater2: {
+        status: boolean;
+        inletTemperature: number;
+        outletTemperature: number;
+        steamPressure: number;
+        flowRate: number;
+      };
+    };
+    // 系统参数
+    system: {
+      totalFlowRate: number;
+      headerPressure: number;
+      headerTemperature: number;
+      waterLevel: number;
+      status: string;
     };
   };
 
@@ -237,11 +325,11 @@ export interface ReactorState {
     levelError: number; // 水位误差
     flowError: number; // 流量误差
     waterLevelStatus:
-    | 'normal'
-    | 'low'
-    | 'high'
-    | 'critical_low'
-    | 'critical_high'; // 水位状态
+      | 'normal'
+      | 'low'
+      | 'high'
+      | 'critical_low'
+      | 'critical_high'; // 水位状态
     alarm: boolean; // 警报
   };
 
@@ -269,12 +357,28 @@ const initialState: ReactorState = {
   controlRods: {
     position: 50,
     insertionSpeed: 0,
+    rods: Array.from({ length: 5 }, () =>
+      Array.from({ length: 5 }, () => ({
+        position: 50,
+        status: 'normal' as const,
+        type: 'control' as const,
+      }))
+    ),
+    emergencyInsertion: false,
+    autoMode: false,
   },
 
   powerRegulation: {
     powerLevel: 50,
     targetPower: 50,
     reactivity: 0,
+    powerRate: 0,
+    neutronFlux: 1e13,
+    neutronFluxLog: Math.log10(1e13),
+    controlError: 0,
+    automaticControl: false,
+    axialOffsetControl: false,
+    powerSetpoint: 50,
   },
 
   recirculationPumps: {
@@ -313,6 +417,16 @@ const initialState: ReactorState = {
     status: true,
     load: 50,
     speed: 3000,
+    speedSetpoint: 3000,
+    loadSetpoint: 50,
+    steamPressure: 7.0,
+    steamTemperature: 280,
+    exhaustPressure: 0.05,
+    exhaustTemperature: 40,
+    valvePosition: 50,
+    automaticControl: false,
+    tripStatus: false,
+    tripReason: '',
   },
 
   deaerator: {
@@ -364,10 +478,66 @@ const initialState: ReactorState = {
     pump1: {
       status: true,
       flowRate: 70,
+      pressure: 12.0,
+      temperature: 180,
+      vibration: 0.05,
+      statusText: '正常运行',
     },
     pump2: {
       status: true,
       flowRate: 70,
+      pressure: 12.0,
+      temperature: 180,
+      vibration: 0.05,
+      statusText: '正常运行',
+    },
+  },
+
+  // 给水系统扩展
+  feedwaterSystem: {
+    // 隔离阀
+    isolationValves: {
+      pump1Inlet: {
+        status: true,
+        position: 100,
+      },
+      pump1Outlet: {
+        status: true,
+        position: 100,
+      },
+      pump2Inlet: {
+        status: true,
+        position: 100,
+      },
+      pump2Outlet: {
+        status: true,
+        position: 100,
+      },
+    },
+    // 给水加热器
+    heaters: {
+      heater1: {
+        status: true,
+        inletTemperature: 150,
+        outletTemperature: 220,
+        steamPressure: 3.5,
+        flowRate: 65,
+      },
+      heater2: {
+        status: true,
+        inletTemperature: 220,
+        outletTemperature: 260,
+        steamPressure: 5.0,
+        flowRate: 65,
+      },
+    },
+    // 系统参数
+    system: {
+      totalFlowRate: 130,
+      headerPressure: 11.5,
+      headerTemperature: 260,
+      waterLevel: 65,
+      status: '正常',
     },
   },
 
@@ -523,9 +693,11 @@ export async function updateReactorState() {
       M_deaerator: currentState.physics.masses.M_deaerator,
 
       // 流量参数
-      m_feedwater: (currentState.reactorFeedPumps.pump1.status
-        ? currentState.reactorFeedPumps.pump1.flowRate * 100
-        : 0) + (currentState.reactorFeedPumps.pump2.status
+      m_feedwater:
+        (currentState.reactorFeedPumps.pump1.status
+          ? currentState.reactorFeedPumps.pump1.flowRate * 100
+          : 0) +
+        (currentState.reactorFeedPumps.pump2.status
           ? currentState.reactorFeedPumps.pump2.flowRate * 100
           : 0),
       m_steam: currentState.powerRegulation.powerLevel * 100,
@@ -534,17 +706,21 @@ export async function updateReactorState() {
         : 0,
       m_cooling: 1000,
       m_steam_heating: 500,
-      m_feedwater_out: (currentState.reactorFeedPumps.pump1.status
-        ? currentState.reactorFeedPumps.pump1.flowRate * 100
-        : 0) + (currentState.reactorFeedPumps.pump2.status
+      m_feedwater_out:
+        (currentState.reactorFeedPumps.pump1.status
+          ? currentState.reactorFeedPumps.pump1.flowRate * 100
+          : 0) +
+        (currentState.reactorFeedPumps.pump2.status
           ? currentState.reactorFeedPumps.pump2.flowRate * 100
           : 0),
 
       // 热工参数
       η_thermal: 0.33,
-      m_coolant: (currentState.recirculationPumps.pump1.status
-        ? currentState.recirculationPumps.pump1.speed * 1000
-        : 0) + (currentState.recirculationPumps.pump2.status
+      m_coolant:
+        (currentState.recirculationPumps.pump1.status
+          ? currentState.recirculationPumps.pump1.speed * 1000
+          : 0) +
+        (currentState.recirculationPumps.pump2.status
           ? currentState.recirculationPumps.pump2.speed * 1000
           : 0),
       c_p: 4.186, // 水的比热容
@@ -596,9 +772,11 @@ export async function updateReactorState() {
       waterLevelSetpoint:
         currentState.threeImpulseLevelControl.waterLevelSetpoint,
       steamFlow: currentState.powerRegulation.powerLevel * 100,
-      feedwaterFlow: (currentState.reactorFeedPumps.pump1.status
-        ? currentState.reactorFeedPumps.pump1.flowRate * 100
-        : 0) + (currentState.reactorFeedPumps.pump2.status
+      feedwaterFlow:
+        (currentState.reactorFeedPumps.pump1.status
+          ? currentState.reactorFeedPumps.pump1.flowRate * 100
+          : 0) +
+        (currentState.reactorFeedPumps.pump2.status
           ? currentState.reactorFeedPumps.pump2.flowRate * 100
           : 0),
 
@@ -628,9 +806,11 @@ export async function updateReactorState() {
       await workerManager.calculateReactorCore(reactorCoreInput);
 
     // 计算流动阻力和泵性能
-    const flowRate = (currentState.recirculationPumps.pump1.status
-      ? currentState.recirculationPumps.pump1.speed * 0.01
-      : 0) + (currentState.recirculationPumps.pump2.status
+    const flowRate =
+      (currentState.recirculationPumps.pump1.status
+        ? currentState.recirculationPumps.pump1.speed * 0.01
+        : 0) +
+      (currentState.recirculationPumps.pump2.status
         ? currentState.recirculationPumps.pump2.speed * 0.01
         : 0);
     const fluidDensity = 998; // 水的密度
@@ -758,6 +938,23 @@ export async function updateReactorState() {
       newState.powerRegulation.powerLevel = reactorCoreResult.newPower / 30;
       newState.powerRegulation.reactivity = reactorCoreResult.totalReactivity;
 
+      // 计算功率变化率
+      const previousPower = state.powerRegulation.powerLevel;
+      newState.powerRegulation.powerRate =
+        (newState.powerRegulation.powerLevel - previousPower) / 1;
+
+      // 计算中子通量
+      newState.powerRegulation.neutronFlux =
+        1e13 * (newState.powerRegulation.powerLevel / 50);
+      newState.powerRegulation.neutronFluxLog = Math.log10(
+        newState.powerRegulation.neutronFlux + 1e-10
+      );
+
+      // 计算控制误差
+      newState.powerRegulation.controlError =
+        newState.powerRegulation.targetPower -
+        newState.powerRegulation.powerLevel;
+
       // 限制功率范围
       newState.powerRegulation.powerLevel = Math.max(
         0,
@@ -768,6 +965,39 @@ export async function updateReactorState() {
       newState.core.temperature =
         250 + newState.powerRegulation.powerLevel * 0.8;
       newState.core.pressure = 6.5 + newState.powerRegulation.powerLevel * 0.01;
+
+      // 自动控制逻辑
+      if (newState.powerRegulation.automaticControl) {
+        // 基于控制误差调整控制棒位置
+        const error = newState.powerRegulation.controlError;
+        let rodAdjustment = 0;
+
+        if (Math.abs(error) > 2) {
+          rodAdjustment = error > 0 ? -0.5 : 0.5; // 误差大时快速调整
+        } else if (Math.abs(error) > 0.5) {
+          rodAdjustment = error > 0 ? -0.2 : 0.2; // 误差小时微调
+        }
+
+        // 更新控制棒位置
+        newState.controlRods.position = Math.max(
+          0,
+          Math.min(100, newState.controlRods.position + rodAdjustment)
+        );
+
+        // 更新所有控制棒的位置
+        for (let i = 0; i < 5; i++) {
+          for (let j = 0; j < 5; j++) {
+            newState.controlRods.rods[i][j].position =
+              newState.controlRods.position;
+          }
+        }
+      }
+
+      // 轴向偏移控制逻辑
+      if (newState.powerRegulation.axialOffsetControl) {
+        // 简化的轴向偏移控制
+        // 这里可以根据实际的轴向功率分布进行更复杂的控制
+      }
 
       // 更新数据趋势
       if (newState.simulationTime % 5 === 0) {
@@ -843,6 +1073,178 @@ export async function updateReactorState() {
             ];
           }
         });
+      }
+
+      // 更新给水系统状态
+      // 计算总流量
+      newState.feedwaterSystem.system.totalFlowRate =
+        (newState.reactorFeedPumps.pump1.status
+          ? newState.reactorFeedPumps.pump1.flowRate
+          : 0) +
+        (newState.reactorFeedPumps.pump2.status
+          ? newState.reactorFeedPumps.pump2.flowRate
+          : 0);
+
+      // 计算给水温度（基于加热器状态）
+      let feedwaterTemp = 150; // 初始温度
+      if (newState.feedwaterSystem.heaters.heater1.status) {
+        feedwaterTemp =
+          newState.feedwaterSystem.heaters.heater1.outletTemperature;
+      }
+      if (newState.feedwaterSystem.heaters.heater2.status) {
+        feedwaterTemp =
+          newState.feedwaterSystem.heaters.heater2.outletTemperature;
+      }
+      newState.feedwaterSystem.system.headerTemperature = feedwaterTemp;
+
+      // 计算给水压力
+      newState.feedwaterSystem.system.headerPressure =
+        12.0 - (newState.feedwaterSystem.system.totalFlowRate / 100) * 0.5;
+
+      // 更新泵的状态
+      newState.reactorFeedPumps.pump1.statusText = newState.reactorFeedPumps
+        .pump1.status
+        ? '正常运行'
+        : '已停止';
+      newState.reactorFeedPumps.pump2.statusText = newState.reactorFeedPumps
+        .pump2.status
+        ? '正常运行'
+        : '已停止';
+
+      // 更新汽轮机状态
+      newState.turbine.steamPressure = newState.core.pressure;
+      newState.turbine.steamTemperature = newState.core.temperature;
+      newState.turbine.exhaustTemperature = 30 + newState.turbine.load * 0.2;
+      newState.turbine.valvePosition = newState.turbine.load;
+
+      // 汽轮机自动控制逻辑
+      if (newState.turbine.automaticControl && newState.turbine.status) {
+        // 转速控制
+        const speedError =
+          newState.turbine.speedSetpoint - newState.turbine.speed;
+        if (Math.abs(speedError) > 10) {
+          // 根据转速误差调整阀门位置
+          const valveAdjustment = speedError > 0 ? 1 : -1;
+          newState.turbine.valvePosition = Math.max(
+            0,
+            Math.min(100, newState.turbine.valvePosition + valveAdjustment)
+          );
+          newState.turbine.load = newState.turbine.valvePosition;
+        }
+
+        // 负荷控制
+        const loadError = newState.turbine.loadSetpoint - newState.turbine.load;
+        if (Math.abs(loadError) > 2) {
+          // 根据负荷误差调整阀门位置
+          const valveAdjustment = loadError > 0 ? 0.5 : -0.5;
+          newState.turbine.valvePosition = Math.max(
+            0,
+            Math.min(100, newState.turbine.valvePosition + valveAdjustment)
+          );
+          newState.turbine.load = newState.turbine.valvePosition;
+        }
+      }
+
+      // 汽轮机跳闸逻辑
+      if (newState.turbine.status) {
+        // 超速保护
+        if (newState.turbine.speed > 3300) {
+          newState.turbine.tripStatus = true;
+          newState.turbine.status = false;
+          newState.turbine.tripReason = 'OVERSPEED';
+          newState.logs = [
+            ...newState.logs,
+            {
+              timestamp: Date.now(),
+              message:
+                'TURBINE TRIP: OVERSPEED - Speed: ' +
+                newState.turbine.speed +
+                ' RPM',
+            },
+          ];
+        }
+
+        // 蒸汽压力保护
+        if (newState.turbine.steamPressure > 8.5) {
+          newState.turbine.tripStatus = true;
+          newState.turbine.status = false;
+          newState.turbine.tripReason = 'HIGH STEAM PRESSURE';
+          newState.logs = [
+            ...newState.logs,
+            {
+              timestamp: Date.now(),
+              message:
+                'TURBINE TRIP: HIGH STEAM PRESSURE - Pressure: ' +
+                newState.turbine.steamPressure +
+                ' MPa',
+            },
+          ];
+        }
+
+        // 蒸汽温度保护
+        if (newState.turbine.steamTemperature > 320) {
+          newState.turbine.tripStatus = true;
+          newState.turbine.status = false;
+          newState.turbine.tripReason = 'HIGH STEAM TEMPERATURE';
+          newState.logs = [
+            ...newState.logs,
+            {
+              timestamp: Date.now(),
+              message:
+                'TURBINE TRIP: HIGH STEAM TEMPERATURE - Temperature: ' +
+                newState.turbine.steamTemperature +
+                ' °C',
+            },
+          ];
+        }
+      }
+
+      // 汽轮机警报
+      if (newState.turbine.status) {
+        if (newState.turbine.speed > 3100) {
+          newState.alarms.active = true;
+          const alarmMessage = 'TURBINE SPEED HIGH';
+          if (!newState.alarms.messages.includes(alarmMessage)) {
+            newState.alarms.messages = [
+              ...newState.alarms.messages,
+              alarmMessage,
+            ];
+          }
+        }
+
+        if (newState.turbine.steamPressure > 8.0) {
+          newState.alarms.active = true;
+          const alarmMessage = 'STEAM PRESSURE HIGH';
+          if (!newState.alarms.messages.includes(alarmMessage)) {
+            newState.alarms.messages = [
+              ...newState.alarms.messages,
+              alarmMessage,
+            ];
+          }
+        }
+      }
+
+      // 给水系统警报
+      if (newState.feedwaterSystem.system.totalFlowRate < 30) {
+        newState.alarms.active = true;
+        const alarmMessage = 'FEEDWATER FLOW LOW';
+        if (!newState.alarms.messages.includes(alarmMessage)) {
+          newState.alarms.messages = [
+            ...newState.alarms.messages,
+            alarmMessage,
+          ];
+        }
+      }
+
+      if (newState.feedwaterSystem.system.headerPressure < 8.0) {
+        newState.alarms.active = true;
+        const alarmMessage = 'FEEDWATER PRESSURE LOW';
+        if (!newState.alarms.messages.includes(alarmMessage)) {
+          newState.alarms.messages = [
+            ...newState.alarms.messages,
+            alarmMessage,
+          ];
+        }
       }
 
       // 添加操作日志
@@ -922,6 +1324,59 @@ export function setControlRodPosition(position: number) {
   }));
 }
 
+// 设置单根控制棒位置
+export function setSingleControlRodPosition(
+  row: number,
+  col: number,
+  position: number
+) {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    if (row >= 0 && row < 5 && col >= 0 && col < 5) {
+      newState.controlRods.rods[row][col].position = Math.max(
+        0,
+        Math.min(100, position)
+      );
+    }
+    return newState;
+  });
+}
+
+// 控制棒紧急插入（AZ-5）
+export function emergencyRodInsertion() {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.controlRods.emergencyInsertion = true;
+    newState.controlRods.position = 100; // 完全插入
+    // 更新所有控制棒的位置
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 5; j++) {
+        newState.controlRods.rods[i][j].position = 100;
+      }
+    }
+    // 添加紧急插入日志
+    newState.logs = [
+      ...newState.logs,
+      {
+        timestamp: Date.now(),
+        message: 'EMERGENCY ROD INSERTION (AZ-5) TRIGGERED',
+      },
+    ];
+    return newState;
+  });
+}
+
+// 切换控制棒自动模式
+export function toggleControlRodAutoMode() {
+  reactorStore.update((state) => ({
+    ...state,
+    controlRods: {
+      ...state.controlRods,
+      autoMode: !state.controlRods.autoMode,
+    },
+  }));
+}
+
 // 功率调节函数
 export function setTargetPower(power: number) {
   reactorStore.update((state) => ({
@@ -929,8 +1384,138 @@ export function setTargetPower(power: number) {
     powerRegulation: {
       ...state.powerRegulation,
       targetPower: Math.max(0, Math.min(100, power)),
+      powerSetpoint: Math.max(0, Math.min(100, power)),
     },
   }));
+}
+
+// 设置功率设定点
+export function setPowerSetpoint(setpoint: number) {
+  reactorStore.update((state) => ({
+    ...state,
+    powerRegulation: {
+      ...state.powerRegulation,
+      powerSetpoint: Math.max(0, Math.min(100, setpoint)),
+      targetPower: Math.max(0, Math.min(100, setpoint)),
+    },
+  }));
+}
+
+// 切换自动控制模式
+export function toggleAutomaticControl() {
+  reactorStore.update((state) => ({
+    ...state,
+    powerRegulation: {
+      ...state.powerRegulation,
+      automaticControl: !state.powerRegulation.automaticControl,
+    },
+  }));
+}
+
+// 切换轴向偏移控制
+export function toggleAxialOffsetControl() {
+  reactorStore.update((state) => ({
+    ...state,
+    powerRegulation: {
+      ...state.powerRegulation,
+      axialOffsetControl: !state.powerRegulation.axialOffsetControl,
+    },
+  }));
+}
+
+// 触发停堆
+export function tripReactor() {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    // 紧急插入控制棒
+    newState.controlRods.emergencyInsertion = true;
+    newState.controlRods.position = 100;
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 5; j++) {
+        newState.controlRods.rods[i][j].position = 100;
+      }
+    }
+    // 停止汽轮机
+    newState.turbine.status = false;
+    // 停止给水泵
+    newState.reactorFeedPumps.pump1.status = false;
+    newState.reactorFeedPumps.pump2.status = false;
+    // 关闭隔离阀
+    Object.keys(newState.feedwaterSystem.isolationValves).forEach((valve) => {
+      const v =
+        newState.feedwaterSystem.isolationValves[
+          valve as keyof typeof newState.feedwaterSystem.isolationValves
+        ];
+      v.status = false;
+      v.position = 0;
+    });
+    // 添加停堆日志
+    newState.logs = [
+      ...newState.logs,
+      {
+        timestamp: Date.now(),
+        message: 'REACTOR TRIP INITIATED - FEEDWATER SYSTEM SHUT DOWN',
+      },
+    ];
+    return newState;
+  });
+}
+
+// 给水系统控制函数
+
+// 切换隔离阀状态
+export function toggleIsolationValve(
+  valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet'
+) {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.feedwaterSystem.isolationValves[valve].status =
+      !newState.feedwaterSystem.isolationValves[valve].status;
+    newState.feedwaterSystem.isolationValves[valve].position = newState
+      .feedwaterSystem.isolationValves[valve].status
+      ? 100
+      : 0;
+    return newState;
+  });
+}
+
+// 设置隔离阀位置
+export function setIsolationValvePosition(
+  valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet',
+  position: number
+) {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.feedwaterSystem.isolationValves[valve].position = Math.max(
+      0,
+      Math.min(100, position)
+    );
+    newState.feedwaterSystem.isolationValves[valve].status = position > 0;
+    return newState;
+  });
+}
+
+// 切换给水加热器状态
+export function toggleFeedwaterHeater(heater: 'heater1' | 'heater2') {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.feedwaterSystem.heaters[heater].status =
+      !newState.feedwaterSystem.heaters[heater].status;
+    return newState;
+  });
+}
+
+// 设置给水加热器参数
+export function setFeedwaterHeaterParameter(
+  heater: 'heater1' | 'heater2',
+  parameter: 'steamPressure' | 'flowRate',
+  value: number
+) {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.feedwaterSystem.heaters[heater][parameter] = value;
+    return newState;
+  });
 }
 
 // 泵控制函数
@@ -1034,13 +1619,35 @@ export function setCoreCoolingPumpFlowRate(flowRate: number) {
 
 // 汽轮机控制函数
 export function toggleTurbine() {
-  reactorStore.update((state) => ({
-    ...state,
-    turbine: {
-      ...state.turbine,
-      status: !state.turbine.status,
-    },
-  }));
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.turbine.status = !newState.turbine.status;
+    if (newState.turbine.status) {
+      // 启动时重置跳闸状态
+      newState.turbine.tripStatus = false;
+      newState.turbine.tripReason = '';
+      // 逐渐恢复转速
+      newState.turbine.speed = 1000;
+      // 添加启动日志
+      newState.logs = [
+        ...newState.logs,
+        {
+          timestamp: Date.now(),
+          message: 'TURBINE STARTED - INITIAL SPEED: 1000 RPM',
+        },
+      ];
+    } else {
+      // 停止时记录
+      newState.logs = [
+        ...newState.logs,
+        {
+          timestamp: Date.now(),
+          message: 'TURBINE STOPPED',
+        },
+      ];
+    }
+    return newState;
+  });
 }
 
 export function setTurbineLoad(load: number) {
@@ -1049,8 +1656,71 @@ export function setTurbineLoad(load: number) {
     turbine: {
       ...state.turbine,
       load: Math.max(0, Math.min(100, load)),
+      loadSetpoint: Math.max(0, Math.min(100, load)),
     },
   }));
+}
+
+// 设置转速设定点
+export function setTurbineSpeedSetpoint(speed: number) {
+  reactorStore.update((state) => ({
+    ...state,
+    turbine: {
+      ...state.turbine,
+      speedSetpoint: Math.max(2500, Math.min(3500, speed)),
+    },
+  }));
+}
+
+// 设置负荷设定点
+export function setTurbineLoadSetpoint(load: number) {
+  reactorStore.update((state) => ({
+    ...state,
+    turbine: {
+      ...state.turbine,
+      loadSetpoint: Math.max(0, Math.min(100, load)),
+    },
+  }));
+}
+
+// 切换自动控制模式
+export function toggleTurbineAutomaticControl() {
+  reactorStore.update((state) => ({
+    ...state,
+    turbine: {
+      ...state.turbine,
+      automaticControl: !state.turbine.automaticControl,
+    },
+  }));
+}
+
+// 手动调整汽轮机转速
+export function adjustTurbineSpeed(adjustment: number) {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.turbine.speed = Math.max(
+      0,
+      Math.min(4000, newState.turbine.speed + adjustment)
+    );
+    return newState;
+  });
+}
+
+// 汽轮机复位
+export function resetTurbineTrip() {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.turbine.tripStatus = false;
+    newState.turbine.tripReason = '';
+    newState.logs = [
+      ...newState.logs,
+      {
+        timestamp: Date.now(),
+        message: 'TURBINE TRIP RESET',
+      },
+    ];
+    return newState;
+  });
 }
 
 // 除氧器控制函数
@@ -1268,6 +1938,142 @@ export function setHepaFilterEfficiency(efficiency: number) {
   }));
 }
 
+// 故障模拟系统函数
+
+// 触发特定故障
+export function triggerFault(
+  faultType:
+    | 'pump'
+    | 'valve'
+    | 'sensor'
+    | 'controller'
+    | 'pipe'
+    | 'electrical'
+    | 'cooling'
+    | 'steam',
+  componentId: string,
+  severity: 'minor' | 'major' | 'critical'
+) {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    const fault = triggerSpecificFault(faultType, componentId, severity);
+    newState.faultSimulation.activeFaults = [
+      ...newState.faultSimulation.activeFaults,
+      fault,
+    ];
+
+    // 更新风险级别
+    const criticalFaults = newState.faultSimulation.activeFaults.filter(
+      (f: Fault) => f.severity === 'critical'
+    ).length;
+    const majorFaults = newState.faultSimulation.activeFaults.filter(
+      (f: Fault) => f.severity === 'major'
+    ).length;
+
+    if (criticalFaults > 0) {
+      newState.faultSimulation.riskLevel = 'critical';
+    } else if (majorFaults > 1) {
+      newState.faultSimulation.riskLevel = 'high';
+    } else if (
+      majorFaults > 0 ||
+      newState.faultSimulation.activeFaults.length > 2
+    ) {
+      newState.faultSimulation.riskLevel = 'medium';
+    } else {
+      newState.faultSimulation.riskLevel = 'low';
+    }
+
+    // 添加日志
+    newState.logs = [
+      ...newState.logs,
+      {
+        timestamp: Date.now(),
+        message: `FAULT TRIGGERED: ${fault.description} - Severity: ${fault.severity}`,
+      },
+    ];
+
+    return newState;
+  });
+}
+
+// 修复故障
+export function fixFault(faultId: string) {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.faultSimulation.activeFaults = repairFault(
+      faultId,
+      newState.faultSimulation.activeFaults
+    );
+
+    // 更新风险级别
+    const criticalFaults = newState.faultSimulation.activeFaults.filter(
+      (f: Fault) => f.severity === 'critical' && f.status === 'active'
+    ).length;
+    const majorFaults = newState.faultSimulation.activeFaults.filter(
+      (f: Fault) => f.severity === 'major' && f.status === 'active'
+    ).length;
+    const activeFaults = newState.faultSimulation.activeFaults.filter(
+      (f: Fault) => f.status === 'active'
+    ).length;
+
+    if (criticalFaults > 0) {
+      newState.faultSimulation.riskLevel = 'critical';
+    } else if (majorFaults > 1) {
+      newState.faultSimulation.riskLevel = 'high';
+    } else if (majorFaults > 0 || activeFaults > 2) {
+      newState.faultSimulation.riskLevel = 'medium';
+    } else {
+      newState.faultSimulation.riskLevel = 'low';
+    }
+
+    // 添加日志
+    newState.logs = [
+      ...newState.logs,
+      {
+        timestamp: Date.now(),
+        message: `FAULT REPAIRED: ID ${faultId}`,
+      },
+    ];
+
+    return newState;
+  });
+}
+
+// 设置维护水平
+export function setMaintenanceLevel(level: number) {
+  reactorStore.update((state) => ({
+    ...state,
+    faultSimulation: {
+      ...state.faultSimulation,
+      maintenanceLevel: Math.max(0, Math.min(100, level)),
+    },
+  }));
+}
+
+// 清除所有故障
+export function clearAllFaults() {
+  reactorStore.update((state) => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.faultSimulation.activeFaults = [];
+    newState.faultSimulation.riskLevel = 'low';
+    newState.faultSimulation.recommendedActions = [
+      '继续正常运行',
+      '保持定期维护',
+    ];
+
+    // 添加日志
+    newState.logs = [
+      ...newState.logs,
+      {
+        timestamp: Date.now(),
+        message: 'ALL FAULTS CLEARED',
+      },
+    ];
+
+    return newState;
+  });
+}
+
 // 凝结水系统控制函数
 export function toggleCondensateSystem() {
   reactorStore.update((state) => ({
@@ -1348,17 +2154,6 @@ export function setWaterLevelSetpoint(setpoint: number) {
     threeImpulseLevelControl: {
       ...state.threeImpulseLevelControl,
       waterLevelSetpoint: Math.max(45, Math.min(90, setpoint)),
-    },
-  }));
-}
-
-// 故障模拟系统控制函数
-export function setMaintenanceLevel(level: number) {
-  reactorStore.update((state) => ({
-    ...state,
-    faultSimulation: {
-      ...state.faultSimulation,
-      maintenanceLevel: Math.max(0, Math.min(100, level)),
     },
   }));
 }

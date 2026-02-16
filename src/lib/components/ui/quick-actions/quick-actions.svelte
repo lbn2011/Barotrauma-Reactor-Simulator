@@ -75,19 +75,25 @@
 
 <div class="quick-actions">
   <h3 class="text-lg font-semibold text-white mb-4">快捷操作</h3>
-  
-  <div class={`${layout === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3' : 'flex flex-col gap-2'}`}>
-    {#each actions.filter(a => a.enabled) as action}
+
+  <div
+    class={`${layout === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3' : 'flex flex-col gap-2'}`}
+  >
+    {#each actions.filter((a) => a.enabled) as action}
       <Button
         variant="default"
         class={`${layout === 'grid' ? 'flex flex-col items-center justify-center p-4' : 'flex items-center justify-start p-3'}`}
         on:click={() => executeAction(action)}
       >
-        <div class={`w-8 h-8 rounded-full ${getRiskColor(action.riskLevel)} flex items-center justify-center mb-2 ${layout === 'grid' ? '' : 'mr-3'}`}>
+        <div
+          class={`w-8 h-8 rounded-full ${getRiskColor(action.riskLevel)} flex items-center justify-center mb-2 ${layout === 'grid' ? '' : 'mr-3'}`}
+        >
           <span class="text-white font-bold">{action.icon}</span>
         </div>
         {#if showLabels}
-          <span class={`text-sm ${layout === 'grid' ? 'text-center' : ''}`}>{action.name}</span>
+          <span class={`text-sm ${layout === 'grid' ? 'text-center' : ''}`}
+            >{action.name}</span
+          >
           <span class="text-xs text-gray-400 mt-1">{action.shortcut}</span>
         {/if}
       </Button>

@@ -3,15 +3,26 @@
     reactorStore,
     toggleTurbine,
     setTurbineLoad,
+    setTurbineSpeedSetpoint,
+    setTurbineLoadSetpoint,
+    toggleTurbineAutomaticControl,
+    adjustTurbineSpeed,
+    resetTurbineTrip,
   } from '../../lib/stores/reactorStore';
 
   // 订阅状态
-  let turbine: { status: boolean; load: number; speed: number };
+  let turbine: any;
   let powerLevel: number;
+  let turbineAuxiliary: any;
+  let steamBypass: any;
+  let condenserVacuum: any;
 
   reactorStore.subscribe((state) => {
     turbine = state.turbine;
     powerLevel = state.powerRegulation.powerLevel;
+    turbineAuxiliary = state.turbineAuxiliary;
+    steamBypass = state.steamBypass;
+    condenserVacuum = state.condenserVacuum;
   });
 
   // 处理汽轮机状态切换
@@ -24,6 +35,35 @@
     const target = e.target as HTMLInputElement;
     const load = parseFloat(target.value);
     setTurbineLoad(load);
+  }
+
+  // 处理转速设定点变化
+  function handleSpeedSetpointChange(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const speed = parseFloat(target.value);
+    setTurbineSpeedSetpoint(speed);
+  }
+
+  // 处理负荷设定点变化
+  function handleLoadSetpointChange(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const load = parseFloat(target.value);
+    setTurbineLoadSetpoint(load);
+  }
+
+  // 切换自动控制模式
+  function handleAutomaticControlToggle() {
+    toggleTurbineAutomaticControl();
+  }
+
+  // 手动调整转速
+  function handleSpeedAdjustment(adjustment: number) {
+    adjustTurbineSpeed(adjustment);
+  }
+
+  // 复位汽轮机跳闸
+  function handleResetTrip() {
+    resetTurbineTrip();
   }
 </script>
 
@@ -278,8 +318,78 @@
 <div class="panel-container">
   <h1 class="panel-title">9. 汽轮机控制</h1>
 
+  <!-- 系统概览 -->
+  <div class="status-indicators">
+    <div class="indicator-card">
+      <div class="indicator-label">汽轮机状态</div>
+      <div class="indicator-value">
+        {turbine.status ? '运行中' : '已停止'}
+      </div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">汽轮机转速</div>
+      <div class="indicator-value">{turbine.speed} RPM</div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">当前负载</div>
+      <div class="indicator-value">{turbine.load}%</div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">控制模式</div>
+      <div class="indicator-value">
+        {turbine.automaticControl ? '自动' : '手动'}
+      </div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">润滑油压力</div>
+      <div class="indicator-value">
+        {turbineAuxiliary?.lubricationOil?.pressure.toFixed(2)} MPa
+      </div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">密封油压力</div>
+      <div class="indicator-value">
+        {turbineAuxiliary?.sealOil?.pressure.toFixed(2)} MPa
+      </div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">凝汽器真空</div>
+      <div class="indicator-value">
+        {condenserVacuum?.vacuumLevel.toFixed(2)}
+      </div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">蒸汽旁路状态</div>
+      <div class="indicator-value">{steamBypass?.status ? '激活' : '关闭'}</div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">旁路位置</div>
+      <div class="indicator-value">
+        {steamBypass?.bypassPosition.toFixed(0)}%
+      </div>
+    </div>
+  </div>
+
+  <!-- 跳闸状态 -->
+  {#if turbine.tripStatus}
+    <div
+      style="margin: 1rem 0; padding: 1rem; background-color: #b71c1c; border-radius: 6px;"
+    >
+      <div style="color: white; font-weight: 600;">
+        汽轮机已跳闸: {turbine.tripReason}
+      </div>
+      <button
+        class="toggle-btn start"
+        on:click={handleResetTrip}
+        style="margin-top: 1rem;"
+      >
+        复位跳闸
+      </button>
+    </div>
+  {/if}
+
   <div class="turbine-control">
-    <h2 class="section-title">汽轮机状态</h2>
+    <h2 class="section-title">汽轮机状态控制</h2>
 
     <div class="status-control">
       <span class="status-label">状态:</span>
@@ -290,10 +400,22 @@
       <button
         class={`toggle-btn ${turbine.status ? 'stop' : 'start'}`}
         on:click={handleTurbineToggle}
+        disabled={turbine.tripStatus}
       >
         {turbine.status ? '停止' : '启动'}
       </button>
+      <button
+        class={`toggle-btn ${turbine.automaticControl ? 'stop' : 'start'}`}
+        on:click={handleAutomaticControlToggle}
+        style="margin-left: 1rem;"
+      >
+        {turbine.automaticControl ? '手动模式' : '自动模式'}
+      </button>
     </div>
+  </div>
+
+  <div class="turbine-control">
+    <h2 class="section-title">负载控制</h2>
 
     <div class="load-control">
       <label for="turbine-load" class="load-label">负载调节</label>
@@ -306,12 +428,72 @@
           step="1"
           value={turbine.load}
           on:input={handleLoadChange}
-          disabled={!turbine.status}
+          disabled={!turbine.status || turbine.automaticControl}
         />
       </div>
       <div class="load-display">
         当前负载: {turbine.load}%
       </div>
+    </div>
+
+    <div class="load-control">
+      <label for="turbine-load-setpoint" class="load-label">负载设定点</label>
+      <div class="slider-container">
+        <input
+          id="turbine-load-setpoint"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          value={turbine.loadSetpoint}
+          on:input={handleLoadSetpointChange}
+        />
+      </div>
+      <div class="load-display">
+        负载设定点: {turbine.loadSetpoint}%
+      </div>
+    </div>
+  </div>
+
+  <div class="turbine-control">
+    <h2 class="section-title">转速控制</h2>
+
+    <div class="load-control">
+      <label for="turbine-speed-setpoint" class="load-label"
+        >转速设定点 (RPM)</label
+      >
+      <div class="slider-container">
+        <input
+          id="turbine-speed-setpoint"
+          type="range"
+          min="2500"
+          max="3500"
+          step="10"
+          value={turbine.speedSetpoint}
+          on:input={handleSpeedSetpointChange}
+        />
+      </div>
+      <div class="load-display">
+        转速设定点: {turbine.speedSetpoint} RPM
+      </div>
+    </div>
+
+    <!-- 手动转速调整 -->
+    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+      <button
+        class="toggle-btn start"
+        on:click={() => handleSpeedAdjustment(50)}
+        disabled={!turbine.status || turbine.automaticControl}
+      >
+        增加转速
+      </button>
+      <button
+        class="toggle-btn stop"
+        on:click={() => handleSpeedAdjustment(-50)}
+        disabled={!turbine.status || turbine.automaticControl}
+      >
+        减少转速
+      </button>
     </div>
   </div>
 
@@ -322,20 +504,132 @@
     </div>
   </div>
 
-  <div class="status-indicators">
-    <div class="indicator-card">
-      <div class="indicator-label">汽轮机转速</div>
-      <div class="indicator-value">{turbine.speed} RPM</div>
+  <div class="turbine-control">
+    <h2 class="section-title">蒸汽参数</h2>
+    <div class="status-indicators">
+      <div class="indicator-card">
+        <div class="indicator-label">蒸汽压力</div>
+        <div class="indicator-value">
+          {turbine.steamPressure.toFixed(2)} MPa
+        </div>
+      </div>
+      <div class="indicator-card">
+        <div class="indicator-label">蒸汽温度</div>
+        <div class="indicator-value">
+          {turbine.steamTemperature.toFixed(0)} °C
+        </div>
+      </div>
+      <div class="indicator-card">
+        <div class="indicator-label">排汽压力</div>
+        <div class="indicator-value">
+          {turbine.exhaustPressure.toFixed(3)} MPa
+        </div>
+      </div>
+      <div class="indicator-card">
+        <div class="indicator-label">排汽温度</div>
+        <div class="indicator-value">
+          {turbine.exhaustTemperature.toFixed(0)} °C
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="indicator-card">
-      <div class="indicator-label">当前功率水平</div>
-      <div class="indicator-value">{powerLevel.toFixed(1)}%</div>
+  <div class="turbine-control">
+    <h2 class="section-title">阀门控制</h2>
+    <div class="load-control">
+      <label class="load-label" for="valvePosition">阀门位置</label>
+      <div class="slider-container">
+        <input
+          id="valvePosition"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          value={turbine.valvePosition}
+          disabled={true}
+        />
+      </div>
+      <div class="load-display">
+        阀门位置: {turbine.valvePosition}%
+      </div>
     </div>
+  </div>
 
-    <div class="indicator-card">
-      <div class="indicator-label">汽轮机负载</div>
-      <div class="indicator-value">{turbine.load}%</div>
+  <!-- 蒸汽旁路系统 -->
+  <div class="turbine-control">
+    <h2 class="section-title">蒸汽旁路系统</h2>
+    <div class="status-indicators">
+      <div class="indicator-card">
+        <div class="indicator-label">旁路流量</div>
+        <div class="indicator-value">
+          {steamBypass?.bypassFlow.toFixed(0)} kg/s
+        </div>
+      </div>
+      <div class="indicator-card">
+        <div class="indicator-label">旁路容量</div>
+        <div class="indicator-value">
+          {steamBypass?.bypassCapacity.toFixed(0)}%
+        </div>
+      </div>
+      <div class="indicator-card">
+        <div class="indicator-label">压力设定点</div>
+        <div class="indicator-value">
+          {steamBypass?.pressureSetpoint.toFixed(2)} MPa
+        </div>
+      </div>
+    </div>
+    <div class="load-control">
+      <label class="load-label" for="pressureSetpoint">压力设定点调节</label>
+      <div class="slider-container">
+        <input
+          id="pressureSetpoint"
+          type="range"
+          min="6.0"
+          max="8.0"
+          step="0.1"
+          value={steamBypass?.pressureSetpoint || 7.0}
+          on:input={(e) => {
+            // 这里需要在reactorStore中添加相应的函数
+            console.log(
+              `Steam bypass pressure setpoint changed to: ${parseFloat((e.target as HTMLInputElement).value)}`
+            );
+          }}
+        />
+      </div>
+      <div class="load-display">
+        压力设定点: {steamBypass?.pressureSetpoint.toFixed(2)} MPa
+      </div>
+    </div>
+  </div>
+
+  <!-- 汽轮机辅助系统 -->
+  <div class="turbine-control">
+    <h2 class="section-title">汽轮机辅助系统</h2>
+    <div class="status-indicators">
+      <div class="indicator-card">
+        <div class="indicator-label">润滑油压力</div>
+        <div class="indicator-value">
+          {turbineAuxiliary?.lubricationOil?.pressure.toFixed(2)} MPa
+        </div>
+      </div>
+      <div class="indicator-card">
+        <div class="indicator-label">润滑油温度</div>
+        <div class="indicator-value">
+          {turbineAuxiliary?.lubricationOil?.temperature.toFixed(0)} °C
+        </div>
+      </div>
+      <div class="indicator-card">
+        <div class="indicator-label">密封油压力</div>
+        <div class="indicator-value">
+          {turbineAuxiliary?.sealOil?.pressure.toFixed(2)} MPa
+        </div>
+      </div>
+      <div class="indicator-card">
+        <div class="indicator-label">凝汽器真空状态</div>
+        <div class="indicator-value">
+          {condenserVacuum?.status ? '正常' : '异常'}
+        </div>
+      </div>
     </div>
   </div>
 
@@ -354,6 +648,12 @@
         </li>
         <li style="margin-bottom: 0.5rem;">
           启动汽轮机前，确保反应堆功率水平在适当范围
+        </li>
+        <li style="margin-bottom: 0.5rem;">
+          自动模式下，系统会根据设定点自动调整汽轮机运行状态
+        </li>
+        <li style="margin-bottom: 0.5rem;">
+          汽轮机设有超速、超压等保护机制，触发时会自动跳闸
         </li>
         <li>停止汽轮机时，应先降低负载至零，再执行停止操作</li>
       </ul>

@@ -3,15 +3,15 @@
 
 // 区域定义
 export const REGION_1 = 'liquid'; // 液态水区
-export const REGION_2 = 'vapor';  // 蒸汽区
+export const REGION_2 = 'vapor'; // 蒸汽区
 export const REGION_3 = 'two_phase'; // 两相区
 export const REGION_4 = 'saturation'; // 饱和线
 
 // 基础常数
 export const T_CRIT = 647.096; // 临界温度（K）
-export const P_CRIT = 22.064;  // 临界压力（MPa）
-export const R = 0.461526;     // 气体常数（kJ/(kg·K)）
-export const M = 18.015268;    // 摩尔质量（g/mol）
+export const P_CRIT = 22.064; // 临界压力（MPa）
+export const R = 0.461526; // 气体常数（kJ/(kg·K)）
+export const M = 18.015268; // 摩尔质量（g/mol）
 
 /**
  * 确定水/蒸汽的区域
@@ -54,14 +54,16 @@ export function calculateSaturationPressure(T: number): number {
   const T_valid = Math.max(273.15, Math.min(T, Tc));
 
   const theta = 1 - T_valid / Tc;
-  const A = [-7.85951783, 1.84408259, -11.7866497, 22.6807411, -15.9618719, 1.80122502];
+  const A = [
+    -7.85951783, 1.84408259, -11.7866497, 22.6807411, -15.9618719, 1.80122502,
+  ];
 
   let lnPs = 0;
   for (let i = 0; i < A.length; i++) {
     lnPs += A[i] * Math.pow(theta, (i + 1) / 6);
   }
 
-  lnPs *= (Tc / T);
+  lnPs *= Tc / T;
   return Pc * Math.exp(lnPs);
 }
 
@@ -84,7 +86,10 @@ export function calculateSaturationTemperature(P: number): number {
   const Tc = T_CRIT;
   const pi = P / Pc;
 
-  const A = [6.54682177, -13.7189451, 29.2048855, -47.1471958, 59.4405636, -51.5719865, 23.8553633];
+  const A = [
+    6.54682177, -13.7189451, 29.2048855, -47.1471958, 59.4405636, -51.5719865,
+    23.8553633,
+  ];
 
   let theta = 0;
   let T = 373.15; // 初始猜测值：100°C
@@ -102,7 +107,7 @@ export function calculateSaturationTemperature(P: number): number {
     error = Math.abs(calculatedPi - pi);
 
     // 牛顿迭代法修正
-    T += (pi - calculatedPi) * (Tc - T) / (10 * calculatedPi);
+    T += ((pi - calculatedPi) * (Tc - T)) / (10 * calculatedPi);
     T = Math.max(273.15, Math.min(T, Tc));
     iterations++;
   }

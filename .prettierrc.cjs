@@ -11,7 +11,7 @@ module.exports = {
   endOfLine: 'lf',
   htmlWhitespaceSensitivity: 'css',
   insertPragma: false,
-  jsxBracketSameLine: false,
+
   jsxSingleQuote: false,
   proseWrap: 'preserve',
   quoteProps: 'as-needed',

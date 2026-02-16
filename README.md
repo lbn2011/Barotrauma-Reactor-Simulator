@@ -419,8 +419,7 @@ binding = "ASSETS"
 2. 在组件中导入并使用：
 
    ```svelte
-   import { Button } from '$lib/components/ui/button';
-   import { Card, CardContent } from '$lib/components/ui/card';
+   import {Button} from '$lib/components/ui/button'; import {(Card, CardContent)} from '$lib/components/ui/card';
    ```
 
 3. 遵循 Tailwind CSS 的实用优先样式方法，利用预设的样式类和变体。
@@ -533,18 +532,21 @@ binding = "ASSETS"
 ## 版本历史
 
 ### v1.0.0 (2026-02-05)
+
 - 初始版本发布
 - 实现基本反应堆模拟功能
 - 添加核心控制面板
 - 部署到 Cloudflare Workers
 
 ### v1.1.0 (2026-02-15)
+
 - 添加更多控制面板
 - 增强物理模型
 - 改进数据可视化
 - 添加故障模拟功能
 
 ### v1.2.0 (计划)
+
 - 添加多语言支持
 - 实现更复杂的故障场景
 - 改进性能和用户体验

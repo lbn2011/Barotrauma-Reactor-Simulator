@@ -35,15 +35,19 @@
 </script>
 
 {#if isOpen}
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-md w-full">
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div
+      class="bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-md w-full"
+    >
       <h3 class="text-xl font-semibold text-white mb-4">{title}</h3>
       <p class="text-gray-300 mb-6">{message}</p>
       <div class="flex justify-end space-x-4">
         <Button variant="secondary" on:click={cancel}>
           {cancelText}
         </Button>
-        <Button variant={danger ? "destructive" : "default"} on:click={confirm}>
+        <Button variant={danger ? 'destructive' : 'default'} on:click={confirm}>
           {confirmText}
         </Button>
       </div>

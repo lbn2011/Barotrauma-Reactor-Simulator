@@ -41,15 +41,15 @@
   export type ButtonSize = VariantProps<typeof buttonVariants>['size'];
 
   export type ButtonProps = {
-      variant?: ButtonVariant;
-      size?: ButtonSize;
-      class?: string;
-      href?: string;
-      type?: 'button' | 'submit' | 'reset';
-      disabled?: boolean;
-      ref?: HTMLElement | null;
-      children?: any;
-    } & Record<string, any>;
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    class?: string;
+    href?: string;
+    type?: 'button' | 'submit' | 'reset';
+    disabled?: boolean;
+    ref?: HTMLElement | null;
+    children?: any;
+  } & Record<string, any>;
 </script>
 
 <script lang="ts">

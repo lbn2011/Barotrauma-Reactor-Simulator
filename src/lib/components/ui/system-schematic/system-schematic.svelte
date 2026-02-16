@@ -3,7 +3,15 @@
   interface SystemNode {
     id: string;
     name: string;
-    type: 'reactor' | 'turbine' | 'condenser' | 'deaerator' | 'pump' | 'valve' | 'tank' | 'heat_exchanger';
+    type:
+      | 'reactor'
+      | 'turbine'
+      | 'condenser'
+      | 'deaerator'
+      | 'pump'
+      | 'valve'
+      | 'tank'
+      | 'heat_exchanger';
     position: { x: number; y: number };
     status: 'normal' | 'warning' | 'alarm' | 'offline';
     parameters: {
@@ -103,7 +111,10 @@
   }
 
   // 计算两点之间的距离
-  function calculateDistance(p1: { x: number; y: number }, p2: { x: number; y: number }) {
+  function calculateDistance(
+    p1: { x: number; y: number },
+    p2: { x: number; y: number }
+  ) {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
   }
 
@@ -128,17 +139,20 @@
 
 <div class="system-schematic">
   <h3 class="text-lg font-semibold text-white mb-4">系统流程图</h3>
-  
+
   <div
     class="schematic-container bg-gray-900 border border-gray-700 rounded-lg overflow-hidden"
     style={`width: ${width}px; height: ${height}px; position: relative`}
   >
     <!-- 绘制连接线 -->
     {#each connections as connection}
-      {#if nodes.find(n => n.id === connection.sourceId) && nodes.find(n => n.id === connection.targetId)}
-        {@const sourceNode = nodes.find(n => n.id === connection.sourceId)!}
-        {@const targetNode = nodes.find(n => n.id === connection.targetId)!}
-        {@const arrowPos = calculateArrowPosition(sourceNode.position, targetNode.position)}
+      {#if nodes.find((n) => n.id === connection.sourceId) && nodes.find((n) => n.id === connection.targetId)}
+        {@const sourceNode = nodes.find((n) => n.id === connection.sourceId)!}
+        {@const targetNode = nodes.find((n) => n.id === connection.targetId)!}
+        {@const arrowPos = calculateArrowPosition(
+          sourceNode.position,
+          targetNode.position
+        )}
 
         <svg
           style={`position: absolute; top: 0; left: 0; width: ${width}px; height: ${height}px; pointer-events: none; z-index: 1`}
@@ -211,7 +225,8 @@
           <div
             style={`position: absolute; top: -40px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.7); padding: 4px 8px; border-radius: 4px; font-size: 10px; color: white; white-space: nowrap`}
           >
-            {node.parameters.value.toFixed(1)} {node.parameters.unit}
+            {node.parameters.value.toFixed(1)}
+            {node.parameters.unit}
           </div>
         {/if}
       </div>

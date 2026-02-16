@@ -23,16 +23,18 @@
   }
 
   // 组件属性
-export let historyData: HistoryData[] = [];
-export let chartConfigs: ChartConfig[] = [];
-export let timeRange: '1h' | '6h' | '24h' | '7d' = '6h';
-export const refreshInterval: number = 5000; // 5秒
+  export let historyData: HistoryData[] = [];
+  export let chartConfigs: ChartConfig[] = [];
+  export let timeRange: '1h' | '6h' | '24h' | '7d' = '6h';
+  export const refreshInterval: number = 5000; // 5秒
 
   // 内部状态
   let chart: any = null;
   let chartCanvas: HTMLCanvasElement | null = null;
   let isLoading = false;
-  let selectedParameters: string[] = chartConfigs.filter(c => c.visible).map(c => c.id);
+  let selectedParameters: string[] = chartConfigs
+    .filter((c) => c.visible)
+    .map((c) => c.id);
 
   // 初始化图表
   function initChart() {
@@ -45,13 +47,13 @@ export const refreshInterval: number = 5000; // 5秒
 
     // 准备图表数据
     const datasets = chartConfigs
-      .filter(config => config.visible)
-      .map(config => {
+      .filter((config) => config.visible)
+      .map((config) => {
         return {
           label: `${config.name} (${config.unit})`,
-          data: historyData.map(data => ({
+          data: historyData.map((data) => ({
             x: new Date(data.timestamp),
-            y: data.parameters[config.id] || 0
+            y: data.parameters[config.id] || 0,
           })),
           borderColor: config.color,
           backgroundColor: `${config.color}20`,
@@ -59,7 +61,7 @@ export const refreshInterval: number = 5000; // 5秒
           tension: 0.1,
           fill: false,
           pointRadius: 0,
-          pointHoverRadius: 5
+          pointHoverRadius: 5,
         };
       });
 
@@ -67,21 +69,21 @@ export const refreshInterval: number = 5000; // 5秒
     chart = new Chart(chartCanvas, {
       type: 'line',
       data: {
-        datasets
+        datasets,
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         interaction: {
           mode: 'index',
-          intersect: false
+          intersect: false,
         },
         plugins: {
           legend: {
             position: 'top' as const,
             labels: {
-              color: '#ffffff'
-            }
+              color: '#ffffff',
+            },
           },
           tooltip: {
             mode: 'index',
@@ -90,8 +92,8 @@ export const refreshInterval: number = 5000; // 5秒
             titleColor: '#ffffff',
             bodyColor: '#ffffff',
             borderColor: '#333333',
-            borderWidth: 1
-          }
+            borderWidth: 1,
+          },
         },
         scales: {
           x: {
@@ -101,41 +103,53 @@ export const refreshInterval: number = 5000; // 5秒
               displayFormats: {
                 hour: 'HH:mm',
                 minute: 'HH:mm',
-                second: 'HH:mm:ss'
-              }
+                second: 'HH:mm:ss',
+              },
             },
             title: {
               display: true,
               text: '时间',
-              color: '#ffffff'
+              color: '#ffffff',
             },
             ticks: {
-              color: '#cccccc'
+              color: '#cccccc',
             },
             grid: {
-              color: 'rgba(255, 255, 255, 0.1)'
-            }
+              color: 'rgba(255, 255, 255, 0.1)',
+            },
           },
           y: {
             title: {
               display: true,
               text: '数值',
-              color: '#ffffff'
+              color: '#ffffff',
             },
             ticks: {
-              color: '#cccccc'
+              color: '#cccccc',
             },
             grid: {
-              color: 'rgba(255, 255, 255, 0.1)'
-            }
-          }
-        }
-      }
+              color: 'rgba(255, 255, 255, 0.1)',
+            },
+          },
+        },
+      },
     });
   }
 
   // 获取时间单位
-  function getTimeUnit(timeRange: string): 'millisecond' | 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year' | undefined {
+  function getTimeUnit(
+    timeRange: string
+  ):
+    | 'millisecond'
+    | 'second'
+    | 'minute'
+    | 'hour'
+    | 'day'
+    | 'week'
+    | 'month'
+    | 'quarter'
+    | 'year'
+    | undefined {
     switch (timeRange) {
       case '1h':
         return 'minute';
@@ -158,7 +172,7 @@ export const refreshInterval: number = 5000; // 5秒
 
   // 切换参数可见性
   function toggleParameterVisibility(configId: string) {
-    const config = chartConfigs.find(c => c.id === configId);
+    const config = chartConfigs.find((c) => c.id === configId);
     if (config) {
       config.visible = !config.visible;
       initChart();
@@ -168,10 +182,13 @@ export const refreshInterval: number = 5000; // 5秒
   // 导出数据
   function exportData() {
     // 转换数据为CSV格式
-    const headers = ['Timestamp', ...chartConfigs.map(c => `${c.name} (${c.unit})`)];
-    const rows = historyData.map(data => {
+    const headers = [
+      'Timestamp',
+      ...chartConfigs.map((c) => `${c.name} (${c.unit})`),
+    ];
+    const rows = historyData.map((data) => {
       const row = [new Date(data.timestamp).toISOString()];
-      chartConfigs.forEach(config => {
+      chartConfigs.forEach((config) => {
         row.push((data.parameters[config.id] || 0).toString());
       });
       return row.join(',');
@@ -213,7 +230,8 @@ export const refreshInterval: number = 5000; // 5秒
   function calculateChange(parameterId: string) {
     if (historyData.length < 2) return '无变化';
     const firstValue = historyData[0].parameters[parameterId] || 0;
-    const lastValue = historyData[historyData.length - 1].parameters[parameterId] || 0;
+    const lastValue =
+      historyData[historyData.length - 1].parameters[parameterId] || 0;
     const change = lastValue - firstValue;
     const changePercent = firstValue !== 0 ? (change / firstValue) * 100 : 0;
     const sign = change >= 0 ? '+' : '';
@@ -224,7 +242,9 @@ export const refreshInterval: number = 5000; // 5秒
 <div class="history-viewer">
   <Card>
     <CardHeader>
-      <CardTitle class="text-xl font-semibold text-white">历史数据查看</CardTitle>
+      <CardTitle class="text-xl font-semibold text-white"
+        >历史数据查看</CardTitle
+      >
     </CardHeader>
     <CardContent>
       <!-- 控制面板 -->
@@ -283,7 +303,12 @@ export const refreshInterval: number = 5000; // 5秒
 
         <!-- 操作按钮 -->
         <div class="flex gap-2 ml-auto">
-          <Button variant="secondary" size="sm" on:click={refreshData} disabled={isLoading}>
+          <Button
+            variant="secondary"
+            size="sm"
+            on:click={refreshData}
+            disabled={isLoading}
+          >
             {isLoading ? '刷新中...' : '刷新'}
           </Button>
           <Button variant="default" size="sm" on:click={exportData}>
@@ -299,19 +324,22 @@ export const refreshInterval: number = 5000; // 5秒
 
       <!-- 数据统计 -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
-        {#each chartConfigs.filter(c => c.visible) as config}
+        {#each chartConfigs.filter((c) => c.visible) as config}
           <div class="bg-gray-800 rounded-lg p-3">
             <div class="text-sm text-gray-400">{config.name}</div>
             <div class="text-xl font-semibold text-white">
               {historyData.length > 0
-                ? (historyData[historyData.length - 1].parameters[config.id] || 0).toFixed(1)
+                ? (
+                    historyData[historyData.length - 1].parameters[config.id] ||
+                    0
+                  ).toFixed(1)
                 : '0.0'}
-              <span class="text-sm font-normal text-gray-400"> {config.unit}</span>
+              <span class="text-sm font-normal text-gray-400">
+                {config.unit}</span
+              >
             </div>
             <div class="text-xs text-gray-400 mt-1">
-              {historyData.length > 0
-                ? calculateChange(config.id)
-                : '无数据'}
+              {historyData.length > 0 ? calculateChange(config.id) : '无数据'}
             </div>
           </div>
         {/each}

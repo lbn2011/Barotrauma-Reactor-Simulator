@@ -12,11 +12,17 @@
   };
   let coreTemperature: number;
   let corePressure: number;
+  let waterLevel: number;
+  let alarms: any;
+  let faultSimulation: any;
 
   reactorStore.subscribe((state) => {
     emergencyCoolingPumps = state.emergencyCoolingPumps;
     coreTemperature = state.core.temperature;
     corePressure = state.core.pressure;
+    waterLevel = state.core.waterLevel;
+    alarms = state.alarms;
+    faultSimulation = state.faultSimulation;
   });
 
   // 处理泵状态切换
@@ -433,6 +439,41 @@
     </div>
   </div>
 
+  <!-- 安全注水阀 -->
+  <div class="pumps-container">
+    <div class="pump-card">
+      <h2 class="pump-title">安全注水阀</h2>
+      <div
+        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;"
+      >
+        {#each [1, 2, 3] as valveNumber}
+          <div>
+            <div class="status-label">注水阀 {valveNumber}</div>
+            <button
+              class={`toggle-btn ${Math.random() > 0.5 ? 'start' : 'stop'}`}
+              on:click={() =>
+                console.log(`Safety injection valve ${valveNumber} toggled`)}
+            >
+              {Math.random() > 0.5 ? '关闭' : '打开'}
+            </button>
+          </div>
+        {/each}
+      </div>
+      <div class="status-indicators" style="margin-top: 1rem;">
+        <div class="indicator-card">
+          <div class="indicator-label">安全注水状态</div>
+          <div class="indicator-value">
+            {Math.random() > 0.5 ? '激活' : '正常'}
+          </div>
+        </div>
+        <div class="indicator-card">
+          <div class="indicator-label">注水流量</div>
+          <div class="indicator-value">{Math.floor(Math.random() * 100)}%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="pump-diagram">
     <h3 class="diagram-title">应急冷却泵状态示意图</h3>
     <div class="diagram-content">
@@ -458,22 +499,16 @@
   <div class="status-indicators">
     <div class="indicator-card">
       <div class="indicator-label">堆芯温度</div>
-      <div
-        class={`indicator-value ${coreTemperature > 300 ? 'temperature-high' : ''}`}
-      >
-        {coreTemperature.toFixed(1)}°C
-      </div>
+      <div class="indicator-value">{coreTemperature.toFixed(1)}°C</div>
     </div>
-
     <div class="indicator-card">
       <div class="indicator-label">堆芯压力</div>
-      <div
-        class={`indicator-value ${corePressure > 7.2 ? 'pressure-high' : ''}`}
-      >
-        {corePressure.toFixed(2)} MPa
-      </div>
+      <div class="indicator-value">{corePressure.toFixed(2)} MPa</div>
     </div>
-
+    <div class="indicator-card">
+      <div class="indicator-label">堆芯水位</div>
+      <div class="indicator-value">{waterLevel.toFixed(1)}%</div>
+    </div>
     <div class="indicator-card">
       <div class="indicator-label">运行泵数量</div>
       <div class="indicator-value">
@@ -481,7 +516,6 @@
           Number(emergencyCoolingPumps.pump2.status)}
       </div>
     </div>
-
     <div class="indicator-card">
       <div class="indicator-label">总冷却流量</div>
       <div class="indicator-value">
@@ -490,6 +524,18 @@
           emergencyCoolingPumps.pump2.flowRate
         ).toFixed(1)}%
       </div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">活跃报警</div>
+      <div class="indicator-value">{alarms?.active ? '是' : '否'}</div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">报警数量</div>
+      <div class="indicator-value">{alarms?.messages?.length || 0}</div>
+    </div>
+    <div class="indicator-card">
+      <div class="indicator-label">系统风险等级</div>
+      <div class="indicator-value">{faultSimulation?.riskLevel || 'low'}</div>
     </div>
   </div>
 
@@ -500,7 +546,7 @@
     >
       <ul style="margin: 0; padding-left: 1.5rem; color: #e0e0e0;">
         <li style="margin-bottom: 0.5rem;">
-          应急冷却泵用于在反应堆出现紧急情况时快速降低温度和压力
+          应急冷却泵用于在反应堆出现紧急情况时快速降低反应堆温度和压力
         </li>
         <li style="margin-bottom: 0.5rem;">
           当堆芯温度超过300°C或压力超过7.2 MPa时，应考虑启动应急冷却系统
@@ -510,6 +556,12 @@
         </li>
         <li style="margin-bottom: 0.5rem;">
           正常运行时，应急冷却泵应保持停止状态
+        </li>
+        <li style="margin-bottom: 0.5rem;">
+          安全注水阀用于在LOCA（失水事故）时快速注入冷却水
+        </li>
+        <li style="margin-bottom: 0.5rem;">
+          系统会自动监测堆芯参数，当检测到异常时会自动触发安全措施
         </li>
         <li>可以通过调节流量控制冷却速度，流量越大，冷却速度越快</li>
       </ul>

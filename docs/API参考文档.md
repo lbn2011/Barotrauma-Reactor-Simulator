@@ -60,14 +60,15 @@ unsubscribe();
 
 #### 2.2.1 模拟控制
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `startSimulation()` | 无 | void | 启动模拟 |
-| `stopSimulation()` | 无 | void | 停止模拟 |
-| `resetSimulation()` | 无 | void | 重置模拟到初始状态 |
-| `updateReactorState()` | 无 | Promise<void> | 更新反应堆状态（内部使用） |
+| 函数名                 | 参数 | 返回值        | 功能描述                   |
+| ---------------------- | ---- | ------------- | -------------------------- |
+| `startSimulation()`    | 无   | void          | 启动模拟                   |
+| `stopSimulation()`     | 无   | void          | 停止模拟                   |
+| `resetSimulation()`    | 无   | void          | 重置模拟到初始状态         |
+| `updateReactorState()` | 无   | Promise<void> | 更新反应堆状态（内部使用） |
 
 **使用示例**:
+
 ```typescript
 import { startSimulation, stopSimulation } from '$lib/stores/reactorStore';
 
@@ -80,11 +81,12 @@ stopSimulation();
 
 #### 2.2.2 控制棒操作
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `setControlRodPosition(position: number)` | position: 控制棒位置 (0-100) | void | 设置控制棒位置 |
+| 函数名                                    | 参数                         | 返回值 | 功能描述       |
+| ----------------------------------------- | ---------------------------- | ------ | -------------- |
+| `setControlRodPosition(position: number)` | position: 控制棒位置 (0-100) | void   | 设置控制棒位置 |
 
 **使用示例**:
+
 ```typescript
 import { setControlRodPosition } from '$lib/stores/reactorStore';
 
@@ -94,11 +96,12 @@ setControlRodPosition(75);
 
 #### 2.2.3 功率调节
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `setTargetPower(power: number)` | power: 目标功率 (0-100) | void | 设置目标功率 |
+| 函数名                          | 参数                    | 返回值 | 功能描述     |
+| ------------------------------- | ----------------------- | ------ | ------------ |
+| `setTargetPower(power: number)` | power: 目标功率 (0-100) | void   | 设置目标功率 |
 
 **使用示例**:
+
 ```typescript
 import { setTargetPower } from '$lib/stores/reactorStore';
 
@@ -108,23 +111,24 @@ setTargetPower(80);
 
 #### 2.2.4 泵控制
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `toggleRecirculationPump(pumpNumber: 1 | 2)` | pumpNumber: 泵编号 | void | 切换再循环泵状态 |
-| `setRecirculationPumpSpeed(pumpNumber: 1 | 2, speed: number)` | pumpNumber: 泵编号<br>speed: 转速 (0-100) | void | 设置再循环泵转速 |
-| `toggleEmergencyCoolingPump(pumpNumber: 1 | 2)` | pumpNumber: 泵编号 | void | 切换应急冷却泵状态 |
-| `setEmergencyCoolingPumpFlowRate(pumpNumber: 1 | 2, flowRate: number)` | pumpNumber: 泵编号<br>flowRate: 流量 (0-100) | void | 设置应急冷却泵流量 |
-| `toggleReactorDrain()` | 无 | void | 切换反应堆排水状态 |
-| `setReactorDrainFlowRate(flowRate: number)` | flowRate: 流量 (0-100) | void | 设置反应堆排水流量 |
-| `toggleCoreCoolingPump()` | 无 | void | 切换堆芯离线冷却泵状态 |
-| `setCoreCoolingPumpFlowRate(flowRate: number)` | flowRate: 流量 (0-100) | void | 设置堆芯离线冷却泵流量 |
+| 函数名                                         | 参数                   | 返回值                                       | 功能描述               |
+| ---------------------------------------------- | ---------------------- | -------------------------------------------- | ---------------------- | ------------------ |
+| `toggleRecirculationPump(pumpNumber: 1         | 2)`                    | pumpNumber: 泵编号                           | void                   | 切换再循环泵状态   |
+| `setRecirculationPumpSpeed(pumpNumber: 1       | 2, speed: number)`     | pumpNumber: 泵编号<br>speed: 转速 (0-100)    | void                   | 设置再循环泵转速   |
+| `toggleEmergencyCoolingPump(pumpNumber: 1      | 2)`                    | pumpNumber: 泵编号                           | void                   | 切换应急冷却泵状态 |
+| `setEmergencyCoolingPumpFlowRate(pumpNumber: 1 | 2, flowRate: number)`  | pumpNumber: 泵编号<br>flowRate: 流量 (0-100) | void                   | 设置应急冷却泵流量 |
+| `toggleReactorDrain()`                         | 无                     | void                                         | 切换反应堆排水状态     |
+| `setReactorDrainFlowRate(flowRate: number)`    | flowRate: 流量 (0-100) | void                                         | 设置反应堆排水流量     |
+| `toggleCoreCoolingPump()`                      | 无                     | void                                         | 切换堆芯离线冷却泵状态 |
+| `setCoreCoolingPumpFlowRate(flowRate: number)` | flowRate: 流量 (0-100) | void                                         | 设置堆芯离线冷却泵流量 |
 
 **使用示例**:
+
 ```typescript
 import { toggleRecirculationPump, setRecirculationPumpSpeed } from '$lib/stores/reactorStore';
 
 // 切换1号再循环泵
- toggleRecirculationPump(1);
+toggleRecirculationPump(1);
 
 // 设置2号再循环泵转速为80%
 setRecirculationPumpSpeed(2, 80);
@@ -132,12 +136,13 @@ setRecirculationPumpSpeed(2, 80);
 
 #### 2.2.5 汽轮机控制
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `toggleTurbine()` | 无 | void | 切换汽轮机状态 |
-| `setTurbineLoad(load: number)` | load: 负荷 (0-100) | void | 设置汽轮机负荷 |
+| 函数名                         | 参数               | 返回值 | 功能描述       |
+| ------------------------------ | ------------------ | ------ | -------------- |
+| `toggleTurbine()`              | 无                 | void   | 切换汽轮机状态 |
+| `setTurbineLoad(load: number)` | load: 负荷 (0-100) | void   | 设置汽轮机负荷 |
 
 **使用示例**:
+
 ```typescript
 import { toggleTurbine, setTurbineLoad } from '$lib/stores/reactorStore';
 
@@ -150,44 +155,45 @@ setTurbineLoad(75);
 
 #### 2.2.6 其他系统控制
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `setDeaeratorPressure(pressure: number)` | pressure: 压力 | void | 设置除氧器压力 |
-| `setDeaeratorLevel(level: number)` | level: 液位 (0-100) | void | 设置除氧器液位 |
-| `toggleCondenserVacuum()` | 无 | void | 切换凝汽器真空系统状态 |
-| `setCondenserVacuumLevel(vacuumLevel: number)` | vacuumLevel: 真空度 (0-1) | void | 设置凝汽器真空度 |
-| `toggleSteamDump()` | 无 | void | 切换蒸汽排汽状态 |
-| `setSteamDumpCapacity(capacity: number)` | capacity: 容量 (0-100) | void | 设置蒸汽排汽容量 |
-| `setLubricationOilPressure(pressure: number)` | pressure: 压力 | void | 设置润滑油压力 |
-| `setLubricationOilTemperature(temperature: number)` | temperature: 温度 | void | 设置润滑油温度 |
-| `setSealOilPressure(pressure: number)` | pressure: 压力 | void | 设置密封油压力 |
-| `setCondenserHotwellLevel(level: number)` | level: 液位 (0-100) | void | 设置凝汽器热井液位 |
-| `toggleCondenserCirculationPump(pumpNumber: 1 | 2)` | pumpNumber: 泵编号 | void | 切换凝汽器循环泵状态 |
-| `setCondenserCirculationPumpFlowRate(pumpNumber: 1 | 2, flowRate: number)` | pumpNumber: 泵编号<br>flowRate: 流量 (0-100) | void | 设置凝汽器循环泵流量 |
-| `toggleMakeUpWater()` | 无 | void | 切换补水系统状态 |
-| `setMakeUpWaterFlowRate(flowRate: number)` | flowRate: 流量 (0-100) | void | 设置补水系统流量 |
-| `toggleReactorFeedPump(pumpNumber: 1 | 2)` | pumpNumber: 泵编号 | void | 切换反应堆给水泵状态 |
-| `setReactorFeedPumpFlowRate(pumpNumber: 1 | 2, flowRate: number)` | pumpNumber: 泵编号<br>flowRate: 流量 (0-100) | void | 设置反应堆给水泵流量 |
-| `toggleHepaFilters()` | 无 | void | 切换HEPA过滤器状态 |
-| `setHepaFilterEfficiency(efficiency: number)` | efficiency: 效率 (0-100) | void | 设置HEPA过滤器效率 |
-| `toggleCondensateSystem()` | 无 | void | 切换凝结水系统状态 |
-| `setCondensateSystemFlowRate(flowRate: number)` | flowRate: 流量 (0-100) | void | 设置凝结水系统流量 |
-| `setCondensateSystemTemperature(temperature: number)` | temperature: 温度 | void | 设置凝结水系统温度 |
-| `toggleSteamBypass()` | 无 | void | 切换汽轮机旁路系统状态 |
-| `setSteamBypassPressureSetpoint(pressureSetpoint: number)` | pressureSetpoint: 压力设定点 | void | 设置汽轮机旁路系统压力设定点 |
-| `toggleCorePurification()` | 无 | void | 切换堆芯冷却剂净化系统状态 |
-| `setCorePurificationFlowRate(flowRate: number)` | flowRate: 流量 | void | 设置堆芯冷却剂净化系统流量 |
-| `setWaterLevelSetpoint(setpoint: number)` | setpoint: 水位设定点 (45-90) | void | 设置三冲量水位控制系统水位设定点 |
-| `setMaintenanceLevel(level: number)` | level: 维护水平 (0-100) | void | 设置故障模拟系统维护水平 |
+| 函数名                                                     | 参数                         | 返回值                                       | 功能描述                         |
+| ---------------------------------------------------------- | ---------------------------- | -------------------------------------------- | -------------------------------- | -------------------- |
+| `setDeaeratorPressure(pressure: number)`                   | pressure: 压力               | void                                         | 设置除氧器压力                   |
+| `setDeaeratorLevel(level: number)`                         | level: 液位 (0-100)          | void                                         | 设置除氧器液位                   |
+| `toggleCondenserVacuum()`                                  | 无                           | void                                         | 切换凝汽器真空系统状态           |
+| `setCondenserVacuumLevel(vacuumLevel: number)`             | vacuumLevel: 真空度 (0-1)    | void                                         | 设置凝汽器真空度                 |
+| `toggleSteamDump()`                                        | 无                           | void                                         | 切换蒸汽排汽状态                 |
+| `setSteamDumpCapacity(capacity: number)`                   | capacity: 容量 (0-100)       | void                                         | 设置蒸汽排汽容量                 |
+| `setLubricationOilPressure(pressure: number)`              | pressure: 压力               | void                                         | 设置润滑油压力                   |
+| `setLubricationOilTemperature(temperature: number)`        | temperature: 温度            | void                                         | 设置润滑油温度                   |
+| `setSealOilPressure(pressure: number)`                     | pressure: 压力               | void                                         | 设置密封油压力                   |
+| `setCondenserHotwellLevel(level: number)`                  | level: 液位 (0-100)          | void                                         | 设置凝汽器热井液位               |
+| `toggleCondenserCirculationPump(pumpNumber: 1              | 2)`                          | pumpNumber: 泵编号                           | void                             | 切换凝汽器循环泵状态 |
+| `setCondenserCirculationPumpFlowRate(pumpNumber: 1         | 2, flowRate: number)`        | pumpNumber: 泵编号<br>flowRate: 流量 (0-100) | void                             | 设置凝汽器循环泵流量 |
+| `toggleMakeUpWater()`                                      | 无                           | void                                         | 切换补水系统状态                 |
+| `setMakeUpWaterFlowRate(flowRate: number)`                 | flowRate: 流量 (0-100)       | void                                         | 设置补水系统流量                 |
+| `toggleReactorFeedPump(pumpNumber: 1                       | 2)`                          | pumpNumber: 泵编号                           | void                             | 切换反应堆给水泵状态 |
+| `setReactorFeedPumpFlowRate(pumpNumber: 1                  | 2, flowRate: number)`        | pumpNumber: 泵编号<br>flowRate: 流量 (0-100) | void                             | 设置反应堆给水泵流量 |
+| `toggleHepaFilters()`                                      | 无                           | void                                         | 切换HEPA过滤器状态               |
+| `setHepaFilterEfficiency(efficiency: number)`              | efficiency: 效率 (0-100)     | void                                         | 设置HEPA过滤器效率               |
+| `toggleCondensateSystem()`                                 | 无                           | void                                         | 切换凝结水系统状态               |
+| `setCondensateSystemFlowRate(flowRate: number)`            | flowRate: 流量 (0-100)       | void                                         | 设置凝结水系统流量               |
+| `setCondensateSystemTemperature(temperature: number)`      | temperature: 温度            | void                                         | 设置凝结水系统温度               |
+| `toggleSteamBypass()`                                      | 无                           | void                                         | 切换汽轮机旁路系统状态           |
+| `setSteamBypassPressureSetpoint(pressureSetpoint: number)` | pressureSetpoint: 压力设定点 | void                                         | 设置汽轮机旁路系统压力设定点     |
+| `toggleCorePurification()`                                 | 无                           | void                                         | 切换堆芯冷却剂净化系统状态       |
+| `setCorePurificationFlowRate(flowRate: number)`            | flowRate: 流量               | void                                         | 设置堆芯冷却剂净化系统流量       |
+| `setWaterLevelSetpoint(setpoint: number)`                  | setpoint: 水位设定点 (45-90) | void                                         | 设置三冲量水位控制系统水位设定点 |
+| `setMaintenanceLevel(level: number)`                       | level: 维护水平 (0-100)      | void                                         | 设置故障模拟系统维护水平         |
 
 ### 2.3 存档和加载
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `saveState()` | 无 | string | 保存当前状态为Base64编码字符串 |
-| `loadState(saveCode: string)` | saveCode: 保存的状态编码 | boolean | 加载保存的状态，返回是否成功 |
+| 函数名                        | 参数                     | 返回值  | 功能描述                       |
+| ----------------------------- | ------------------------ | ------- | ------------------------------ |
+| `saveState()`                 | 无                       | string  | 保存当前状态为Base64编码字符串 |
+| `loadState(saveCode: string)` | saveCode: 保存的状态编码 | boolean | 加载保存的状态，返回是否成功   |
 
 **使用示例**:
+
 ```typescript
 import { saveState, loadState } from '$lib/stores/reactorStore';
 
@@ -211,11 +217,12 @@ if (savedState) {
 
 #### 3.1.1 质量平衡
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
+| 函数名                       | 参数                   | 返回值            | 功能描述     |
+| ---------------------------- | ---------------------- | ----------------- | ------------ |
 | `calculateMassBalance(data)` | data: 质量平衡输入数据 | MassBalanceResult | 计算质量平衡 |
 
 **参数结构**:
+
 ```typescript
 interface MassBalanceInput {
   M_reactor: number; // 反应堆内水的质量
@@ -231,6 +238,7 @@ interface MassBalanceInput {
 ```
 
 **返回值结构**:
+
 ```typescript
 interface MassBalanceResult {
   dM_reactor: number; // 反应堆质量变化率
@@ -246,11 +254,12 @@ interface MassBalanceResult {
 
 #### 3.1.2 能量平衡
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
+| 函数名                         | 参数                   | 返回值              | 功能描述     |
+| ------------------------------ | ---------------------- | ------------------- | ------------ |
 | `calculateEnergyBalance(data)` | data: 能量平衡输入数据 | EnergyBalanceResult | 计算能量平衡 |
 
 **参数结构**:
+
 ```typescript
 interface EnergyBalanceInput {
   P_nuclear: number; // 核功率
@@ -267,6 +276,7 @@ interface EnergyBalanceInput {
 ```
 
 **返回值结构**:
+
 ```typescript
 interface EnergyBalanceResult {
   Q_thermal: number; // 热功率
@@ -279,12 +289,12 @@ interface EnergyBalanceResult {
 
 #### 3.1.3 流动阻力
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `calculateReynoldsNumber(data)` | data: 雷诺数输入数据 | ReynoldsResult | 计算雷诺数 |
-| `calculateFrictionCoefficient(Re: number, ε: number, D: number)` | Re: 雷诺数<br>ε: 管道粗糙度<br>D: 管道直径 | number | 计算摩擦系数 |
-| `calculateFlowResistance(data)` | data: 流动阻力输入数据 | FlowResistanceResult | 计算流动阻力 |
-| `calculatePumpPerformance(data)` | data: 泵性能输入数据 | PumpPerformanceResult | 计算泵性能 |
+| 函数名                                                           | 参数                                       | 返回值                | 功能描述     |
+| ---------------------------------------------------------------- | ------------------------------------------ | --------------------- | ------------ |
+| `calculateReynoldsNumber(data)`                                  | data: 雷诺数输入数据                       | ReynoldsResult        | 计算雷诺数   |
+| `calculateFrictionCoefficient(Re: number, ε: number, D: number)` | Re: 雷诺数<br>ε: 管道粗糙度<br>D: 管道直径 | number                | 计算摩擦系数 |
+| `calculateFlowResistance(data)`                                  | data: 流动阻力输入数据                     | FlowResistanceResult  | 计算流动阻力 |
+| `calculatePumpPerformance(data)`                                 | data: 泵性能输入数据                       | PumpPerformanceResult | 计算泵性能   |
 
 ### 3.2 中子物理模型
 
@@ -292,11 +302,12 @@ interface EnergyBalanceResult {
 
 #### 3.2.1 空泡系数
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
+| 函数名                           | 参数                   | 返回值                | 功能描述         |
+| -------------------------------- | ---------------------- | --------------------- | ---------------- |
 | `calculateVoidCoefficient(data)` | data: 空泡系数输入数据 | VoidCoefficientResult | 计算空泡系数效应 |
 
 **参数结构**:
+
 ```typescript
 interface VoidCoefficientInput {
   α_void: number; // 空泡系数
@@ -307,6 +318,7 @@ interface VoidCoefficientInput {
 ```
 
 **返回值结构**:
+
 ```typescript
 interface VoidCoefficientResult {
   ρ_void: number; // 空泡反应性
@@ -317,12 +329,13 @@ interface VoidCoefficientResult {
 
 #### 3.2.2 氙中毒
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `getDefaultXenonParameters()` | 无 | XenonParameters | 获取默认氙中毒参数 |
-| `calculateXenonPoisoning(data)` | data: 氙中毒输入数据 | XenonPoisoningResult | 计算氙中毒效应 |
+| 函数名                          | 参数                 | 返回值               | 功能描述           |
+| ------------------------------- | -------------------- | -------------------- | ------------------ |
+| `getDefaultXenonParameters()`   | 无                   | XenonParameters      | 获取默认氙中毒参数 |
+| `calculateXenonPoisoning(data)` | data: 氙中毒输入数据 | XenonPoisoningResult | 计算氙中毒效应     |
 
 **参数结构**:
+
 ```typescript
 interface XenonPoisoningInput {
   Xe: number; // 氙-135浓度
@@ -339,6 +352,7 @@ interface XenonPoisoningInput {
 ```
 
 **返回值结构**:
+
 ```typescript
 interface XenonPoisoningResult {
   Xe_new: number; // 新的氙-135浓度
@@ -349,11 +363,12 @@ interface XenonPoisoningResult {
 
 #### 3.2.3 控制棒物理
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
+| 函数名                                | 参数                       | 返回值           | 功能描述         |
+| ------------------------------------- | -------------------------- | ---------------- | ---------------- |
 | `calculateControlRodReactivity(data)` | data: 控制棒反应性输入数据 | ControlRodResult | 计算控制棒反应性 |
 
 **参数结构**:
+
 ```typescript
 interface ControlRodInput {
   ρ_max: number; // 最大反应性
@@ -364,6 +379,7 @@ interface ControlRodInput {
 ```
 
 **返回值结构**:
+
 ```typescript
 interface ControlRodResult {
   ρ_rod: number; // 控制棒反应性
@@ -378,32 +394,32 @@ interface ControlRodResult {
 
 #### 3.3.1 反应堆堆芯
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
+| 函数名                       | 参数                     | 返回值            | 功能描述           |
+| ---------------------------- | ------------------------ | ----------------- | ------------------ |
 | `calculateReactorCore(data)` | data: 反应堆堆芯输入数据 | ReactorCoreResult | 计算反应堆堆芯状态 |
 
 #### 3.3.2 汽轮机旁路
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
+| 函数名                       | 参数                   | 返回值            | 功能描述             |
+| ---------------------------- | ---------------------- | ----------------- | -------------------- |
 | `calculateSteamBypass(data)` | data: 蒸汽旁路输入数据 | SteamBypassResult | 计算蒸汽旁路系统状态 |
 
 #### 3.3.3 堆芯净化
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
+| 函数名                            | 参数                   | 返回值                 | 功能描述             |
+| --------------------------------- | ---------------------- | ---------------------- | -------------------- |
 | `calculateCorePurification(data)` | data: 堆芯净化输入数据 | CorePurificationResult | 计算堆芯净化系统状态 |
 
 #### 3.3.4 三冲量水位控制
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
+| 函数名                                    | 参数                         | 返回值             | 功能描述                   |
+| ----------------------------------------- | ---------------------------- | ------------------ | -------------------------- |
 | `calculateThreeImpulseLevelControl(data)` | data: 三冲量水位控制输入数据 | ThreeImpulseResult | 计算三冲量水位控制系统状态 |
 
 #### 3.3.5 故障模拟
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
+| 函数名                 | 参数                   | 返回值                | 功能描述     |
+| ---------------------- | ---------------------- | --------------------- | ------------ |
 | `simulateFaults(data)` | data: 故障模拟输入数据 | FaultSimulationResult | 模拟系统故障 |
 
 ## 4. Web Workers API
@@ -414,12 +430,13 @@ interface ControlRodResult {
 
 #### 4.1.1 初始化和管理
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `initialize()` | 无 | void | 初始化 Web Workers |
-| `terminate()` | 无 | void | 终止所有 Web Workers |
+| 函数名         | 参数 | 返回值 | 功能描述             |
+| -------------- | ---- | ------ | -------------------- |
+| `initialize()` | 无   | void   | 初始化 Web Workers   |
+| `terminate()`  | 无   | void   | 终止所有 Web Workers |
 
 **使用示例**:
+
 ```typescript
 import { workerManager } from '$workers/workerManager';
 
@@ -432,19 +449,20 @@ workerManager.initialize();
 
 #### 4.1.2 计算方法
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `calculateMassBalance(data)` | data: 质量平衡输入数据 | Promise<MassBalanceResult> | 计算质量平衡 |
-| `calculateEnergyBalance(data)` | data: 能量平衡输入数据 | Promise<EnergyBalanceResult> | 计算能量平衡 |
-| `calculateVoidCoefficient(data)` | data: 空泡系数输入数据 | Promise<VoidCoefficientResult> | 计算空泡系数效应 |
-| `calculateXenonPoisoning(data)` | data: 氙中毒输入数据 | Promise<XenonPoisoningResult> | 计算氙中毒效应 |
-| `calculateControlRodPhysics(data)` | data: 控制棒物理输入数据 | Promise<ControlRodResult> | 计算控制棒物理特性 |
-| `calculateReactorCore(data)` | data: 反应堆堆芯输入数据 | Promise<ReactorCoreResult> | 计算反应堆堆芯状态 |
-| `processAlarmData(data)` | data: 警报数据输入数据 | Promise<AlarmDataResult> | 处理警报数据 |
-| `processTrendData(data)` | data: 趋势数据输入数据 | Promise<TrendDataResult> | 处理趋势数据 |
-| `generateReport(data)` | data: 报告输入数据 | Promise<ReportResult> | 生成报告 |
+| 函数名                             | 参数                     | 返回值                         | 功能描述           |
+| ---------------------------------- | ------------------------ | ------------------------------ | ------------------ |
+| `calculateMassBalance(data)`       | data: 质量平衡输入数据   | Promise<MassBalanceResult>     | 计算质量平衡       |
+| `calculateEnergyBalance(data)`     | data: 能量平衡输入数据   | Promise<EnergyBalanceResult>   | 计算能量平衡       |
+| `calculateVoidCoefficient(data)`   | data: 空泡系数输入数据   | Promise<VoidCoefficientResult> | 计算空泡系数效应   |
+| `calculateXenonPoisoning(data)`    | data: 氙中毒输入数据     | Promise<XenonPoisoningResult>  | 计算氙中毒效应     |
+| `calculateControlRodPhysics(data)` | data: 控制棒物理输入数据 | Promise<ControlRodResult>      | 计算控制棒物理特性 |
+| `calculateReactorCore(data)`       | data: 反应堆堆芯输入数据 | Promise<ReactorCoreResult>     | 计算反应堆堆芯状态 |
+| `processAlarmData(data)`           | data: 警报数据输入数据   | Promise<AlarmDataResult>       | 处理警报数据       |
+| `processTrendData(data)`           | data: 趋势数据输入数据   | Promise<TrendDataResult>       | 处理趋势数据       |
+| `generateReport(data)`             | data: 报告输入数据       | Promise<ReportResult>          | 生成报告           |
 
 **使用示例**:
+
 ```typescript
 import { workerManager } from '$workers/workerManager';
 
@@ -455,7 +473,7 @@ async function updateReactor() {
     M_reactor: 100000,
     // 其他参数...
   });
-  
+
   console.log('Reactor core result:', result);
 }
 
@@ -468,14 +486,14 @@ updateReactor();
 
 #### 4.2.1 消息类型
 
-| 消息类型 | 描述 | 输入数据 | 输出数据 |
-|----------|------|----------|----------|
-| `calculateMassBalance` | 计算质量平衡 | MassBalanceInput | MassBalanceResult |
-| `calculateEnergyBalance` | 计算能量平衡 | EnergyBalanceInput | EnergyBalanceResult |
-| `calculateVoidCoefficient` | 计算空泡系数效应 | VoidCoefficientInput | VoidCoefficientResult |
-| `calculateXenonPoisoning` | 计算氙中毒效应 | XenonPoisoningInput | XenonPoisoningResult |
-| `calculateControlRodPhysics` | 计算控制棒物理特性 | ControlRodInput | ControlRodResult |
-| `calculateReactorCore` | 计算反应堆堆芯状态 | ReactorCoreInput | ReactorCoreResult |
+| 消息类型                     | 描述               | 输入数据             | 输出数据              |
+| ---------------------------- | ------------------ | -------------------- | --------------------- |
+| `calculateMassBalance`       | 计算质量平衡       | MassBalanceInput     | MassBalanceResult     |
+| `calculateEnergyBalance`     | 计算能量平衡       | EnergyBalanceInput   | EnergyBalanceResult   |
+| `calculateVoidCoefficient`   | 计算空泡系数效应   | VoidCoefficientInput | VoidCoefficientResult |
+| `calculateXenonPoisoning`    | 计算氙中毒效应     | XenonPoisoningInput  | XenonPoisoningResult  |
+| `calculateControlRodPhysics` | 计算控制棒物理特性 | ControlRodInput      | ControlRodResult      |
+| `calculateReactorCore`       | 计算反应堆堆芯状态 | ReactorCoreInput     | ReactorCoreResult     |
 
 ### 4.3 数据处理 Worker
 
@@ -483,11 +501,11 @@ updateReactor();
 
 #### 4.3.1 消息类型
 
-| 消息类型 | 描述 | 输入数据 | 输出数据 |
-|----------|------|----------|----------|
+| 消息类型           | 描述         | 输入数据       | 输出数据        |
+| ------------------ | ------------ | -------------- | --------------- |
 | `processAlarmData` | 处理警报数据 | AlarmDataInput | AlarmDataResult |
 | `processTrendData` | 处理趋势数据 | TrendDataInput | TrendDataResult |
-| `generateReport` | 生成报告 | ReportInput | ReportResult |
+| `generateReport`   | 生成报告     | ReportInput    | ReportResult    |
 
 ## 5. 工具函数 API
 
@@ -495,27 +513,27 @@ updateReactor();
 
 **文件位置**: `src/lib/utils.ts`
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `clamp(value: number, min: number, max: number)` | value: 输入值<br>min: 最小值<br>max: 最大值 | number | 将值限制在指定范围内 |
-| `formatNumber(value: number, decimals: number)` | value: 数值<br>decimals: 小数位数 | string | 格式化数值为字符串 |
-| `calculatePercentage(current: number, total: number)` | current: 当前值<br>total: 总值 | number | 计算百分比 |
-| `linearInterpolation(x: number, x1: number, y1: number, x2: number, y2: number)` | x: 输入值<br>x1, y1: 第一个点<br>x2, y2: 第二个点 | number | 线性插值 |
+| 函数名                                                                           | 参数                                              | 返回值 | 功能描述             |
+| -------------------------------------------------------------------------------- | ------------------------------------------------- | ------ | -------------------- |
+| `clamp(value: number, min: number, max: number)`                                 | value: 输入值<br>min: 最小值<br>max: 最大值       | number | 将值限制在指定范围内 |
+| `formatNumber(value: number, decimals: number)`                                  | value: 数值<br>decimals: 小数位数                 | string | 格式化数值为字符串   |
+| `calculatePercentage(current: number, total: number)`                            | current: 当前值<br>total: 总值                    | number | 计算百分比           |
+| `linearInterpolation(x: number, x1: number, y1: number, x2: number, y2: number)` | x: 输入值<br>x1, y1: 第一个点<br>x2, y2: 第二个点 | number | 线性插值             |
 
 ### 5.2 数据处理
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `calculateTrend(history: number[], currentValue: number)` | history: 历史数据<br>currentValue: 当前值 | TrendResult | 计算数据趋势 |
-| `calculateMovingAverage(data: number[], window: number)` | data: 数据数组<br>window: 窗口大小 | number[] | 计算移动平均值 |
-| `detectAnomalies(data: number[], threshold: number)` | data: 数据数组<br>threshold: 异常阈值 | AnomalyResult | 检测数据异常 |
+| 函数名                                                    | 参数                                      | 返回值        | 功能描述       |
+| --------------------------------------------------------- | ----------------------------------------- | ------------- | -------------- |
+| `calculateTrend(history: number[], currentValue: number)` | history: 历史数据<br>currentValue: 当前值 | TrendResult   | 计算数据趋势   |
+| `calculateMovingAverage(data: number[], window: number)`  | data: 数据数组<br>window: 窗口大小        | number[]      | 计算移动平均值 |
+| `detectAnomalies(data: number[], threshold: number)`      | data: 数据数组<br>threshold: 异常阈值     | AnomalyResult | 检测数据异常   |
 
 ### 5.3 时间处理
 
-| 函数名 | 参数 | 返回值 | 功能描述 |
-|--------|------|--------|----------|
-| `formatTime(seconds: number)` | seconds: 秒数 | string | 格式化时间为 HH:MM:SS |
-| `calculateElapsedTime(startTime: number)` | startTime: 开始时间戳 | number | 计算经过的时间（秒） |
+| 函数名                                    | 参数                  | 返回值 | 功能描述              |
+| ----------------------------------------- | --------------------- | ------ | --------------------- |
+| `formatTime(seconds: number)`             | seconds: 秒数         | string | 格式化时间为 HH:MM:SS |
+| `calculateElapsedTime(startTime: number)` | startTime: 开始时间戳 | number | 计算经过的时间（秒）  |
 
 ## 6. 组件 API
 
@@ -527,42 +545,42 @@ updateReactor();
 
 **文件位置**: `src/lib/components/ui/button/button.svelte`
 
-| 属性 | 类型 | 默认值 | 功能描述 |
-|--------|------|--------|----------|
-| `variant` | 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'default' | 按钮样式变体 |
-| `size` | 'default' | 'sm' | 'lg' | 'icon' | 'default' | 按钮大小 |
-| `disabled` | boolean | false | 是否禁用 |
-| `loading` | boolean | false | 是否显示加载状态 |
-| `form` | string | - | 关联的表单ID |
-| `type` | 'button' | 'submit' | 'reset' | 'button' | 按钮类型 |
-| `onClick` | () => void | - | 点击事件处理函数 |
+| 属性       | 类型       | 默认值        | 功能描述         |
+| ---------- | ---------- | ------------- | ---------------- | ----------- | --------- | -------- | --------- | ------------ |
+| `variant`  | 'default'  | 'destructive' | 'outline'        | 'secondary' | 'ghost'   | 'link'   | 'default' | 按钮样式变体 |
+| `size`     | 'default'  | 'sm'          | 'lg'             | 'icon'      | 'default' | 按钮大小 |
+| `disabled` | boolean    | false         | 是否禁用         |
+| `loading`  | boolean    | false         | 是否显示加载状态 |
+| `form`     | string     | -             | 关联的表单ID     |
+| `type`     | 'button'   | 'submit'      | 'reset'          | 'button'    | 按钮类型  |
+| `onClick`  | () => void | -             | 点击事件处理函数 |
 
 **使用示例**:
+
 ```svelte
 <script>
   import Button from '$lib/components/ui/button';
 </script>
 
-<Button variant="default" size="lg" on:click={() => console.log('Clicked')}>
-  启动模拟
-</Button>
+<Button variant="default" size="lg" on:click={() => console.log('Clicked')}>启动模拟</Button>
 ```
 
 #### 6.1.2 卡片组件
 
 **文件位置**: `src/lib/components/ui/card/`
 
-| 组件 | 功能描述 |
-|--------|----------|
-| `Card` | 卡片容器 |
-| `CardHeader` | 卡片头部 |
-| `CardTitle` | 卡片标题 |
-| `CardDescription` | 卡片描述 |
-| `CardContent` | 卡片内容 |
-| `CardFooter` | 卡片底部 |
-| `CardAction` | 卡片操作按钮 |
+| 组件              | 功能描述     |
+| ----------------- | ------------ |
+| `Card`            | 卡片容器     |
+| `CardHeader`      | 卡片头部     |
+| `CardTitle`       | 卡片标题     |
+| `CardDescription` | 卡片描述     |
+| `CardContent`     | 卡片内容     |
+| `CardFooter`      | 卡片底部     |
+| `CardAction`      | 卡片操作按钮 |
 
 **使用示例**:
+
 ```svelte
 <script>
   import {
@@ -571,7 +589,7 @@ updateReactor();
     CardDescription,
     CardFooter,
     CardHeader,
-    CardTitle
+    CardTitle,
   } from '$lib/components/ui/card';
 </script>
 
@@ -593,51 +611,51 @@ updateReactor();
 
 **文件位置**: `src/lib/components/ui/input/input.svelte`
 
-| 属性 | 类型 | 默认值 | 功能描述 |
-|--------|------|--------|----------|
-| `type` | string | 'text' | 输入类型 |
-| `value` | string | - | 输入值 |
-| `placeholder` | string | - | 占位文本 |
-| `disabled` | boolean | false | 是否禁用 |
-| `required` | boolean | false | 是否必填 |
-| `onChange` | (e: Event) => void | - | 输入变化事件处理函数 |
+| 属性          | 类型               | 默认值 | 功能描述             |
+| ------------- | ------------------ | ------ | -------------------- |
+| `type`        | string             | 'text' | 输入类型             |
+| `value`       | string             | -      | 输入值               |
+| `placeholder` | string             | -      | 占位文本             |
+| `disabled`    | boolean            | false  | 是否禁用             |
+| `required`    | boolean            | false  | 是否必填             |
+| `onChange`    | (e: Event) => void | -      | 输入变化事件处理函数 |
 
 #### 6.1.4 滑块组件
 
 **文件位置**: `src/lib/components/ui/slider/slider.svelte`
 
-| 属性 | 类型 | 默认值 | 功能描述 |
-|--------|------|--------|----------|
-| `value` | number[] | [0] | 滑块值 |
-| `min` | number | 0 | 最小值 |
-| `max` | number | 100 | 最大值 |
-| `step` | number | 1 | 步长 |
-| `disabled` | boolean | false | 是否禁用 |
-| `onValueChange` | (value: number[]) => void | - | 值变化事件处理函数 |
+| 属性            | 类型                      | 默认值 | 功能描述           |
+| --------------- | ------------------------- | ------ | ------------------ |
+| `value`         | number[]                  | [0]    | 滑块值             |
+| `min`           | number                    | 0      | 最小值             |
+| `max`           | number                    | 100    | 最大值             |
+| `step`          | number                    | 1      | 步长               |
+| `disabled`      | boolean                   | false  | 是否禁用           |
+| `onValueChange` | (value: number[]) => void | -      | 值变化事件处理函数 |
 
 #### 6.1.5 图表组件
 
 **文件位置**: `src/lib/components/ui/chart/`
 
-| 组件 | 功能描述 |
-|--------|----------|
-| `ChartContainer` | 图表容器 |
-| `ChartTooltip` | 图表 tooltip |
-| `ChartStyle` | 图表样式 |
+| 组件             | 功能描述     |
+| ---------------- | ------------ |
+| `ChartContainer` | 图表容器     |
+| `ChartTooltip`   | 图表 tooltip |
+| `ChartStyle`     | 图表样式     |
 
 #### 6.1.6 系统示意图组件
 
 **文件位置**: `src/lib/components/ui/system-schematic/system-schematic.svelte`
 
-| 属性 | 类型 | 默认值 | 功能描述 |
-|--------|------|--------|----------|
-| `nodes` | SystemNode[] | [] | 系统节点 |
-| `connections` | SystemConnection[] | [] | 系统连接 |
-| `width` | number | 800 | 示意图宽度 |
-| `height` | number | 600 | 示意图高度 |
-| `interactive` | boolean | true | 是否可交互 |
-| `showLabels` | boolean | true | 是否显示标签 |
-| `showParameters` | boolean | true | 是否显示参数 |
+| 属性             | 类型               | 默认值 | 功能描述     |
+| ---------------- | ------------------ | ------ | ------------ |
+| `nodes`          | SystemNode[]       | []     | 系统节点     |
+| `connections`    | SystemConnection[] | []     | 系统连接     |
+| `width`          | number             | 800    | 示意图宽度   |
+| `height`         | number             | 600    | 示意图高度   |
+| `interactive`    | boolean            | true   | 是否可交互   |
+| `showLabels`     | boolean            | true   | 是否显示标签 |
+| `showParameters` | boolean            | true   | 是否显示参数 |
 
 ### 6.2 面板组件
 
@@ -647,43 +665,43 @@ updateReactor();
 
 **文件位置**: `src/routes/panels/control-rod/+page.svelte`
 
-| 属性 | 类型 | 默认值 | 功能描述 |
-|--------|------|--------|----------|
-| `rodPosition` | number | 50 | 控制棒位置 |
-| `onRodPositionChange` | (position: number) => void | - | 控制棒位置变化回调 |
+| 属性                  | 类型                       | 默认值 | 功能描述           |
+| --------------------- | -------------------------- | ------ | ------------------ |
+| `rodPosition`         | number                     | 50     | 控制棒位置         |
+| `onRodPositionChange` | (position: number) => void | -      | 控制棒位置变化回调 |
 
 #### 6.2.2 功率调节面板
 
 **文件位置**: `src/routes/panels/power-control/+page.svelte`
 
-| 属性 | 类型 | 默认值 | 功能描述 |
-|--------|------|--------|----------|
-| `powerLevel` | number | 50 | 功率水平 |
-| `targetPower` | number | 50 | 目标功率 |
-| `reactivity` | number | 0 | 反应性 |
-| `onTargetPowerChange` | (power: number) => void | - | 目标功率变化回调 |
+| 属性                  | 类型                    | 默认值 | 功能描述         |
+| --------------------- | ----------------------- | ------ | ---------------- |
+| `powerLevel`          | number                  | 50     | 功率水平         |
+| `targetPower`         | number                  | 50     | 目标功率         |
+| `reactivity`          | number                  | 0      | 反应性           |
+| `onTargetPowerChange` | (power: number) => void | -      | 目标功率变化回调 |
 
 #### 6.2.3 数据趋势面板
 
 **文件位置**: `src/routes/panels/data-trend/+page.svelte`
 
-| 属性 | 类型 | 默认值 | 功能描述 |
-|--------|------|--------|----------|
-| `timePoints` | number[] | [] | 时间点 |
-| `powerData` | number[] | [] | 功率数据 |
-| `temperatureData` | number[] | [] | 温度数据 |
-| `pressureData` | number[] | [] | 压力数据 |
+| 属性              | 类型     | 默认值 | 功能描述 |
+| ----------------- | -------- | ------ | -------- |
+| `timePoints`      | number[] | []     | 时间点   |
+| `powerData`       | number[] | []     | 功率数据 |
+| `temperatureData` | number[] | []     | 温度数据 |
+| `pressureData`    | number[] | []     | 压力数据 |
 
 ## 7. 错误处理
 
 ### 7.1 错误类型
 
-| 错误类型 | 描述 | 可能原因 | 解决方案 |
-|----------|------|----------|----------|
+| 错误类型                    | 描述              | 可能原因                 | 解决方案                      |
+| --------------------------- | ----------------- | ------------------------ | ----------------------------- |
 | `WorkerInitializationError` | Worker 初始化失败 | 浏览器不支持 Web Workers | 使用支持 Web Workers 的浏览器 |
-| `CalculationError` | 物理模型计算错误 | 输入参数无效 | 检查输入参数范围 |
-| `StateLoadError` | 状态加载失败 | 保存的状态格式错误 | 确保使用有效的保存代码 |
-| `ComponentError` | 组件渲染错误 | 组件属性无效 | 检查组件属性类型 |
+| `CalculationError`          | 物理模型计算错误  | 输入参数无效             | 检查输入参数范围              |
+| `StateLoadError`            | 状态加载失败      | 保存的状态格式错误       | 确保使用有效的保存代码        |
+| `ComponentError`            | 组件渲染错误      | 组件属性无效             | 检查组件属性类型              |
 
 ### 7.2 错误处理最佳实践
 
@@ -694,6 +712,7 @@ updateReactor();
 5. **提供用户反馈** 显示友好的错误信息
 
 **示例**:
+
 ```typescript
 import { loadState } from '$lib/stores/reactorStore';
 
@@ -739,6 +758,7 @@ try {
 ### 9.1 基本操作示例
 
 **启动模拟并监控状态**:
+
 ```typescript
 import { startSimulation, reactorStore } from '$lib/stores/reactorStore';
 
@@ -750,7 +770,7 @@ const unsubscribe = reactorStore.subscribe((state) => {
   console.log('Power level:', state.powerRegulation.powerLevel);
   console.log('Core temperature:', state.core.temperature);
   console.log('Core pressure:', state.core.pressure);
-  
+
   // 当功率达到目标值时执行操作
   if (Math.abs(state.powerRegulation.powerLevel - state.powerRegulation.targetPower) < 1) {
     console.log('Power level stabilized');
@@ -767,6 +787,7 @@ setTimeout(() => {
 ### 9.2 高级控制示例
 
 **实现自动功率控制**:
+
 ```typescript
 import { setTargetPower, setControlRodPosition, reactorStore } from '$lib/stores/reactorStore';
 
@@ -783,16 +804,16 @@ const controlInterval = setInterval(() => {
     const error = targetPower - state.powerRegulation.powerLevel;
     integral += error * 0.1;
     const derivative = (error - previousError) / 0.1;
-    
+
     // 计算控制棒位置调整
     const adjustment = 0.5 * error + 0.1 * integral + 0.2 * derivative;
     const newRodPosition = Math.max(0, Math.min(100, state.controlRods.position + adjustment));
-    
+
     // 更新控制棒位置
     setControlRodPosition(newRodPosition);
-    
+
     previousError = error;
-    
+
     // 当误差足够小时停止控制
     if (Math.abs(error) < 0.5) {
       clearInterval(controlInterval);
@@ -805,20 +826,21 @@ const controlInterval = setInterval(() => {
 ### 9.3 数据导出示例
 
 **导出模拟数据为 CSV**:
+
 ```typescript
 import { reactorStore } from '$lib/stores/reactorStore';
 
 function exportDataToCSV() {
   reactorStore.subscribe((state) => {
     const { timePoints, powerData, temperatureData, pressureData } = state.trends;
-    
+
     // 创建 CSV 内容
     let csvContent = 'Time (s),Power (%),Temperature (°C),Pressure (MPa)\n';
-    
+
     for (let i = 0; i < timePoints.length; i++) {
       csvContent += `${timePoints[i]},${powerData[i]},${temperatureData[i]},${pressureData[i]}\n`;
     }
-    
+
     // 创建下载链接
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -840,30 +862,30 @@ exportDataToCSV();
 
 ### 10.1 API 版本
 
-| 版本 | 主要变更 |
-|------|----------|
-| 1.0.0 | 初始版本 |
+| 版本  | 主要变更             |
+| ----- | -------------------- |
+| 1.0.0 | 初始版本             |
 | 1.1.0 | 增加故障模拟系统 API |
-| 1.2.0 | 改进物理模型 API |
-| 1.3.0 | 增加数据导出功能 |
+| 1.2.0 | 改进物理模型 API     |
+| 1.3.0 | 增加数据导出功能     |
 
 ### 10.2 浏览器兼容性
 
-| 浏览器 | 最低版本 | 推荐版本 |
-|--------|----------|----------|
-| Chrome | 90 | 100+ |
-| Firefox | 88 | 90+ |
-| Safari | 14 | 15+ |
-| Edge | 90 | 100+ |
+| 浏览器  | 最低版本 | 推荐版本 |
+| ------- | -------- | -------- |
+| Chrome  | 90       | 100+     |
+| Firefox | 88       | 90+      |
+| Safari  | 14       | 15+      |
+| Edge    | 90       | 100+     |
 
 ### 10.3 技术依赖
 
-| 依赖 | 版本 | 用途 |
-|------|------|------|
-| Svelte | ^5.43.8 | 前端框架 |
-| TypeScript | ~5.9.3 | 类型系统 |
-| Chart.js | ^4.5.1 | 数据可视化 |
-| svelte-chartjs | ^3.1.5 | Svelte Chart.js 集成 |
+| 依赖           | 版本    | 用途                 |
+| -------------- | ------- | -------------------- |
+| Svelte         | ^5.43.8 | 前端框架             |
+| TypeScript     | ~5.9.3  | 类型系统             |
+| Chart.js       | ^4.5.1  | 数据可视化           |
+| svelte-chartjs | ^3.1.5  | Svelte Chart.js 集成 |
 
 ## 11. 贡献指南
 
@@ -898,13 +920,13 @@ exportDataToCSV();
 
 ### 12.1 常见问题
 
-| 问题 | 可能原因 | 解决方案 |
-|--------|----------|----------|
-| API 调用无响应 | 浏览器不支持 | 使用推荐的浏览器 |
-| 状态更新不生效 | 订阅方式错误 | 检查订阅代码 |
-| 计算结果异常 | 输入参数无效 | 验证输入参数范围 |
+| 问题              | 可能原因     | 解决方案           |
+| ----------------- | ------------ | ------------------ |
+| API 调用无响应    | 浏览器不支持 | 使用推荐的浏览器   |
+| 状态更新不生效    | 订阅方式错误 | 检查订阅代码       |
+| 计算结果异常      | 输入参数无效 | 验证输入参数范围   |
 | Worker 初始化失败 | 安全设置阻止 | 检查浏览器安全设置 |
-| 组件渲染错误 | 属性类型错误 | 检查组件属性类型 |
+| 组件渲染错误      | 属性类型错误 | 检查组件属性类型   |
 
 ### 12.2 调试技巧
 

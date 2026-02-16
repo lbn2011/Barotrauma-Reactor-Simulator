@@ -2,15 +2,20 @@
   import {
     reactorStore,
     setControlRodPosition,
+    setSingleControlRodPosition,
+    emergencyRodInsertion,
+    toggleControlRodAutoMode,
   } from '../../lib/stores/reactorStore';
 
   // 订阅状态
-  let controlRods: { position: number; insertionSpeed: number };
+  let controlRods: any;
   let reactivity: number;
+  let powerLevel: number;
 
   reactorStore.subscribe((state) => {
     controlRods = state.controlRods;
     reactivity = state.powerRegulation.reactivity;
+    powerLevel = state.powerRegulation.powerLevel;
   });
 
   // 处理控制棒位置变化
@@ -20,9 +25,82 @@
     setControlRodPosition(position);
   }
 
+  // 处理控制棒移动速度变化
+  function handleInsertionSpeedChange(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const speed = parseFloat(target.value);
+    // 这里需要在reactorStore中添加相应的函数
+    console.log(`Insertion speed changed to: ${speed}`);
+  }
+
   // 快速操作按钮
   function setPositionQuickly(position: number) {
     setControlRodPosition(position);
+  }
+
+  // 处理单根控制棒位置变化
+  function handleSingleRodChange(row: number, col: number, e: Event) {
+    const target = e.target as HTMLInputElement;
+    const position = parseFloat(target.value);
+    setSingleControlRodPosition(row, col, position);
+  }
+
+  // 触发紧急插入
+  function handleEmergencyInsertion() {
+    emergencyRodInsertion();
+  }
+
+  // 切换自动模式
+  function handleAutoModeToggle() {
+    toggleControlRodAutoMode();
+  }
+
+  // 获取控制棒状态颜色
+  function getRodStatusColor(status: string) {
+    switch (status) {
+      case 'normal':
+        return '#4caf50';
+      case 'fault':
+        return '#f44336';
+      case 'maintenance':
+        return '#ff9800';
+      default:
+        return '#4caf50';
+    }
+  }
+
+  // 获取控制棒类型标签
+  function getRodTypeLabel(type: string) {
+    switch (type) {
+      case 'control':
+        return '控制';
+      case 'shutdown':
+        return '停堆';
+      case 'automatic':
+        return '自动';
+      default:
+        return '控制';
+    }
+  }
+
+  // 获取控制棒类型颜色
+  function getRodTypeColor(type: string) {
+    switch (type) {
+      case 'control':
+        return '#2196f3';
+      case 'shutdown':
+        return '#f44336';
+      case 'automatic':
+        return '#4caf50';
+      default:
+        return '#2196f3';
+    }
+  }
+
+  // 模拟燃料更换
+  function handleFuelReload(row: number, col: number) {
+    // 这里可以实现燃料更换的逻辑
+    console.log(`Fuel reload initiated for rod at ${row}, ${col}`);
   }
 </script>
 
@@ -143,6 +221,22 @@
     transform: translateY(0);
   }
 
+  .emergency-btn {
+    background-color: #f44336 !important;
+  }
+
+  .emergency-btn:hover {
+    background-color: #d32f2f !important;
+  }
+
+  .auto-mode-btn {
+    background-color: #2196f3 !important;
+  }
+
+  .auto-mode-btn:hover {
+    background-color: #1976d2 !important;
+  }
+
   .status-indicators {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -245,6 +339,134 @@
     font-size: 0.8rem;
     color: #aaa;
   }
+
+  /* 控制棒网格样式 */
+  .control-rod-grid {
+    margin: 3rem 0;
+    padding: 2rem;
+    background-color: #121212;
+    border-radius: 6px;
+    border: 1px solid #333;
+  }
+
+  .grid-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #00bcd4;
+    font-size: 1.2rem;
+  }
+
+  .rod-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .rod-cell {
+    background-color: #1e1e1e;
+    border-radius: 4px;
+    padding: 1rem;
+    border: 1px solid #333;
+    text-align: center;
+    position: relative;
+  }
+
+  .rod-cell:hover {
+    border-color: #00bcd4;
+  }
+
+  .rod-id {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 0.5rem;
+  }
+
+  .rod-position {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #e0e0e0;
+    margin-bottom: 0.5rem;
+  }
+
+  .rod-status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 auto 0.5rem;
+  }
+
+  .rod-type-tag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    background-color: #333;
+    color: #e0e0e0;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+  }
+
+  .rod-slider {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .fuel-reload-btn {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #ff9800;
+    color: white;
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+
+  .fuel-reload-btn:hover {
+    background-color: #f57c00;
+    transform: translateY(-1px);
+  }
+
+  .fuel-reload-btn:active {
+    transform: translateY(0);
+  }
+
+  /* 操作按钮区域 */
+  .operation-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  /* 模式指示器 */
+  .mode-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .mode-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .mode-auto {
+    background-color: #2196f3;
+    color: white;
+  }
+
+  .mode-manual {
+    background-color: #666;
+    color: white;
+  }
 </style>
 
 <div class="panel-container">
@@ -287,7 +509,50 @@
           完全插入
         </button>
       </div>
+
+      <!-- 控制棒移动速度控制 -->
+      <div class="slider-container">
+        <label for="insertion-speed">移动速度</label>
+        <input
+          id="insertion-speed"
+          type="range"
+          min="0"
+          max="10"
+          step="0.1"
+          value={controlRods.insertionSpeed}
+          on:input={handleInsertionSpeedChange}
+          class="position-slider"
+        />
+        <div class="position-value">
+          当前速度: {controlRods.insertionSpeed} %/s
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- 操作按钮区域 -->
+  <div class="operation-buttons">
+    <button class="quick-btn emergency-btn" on:click={handleEmergencyInsertion}>
+      紧急插入 (AZ-5)
+    </button>
+    <button class="quick-btn auto-mode-btn" on:click={handleAutoModeToggle}>
+      {controlRods.autoMode ? '手动模式' : '自动模式'}
+    </button>
+  </div>
+
+  <!-- 模式指示器 -->
+  <div class="mode-indicator">
+    <span class="indicator-label">当前模式:</span>
+    <span
+      class={`mode-badge ${controlRods.autoMode ? 'mode-auto' : 'mode-manual'}`}
+    >
+      {controlRods.autoMode ? '自动控制' : '手动控制'}
+    </span>
+    {#if controlRods.emergencyInsertion}
+      <span class="mode-badge" style="background-color: #f44336; color: white;">
+        紧急插入状态
+      </span>
+    {/if}
   </div>
 
   <div class="control-rod-diagram">
@@ -309,6 +574,48 @@
     </div>
   </div>
 
+  <!-- 控制棒5x5网格 -->
+  <div class="control-rod-grid">
+    <h3 class="grid-title">控制棒组 (5×5)</h3>
+    <div class="rod-grid">
+      {#if controlRods.rods}
+        {#each controlRods.rods as row, rowIndex}
+          {#each row as rod, colIndex}
+            <div class="rod-cell">
+              <div class="rod-id">#{rowIndex * 5 + colIndex + 1}</div>
+              <div
+                class="rod-status-indicator"
+                style="background-color: {getRodStatusColor(rod.status)}"
+              ></div>
+              <div
+                class="rod-type-tag"
+                style="background-color: {getRodTypeColor(rod.type)}"
+              >
+                {getRodTypeLabel(rod.type)}
+              </div>
+              <div class="rod-position">{rod.position}%</div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="0.1"
+                value={rod.position}
+                on:input={(e) => handleSingleRodChange(rowIndex, colIndex, e)}
+                class="rod-slider"
+              />
+              <button
+                class="fuel-reload-btn"
+                on:click={() => handleFuelReload(rowIndex, colIndex)}
+              >
+                燃料更换
+              </button>
+            </div>
+          {/each}
+        {/each}
+      {/if}
+    </div>
+  </div>
+
   <div class="status-indicators">
     <div class="indicator-card">
       <div class="indicator-label">控制棒位置</div>
@@ -320,13 +627,32 @@
       <div
         class={`indicator-value ${reactivity > 0 ? 'reactivity-positive' : 'reactivity-negative'}`}
       >
-        {reactivity.toFixed(2)}
+        {reactivity.toFixed(4)}
       </div>
     </div>
 
     <div class="indicator-card">
       <div class="indicator-label">插入速度</div>
-      <div class="indicator-value">{controlRods.insertionSpeed} cm/s</div>
+      <div class="indicator-value">{controlRods.insertionSpeed} %/s</div>
+    </div>
+
+    <div class="indicator-card">
+      <div class="indicator-label">反应堆功率</div>
+      <div class="indicator-value">{powerLevel.toFixed(1)}%</div>
+    </div>
+
+    <div class="indicator-card">
+      <div class="indicator-label">紧急插入状态</div>
+      <div class="indicator-value">
+        {controlRods.emergencyInsertion ? '激活' : '正常'}
+      </div>
+    </div>
+
+    <div class="indicator-card">
+      <div class="indicator-label">自动模式</div>
+      <div class="indicator-value">
+        {controlRods.autoMode ? '开启' : '关闭'}
+      </div>
     </div>
   </div>
 
@@ -348,7 +674,13 @@
         <li style="margin-bottom: 0.5rem;">
           正常运行时，控制棒位置通常保持在 40-60% 之间
         </li>
-        <li>紧急情况下，应将控制棒完全插入以快速降低反应堆功率</li>
+        <li style="margin-bottom: 0.5rem;">
+          紧急插入 (AZ-5) 会将所有控制棒快速插入，立即降低反应堆功率
+        </li>
+        <li style="margin-bottom: 0.5rem;">
+          自动模式下，系统会根据功率设定点自动调整控制棒位置
+        </li>
+        <li>可以通过下方网格单独调整每根控制棒的位置</li>
       </ul>
     </div>
   </div>
