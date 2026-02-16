@@ -14,6 +14,9 @@ export default [
       '.svelte-kit/', // 排除 SvelteKit 生成的目录
       '.svelte-kit/**/*',
       'src/**/*.js', // 排除可能的 JS 文件
+      'test-*.js', // 排除根目录测试文件
+      'test-*.mts', // 排除根目录测试文件
+      '**/*.css', // 排除 CSS 文件
     ],
   },
 

@@ -48,7 +48,7 @@ for (const testCase of testCases) {
     const cv = calculateSpecificHeatCapacityV(testCase.T, testCase.P);
     console.log(`定容比热容: ${cv.toFixed(3)} kJ/(kg·K)`);
   } catch (error) {
-    console.log(`错误: ${error.message}`);
+    console.log(`错误: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   console.log('---\n');
@@ -66,7 +66,7 @@ for (const T of testTemperatures) {
       `温度 ${T} K (${T - 273.15} °C) 时的饱和压力: ${ps.toFixed(6)} MPa`
     );
   } catch (error) {
-    console.log(`计算饱和压力错误 (T=${T}): ${error.message}`);
+    console.log(`计算饱和压力错误 (T=${T}): ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -81,6 +81,6 @@ for (const P of testPressures) {
       `压力 ${P} MPa 时的饱和温度: ${ts.toFixed(2)} K (${ts - 273.15} °C)`
     );
   } catch (error) {
-    console.log(`计算饱和温度错误 (P=${P}): ${error.message}`);
+    console.log(`计算饱和温度错误 (P=${P}): ${error instanceof Error ? error.message : String(error)}`);
   }
 }
