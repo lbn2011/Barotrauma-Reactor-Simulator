@@ -6,12 +6,10 @@
     WebSearchFlowAction,
   } from '~/types';
 
-  import AppStoreLogo from '~/components/icons/AppStoreLogo.svg';
+  import AppStoreLogo from '~/components/icons/AppStoreLogo.svelte';
   import PlatformSelectorDropdown from '~/components/jet/web-navigation/PlatformSelectorDropdown.svelte';
   import FlowAction from '~/components/jet/action/FlowAction.svelte';
-  import SystemImage, {
-    isSystemImageArtwork,
-  } from '~/components/SystemImage.svelte';
+  import SystemImage from '~/components/SystemImage.svelte';
   import SearchInput from '~/components/navigation/SearchInput.svelte';
   import SFSymbol from '~/components/SFSymbol.svelte';
 
@@ -32,6 +30,10 @@
   let currentTabStore = writable<string | null>(null);
 
   export let webNavigation: WebNavigation;
+
+  function isSystemImageArtwork(artwork: any): boolean {
+    return artwork.type === 'system';
+  }
 
   $: isXSmallViewport = $mediaQueries === 'xsmall';
   $: searchAction = webNavigation.searchAction as WebSearchFlowAction;
@@ -215,12 +217,12 @@
 
 <div class="navigation-wrapper">
   <div class="navigation">
-    <div slot="logo" class="platform-selector-container">
+    <div class="platform-selector-container">
       <span
         id="app-store-icon-contianer"
         class="app-store-icon-container"
         role="img"
-        aria-label={$i18n?.t?.('ASE.Web.AppStore.Navigation.AX.AppStoreLogo') ||
+        aria-label={i18n?.t?.('ASE.Web.AppStore.Navigation.AX.AppStoreLogo') ||
           'App Store Logo'}
       >
         <AppStoreLogo focusable={false} />
@@ -231,16 +233,14 @@
       {/if}
     </div>
 
-    <svelte:fragment slot="search">
-      <div class="search-input-container">
-        <SearchInput {searchAction} />
-      </div>
-    </svelte:fragment>
+    <div class="search-input-container">
+      <SearchInput {searchAction} />
+    </div>
 
-    <div slot="after-navigation-items" class="platform-selector-inline">
+    <div class="platform-selector-inline">
       {#if isXSmallViewport}
         <h3 in:fade out:fade={{ delay: 250, duration: BASE_DURATION }}>
-          {$i18n?.t?.('ASE.Web.AppStore.Navigation.PlatformHeading') ||
+          {i18n?.t?.('ASE.Web.AppStore.Navigation.PlatformHeading') ||
             'Platforms'}
         </h3>
       {/if}

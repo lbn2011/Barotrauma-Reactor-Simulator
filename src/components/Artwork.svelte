@@ -1,12 +1,12 @@
 <script context="module" lang="ts">
-  import type { Artwork as ArtworkType } from '~/types';
+  import type { Artwork } from '~/types';
 
   export type Profile = {
     width: number;
     height: number;
   };
 
-  export function getNaturalProfile(artwork: ArtworkType): Profile {
+  export function getNaturalProfile(artwork: Artwork): Profile {
     return {
       width: artwork.width || 100,
       height: artwork.height || 100,

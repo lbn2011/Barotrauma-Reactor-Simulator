@@ -1,13 +1,17 @@
 <script lang="ts">
   import type { WebSearchFlowAction } from '~/types';
+  import { getJetPerform } from '~/jet';
 
   export let searchAction: WebSearchFlowAction;
 
   let searchQuery: string = '';
+  const perform = getJetPerform();
 
   function handleSubmit(event: Event) {
     event.preventDefault();
-    // Implement search submission logic here
+    if (searchQuery.trim() && searchAction) {
+      perform(searchAction);
+    }
   }
 </script>
 

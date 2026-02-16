@@ -24,6 +24,6 @@
 
 <div class="system-image">
   {#if artwork.url}
-    <img src={artwork.url} alt="System Image" class="system-image-img" />
+    <img src={artwork.url} alt="" class="system-image-img" />
   {/if}
 </div>

@@ -1,26 +1,12 @@
 <script lang="ts">
   import type { Artwork as JetArtworkType } from '~/types';
-  import { intersectionObserver } from '@amp/web-app-components/src/actions/intersection-observer';
-  import { buildSrc } from '@amp/web-app-components/src/components/Artwork/utils/srcset';
-  import ResizeDetector from '@amp/web-app-components/src/components/helpers/ResizeDetector.svelte';
   import { colorAsString } from '~/utils/color';
 
   export let artwork: JetArtworkType;
   export let active: boolean = false;
 
   $: isBackgroundImageLoaded = false;
-  $: backgroundImage = artwork
-    ? buildSrc(
-        artwork.template,
-        {
-          crop: 'sr',
-          width: 400,
-          height: Math.floor(400 / 1.6667),
-          fileType: 'webp',
-        },
-        {}
-      )
-    : undefined;
+  $: backgroundImage = artwork?.url || '';
 
   $: if (backgroundImage) {
     const img = new Image();
@@ -36,6 +22,42 @@
   const handleIntersectionOberserverUpdate = (
     isIntersectingViewport: boolean
   ) => (isOutOfView = !isIntersectingViewport);
+
+  function intersectionObserver(node: HTMLElement, options: any) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (options.callback) {
+          options.callback(entry.isIntersecting);
+        }
+      });
+    }, { threshold: options.threshold || 0 });
+
+    observer.observe(node);
+
+    return {
+      destroy() {
+        observer.disconnect();
+      }
+    };
+  }
+
+  function resizeDetector(node: HTMLElement) {
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        node.dispatchEvent(new CustomEvent('resizeUpdate', {
+          detail: { isResizing: true }
+        }));
+      }
+    });
+
+    resizeObserver.observe(node);
+
+    return {
+      destroy() {
+        resizeObserver.disconnect();
+      }
+    };
+  }
 </script>
 
 <style>
@@ -148,8 +170,6 @@
 </style>
 
 {#if backgroundImage}
-  <ResizeDetector on:resizeUpdate={handleResizeUpdate} />
-
   <div
     class="container"
     class:active
@@ -163,6 +183,7 @@
       callback: handleIntersectionOberserverUpdate,
       threshold: 0,
     }}
+    use:resizeDetector
   >
     <div class="overlay"></div>
   </div>
