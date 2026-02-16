@@ -1,30 +1,56 @@
 <script lang="ts">
+  /**
+   * 图表容器组件
+   * 用于包装和配置 LayerChart 图表
+   */
   import { cn, type WithElementRef } from '$lib/utils.js';
   import type { HTMLAttributes } from 'svelte/elements';
   import ChartStyle from './chart-style.svelte';
   import { setChartContext, type ChartConfig } from './chart-utils.js';
 
+  // 唯一标识符
   const uid = $props.id();
 
+  // 组件属性
   let {
-    ref = $bindable(null),
-    id = uid,
-    class: className,
-    children,
-    config,
-    ...restProps
+    ref = $bindable(null), // 元素引用
+    id = uid, // 组件ID
+    class: className, // 自定义类名
+    children, // 子组件
+    config, // 图表配置
+    ...restProps // 其他HTML属性
   }: WithElementRef<HTMLAttributes<HTMLElement>> & {
     config: ChartConfig;
   } = $props();
 
+  // 派生的图表ID
   const chartId = $derived(`chart-${id || uid.replace(/:/g, '')}`);
 
+  // 设置图表上下文
   setChartContext({
     get config() {
       return config;
     },
   });
 </script>
+
+<!--
+  图表容器组件
+  
+  功能：
+  - 包装 LayerChart 图表
+  - 提供统一的图表样式和配置
+  - 支持元素引用
+  - 应用自定义类名
+  - 渲染子组件
+  
+  技术实现：
+  - 使用 Svelte 5 的新语法 ($props, $bindable, $derived)
+  - 使用 cn 函数合并类名
+  - 设置图表上下文
+  - 应用图表样式覆盖
+  - 支持自定义属性
+-->
 
 <div
   bind:this={ref}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleCoreCoolingPump,
@@ -6,9 +7,10 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 堆芯离线冷却泵数据
   let coreCoolingPump: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       coreCoolingPump = state.coreCoolingPump;
@@ -22,12 +24,34 @@
     toggleCoreCoolingPump();
   }
 
-  // 调整流量
+  // 调整冷却流量
   function handleFlowRateChange(e: Event) {
     const target = e.target as HTMLInputElement;
     setCoreCoolingPumpFlowRate(parseFloat(target.value));
   }
 </script>
+
+<!--
+  堆芯离线冷却泵控制面板组件
+  
+  功能：
+  - 控制堆芯离线冷却泵的启停
+  - 调节冷却泵流量
+  - 实时显示冷却泵状态
+  - 监控冷却参数
+  
+  界面元素：
+  - 泵状态切换按钮
+  - 状态指示器
+  - 冷却流量调节滑块
+  - 系统参数信息卡片
+  - 操作警告框
+  
+  状态管理：
+  - 从reactorStore订阅coreCoolingPump状态
+  - 调用toggleCoreCoolingPump切换泵状态
+  - 调用setCoreCoolingPumpFlowRate设置冷却流量
+-->
 
 <style>
   .panel {

@@ -1,4 +1,8 @@
 <script lang="ts">
+  /**
+   * 汽轮机控制面板组件
+   * 用于控制和监控汽轮机的运行状态
+   */
   import {
     reactorStore,
     toggleTurbine,
@@ -11,12 +15,16 @@
   } from '../../lib/stores/reactorStore';
 
   // 订阅状态
-  let turbine: any;
-  let powerLevel: number;
-  let turbineAuxiliary: any;
-  let steamBypass: any;
-  let condenserVacuum: any;
+  let turbine: any; // 汽轮机系统状态
+  let powerLevel: number; // 反应堆功率水平
+  let turbineAuxiliary: any; // 汽轮机辅助系统状态
+  let steamBypass: any; // 蒸汽旁路系统状态
+  let condenserVacuum: any; // 凝汽器真空系统状态
 
+  /**
+   * 订阅反应堆状态变化
+   * 实时更新汽轮机相关参数
+   */
   reactorStore.subscribe((state) => {
     turbine = state.turbine;
     powerLevel = state.powerRegulation.powerLevel;
@@ -25,43 +33,64 @@
     condenserVacuum = state.condenserVacuum;
   });
 
-  // 处理汽轮机状态切换
+  /**
+   * 处理汽轮机状态切换
+   * 启动或停止汽轮机
+   */
   function handleTurbineToggle() {
     toggleTurbine();
   }
 
-  // 处理负载变化
+  /**
+   * 处理负载变化
+   * @param e 事件对象
+   */
   function handleLoadChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const load = parseFloat(target.value);
     setTurbineLoad(load);
   }
 
-  // 处理转速设定点变化
+  /**
+   * 处理转速设定点变化
+   * @param e 事件对象
+   */
   function handleSpeedSetpointChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const speed = parseFloat(target.value);
     setTurbineSpeedSetpoint(speed);
   }
 
-  // 处理负荷设定点变化
+  /**
+   * 处理负荷设定点变化
+   * @param e 事件对象
+   */
   function handleLoadSetpointChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const load = parseFloat(target.value);
     setTurbineLoadSetpoint(load);
   }
 
-  // 切换自动控制模式
+  /**
+   * 切换自动控制模式
+   * 在自动和手动控制模式之间切换
+   */
   function handleAutomaticControlToggle() {
     toggleTurbineAutomaticControl();
   }
 
-  // 手动调整转速
+  /**
+   * 手动调整转速
+   * @param adjustment 调整值
+   */
   function handleSpeedAdjustment(adjustment: number) {
     adjustTurbineSpeed(adjustment);
   }
 
-  // 复位汽轮机跳闸
+  /**
+   * 复位汽轮机跳闸
+   * 清除汽轮机跳闸状态，允许重新启动
+   */
   function handleResetTrip() {
     resetTurbineTrip();
   }

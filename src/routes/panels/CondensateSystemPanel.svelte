@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleCondensateSystem,
@@ -7,9 +8,10 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 凝结水系统数据
   let condensateSystem: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       condensateSystem = state.condensateSystem;
@@ -23,18 +25,41 @@
     toggleCondensateSystem();
   }
 
-  // 调整流量
+  // 调整凝结水流量
   function handleFlowRateChange(e: Event) {
     const target = e.target as HTMLInputElement;
     setCondensateSystemFlowRate(parseFloat(target.value));
   }
 
-  // 调整温度
+  // 调整凝结水温度
   function handleTemperatureChange(e: Event) {
     const target = e.target as HTMLInputElement;
     setCondensateSystemTemperature(parseFloat(target.value));
   }
 </script>
+
+<!--
+  凝结水系统面板组件
+  
+  功能：
+  - 控制凝结水系统的启停
+  - 调节凝结水流量
+  - 调节凝结水温度
+  - 实时显示系统状态
+  
+  界面元素：
+  - 系统状态切换按钮
+  - 状态指示器
+  - 流量调节滑块
+  - 温度调节滑块
+  - 系统参数信息卡片
+  
+  状态管理：
+  - 从reactorStore订阅condensateSystem状态
+  - 调用toggleCondensateSystem切换系统状态
+  - 调用setCondensateSystemFlowRate设置流量
+  - 调用setCondensateSystemTemperature设置温度
+-->
 
 <style>
   .panel {

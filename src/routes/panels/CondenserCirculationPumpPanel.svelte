@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleCondenserCirculationPump,
@@ -6,9 +7,10 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 凝汽器循环水泵数据
   let condenserCirculationPumps: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       condenserCirculationPumps = state.condenserCirculationPumps;
@@ -28,6 +30,27 @@
     setCondenserCirculationPumpFlowRate(pumpNumber, parseFloat(target.value));
   }
 </script>
+
+<!--
+  凝汽器循环水泵面板组件
+  
+  功能：
+  - 控制两台凝汽器循环水泵的启停
+  - 调节循环水泵的流量
+  - 实时显示水泵状态
+  - 监控水泵运行参数
+  
+  界面元素：
+  - 水泵状态切换按钮
+  - 状态指示器
+  - 流量调节滑块
+  - 水泵参数信息卡片
+  
+  状态管理：
+  - 从reactorStore订阅condenserCirculationPumps状态
+  - 调用toggleCondenserCirculationPump切换水泵状态
+  - 调用setCondenserCirculationPumpFlowRate设置流量
+-->
 
 <style>
   .panel {

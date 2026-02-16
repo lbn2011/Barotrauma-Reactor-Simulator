@@ -1,4 +1,8 @@
 <script lang="ts">
+  /**
+   * 故障模拟面板组件
+   * 用于模拟和管理反应堆系统的各种故障情况
+   */
   import {
     reactorStore,
     triggerFault,
@@ -8,9 +12,13 @@
   } from '../../lib/stores/reactorStore';
 
   // 订阅状态
-  let faultSimulation: any;
-  let alarms: any;
+  let faultSimulation: any; // 故障模拟系统状态
+  let alarms: any; // 警报系统状态
 
+  /**
+   * 订阅反应堆状态变化
+   * 实时更新故障模拟状态和警报信息
+   */
   reactorStore.subscribe((state) => {
     faultSimulation = state.faultSimulation;
     alarms = state.alarms;
@@ -57,47 +65,68 @@
   ];
 
   // 表单状态
-  let selectedFaultType = 'pump';
-  let selectedComponentId = 'pump1';
-  let selectedSeverity = 'minor';
+  let selectedFaultType = 'pump'; // 当前选择的故障类型
+  let selectedComponentId = 'pump1'; // 当前选择的组件ID
+  let selectedSeverity = 'minor'; // 当前选择的严重程度
 
-  // 处理故障类型变化
+  /**
+   * 处理故障类型变化
+   * @param e 事件对象
+   */
   function handleFaultTypeChange(e: Event) {
     const target = e.target as HTMLSelectElement;
     selectedFaultType = target.value as any;
     selectedComponentId = componentIds[selectedFaultType][0];
   }
 
-  // 处理组件ID变化
+  /**
+   * 处理组件ID变化
+   * @param e 事件对象
+   */
   function handleComponentIdChange(e: Event) {
     const target = e.target as HTMLSelectElement;
     selectedComponentId = target.value;
   }
 
-  // 处理严重程度变化
+  /**
+   * 处理严重程度变化
+   * @param e 事件对象
+   */
   function handleSeverityChange(e: Event) {
     const target = e.target as HTMLSelectElement;
     selectedSeverity = target.value as any;
   }
 
-  // 触发故障
+  /**
+   * 触发故障
+   * 生成指定类型、组件和严重程度的故障
+   */
   function handleTriggerFault() {
     triggerFault(selectedFaultType, selectedComponentId, selectedSeverity);
   }
 
-  // 修复故障
+  /**
+   * 修复故障
+   * @param faultId 故障ID
+   */
   function handleFixFault(faultId: string) {
     fixFault(faultId);
   }
 
-  // 处理维护水平变化
+  /**
+   * 处理维护水平变化
+   * @param e 事件对象
+   */
   function handleMaintenanceLevelChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const level = parseFloat(target.value);
     setMaintenanceLevel(level);
   }
 
-  // 清除所有故障
+  /**
+   * 清除所有故障
+   * 重置故障模拟系统到初始状态
+   */
   function handleClearAllFaults() {
     clearAllFaults();
   }

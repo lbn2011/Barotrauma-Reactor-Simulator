@@ -1,10 +1,13 @@
 <script lang="ts">
+  // 导入生命周期钩子
   import { onMount, onDestroy } from 'svelte';
+  // 导入反应堆状态管理
   import { reactorStore } from '../../lib/stores/reactorStore';
+  // 导入UI组件
   import { Button } from '../../lib/components/ui/button';
   import { Card, CardContent } from '../../lib/components/ui/card';
 
-  // 订阅状态
+  // 趋势数据
   let trends: {
     timePoints: number[];
     powerData: number[];
@@ -12,18 +15,20 @@
     pressureData: number[];
   };
 
+  // 订阅状态变化
   reactorStore.subscribe((state) => {
     trends = state.trends;
     updateChartData();
   });
 
+  // 图表相关变量
   let chart: any = null;
   let chartCanvas: HTMLCanvasElement | null = null;
   let ChartJS: any = null;
   let isChartLoaded: boolean = false;
   let isLoading: boolean = false;
 
-  // 图表配置
+  // 图表配置选项
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -65,7 +70,7 @@
     },
   };
 
-  // 懒加载Chart.js
+  // 懒加载Chart.js库
   async function loadChartJS() {
     if (isChartLoaded) return;
 
@@ -83,7 +88,7 @@
         Legend,
       } = chartModule;
 
-      // 注册Chart.js组件
+      // 注册Chart.js必要组件
       Chart.register(
         CategoryScale,
         LinearScale,
@@ -159,11 +164,13 @@
     }
   }
 
+  // 组件挂载时加载图表
   onMount(async () => {
     await loadChartJS();
     updateChartData();
   });
 
+  // 组件销毁时清理图表
   onDestroy(() => {
     if (chart) {
       try {
@@ -175,6 +182,30 @@
     }
   });
 </script>
+
+<!--
+  数据趋势图面板组件
+  
+  功能：
+  - 显示反应堆关键参数的时间趋势
+  - 提供实时数据可视化
+  - 支持数据刷新和图表更新
+  - 展示参数摘要和说明
+  
+  界面元素：
+  - 趋势图表（功率、温度、压力）
+  - 刷新按钮
+  - 参数摘要卡片
+  - 图表说明卡片
+  - 加载状态指示器
+  
+  技术实现：
+  - 使用Chart.js进行数据可视化
+  - 懒加载Chart.js库以优化性能
+  - 响应式设计
+  - 实时数据更新
+  - 错误处理和边界情况管理
+-->
 
 <div class="bg-background border border-border rounded-lg p-8 shadow-md">
   <h1 class="text-2xl font-bold text-primary mb-8">18. 数据趋势图</h1>

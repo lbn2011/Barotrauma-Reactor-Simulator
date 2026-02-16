@@ -1,4 +1,10 @@
 <script lang="ts">
+  /**
+   * 控制棒面板组件
+   * 模拟RBMK-1000反应堆的控制棒系统
+   */
+  
+  // 导入反应堆状态管理相关函数
   import {
     reactorStore,
     setControlRodPosition,
@@ -7,25 +13,35 @@
     toggleControlRodAutoMode,
   } from '../../lib/stores/reactorStore';
 
-  // 订阅状态
-  let controlRods: any;
-  let reactivity: number;
-  let powerLevel: number;
+  // 订阅状态变量
+  let controlRods: any; // 控制棒系统状态
+  let reactivity: number; // 反应堆反应性
+  let powerLevel: number; // 反应堆功率水平
 
+  /**
+   * 订阅反应堆状态变化
+   * 实时更新控制棒状态、反应性和功率水平
+   */
   reactorStore.subscribe((state) => {
     controlRods = state.controlRods;
     reactivity = state.powerRegulation.reactivity;
     powerLevel = state.powerRegulation.powerLevel;
   });
 
-  // 处理控制棒位置变化
+  /**
+   * 处理控制棒位置变化
+   * @param e 事件对象
+   */
   function handlePositionChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const position = parseFloat(target.value);
     setControlRodPosition(position);
   }
 
-  // 处理控制棒移动速度变化
+  /**
+   * 处理控制棒移动速度变化
+   * @param e 事件对象
+   */
   function handleInsertionSpeedChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const speed = parseFloat(target.value);
@@ -33,71 +49,100 @@
     console.log(`Insertion speed changed to: ${speed}`);
   }
 
-  // 快速操作按钮
+  /**
+   * 快速设置控制棒位置
+   * @param position 目标位置（%）
+   */
   function setPositionQuickly(position: number) {
     setControlRodPosition(position);
   }
 
-  // 处理单根控制棒位置变化
+  /**
+   * 处理单根控制棒位置变化
+   * @param row 行索引
+   * @param col 列索引
+   * @param e 事件对象
+   */
   function handleSingleRodChange(row: number, col: number, e: Event) {
     const target = e.target as HTMLInputElement;
     const position = parseFloat(target.value);
     setSingleControlRodPosition(row, col, position);
   }
 
-  // 触发紧急插入
+  /**
+   * 触发紧急插入（AZ-5）
+   * 模拟切尔诺贝利事故中的紧急停堆操作
+   */
   function handleEmergencyInsertion() {
     emergencyRodInsertion();
   }
 
-  // 切换自动模式
+  /**
+   * 切换控制棒自动模式
+   */
   function handleAutoModeToggle() {
     toggleControlRodAutoMode();
   }
 
-  // 获取控制棒状态颜色
+  /**
+   * 获取控制棒状态颜色
+   * @param status 控制棒状态
+   * @returns 状态对应的颜色
+   */
   function getRodStatusColor(status: string) {
     switch (status) {
       case 'normal':
-        return '#4caf50';
+        return '#4caf50'; // 正常 - 绿色
       case 'fault':
-        return '#f44336';
+        return '#f44336'; // 故障 - 红色
       case 'maintenance':
-        return '#ff9800';
+        return '#ff9800'; // 维护 - 橙色
       default:
         return '#4caf50';
     }
   }
 
-  // 获取控制棒类型标签
+  /**
+   * 获取控制棒类型标签
+   * @param type 控制棒类型
+   * @returns 类型对应的标签
+   */
   function getRodTypeLabel(type: string) {
     switch (type) {
       case 'control':
-        return '控制';
+        return '控制'; // 控制棒
       case 'shutdown':
-        return '停堆';
+        return '停堆'; // 停堆棒
       case 'automatic':
-        return '自动';
+        return '自动'; // 自动棒
       default:
         return '控制';
     }
   }
 
-  // 获取控制棒类型颜色
+  /**
+   * 获取控制棒类型颜色
+   * @param type 控制棒类型
+   * @returns 类型对应的颜色
+   */
   function getRodTypeColor(type: string) {
     switch (type) {
       case 'control':
-        return '#2196f3';
+        return '#2196f3'; // 控制棒 - 蓝色
       case 'shutdown':
-        return '#f44336';
+        return '#f44336'; // 停堆棒 - 红色
       case 'automatic':
-        return '#4caf50';
+        return '#4caf50'; // 自动棒 - 绿色
       default:
         return '#2196f3';
     }
   }
 
-  // 模拟燃料更换
+  /**
+   * 模拟燃料更换
+   * @param row 行索引
+   * @param col 列索引
+   */
   function handleFuelReload(row: number, col: number) {
     // 这里可以实现燃料更换的逻辑
     console.log(`Fuel reload initiated for rod at ${row}, ${col}`);

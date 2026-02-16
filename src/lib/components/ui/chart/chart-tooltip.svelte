@@ -1,4 +1,8 @@
 <script lang="ts">
+  /**
+   * 图表提示框组件
+   * 用于显示图表数据的详细信息
+   */
   import { cn, type WithElementRef, type WithoutChildren } from '$lib/utils.js';
   import type { HTMLAttributes } from 'svelte/elements';
   import {
@@ -9,25 +13,32 @@
   import { getTooltipContext, Tooltip as TooltipPrimitive } from 'layerchart';
   import type { Snippet } from 'svelte';
 
+  /**
+   * 默认标签格式化函数
+   * @param value 标签值
+   * @param _payload 提示框数据
+   * @returns 格式化后的标签
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function defaultFormatter(value: any, _payload: TooltipPayload[]) {
     return `${value}`;
   }
 
+  // 组件属性
   let {
-    ref = $bindable(null),
-    class: className,
-    hideLabel = false,
-    indicator = 'dot',
-    hideIndicator = false,
-    labelKey,
-    label,
-    labelFormatter = defaultFormatter,
-    labelClassName,
-    formatter,
-    nameKey,
-    color,
-    ...restProps
+    ref = $bindable(null), // 元素引用
+    class: className, // 自定义类名
+    hideLabel = false, // 是否隐藏标签
+    indicator = 'dot', // 指示器类型
+    hideIndicator = false, // 是否隐藏指示器
+    labelKey, // 标签键
+    label, // 标签文本
+    labelFormatter = defaultFormatter, // 标签格式化函数
+    labelClassName, // 标签类名
+    formatter, // 自定义格式化片段
+    nameKey, // 名称键
+    color, // 颜色
+    ...restProps // 其他HTML属性
   }: WithoutChildren<WithElementRef<HTMLAttributes<HTMLDivElement>>> & {
     hideLabel?: boolean;
     label?: string;
@@ -52,9 +63,11 @@
     >;
   } = $props();
 
+  // 获取图表上下文
   const chart = useChart();
   const tooltipCtx = getTooltipContext();
 
+  // 格式化标签
   const formattedLabel = $derived.by(() => {
     if (hideLabel || !tooltipCtx.payload?.length) return null;
 
@@ -73,10 +86,38 @@
     return labelFormatter(value, tooltipCtx.payload);
   });
 
+  // 是否嵌套标签
   const nestLabel = $derived(
     tooltipCtx.payload.length === 1 && indicator !== 'dot'
   );
 </script>
+
+<!--
+  图表提示框组件
+  
+  功能：
+  - 显示图表数据的详细信息
+  - 支持自定义标签和格式化
+  - 支持不同类型的指示器（点、线、虚线）
+  - 支持自定义颜色
+  - 响应式布局
+  - 支持嵌套标签
+  
+  界面元素：
+  - 提示框容器
+  - 标签显示
+  - 数据项列表
+  - 指示器
+  - 数据值
+  
+  技术实现：
+  - 使用 LayerChart 的 TooltipPrimitive
+  - 使用 Svelte 5 的新语法 ($props, $bindable, $derived)
+  - 条件渲染
+  - 自定义格式化函数
+  - 动态样式
+  - 片段渲染
+-->
 
 {#snippet TooltipLabel()}
   {#if formattedLabel}

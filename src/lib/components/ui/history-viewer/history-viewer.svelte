@@ -1,16 +1,34 @@
 <script lang="ts">
+  /**
+   * 历史数据查看器组件
+   * 用于显示和分析反应堆历史运行数据
+   */
   import { Chart, registerables } from 'chart.js';
   import { Card, CardContent, CardHeader, CardTitle } from '../card';
   import { Button } from '../button';
   import { Input } from '../input';
 
+  // 注册Chart.js组件
   Chart.register(...registerables);
 
+  /**
+   * 历史数据接口
+   * @property timestamp 时间戳
+   * @property parameters 参数记录
+   */
   interface HistoryData {
     timestamp: number;
     parameters: Record<string, number>;
   }
 
+  /**
+   * 图表配置接口
+   * @property id 参数ID
+   * @property name 参数名称
+   * @property color 图表颜色
+   * @property unit 单位
+   * @property visible 是否可见
+   */
   interface ChartConfig {
     id: string;
     name: string;
@@ -19,21 +37,28 @@
     visible: boolean;
   }
 
-  export let historyData: HistoryData[] = [];
-  export let chartConfigs: ChartConfig[] = [];
-  export let timeRange: '1h' | '6h' | '24h' | '7d' = '6h';
-  export const refreshInterval: number = 5000;
+  // 组件属性
+  export let historyData: HistoryData[] = []; // 历史数据数组
+  export let chartConfigs: ChartConfig[] = []; // 图表配置数组
+  export let timeRange: '1h' | '6h' | '24h' | '7d' = '6h'; // 时间范围
+  export const refreshInterval: number = 5000; // 刷新间隔
 
-  let chart: any = null;
-  let chartCanvas: HTMLCanvasElement | null = null;
-  let isLoading = false;
+  // 组件状态
+  let chart: any = null; // Chart.js实例
+  let chartCanvas: HTMLCanvasElement | null = null; // 图表画布元素
+  let isLoading = false; // 加载状态
   let selectedParameters: string[] = chartConfigs
     .filter((c) => c.visible)
-    .map((c) => c.id);
+    .map((c) => c.id); // 选中的参数
 
+  /**
+   * 初始化图表
+   * 创建或更新Chart.js实例
+   */
   function initChart() {
     if (!chartCanvas) return;
 
+    // 销毁现有图表实例
     if (chart) {
       try {
         chart.destroy();
@@ -43,11 +68,13 @@
       }
     }
 
+    // 准备图表标签
     const labels = historyData.map((data) => {
       const date = new Date(data.timestamp);
       return date.toLocaleTimeString();
     });
 
+    // 准备数据集
     const datasets = chartConfigs
       .filter((config) => config.visible)
       .map((config) => {
@@ -64,6 +91,7 @@
         };
       });
 
+    // 创建图表实例
     try {
       chart = new Chart(chartCanvas, {
         type: 'line',
@@ -130,24 +158,38 @@
     }
   }
 
+  /**
+   * 更新时间范围
+   * @param range 新的时间范围
+   */
   function updateTimeRange(range: '1h' | '6h' | '24h' | '7d') {
     timeRange = range;
-    initChart();
+    initChart(); // 重新初始化图表
   }
 
+  /**
+   * 切换参数可见性
+   * @param configId 参数配置ID
+   */
   function toggleParameterVisibility(configId: string) {
     const config = chartConfigs.find((c) => c.id === configId);
     if (config) {
       config.visible = !config.visible;
-      initChart();
+      initChart(); // 重新初始化图表
     }
   }
 
+  /**
+   * 导出数据为CSV格式
+   */
   function exportData() {
+    // 准备CSV表头
     const headers = [
       'Timestamp',
       ...chartConfigs.map((c) => `${c.name} (${c.unit})`),
     ];
+    
+    // 准备CSV行数据
     const rows = historyData.map((data) => {
       const row = [new Date(data.timestamp).toISOString()];
       chartConfigs.forEach((config) => {
@@ -156,9 +198,12 @@
       return row.join(',');
     });
 
+    // 生成CSV内容
     const csvContent = [headers.join(','), ...rows].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
+    
+    // 创建下载链接
     const link = document.createElement('a');
     link.setAttribute('href', url);
     link.setAttribute('download', `reactor-history-${Date.now()}.csv`);
@@ -168,6 +213,9 @@
     document.body.removeChild(link);
   }
 
+  /**
+   * 刷新数据
+   */
   function refreshData() {
     isLoading = true;
     setTimeout(() => {
@@ -176,14 +224,25 @@
     }, 1000);
   }
 
+  /**
+   * 组件挂载时初始化图表
+   */
   function onMount() {
     initChart();
   }
 
+  /**
+   * 组件更新时重新初始化图表
+   */
   function onUpdate() {
     initChart();
   }
 
+  /**
+   * 计算参数变化
+   * @param parameterId 参数ID
+   * @returns 变化百分比
+   */
   function calculateChange(parameterId: string) {
     if (historyData.length < 2) return '无变化';
     const firstValue = historyData[0].parameters[parameterId] || 0;
@@ -195,6 +254,32 @@
     return `${sign}${change.toFixed(1)} (${sign}${changePercent.toFixed(1)}%)`;
   }
 </script>
+
+<!--
+  历史数据查看器组件
+  
+  功能：
+  - 显示反应堆历史运行数据
+  - 支持多种时间范围选择
+  - 可切换显示不同参数
+  - 提供数据导出功能
+  - 实时数据刷新
+  - 数据变化趋势分析
+  
+  界面元素：
+  - 时间范围选择按钮
+  - 参数选择按钮
+  - 刷新和导出按钮
+  - 数据趋势图表
+  - 数据统计卡片
+  
+  技术实现：
+  - 使用Chart.js进行数据可视化
+  - 响应式设计
+  - CSV数据导出
+  - 实时数据更新
+  - 动态图表配置
+-->
 
 <div class="history-viewer">
   <Card>

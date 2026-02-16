@@ -1,21 +1,25 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleEmergencyCoolingPump,
     setEmergencyCoolingPumpFlowRate,
   } from '../../lib/stores/reactorStore';
 
-  // 订阅状态
+  // 应急冷却泵状态数据
   let emergencyCoolingPumps: {
     pump1: { status: boolean; flowRate: number };
     pump2: { status: boolean; flowRate: number };
   };
+  // 堆芯参数
   let coreTemperature: number;
   let corePressure: number;
   let waterLevel: number;
+  // 报警和故障数据
   let alarms: any;
   let faultSimulation: any;
 
+  // 订阅状态变化
   reactorStore.subscribe((state) => {
     emergencyCoolingPumps = state.emergencyCoolingPumps;
     coreTemperature = state.core.temperature;
@@ -37,6 +41,34 @@
     setEmergencyCoolingPumpFlowRate(pumpNumber, flowRate);
   }
 </script>
+
+<!--
+  反应堆应急冷却（ERC）泵面板组件
+  
+  功能：
+  - 控制两台应急冷却泵的启停
+  - 调节应急冷却泵的流量
+  - 监控安全注水阀状态
+  - 显示堆芯关键参数
+  - 提供应急冷却系统状态示意图
+  - 显示操作说明和警告
+  
+  界面元素：
+  - 应急冷却泵控制面板
+  - 安全注水阀控制
+  - 状态指示器
+  - 流量调节滑块
+  - 泵状态示意图
+  - 堆芯参数监控卡片
+  - 操作说明和警告框
+  
+  状态管理：
+  - 从reactorStore订阅emergencyCoolingPumps状态
+  - 从reactorStore订阅堆芯参数
+  - 从reactorStore订阅报警和故障状态
+  - 调用toggleEmergencyCoolingPump切换泵状态
+  - 调用setEmergencyCoolingPumpFlowRate设置泵流量
+-->
 
 <style>
   .panel-container {

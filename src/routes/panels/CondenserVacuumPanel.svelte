@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleCondenserVacuum,
@@ -6,9 +7,10 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 凝汽器真空系统数据
   let condenserVacuum: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       condenserVacuum = state.condenserVacuum;
@@ -28,6 +30,29 @@
     setCondenserVacuumLevel(parseFloat(target.value));
   }
 </script>
+
+<!--
+  凝汽器真空系统面板组件
+  
+  功能：
+  - 控制凝汽器真空系统的启停
+  - 调节凝汽器真空度
+  - 实时显示真空系统状态
+  - 监控真空度水平
+  
+  界面元素：
+  - 系统状态切换按钮
+  - 状态指示器
+  - 真空度调节滑块
+  - 真空度仪表
+  - 系统参数信息卡片
+  - 操作警告框
+  
+  状态管理：
+  - 从reactorStore订阅condenserVacuum状态
+  - 调用toggleCondenserVacuum切换系统状态
+  - 调用setCondenserVacuumLevel设置真空度
+-->
 
 <style>
   .panel {

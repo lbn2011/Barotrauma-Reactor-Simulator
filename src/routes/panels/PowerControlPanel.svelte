@@ -1,4 +1,10 @@
 <script lang="ts">
+  /**
+   * 功率控制面板组件
+   * 模拟RBMK-1000反应堆的功率调节系统
+   */
+  
+  // 导入反应堆状态管理相关函数
   import {
     reactorStore,
     setTargetPower,
@@ -9,51 +15,74 @@
   import { Card, CardContent } from '../../lib/components/ui/card';
   import { Button } from '../../lib/components/ui/button';
 
-  // 订阅状态
+  // 订阅状态变量
   let powerRegulation: {
-    powerLevel: number;
-    targetPower: number;
-    reactivity: number;
-    powerRate: number;
-    neutronFlux: number;
-    neutronFluxLog: number;
-    controlError: number;
-    automaticControl: boolean;
-    axialOffsetControl: boolean;
-    powerSetpoint: number;
+    powerLevel: number; // 当前功率水平
+    targetPower: number; // 目标功率
+    reactivity: number; // 反应性
+    powerRate: number; // 功率变化率
+    neutronFlux: number; // 中子通量
+    neutronFluxLog: number; // 中子通量对数
+    controlError: number; // 控制误差
+    automaticControl: boolean; // 自动控制模式
+    axialOffsetControl: boolean; // 轴向偏移控制
+    powerSetpoint: number; // 功率设定点
   };
-  let core: { temperature: number; pressure: number; waterLevel: number };
+  
+  let core: { 
+    temperature: number; // 堆芯温度
+    pressure: number; // 堆芯压力
+    waterLevel: number; // 堆芯水位
+  };
 
+  /**
+   * 订阅反应堆状态变化
+   * 实时更新功率调节系统状态和堆芯参数
+   */
   reactorStore.subscribe((state) => {
     powerRegulation = state.powerRegulation;
     core = state.core;
   });
 
-  // 处理目标功率变化
+  /**
+   * 处理目标功率变化
+   * @param e 事件对象
+   */
   function handleTargetPowerChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const power = parseFloat(target.value);
     setTargetPower(power);
   }
 
-  // 处理功率设定点变化
+  /**
+   * 处理功率设定点变化
+   * @param e 事件对象
+   */
   function handlePowerSetpointChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const setpoint = parseFloat(target.value);
     setPowerSetpoint(setpoint);
   }
 
-  // 快速操作按钮
+  /**
+   * 快速设置功率水平
+   * @param power 目标功率（%）
+   */
   function setPowerQuickly(power: number) {
     setTargetPower(power);
   }
 
-  // 切换自动控制模式
+  /**
+   * 切换自动控制模式
+   */
   function handleAutomaticControlToggle() {
     toggleAutomaticControl();
   }
 
-  // 切换轴向偏移控制
+  /**
+   * 切换轴向偏移控制
+   * 轴向偏移控制可以优化堆芯功率分布
+   */
   function handleAxialOffsetControlToggle() {
     toggleAxialOffsetControl();
   }

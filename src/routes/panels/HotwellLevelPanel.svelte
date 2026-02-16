@@ -1,13 +1,15 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     setCondenserHotwellLevel,
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 凝汽器热井数据
   let condenserHotwell: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       condenserHotwell = state.condenserHotwell;
@@ -16,12 +18,33 @@
     return unsubscribe;
   });
 
-  // 调整液位
+  // 调整热井液位
   function handleLevelChange(e: Event) {
     const target = e.target as HTMLInputElement;
     setCondenserHotwellLevel(parseFloat(target.value));
   }
 </script>
+
+<!--
+  凝汽器热井液位控制面板组件
+  
+  功能：
+  - 调节凝汽器热井的液位
+  - 实时显示热井液位状态
+  - 提供液位状态指示
+  - 给出操作建议
+  
+  界面元素：
+  - 热井液位调节滑块
+  - 液位仪表
+  - 液位状态信息卡片
+  - 操作建议信息卡片
+  - 操作警告框
+  
+  状态管理：
+  - 从reactorStore订阅condenserHotwell状态
+  - 调用setCondenserHotwellLevel设置热井液位
+-->
 
 <style>
   .panel {

@@ -1,10 +1,12 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import { reactorStore } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 警报数据
   let alarms: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       alarms = state.alarms;
@@ -13,6 +15,26 @@
     return unsubscribe;
   });
 </script>
+
+<!--
+  警报CRT面板组件
+  
+  功能：
+  - 显示反应堆系统的警报信息
+  - 实时监控警报状态
+  - 提供警报历史记录
+  - 视觉化警报严重性
+  
+  界面元素：
+  - 警报状态指示器
+  - 活跃警报计数
+  - 警报消息列表
+  - CRT风格的视觉效果
+  
+  状态管理：
+  - 从reactorStore订阅alarms状态
+  - 实时更新警报信息
+-->
 
 <style>
   .panel {

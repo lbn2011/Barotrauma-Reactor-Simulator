@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleReactorFeedPump,
@@ -10,12 +11,16 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 给水泵状态数据
   let reactorFeedPumps: any;
+  // 给水系统数据
   let feedwaterSystem: any;
+  // 三冲量水位控制系统数据
   let threeImpulseLevelControl: any;
+  // 堆芯参数
   let core: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       reactorFeedPumps = state.reactorFeedPumps;
@@ -68,6 +73,34 @@
     setFeedwaterHeaterParameter(heater, parameter, value);
   }
 </script>
+
+<!--
+  反应堆给水泵控制面板组件
+  
+  功能：
+  - 控制两台给水泵的启停
+  - 调节给水泵的流量
+  - 控制隔离阀的开关和位置
+  - 控制给水加热器的运行
+  - 调节给水加热器的蒸汽压力
+  - 监控三冲量水位控制系统
+  - 显示堆芯和给水系统参数
+  
+  界面元素：
+  - 系统参数概览卡片
+  - 给水泵控制面板（状态切换、流量调节）
+  - 隔离阀控制面板（开关、位置调节）
+  - 给水泵状态参数卡片
+  - 给水加热器控制面板
+  - 三冲量水位控制系统监控
+  
+  状态管理：
+  - 从reactorStore订阅reactorFeedPumps状态
+  - 从reactorStore订阅feedwaterSystem状态
+  - 从reactorStore订阅threeImpulseLevelControl状态
+  - 从reactorStore订阅core状态
+  - 调用相关函数控制各系统组件
+-->
 
 <style>
   .panel {

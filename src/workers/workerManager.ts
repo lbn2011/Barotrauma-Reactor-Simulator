@@ -1,35 +1,52 @@
-// Worker管理器
+/**
+ * Worker管理器
+ * 管理Web Workers，处理计算密集型任务
+ */
 
-// 定义Worker类型
+/**
+ * Worker类型枚举
+ */
 const enum WorkerType {
-  PHYSICS_CALCULATION = 'physicsCalculation',
-  DATA_PROCESSING = 'dataProcessing',
+  PHYSICS_CALCULATION = 'physicsCalculation', // 物理计算Worker
+  DATA_PROCESSING = 'dataProcessing', // 数据处理Worker
 }
 
-// 定义消息类型
+/**
+ * Worker消息接口
+ */
 interface WorkerMessage {
-  type: string;
-  data: any;
+  type: string; // 消息类型
+  data: any; // 消息数据
 }
 
-// 定义响应类型
+/**
+ * Worker响应接口
+ */
 interface WorkerResponse {
-  type: string;
-  data: any;
+  type: string; // 响应类型
+  data: any; // 响应数据
 }
 
-// 定义Worker接口
+/**
+ * Worker实例接口
+ */
 interface WorkerInstance {
-  worker: Worker;
-  callbacks: Map<string, (data: any) => void>;
+  worker: Worker; // Worker实例
+  callbacks: Map<string, (data: any) => void>; // 回调函数映射
 }
 
-// Worker管理器类
+/**
+ * Worker管理器类
+ * 管理多个Web Workers，处理物理计算和数据处理任务
+ */
 class WorkerManager {
-  private workers: Map<WorkerType, WorkerInstance> = new Map();
-  private isInitialized: boolean = false;
+  private workers: Map<WorkerType, WorkerInstance> = new Map(); // Worker实例映射
+  private isInitialized: boolean = false; // 初始化状态
 
-  // 初始化Worker
+  /**
+   * 初始化Worker
+   * 创建物理计算和数据处理Worker
+   */
   initialize() {
     if (this.isInitialized) return;
 
@@ -82,7 +99,11 @@ class WorkerManager {
     this.isInitialized = true;
   }
 
-  // 处理Worker消息
+  /**
+   * 处理Worker消息
+   * @param workerType Worker类型
+   * @param response 响应数据
+   */
   private handleWorkerMessage(
     workerType: WorkerType,
     response: WorkerResponse
@@ -97,7 +118,13 @@ class WorkerManager {
     }
   }
 
-  // 发送消息到Worker
+  /**
+   * 发送消息到Worker
+   * @param workerType Worker类型
+   * @param type 消息类型
+   * @param data 消息数据
+   * @returns Promise<any> 处理结果
+   */
   sendMessage(workerType: WorkerType, type: string, data: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const workerInstance = this.workers.get(workerType);
@@ -129,7 +156,11 @@ class WorkerManager {
     });
   }
 
-  // 计算质量平衡
+  /**
+   * 计算质量平衡
+   * @param data 输入数据
+   * @returns Promise<any> 计算结果
+   */
   async calculateMassBalance(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
@@ -138,7 +169,11 @@ class WorkerManager {
     );
   }
 
-  // 计算能量平衡
+  /**
+   * 计算能量平衡
+   * @param data 输入数据
+   * @returns Promise<any> 计算结果
+   */
   async calculateEnergyBalance(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
@@ -147,7 +182,11 @@ class WorkerManager {
     );
   }
 
-  // 计算空泡系数
+  /**
+   * 计算空泡系数
+   * @param data 输入数据
+   * @returns Promise<any> 计算结果
+   */
   async calculateVoidCoefficient(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
@@ -156,7 +195,11 @@ class WorkerManager {
     );
   }
 
-  // 计算氙中毒
+  /**
+   * 计算氙中毒
+   * @param data 输入数据
+   * @returns Promise<any> 计算结果
+   */
   async calculateXenonPoisoning(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
@@ -165,7 +208,11 @@ class WorkerManager {
     );
   }
 
-  // 计算控制棒物理特性
+  /**
+   * 计算控制棒物理特性
+   * @param data 输入数据
+   * @returns Promise<any> 计算结果
+   */
   async calculateControlRodPhysics(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
@@ -174,7 +221,11 @@ class WorkerManager {
     );
   }
 
-  // 计算反应堆核心
+  /**
+   * 计算反应堆核心
+   * @param data 输入数据
+   * @returns Promise<any> 计算结果
+   */
   async calculateReactorCore(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
@@ -183,7 +234,11 @@ class WorkerManager {
     );
   }
 
-  // 处理警报数据
+  /**
+   * 处理警报数据
+   * @param data 输入数据
+   * @returns Promise<any> 处理结果
+   */
   async processAlarmData(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.DATA_PROCESSING,
@@ -192,7 +247,11 @@ class WorkerManager {
     );
   }
 
-  // 处理趋势数据
+  /**
+   * 处理趋势数据
+   * @param data 输入数据
+   * @returns Promise<any> 处理结果
+   */
   async processTrendData(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.DATA_PROCESSING,
@@ -201,12 +260,19 @@ class WorkerManager {
     );
   }
 
-  // 生成报告
+  /**
+   * 生成报告
+   * @param data 输入数据
+   * @returns Promise<any> 处理结果
+   */
   async generateReport(data: any): Promise<any> {
     return this.sendMessage(WorkerType.DATA_PROCESSING, 'generateReport', data);
   }
 
-  // 终止Worker
+  /**
+   * 终止Worker
+   * 清理所有Worker实例
+   */
   terminate() {
     this.workers.forEach((workerInstance) => {
       workerInstance.worker.terminate();

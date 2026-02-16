@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     startSimulation,
@@ -8,18 +9,22 @@
     tripReactor,
   } from '../../lib/stores/reactorStore';
 
-  // 订阅状态
+  // 模拟状态数据
   let isRunning: boolean;
   let simulationTime: number;
+  // 核心系统数据
   let core: any;
   let powerRegulation: any;
   let controlRods: any;
+  // 辅助系统数据
   let turbine: any;
   let feedwaterSystem: any;
   let emergencyCoolingPumps: any;
+  // 安全和故障数据
   let faultSimulation: any;
   let alarms: any;
 
+  // 订阅状态变化
   reactorStore.subscribe((state) => {
     isRunning = state.isRunning;
     simulationTime = state.simulationTime;
@@ -63,6 +68,30 @@
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 </script>
+
+<!--
+  系统概览面板组件
+  
+  功能：
+  - 提供模拟控制功能（启动、停止、重置）
+  - 执行紧急操作（紧急停堆、触发停堆）
+  - 显示核心状态（功率、温度、压力、水位）
+  - 监控各系统状态（控制棒、汽轮机、给水、安全系统）
+  - 显示故障模拟系统状态
+  - 实时更新模拟时间
+  
+  界面元素：
+  - 模拟控制按钮
+  - 紧急操作按钮
+  - 核心状态卡片
+  - 系统状态卡片
+  - 模拟时间显示
+  - 状态指示器
+  
+  状态管理：
+  - 从reactorStore订阅多个状态
+  - 调用相关函数控制模拟和执行紧急操作
+-->
 
 <style>
   .panel-container {

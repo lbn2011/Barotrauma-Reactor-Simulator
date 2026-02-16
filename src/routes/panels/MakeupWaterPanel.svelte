@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleMakeUpWater,
@@ -6,9 +7,10 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 补水系统数据
   let makeUpWater: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       makeUpWater = state.makeUpWater;
@@ -28,6 +30,27 @@
     setMakeUpWaterFlowRate(parseFloat(target.value));
   }
 </script>
+
+<!--
+  补水系统控制面板组件
+  
+  功能：
+  - 控制补水系统的启停
+  - 调节补水流量
+  - 实时显示补水系统状态
+  - 监控补水参数
+  
+  界面元素：
+  - 系统状态切换按钮
+  - 状态指示器
+  - 补水流量调节滑块
+  - 系统参数信息卡片
+  
+  状态管理：
+  - 从reactorStore订阅makeUpWater状态
+  - 调用toggleMakeUpWater切换系统状态
+  - 调用setMakeUpWaterFlowRate设置补水流量
+-->
 
 <style>
   .panel {

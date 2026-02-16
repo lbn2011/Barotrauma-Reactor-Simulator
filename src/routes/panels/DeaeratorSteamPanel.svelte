@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     setDeaeratorPressure,
@@ -6,9 +7,10 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 除氧器数据
   let deaerator: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       deaerator = state.deaerator;
@@ -17,18 +19,40 @@
     return unsubscribe;
   });
 
-  // 调整压力
+  // 调整除氧器压力
   function handlePressureChange(e: Event) {
     const target = e.target as HTMLInputElement;
     setDeaeratorPressure(parseFloat(target.value));
   }
 
-  // 调整液位
+  // 调整除氧器液位
   function handleLevelChange(e: Event) {
     const target = e.target as HTMLInputElement;
     setDeaeratorLevel(parseFloat(target.value));
   }
 </script>
+
+<!--
+  除氧器蒸汽控制面板组件
+  
+  功能：
+  - 调节除氧器压力
+  - 调节除氧器液位
+  - 实时显示除氧器状态
+  - 监控压力和液位水平
+  
+  界面元素：
+  - 压力调节滑块
+  - 液位调节滑块
+  - 压力和液位仪表
+  - 系统状态信息卡片
+  - 压力和液位状态指示
+  
+  状态管理：
+  - 从reactorStore订阅deaerator状态
+  - 调用setDeaeratorPressure设置压力
+  - 调用setDeaeratorLevel设置液位
+-->
 
 <style>
   .panel {

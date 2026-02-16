@@ -1,10 +1,12 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import { reactorStore } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // CRT示意图数据
   let crtDiagram: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       crtDiagram = state.crtDiagram;
@@ -13,6 +15,26 @@
     return unsubscribe;
   });
 </script>
+
+<!--
+  CRT示意图面板组件
+  
+  功能：
+  - 显示反应堆系统的整体状态
+  - 展示各子系统的运行状态
+  - 提供系统连接示意图
+  - CRT风格的视觉效果
+  
+  界面元素：
+  - 反应堆状态显示
+  - 系统状态卡片
+  - 状态指示器
+  - 系统连接示意图
+  
+  状态管理：
+  - 从reactorStore订阅crtDiagram状态
+  - 实时更新系统状态信息
+-->
 
 <style>
   .panel {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleSteamDump,
@@ -6,9 +7,10 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 蒸汽排汽系统数据
   let steamDump: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       steamDump = state.steamDump;
@@ -28,6 +30,28 @@
     setSteamDumpCapacity(parseFloat(target.value));
   }
 </script>
+
+<!--
+  蒸汽排汽控制面板组件
+  
+  功能：
+  - 控制蒸汽排汽系统的启停
+  - 调节蒸汽排汽容量
+  - 实时显示排汽系统状态
+  - 监控排汽参数
+  
+  界面元素：
+  - 系统状态切换按钮
+  - 状态指示器
+  - 排汽容量调节滑块
+  - 系统参数信息卡片
+  - 操作警告框
+  
+  状态管理：
+  - 从reactorStore订阅steamDump状态
+  - 调用toggleSteamDump切换系统状态
+  - 调用setSteamDumpCapacity设置排汽容量
+-->
 
 <style>
   .panel {

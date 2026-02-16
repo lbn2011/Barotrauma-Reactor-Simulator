@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleReactorDrain,
@@ -6,9 +7,10 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 反应堆排水系统数据
   let reactorDrain: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       reactorDrain = state.reactorDrain;
@@ -22,12 +24,33 @@
     toggleReactorDrain();
   }
 
-  // 调整流量
+  // 调整排水流量
   function handleFlowRateChange(e: Event) {
     const target = e.target as HTMLInputElement;
     setReactorDrainFlowRate(parseFloat(target.value));
   }
 </script>
+
+<!--
+  反应堆排水控制面板组件
+  
+  功能：
+  - 控制反应堆排水系统的启停
+  - 调节排水流量
+  - 实时显示排水系统状态
+  - 监控排水参数
+  
+  界面元素：
+  - 系统状态切换按钮
+  - 状态指示器
+  - 排水流量调节滑块
+  - 系统参数信息卡片
+  
+  状态管理：
+  - 从reactorStore订阅reactorDrain状态
+  - 调用toggleReactorDrain切换系统状态
+  - 调用setReactorDrainFlowRate设置排水流量
+-->
 
 <style>
   .panel {

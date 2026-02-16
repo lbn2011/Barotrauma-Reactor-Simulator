@@ -341,6 +341,15 @@
           <span class="nav-icon">💧</span>
           <span class="nav-text">22. 凝结水系统</span>
         </a>
+
+        <a
+          href="/save-editor"
+          class="nav-item"
+          class:active={$page.url.pathname === '/save-editor'}
+        >
+          <span class="nav-icon">💾</span>
+          <span class="nav-text">存档编辑器</span>
+        </a>
       </div>
     </nav>
 

@@ -1,17 +1,20 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleRecirculationPump,
     setRecirculationPumpSpeed,
   } from '../../lib/stores/reactorStore';
 
-  // 订阅状态
+  // 再循环泵状态数据
   let recirculationPumps: {
     pump1: { status: boolean; speed: number };
     pump2: { status: boolean; speed: number };
   };
+  // 功率水平
   let powerLevel: number;
 
+  // 订阅状态变化
   reactorStore.subscribe((state) => {
     recirculationPumps = state.recirculationPumps;
     powerLevel = state.powerRegulation.powerLevel;
@@ -29,6 +32,29 @@
     setRecirculationPumpSpeed(pumpNumber, speed);
   }
 </script>
+
+<!--
+  反应堆再循环泵控制面板组件
+  
+  功能：
+  - 控制两台再循环泵的启停
+  - 调节再循环泵的转速
+  - 实时显示再循环泵状态
+  - 监控泵运行参数
+  - 显示功率水平和运行泵数量
+  
+  界面元素：
+  - 再循环泵控制面板（状态切换、转速调节）
+  - 泵状态示意图
+  - 系统参数信息卡片
+  - 操作说明
+  
+  状态管理：
+  - 从reactorStore订阅recirculationPumps状态
+  - 从reactorStore订阅powerRegulation状态
+  - 调用toggleRecirculationPump切换泵状态
+  - 调用setRecirculationPumpSpeed设置泵转速
+-->
 
 <style>
   .panel-container {

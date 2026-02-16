@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     setLubricationOilPressure,
@@ -7,9 +8,10 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // 汽轮机辅助系统数据
   let turbineAuxiliary: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       turbineAuxiliary = state.turbineAuxiliary;
@@ -36,6 +38,28 @@
     setSealOilPressure(parseFloat(target.value));
   }
 </script>
+
+<!--
+  汽轮机辅助系统面板组件
+  
+  功能：
+  - 调节汽轮机润滑油压力
+  - 调节汽轮机润滑油温度
+  - 调节汽轮机密封油压力
+  - 实时显示辅助系统状态
+  - 监控油系统参数
+  
+  界面元素：
+  - 润滑油压力调节滑块
+  - 润滑油温度调节滑块
+  - 密封油压力调节滑块
+  - 系统参数信息卡片
+  - 操作警告框
+  
+  状态管理：
+  - 从reactorStore订阅turbineAuxiliary状态
+  - 调用相关函数设置油系统参数
+-->
 
 <style>
   .panel {

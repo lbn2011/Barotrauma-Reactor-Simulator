@@ -1,4 +1,5 @@
 <script lang="ts">
+  // 导入反应堆状态管理
   import {
     reactorStore,
     toggleHepaFilters,
@@ -6,9 +7,10 @@
   } from '../../lib/stores/reactorStore';
   import { onMount } from 'svelte';
 
+  // HEPA过滤器系统数据
   let hepaFilters: any;
 
-  // 订阅状态
+  // 组件挂载时订阅状态
   onMount(() => {
     const unsubscribe = reactorStore.subscribe((state) => {
       hepaFilters = state.hepaFilters;
@@ -28,6 +30,28 @@
     setHepaFilterEfficiency(parseFloat(target.value));
   }
 </script>
+
+<!--
+  HEPA过滤器控制面板组件
+  
+  功能：
+  - 控制HEPA过滤器系统的启停
+  - 调节HEPA过滤器的效率
+  - 实时显示过滤器状态
+  - 监控过滤效率水平
+  
+  界面元素：
+  - 系统状态切换按钮
+  - 状态指示器
+  - 过滤效率调节滑块
+  - 系统参数信息卡片
+  - 操作警告框
+  
+  状态管理：
+  - 从reactorStore订阅hepaFilters状态
+  - 调用toggleHepaFilters切换系统状态
+  - 调用setHepaFilterEfficiency设置过滤效率
+-->
 
 <style>
   .panel {
