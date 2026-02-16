@@ -164,6 +164,6 @@
       threshold: 0,
     }}
   >
-    <div class="overlay" />
+    <div class="overlay"></div>
   </div>
 {/if}

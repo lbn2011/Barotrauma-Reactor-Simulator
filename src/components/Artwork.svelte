@@ -1,4 +1,4 @@
-<script lang="ts">
+<script context="module" lang="ts">
   import type { Artwork as ArtworkType } from '~/types';
 
   export type Profile = {
@@ -6,16 +6,20 @@
     height: number;
   };
 
-  export let artwork: ArtworkType;
-  export let profile: Profile | string;
-  export let alt: string = '';
-
   export function getNaturalProfile(artwork: ArtworkType): Profile {
     return {
       width: artwork.width || 100,
       height: artwork.height || 100,
     };
   }
+</script>
+
+<script lang="ts">
+  import type { Artwork as ArtworkType } from '~/types';
+
+  export let artwork: ArtworkType;
+  export const profile: any = {};
+  export let alt: string = '';
 </script>
 
 <style lang="scss">

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { TodayCardOverlay as TodayCardOverlayType } from '~/types';
-  import Button from '~/components/ui/button/button.svelte';
+  import Button from '~/lib/components/ui/button/button.svelte';
   import LinkWrapper from '~/components/LinkWrapper.svelte';
 
   export let overlay: TodayCardOverlayType;

@@ -98,10 +98,6 @@
     display: flex;
     gap: var(--header-gap);
     position: relative;
-
-    @media (--sidebar-visible) {
-      padding: 19px 25px 14px;
-    }
   }
 
   .platform-selector-container:lang(ja),
@@ -131,11 +127,6 @@
     position: relative;
     top: 0.33px;
     width: auto;
-
-    @media (--sidebar-visible) {
-      height: 22px;
-      width: auto;
-    }
   }
 
   .search-input-container {
@@ -157,12 +148,6 @@
     font: var(--body-emphasized);
     margin: 0 0 10px;
     padding-top: 20px;
-
-    @media (--sidebar-visible) {
-      font: var(--footnote-emphasized);
-      margin: 0 0 6px;
-      padding-top: 7px;
-    }
   }
 
   .platform {
@@ -170,8 +155,10 @@
     gap: 10px;
     padding: 8px 0;
     color: var(--systemTertiary);
+  }
 
-    @media (prefers-color-scheme: dark) {
+  @media (prefers-color-scheme: dark) {
+    .platform {
       color: var(--systemSecondary);
     }
   }
@@ -203,8 +190,10 @@
     color: var(--systemTertiary);
     width: 18px;
     max-height: 16px;
+  }
 
-    @media (prefers-color-scheme: dark) {
+  @media (prefers-color-scheme: dark) {
+    .icon-container :global(svg) {
       color: var(--systemSecondary);
     }
   }

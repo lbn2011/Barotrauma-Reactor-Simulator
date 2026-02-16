@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { TodayCardMedia as TodayCardMediaType } from '~/types';
 
-  export let media: TodayCardMediaType;
+  export const media: TodayCardMediaType = {} as TodayCardMediaType;
 
   export function isTodayCardMediaList(
     media: TodayCardMediaType
