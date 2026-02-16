@@ -4,16 +4,13 @@
   import { Button } from '../button';
   import { Input } from '../input';
 
-  // 注册Chart.js组件
   Chart.register(...registerables);
 
-  // 历史数据类型
   interface HistoryData {
     timestamp: number;
     parameters: Record<string, number>;
   }
 
-  // 图表配置类型
   interface ChartConfig {
     id: string;
     name: string;
@@ -22,13 +19,11 @@
     visible: boolean;
   }
 
-  // 组件属性
   export let historyData: HistoryData[] = [];
   export let chartConfigs: ChartConfig[] = [];
   export let timeRange: '1h' | '6h' | '24h' | '7d' = '6h';
-  export const refreshInterval: number = 5000; // 5秒
+  export const refreshInterval: number = 5000;
 
-  // 内部状态
   let chart: any = null;
   let chartCanvas: HTMLCanvasElement | null = null;
   let isLoading = false;
@@ -36,25 +31,29 @@
     .filter((c) => c.visible)
     .map((c) => c.id);
 
-  // 初始化图表
   function initChart() {
     if (!chartCanvas) return;
 
-    // 销毁现有图表
     if (chart) {
-      chart.destroy();
+      try {
+        chart.destroy();
+        chart = null;
+      } catch (error) {
+        console.error('Failed to destroy chart:', error);
+      }
     }
 
-    // 准备图表数据
+    const labels = historyData.map((data) => {
+      const date = new Date(data.timestamp);
+      return date.toLocaleTimeString();
+    });
+
     const datasets = chartConfigs
       .filter((config) => config.visible)
       .map((config) => {
         return {
           label: `${config.name} (${config.unit})`,
-          data: historyData.map((data) => ({
-            x: new Date(data.timestamp),
-            y: data.parameters[config.id] || 0,
-          })),
+          data: historyData.map((data) => data.parameters[config.id] || 0),
           borderColor: config.color,
           backgroundColor: `${config.color}20`,
           borderWidth: 2,
@@ -65,112 +64,77 @@
         };
       });
 
-    // 创建图表
-    chart = new Chart(chartCanvas, {
-      type: 'line',
-      data: {
-        datasets,
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false,
+    try {
+      chart = new Chart(chartCanvas, {
+        type: 'line',
+        data: {
+          labels,
+          datasets,
         },
-        plugins: {
-          legend: {
-            position: 'top' as const,
-            labels: {
-              color: '#ffffff',
-            },
-          },
-          tooltip: {
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
             mode: 'index',
             intersect: false,
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            titleColor: '#ffffff',
-            bodyColor: '#ffffff',
-            borderColor: '#333333',
-            borderWidth: 1,
           },
-        },
-        scales: {
-          x: {
-            type: 'time' as const,
-            time: {
-              unit: getTimeUnit(timeRange),
-              displayFormats: {
-                hour: 'HH:mm',
-                minute: 'HH:mm',
-                second: 'HH:mm:ss',
+          plugins: {
+            legend: {
+              position: 'top' as const,
+              labels: {
+                color: '#ffffff',
               },
             },
-            title: {
-              display: true,
-              text: '时间',
-              color: '#ffffff',
-            },
-            ticks: {
-              color: '#cccccc',
-            },
-            grid: {
-              color: 'rgba(255, 255, 255, 0.1)',
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: '#333333',
+              borderWidth: 1,
             },
           },
-          y: {
-            title: {
-              display: true,
-              text: '数值',
-              color: '#ffffff',
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: '时间',
+                color: '#ffffff',
+              },
+              ticks: {
+                color: '#cccccc',
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)',
+              },
             },
-            ticks: {
-              color: '#cccccc',
-            },
-            grid: {
-              color: 'rgba(255, 255, 255, 0.1)',
+            y: {
+              title: {
+                display: true,
+                text: '数值',
+                color: '#ffffff',
+              },
+              ticks: {
+                color: '#cccccc',
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)',
+              },
             },
           },
         },
-      },
-    });
-  }
-
-  // 获取时间单位
-  function getTimeUnit(
-    timeRange: string
-  ):
-    | 'millisecond'
-    | 'second'
-    | 'minute'
-    | 'hour'
-    | 'day'
-    | 'week'
-    | 'month'
-    | 'quarter'
-    | 'year'
-    | undefined {
-    switch (timeRange) {
-      case '1h':
-        return 'minute';
-      case '6h':
-        return 'hour';
-      case '24h':
-        return 'hour';
-      case '7d':
-        return 'day';
-      default:
-        return 'hour';
+      });
+    } catch (error) {
+      console.error('Failed to create chart:', error);
     }
   }
 
-  // 更新时间范围
   function updateTimeRange(range: '1h' | '6h' | '24h' | '7d') {
     timeRange = range;
     initChart();
   }
 
-  // 切换参数可见性
   function toggleParameterVisibility(configId: string) {
     const config = chartConfigs.find((c) => c.id === configId);
     if (config) {
@@ -179,9 +143,7 @@
     }
   }
 
-  // 导出数据
   function exportData() {
-    // 转换数据为CSV格式
     const headers = [
       'Timestamp',
       ...chartConfigs.map((c) => `${c.name} (${c.unit})`),
@@ -206,27 +168,22 @@
     document.body.removeChild(link);
   }
 
-  // 刷新数据
   function refreshData() {
     isLoading = true;
-    // 模拟数据刷新
     setTimeout(() => {
       initChart();
       isLoading = false;
     }, 1000);
   }
 
-  // 组件挂载时初始化图表
   function onMount() {
     initChart();
   }
 
-  // 组件更新时重新初始化图表
   function onUpdate() {
     initChart();
   }
 
-  // 计算参数变化
   function calculateChange(parameterId: string) {
     if (historyData.length < 2) return '无变化';
     const firstValue = historyData[0].parameters[parameterId] || 0;

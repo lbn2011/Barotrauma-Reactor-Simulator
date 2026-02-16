@@ -101,7 +101,7 @@
 
   // 更新图表数据
   function updateChartData() {
-    if (!chart) return;
+    if (!chart || !chartCanvas) return;
 
     chart.data.labels = timePoints.map((t) => `t=${t}`);
     chart.data.datasets = [
@@ -128,7 +128,7 @@
       },
     ];
 
-    chart.update();
+    chart.update('none');
   }
 
   // 每2秒更新一次图表
@@ -136,20 +136,19 @@
 
   // 更新控制棒图表数据
   function updateControlRodChart() {
-    if (!controlRodChart) return;
+    if (!controlRodChart || !controlRodChartCanvas) return;
 
     const position = controlRods?.position || 50;
     const remaining = 100 - position;
 
-    // 更新数据集
     controlRodChart.data.datasets[0].data = [position, remaining];
     controlRodChart.data.datasets[0].backgroundColor = [
       position > 75
-        ? 'rgba(255, 99, 132, 0.8)' // 高插入深度时红色
+        ? 'rgba(255, 99, 132, 0.8)'
         : position > 50
-          ? 'rgba(255, 165, 0, 0.8)' // 中等插入深度时橙色
-          : 'rgba(54, 162, 235, 0.8)', // 低插入深度时蓝色
-      'rgba(200, 200, 200, 0.2)', // 剩余部分灰色
+          ? 'rgba(255, 165, 0, 0.8)'
+          : 'rgba(54, 162, 235, 0.8)',
+      'rgba(200, 200, 200, 0.2)',
     ];
 
     if (
@@ -158,80 +157,86 @@
     ) {
       controlRodChart.options.plugins.title.text = `控制棒状态 - 位置: ${position.toFixed(1)}%`;
     }
-    controlRodChart.update();
+    controlRodChart.update('none');
   }
 
   onMount(() => {
     if (chartCanvas) {
-      chart = new Chart(chartCanvas, {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'top' as const,
+      try {
+        chart = new Chart(chartCanvas, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top' as const,
+              },
+              title: {
+                display: true,
+                text: '反应堆参数趋势',
+              },
             },
-            title: {
-              display: true,
-              text: '反应堆参数趋势',
+            scales: {
+              y: {
+                beginAtZero: false,
+              },
             },
           },
-          scales: {
-            y: {
-              beginAtZero: false,
-            },
-          },
-        },
-      });
+        });
+      } catch (error) {
+        console.error('Failed to initialize chart:', error);
+      }
     }
 
-    // 初始化控制棒状态图表
     if (controlRodChartCanvas) {
-      controlRodChart = new Chart(controlRodChartCanvas, {
-        type: 'doughnut',
-        data: {
-          labels: ['插入深度', '剩余'],
-          datasets: [
-            {
-              data: [50, 50], // 默认50%插入
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.8)', // 插入部分红色
-                'rgba(200, 200, 200, 0.2)', // 剩余部分灰色
-              ],
-              borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(200, 200, 200, 0.5)',
-              ],
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '70%', // 创建甜甜圈效果
-          plugins: {
-            title: {
-              display: true,
-              text: '控制棒状态 - 位置: 50.0%',
-            },
-            legend: {
-              position: 'bottom' as const,
-            },
-          } as any,
-          circumference: 180, // 半圆仪表盘
-          rotation: 270,
-        },
-      });
+      try {
+        controlRodChart = new Chart(controlRodChartCanvas, {
+          type: 'doughnut',
+          data: {
+            labels: ['插入深度', '剩余'],
+            datasets: [
+              {
+                data: [50, 50],
+                backgroundColor: [
+                  'rgba(255, 99, 132, 0.8)',
+                  'rgba(200, 200, 200, 0.2)',
+                ],
+                borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(200, 200, 200, 0.5)',
+                ],
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+              title: {
+                display: true,
+                text: '控制棒状态 - 位置: 50.0%',
+              },
+              legend: {
+                position: 'bottom' as const,
+              },
+            } as any,
+            circumference: 180,
+            rotation: 270,
+          },
+        });
+      } catch (error) {
+        console.error('Failed to initialize control rod chart:', error);
+      }
     }
 
     chartUpdateInterval = window.setInterval(updateChartData, 2000);
-    // 每秒更新控制棒图表
     setInterval(updateControlRodChart, 1000);
   });
 
@@ -240,10 +245,20 @@
     unsubscribe();
     clearInterval(chartUpdateInterval);
     if (chart) {
-      chart.destroy();
+      try {
+        chart.destroy();
+        chart = null;
+      } catch (error) {
+        console.error('Failed to destroy chart:', error);
+      }
     }
     if (controlRodChart) {
-      controlRodChart.destroy();
+      try {
+        controlRodChart.destroy();
+        controlRodChart = null;
+      } catch (error) {
+        console.error('Failed to destroy control rod chart:', error);
+      }
     }
   });
 </script>

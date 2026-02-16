@@ -107,7 +107,6 @@
   async function updateChartData() {
     if (!chartCanvas || !trends) return;
 
-    // 确保Chart.js已加载
     if (!isChartLoaded) {
       await loadChartJS();
     }
@@ -143,15 +142,19 @@
 
     if (chart) {
       chart.data = chartData;
-      chart.update();
+      chart.update('none');
     } else {
       const ctx = chartCanvas.getContext('2d');
       if (ctx) {
-        chart = new ChartJS(ctx, {
-          type: 'line',
-          data: chartData,
-          options: chartOptions,
-        });
+        try {
+          chart = new ChartJS(ctx, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions,
+          });
+        } catch (error) {
+          console.error('Failed to create chart:', error);
+        }
       }
     }
   }
@@ -163,7 +166,12 @@
 
   onDestroy(() => {
     if (chart) {
-      chart.destroy();
+      try {
+        chart.destroy();
+        chart = null;
+      } catch (error) {
+        console.error('Failed to destroy chart:', error);
+      }
     }
   });
 </script>
