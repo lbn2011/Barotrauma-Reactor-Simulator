@@ -2,6 +2,7 @@
   import type { TodayCard } from '~/types';
 
   import Artwork from '~/components/Artwork.svelte';
+  import LineClamp from '~/components/LineClamp.svelte';
   import TodayCardMedia from './TodayCardMedia.svelte';
   import TodayCardOverlay from './TodayCardOverlay.svelte';
   import TodayCardMediaList from './media/TodayCardMediaList.svelte';

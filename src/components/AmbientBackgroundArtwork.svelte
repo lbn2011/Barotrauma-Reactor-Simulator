@@ -24,29 +24,34 @@
   ) => (isOutOfView = !isIntersectingViewport);
 
   function intersectionObserver(node: HTMLElement, options: any) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (options.callback) {
-          options.callback(entry.isIntersecting);
-        }
-      });
-    }, { threshold: options.threshold || 0 });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (options.callback) {
+            options.callback(entry.isIntersecting);
+          }
+        });
+      },
+      { threshold: options.threshold || 0 }
+    );
 
     observer.observe(node);
 
     return {
       destroy() {
         observer.disconnect();
-      }
+      },
     };
   }
 
   function resizeDetector(node: HTMLElement) {
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        node.dispatchEvent(new CustomEvent('resizeUpdate', {
-          detail: { isResizing: true }
-        }));
+        node.dispatchEvent(
+          new CustomEvent('resizeUpdate', {
+            detail: { isResizing: true },
+          })
+        );
       }
     });
 
@@ -55,7 +60,7 @@
     return {
       destroy() {
         resizeObserver.disconnect();
-      }
+      },
     };
   }
 </script>
