@@ -499,7 +499,11 @@ binding = "ASSETS"
 
 ## 许可证
 
-此项目遵循 MIT 许可证。详情请参阅 [LICENSE](./LICENSE) 文件。
+此项目遵循 GNU General Public License v3 许可证。详情请参阅 [LICENSE](./LICENSE) 文件。
+
+## 开发声明
+
+本项目由 lbn2011 和 AI 共同开发，结合了人类的专业知识和人工智能的技术能力，打造了这个功能完善的反应堆模拟器。
 
 ## 致谢
 
