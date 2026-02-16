@@ -237,11 +237,11 @@ export interface ReactorState {
     levelError: number; // 水位误差
     flowError: number; // 流量误差
     waterLevelStatus:
-      | 'normal'
-      | 'low'
-      | 'high'
-      | 'critical_low'
-      | 'critical_high'; // 水位状态
+    | 'normal'
+    | 'low'
+    | 'high'
+    | 'critical_low'
+    | 'critical_high'; // 水位状态
     alarm: boolean; // 警报
   };
 
@@ -523,30 +523,30 @@ export async function updateReactorState() {
       M_deaerator: currentState.physics.masses.M_deaerator,
 
       // 流量参数
-      m_feedwater: currentState.reactorFeedPumps.pump1.status
+      m_feedwater: (currentState.reactorFeedPumps.pump1.status
         ? currentState.reactorFeedPumps.pump1.flowRate * 100
-        : 0 + currentState.reactorFeedPumps.pump2.status
+        : 0) + (currentState.reactorFeedPumps.pump2.status
           ? currentState.reactorFeedPumps.pump2.flowRate * 100
-          : 0,
+          : 0),
       m_steam: currentState.powerRegulation.powerLevel * 100,
       m_condensate: currentState.condensateSystem.status
         ? currentState.condensateSystem.flowRate * 100
         : 0,
       m_cooling: 1000,
       m_steam_heating: 500,
-      m_feedwater_out: currentState.reactorFeedPumps.pump1.status
+      m_feedwater_out: (currentState.reactorFeedPumps.pump1.status
         ? currentState.reactorFeedPumps.pump1.flowRate * 100
-        : 0 + currentState.reactorFeedPumps.pump2.status
+        : 0) + (currentState.reactorFeedPumps.pump2.status
           ? currentState.reactorFeedPumps.pump2.flowRate * 100
-          : 0,
+          : 0),
 
       // 热工参数
       η_thermal: 0.33,
-      m_coolant: currentState.recirculationPumps.pump1.status
+      m_coolant: (currentState.recirculationPumps.pump1.status
         ? currentState.recirculationPumps.pump1.speed * 1000
-        : 0 + currentState.recirculationPumps.pump2.status
+        : 0) + (currentState.recirculationPumps.pump2.status
           ? currentState.recirculationPumps.pump2.speed * 1000
-          : 0,
+          : 0),
       c_p: 4.186, // 水的比热容
       h_inlet: 2800, // 蒸汽焓
       h_outlet: 2200, // 给水焓
@@ -596,11 +596,11 @@ export async function updateReactorState() {
       waterLevelSetpoint:
         currentState.threeImpulseLevelControl.waterLevelSetpoint,
       steamFlow: currentState.powerRegulation.powerLevel * 100,
-      feedwaterFlow: currentState.reactorFeedPumps.pump1.status
+      feedwaterFlow: (currentState.reactorFeedPumps.pump1.status
         ? currentState.reactorFeedPumps.pump1.flowRate * 100
-        : 0 + currentState.reactorFeedPumps.pump2.status
+        : 0) + (currentState.reactorFeedPumps.pump2.status
           ? currentState.reactorFeedPumps.pump2.flowRate * 100
-          : 0,
+          : 0),
 
       // 故障模拟参数
       operatingTime: currentState.simulationTime,
@@ -628,11 +628,11 @@ export async function updateReactorState() {
       await workerManager.calculateReactorCore(reactorCoreInput);
 
     // 计算流动阻力和泵性能
-    const flowRate = currentState.recirculationPumps.pump1.status
+    const flowRate = (currentState.recirculationPumps.pump1.status
       ? currentState.recirculationPumps.pump1.speed * 0.01
-      : 0 + currentState.recirculationPumps.pump2.status
+      : 0) + (currentState.recirculationPumps.pump2.status
         ? currentState.recirculationPumps.pump2.speed * 0.01
-        : 0;
+        : 0);
     const fluidDensity = 998; // 水的密度
     const fluidViscosity = 1e-3; // 水的动力粘度
     const pipeDiameter = 0.5; // 管道直径

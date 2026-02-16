@@ -1,20 +1,18 @@
 // 三冲量水位控制模型
 
 interface ThreeImpulseLevelControlInput {
-  H_actual: number; // 实际水位
-  H_setpoint: number; // 水位设定值
-  m_steam: number; // 蒸汽流量
-  m_feedwater: number; // 给水流量
-  K_p: number; // 比例增益
-  K_d: number; // 微分增益
-  m_feedwater_adjusted_prev: number; // 前一次的给水流量调整值
-  m_steam_prev: number; // 前一次的蒸汽流量
+  waterLevel: number; // 实际水位
+  waterLevelSetpoint: number; // 水位设定值
+  steamFlow: number; // 蒸汽流量
+  feedwaterFlow: number; // 给水流量
 }
 
 interface ThreeImpulseLevelControlOutput {
-  m_feedwater_adjusted: number; // 调整后的给水流量
-  error: number; // 水位误差
-  steamFlowChange: number; // 蒸汽流量变化
+  adjustedFeedwaterFlow: number; // 调整后的给水流量
+  levelError: number; // 水位误差
+  flowError: number; // 流量误差
+  waterLevelStatus: 'normal' | 'low' | 'high' | 'critical_low' | 'critical_high'; // 水位状态
+  alarm: boolean; // 警报状态
 }
 
 /**
@@ -26,63 +24,81 @@ export function calculateThreeImpulseLevelControl(
   input: ThreeImpulseLevelControlInput
 ): ThreeImpulseLevelControlOutput {
   // 计算水位误差
-  const error = input.H_setpoint - input.H_actual;
+  const levelError = input.waterLevelSetpoint - input.waterLevel;
 
-  // 计算蒸汽流量变化
-  const steamFlowChange = input.m_steam - input.m_steam_prev;
+  // 计算流量误差（给水流量与蒸汽流量的差值）
+  const flowError = input.feedwaterFlow - input.steamFlow;
 
-  // 三冲量水位控制公式
-  const m_feedwater_adjusted =
-    input.m_feedwater_adjusted_prev +
-    input.K_p * error +
-    input.K_d * steamFlowChange;
+  // 三冲量水位控制公式（简化版）
+  // 这里使用简化的控制算法，实际应用中可能需要更复杂的PID控制
+  const adjustedFeedwaterFlow = input.feedwaterFlow + levelError * 0.5 + flowError * 0.3;
+
+  // 确定水位状态
+  let waterLevelStatus: 'normal' | 'low' | 'high' | 'critical_low' | 'critical_high' = 'normal';
+  let alarm = false;
+
+  if (input.waterLevel < input.waterLevelSetpoint * 0.7) {
+    waterLevelStatus = 'critical_low';
+    alarm = true;
+  } else if (input.waterLevel < input.waterLevelSetpoint * 0.85) {
+    waterLevelStatus = 'low';
+    alarm = true;
+  } else if (input.waterLevel > input.waterLevelSetpoint * 1.3) {
+    waterLevelStatus = 'critical_high';
+    alarm = true;
+  } else if (input.waterLevel > input.waterLevelSetpoint * 1.15) {
+    waterLevelStatus = 'high';
+    alarm = true;
+  }
 
   return {
-    m_feedwater_adjusted,
-    error,
-    steamFlowChange,
+    adjustedFeedwaterFlow,
+    levelError,
+    flowError,
+    waterLevelStatus,
+    alarm,
   };
 }
 
 /**
  * 计算水位警报阈值
- * @param H_actual 实际水位
- * @param H_setpoint 水位设定值
+ * @param waterLevel 实际水位
+ * @param waterLevelSetpoint 水位设定值
  * @returns 水位状态
  */
 export function calculateWaterLevelStatus(
-  H_actual: number,
-  H_setpoint: number
+  waterLevel: number,
+  waterLevelSetpoint: number
 ): {
   status: 'normal' | 'warning' | 'alarm' | 'shutdown';
   message: string;
 } {
-  const highLevelAlarm = H_setpoint * 1.15; // 高水位警报
-  const highLevelShutdown = H_setpoint * 1.2; // 高水位停堆
-  const lowLevelAlarm = H_setpoint * 0.85; // 低水位警报
-  const lowLevelShutdown = H_setpoint * 0.8; // 低水位停堆
+  const highLevelAlarm = waterLevelSetpoint * 1.15; // 高水位警报
+  const highLevelShutdown = waterLevelSetpoint * 1.2; // 高水位停堆
+  const lowLevelAlarm = waterLevelSetpoint * 0.85; // 低水位警报
+  const lowLevelShutdown = waterLevelSetpoint * 0.8; // 低水位停堆
 
-  if (H_actual > highLevelShutdown) {
+  if (waterLevel > highLevelShutdown) {
     return {
       status: 'shutdown',
       message: 'HIGH WATER LEVEL - SHUTDOWN',
     };
-  } else if (H_actual > highLevelAlarm) {
+  } else if (waterLevel > highLevelAlarm) {
     return {
       status: 'alarm',
       message: 'HIGH WATER LEVEL ALARM',
     };
-  } else if (H_actual < lowLevelShutdown) {
+  } else if (waterLevel < lowLevelShutdown) {
     return {
       status: 'shutdown',
       message: 'LOW WATER LEVEL - SHUTDOWN',
     };
-  } else if (H_actual < lowLevelAlarm) {
+  } else if (waterLevel < lowLevelAlarm) {
     return {
       status: 'alarm',
       message: 'LOW WATER LEVEL ALARM',
     };
-  } else if (H_actual > H_setpoint * 1.1 || H_actual < H_setpoint * 0.9) {
+  } else if (waterLevel > waterLevelSetpoint * 1.1 || waterLevel < waterLevelSetpoint * 0.9) {
     return {
       status: 'warning',
       message: 'WATER LEVEL WARNING',

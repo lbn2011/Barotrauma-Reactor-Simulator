@@ -46,21 +46,21 @@ export function calculateSaturationPressure(T: number): number {
   if (T <= 0) {
     return 0;
   }
-  
+
   // 使用简化的饱和压力计算公式
   // 适用于 273.15 K 到 647.096 K
   const Tc = T_CRIT;
   const Pc = P_CRIT;
-  const T = Math.max(273.15, Math.min(T, Tc));
-  
-  const theta = 1 - T / Tc;
+  const T_valid = Math.max(273.15, Math.min(T, Tc));
+
+  const theta = 1 - T_valid / Tc;
   const A = [-7.85951783, 1.84408259, -11.7866497, 22.6807411, -15.9618719, 1.80122502];
-  
+
   let lnPs = 0;
   for (let i = 0; i < A.length; i++) {
     lnPs += A[i] * Math.pow(theta, (i + 1) / 6);
   }
-  
+
   lnPs *= (Tc / T);
   return Pc * Math.exp(lnPs);
 }
@@ -74,43 +74,43 @@ export function calculateSaturationTemperature(P: number): number {
   if (P <= 0) {
     return 273.15; // 0°C
   }
-  
+
   if (P >= P_CRIT) {
     return T_CRIT;
   }
-  
+
   // 使用简化的饱和温度计算公式
   const Pc = P_CRIT;
   const Tc = T_CRIT;
   const pi = P / Pc;
-  
+
   const A = [6.54682177, -13.7189451, 29.2048855, -47.1471958, 59.4405636, -51.5719865, 23.8553633];
-  
+
   let theta = 0;
   let T = 373.15; // 初始猜测值：100°C
   let error = 1;
   let iterations = 0;
-  
+
   while (error > 1e-6 && iterations < 100) {
     theta = 1 - T / Tc;
     let lnPi = 0;
     for (let i = 0; i < A.length; i++) {
       lnPi += A[i] * Math.pow(theta, (i + 1) / 3);
     }
-    
+
     const calculatedPi = Math.exp(lnPi);
     error = Math.abs(calculatedPi - pi);
-    
+
     // 牛顿迭代法修正
     T += (pi - calculatedPi) * (Tc - T) / (10 * calculatedPi);
     T = Math.max(273.15, Math.min(T, Tc));
     iterations++;
   }
-  
+
   return T;
- 
-  
- /**
+}
+
+/**
  * 计算液态水的比容（m³/kg）
  * @param T 温度（K）
  * @param P 压力（MPa）
@@ -122,13 +122,13 @@ function calculateLiquidSpecificVolume(T: number, P: number): number {
   const rho20 = 998.2; // kg/m³
   const beta = 2.07e-4; // 体积膨胀系数 1/°C
   const k = 4.5e-10; // 压缩系数 1/Pa
-  
+
   const Tc = T - 273.15; // °C
   const Pc = P * 1e6; // Pa
-  
+
   // 温度和压力对密度的影响
   const rho = rho20 * (1 - beta * (Tc - 20)) * (1 - k * (Pc - 101325));
-  
+
   return 1 / rho;
 }
 
@@ -153,7 +153,7 @@ function calculateVaporSpecificVolume(T: number, P: number): number {
  */
 export function calculateSpecificVolume(T: number, P: number): number {
   const region = getRegion(T, P);
-  
+
   if (region === REGION_1) {
     return calculateLiquidSpecificVolume(T, P);
   } else if (region === REGION_2) {
@@ -174,7 +174,7 @@ function calculateLiquidInternalEnergy(T: number): number {
   // 基于 0°C 时的内能为 0
   const Tc = T - 273.15; // °C
   const cp = 4.186; // 比热容 kJ/(kg·K)
-  
+
   return cp * Tc;
 }
 
@@ -188,13 +188,13 @@ function calculateVaporInternalEnergy(T: number, P: number): number {
   // 蒸汽的近似内能计算
   const Tc = T - 273.15; // °C
   const hfg = 2257; // 汽化潜热 kJ/kg
-  
+
   // 基于液态水内能加上汽化潜热
   const u_liquid = calculateLiquidInternalEnergy(T);
   return u_liquid + hfg;
 }
 
- **
+/**
  * 计算比内能（kJ/kg）
  * @param T 温度（K）
  * @param P 压力（MPa）
@@ -202,7 +202,7 @@ function calculateVaporInternalEnergy(T: number, P: number): number {
  */
 export function calculateInternalEnergy(T: number, P: number): number {
   const region = getRegion(T, P);
-  
+
   if (region === REGION_1) {
     return calculateLiquidInternalEnergy(T);
   } else if (region === REGION_2) {
@@ -213,7 +213,7 @@ export function calculateInternalEnergy(T: number, P: number): number {
   }
 }
 
- **
+/**
  * 计算焓（kJ/kg）
  * @param T 温度（K）
  * @param P 压力（MPa）
@@ -222,7 +222,7 @@ export function calculateInternalEnergy(T: number, P: number): number {
 export function calculateEnthalpy(T: number, P: number): number {
   const u = calculateInternalEnergy(T, P);
   const v = calculateSpecificVolume(T, P);
-  
+
   return u + P * 1000 * v; // P 转换为 kPa
 }
 
@@ -234,7 +234,7 @@ export function calculateEnthalpy(T: number, P: number): number {
  */
 export function calculateEntropy(T: number, P: number): number {
   const region = getRegion(T, P);
-  
+
   if (region === REGION_1) {
     // 液态水的近似熵计算
     const Tc = T - 273.15; // °C
@@ -261,7 +261,7 @@ export function calculateEntropy(T: number, P: number): number {
  */
 export function calculateSpecificHeatCapacityP(T: number, P: number): number {
   const region = getRegion(T, P);
-  
+
   if (region === REGION_1) {
     // 液态水的定压比热容近似为常数
     return 4.186;
@@ -272,9 +272,9 @@ export function calculateSpecificHeatCapacityP(T: number, P: number): number {
     // 饱和线上，返回液相值
     return 4.186;
   }
- 
-  
- **
+}
+
+/**
  * 计算定容比热容（kJ/(kg·K)）
  * @param T 温度（K）
  * @param P 压力（MPa）
@@ -282,7 +282,7 @@ export function calculateSpecificHeatCapacityP(T: number, P: number): number {
  */
 export function calculateSpecificHeatCapacityV(T: number, P: number): number {
   const region = getRegion(T, P);
-  
+
   if (region === REGION_1) {
     // 液态水的定容比热容近似为常数
     return 4.186;

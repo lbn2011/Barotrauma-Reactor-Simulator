@@ -180,6 +180,15 @@
         class={`system-node cursor-pointer transition-all duration-300 ${interactive ? 'hover:scale-105' : ''}`}
         style={`position: absolute; left: ${node.position.x}px; top: ${node.position.y}px; transform: translate(-50%, -50%); z-index: 3`}
         on:click={() => console.log('Node clicked:', node.id)}
+        on:keydown={(e) => {
+          if ((e.key === 'Enter' || e.key === ' ') && interactive) {
+            e.preventDefault();
+            console.log('Node clicked:', node.id);
+          }
+        }}
+        role="button"
+        tabindex={interactive ? 0 : -1}
+        aria-label={`System node: ${node.name}`}
       >
         <div
           class="node-circle flex items-center justify-center"
@@ -208,4 +217,4 @@
       </div>
     {/each}
   </div>
-</script>
+</div>

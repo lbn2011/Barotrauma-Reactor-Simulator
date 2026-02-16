@@ -23,13 +23,13 @@
   }
 
   // 组件属性
-  export let historyData: HistoryData[] = [];
-  export let chartConfigs: ChartConfig[] = [];
-  export let timeRange: '1h' | '6h' | '24h' | '7d' = '6h';
-  export let refreshInterval: number = 5000; // 5秒
+export let historyData: HistoryData[] = [];
+export let chartConfigs: ChartConfig[] = [];
+export let timeRange: '1h' | '6h' | '24h' | '7d' = '6h';
+export const refreshInterval: number = 5000; // 5秒
 
   // 内部状态
-  let chart: Chart | null = null;
+  let chart: any = null;
   let chartCanvas: HTMLCanvasElement | null = null;
   let isLoading = false;
   let selectedParameters: string[] = chartConfigs.filter(c => c.visible).map(c => c.id);
@@ -135,7 +135,7 @@
   }
 
   // 获取时间单位
-  function getTimeUnit(timeRange: string): string {
+  function getTimeUnit(timeRange: string): 'millisecond' | 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year' | undefined {
     switch (timeRange) {
       case '1h':
         return 'minute';
@@ -207,6 +207,17 @@
   // 组件更新时重新初始化图表
   function onUpdate() {
     initChart();
+  }
+
+  // 计算参数变化
+  function calculateChange(parameterId: string) {
+    if (historyData.length < 2) return '无变化';
+    const firstValue = historyData[0].parameters[parameterId] || 0;
+    const lastValue = historyData[historyData.length - 1].parameters[parameterId] || 0;
+    const change = lastValue - firstValue;
+    const changePercent = firstValue !== 0 ? (change / firstValue) * 100 : 0;
+    const sign = change >= 0 ? '+' : '';
+    return `${sign}${change.toFixed(1)} (${sign}${changePercent.toFixed(1)}%)`;
   }
 </script>
 
@@ -308,21 +319,3 @@
     </CardContent>
   </Card>
 </div>
-
-<script>
-  // 计算参数变化
-  function calculateChange(parameterId: string) {
-    if (historyData.length < 2) return '无变化';
-    const firstValue = historyData[0].parameters[parameterId] || 0;
-    const lastValue = historyData[historyData.length - 1].parameters[parameterId] || 0;
-    const change = lastValue - firstValue;
-    const changePercent = firstValue !== 0 ? (change / firstValue) * 100 : 0;
-    const sign = change >= 0 ? '+' : '';
-    return `${sign}${change.toFixed(1)} (${sign}${changePercent.toFixed(1)}%)`;
-  }
-
-  // 监听组件挂载和更新
-  import { onMount, onUpdate } from 'svelte';
-  onMount(onMount);
-  onUpdate(onUpdate);
-</script>
