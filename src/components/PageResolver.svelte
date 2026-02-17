@@ -3,9 +3,11 @@
 
   import PageComponent from '~/components/Page.svelte';
   import ErrorComponent from '~/components/Error.svelte';
+  import { defaultComponentConfig } from '~/config/components';
 
   export let page: Promise<Page> | Page;
   export let isFirstPage: boolean;
+  export let config = defaultComponentConfig;
 </script>
 
 <style lang="scss">
@@ -29,7 +31,7 @@
     <div class="loading-spinner">Loading...</div>
   </div>
 {:then page}
-  <PageComponent {page} />
+  <PageComponent {page} {config} />
 {:catch error}
   <ErrorComponent {error} />
 {/await}

@@ -1,15 +1,15 @@
 <script lang="ts">
-  import type { TodayCard } from '~/types';
+  import type { TodayCard } from '@/types';
 
-  import Artwork, { type Profile, getNaturalProfile } from '~/components/Artwork.svelte';
-  import LineClamp from '~/components/LineClamp.svelte';
+  import Artwork, { type Profile, getNaturalProfile } from '@/components/Artwork.svelte';
+  import LineClamp from '@/components/LineClamp.svelte';
   import TodayCardMedia from './TodayCardMedia.svelte';
   import TodayCardOverlay from './TodayCardOverlay.svelte';
-  import TodayCardMediaList from './media/TodayCardMediaList.svelte';
-  import LinkWrapper from '~/components/LinkWrapper.svelte';
+  import LinkWrapper from '@/components/LinkWrapper.svelte';
 
-  import { colorAsString } from '~/utils/color';
+  import { colorAsString } from '@/utils/color';
   import { bestBackgroundColor } from './background-color-utils';
+  import { defaultComponentConfig } from '@/config/components';
 
   function isTodayCardMediaList(media: any): boolean {
     return media.kind === 'list';
@@ -43,6 +43,11 @@
    */
   export let artworkProfile: Profile | undefined = undefined;
 
+  /**
+   * Component configuration
+   */
+  export let config = defaultComponentConfig;
+
   let useProtectionLayer: boolean;
   let useBlurryProtectionLayer: boolean;
   let useGradientProtectionLayer: boolean;
@@ -68,11 +73,12 @@
 
     useListStyle = isList;
     useProtectionLayer =
-      editorialDisplayOptions?.useTextProtectionColor ||
+      (config.todayCard?.enableTextProtection || false) &&
+      (editorialDisplayOptions?.useTextProtectionColor ||
       editorialDisplayOptions?.useMaterialBlur ||
-      false;
+      false);
     useBlurryProtectionLayer = useProtectionLayer && !isAppEvent && !isList;
-    useGradientProtectionLayer = useProtectionLayer && isAppEvent;
+    useGradientProtectionLayer = (config.todayCard?.enableGradientEffects || false) && useProtectionLayer && isAppEvent;
     accentColor = colorAsString(bestBackgroundColor(card.media));
   }
 </script>
@@ -159,24 +165,10 @@
   }
 
   .information-layer.with-gradient {
-    // A smooth bottom-to-top gradient with an intermediate stop at 60% of the accent color's
-    // opacity to ease the hard transition.
     --gradient-color-end-position: 22%;
     --gradient-fade-end-position: 50%;
-    background: linear-gradient(
-      0deg,
-      var(--gradient-color) var(--gradient-color-end-position),
-      color-mix(in srgb, var(--gradient-color) 60%, transparent)
-        calc(
-            (
-                var(--gradient-color-end-position) +
-                var(--gradient-fade-end-position)
-            ) / 2
-        ),
-      transparent var(--gradient-fade-end-position)
-    );
-    transition: --accent-color-end 500ms ease-out, --fade-end 350ms ease-out,
-      --gradient-color 350ms ease-out;
+    background: linear-gradient(0deg, var(--gradient-color) var(--gradient-color-end-position), color-mix(in srgb, var(--gradient-color) 60%, transparent) calc((var(--gradient-color-end-position) + var(--gradient-fade-end-position)) / 2), transparent var(--gradient-fade-end-position));
+    transition: --accent-color-end 500ms ease-out, --fade-end 350ms ease-out, --gradient-color 350ms ease-out;
   }
 
   .information-layer.with-gradient.with-action:has(> a:hover) {
@@ -391,8 +383,8 @@
             <TodayCardOverlay
               {overlay}
               buttonVariant={useProtectionLayer
-                ? 'transparent'
-                : 'dark-gray'}
+                ? 'outline'
+                : 'default'}
               --text-color="var(--today-card-text-color)"
               --text-accent-color="var(--today-card-text-accent-color)"
               --text-accent-blend-mode="var(--today-card-text-accent-blend-mode)"

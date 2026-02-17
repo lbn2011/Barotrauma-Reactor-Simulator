@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { WebSearchFlowAction } from '~/types';
-  import { getJetPerform } from '~/jet';
+  import type { WebSearchFlowAction } from '@/types';
+  import { getJetPerform } from '@/jet';
 
   export let searchAction: WebSearchFlowAction;
 

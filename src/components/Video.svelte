@@ -83,7 +83,7 @@
       class="video-element"
       {loop}
       {autoplay}
-      {controls}={useControls}
+      controls={useControls}
       muted={autoplay}
       playsinline
       on:load={handleVideoLoad}
@@ -101,3 +101,5 @@
     {/if}
   {/if}
 </div>
+
+export default Video;

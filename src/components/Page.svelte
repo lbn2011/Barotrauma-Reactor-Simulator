@@ -7,8 +7,10 @@
   // Import all page components
   import DefaultPage from '~/pages/DefaultPage.svelte';
   import ErrorPage from '~/pages/ErrorPage.svelte';
+  import { defaultComponentConfig } from '~/config/components';
 
   export let page: Page;
+  export let config = defaultComponentConfig;
 
   // Page type guards
   function isAppEventDetailPage(page: Page): boolean {

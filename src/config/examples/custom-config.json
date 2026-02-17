@@ -1,0 +1,38 @@
+{
+  "navigation": {
+    "showLanguageSelector": true,
+    "showSearch": true,
+    "collapsedByDefault": false
+  },
+  "todayCard": {
+    "defaultStyle": "dark",
+    "enableTextProtection": true,
+    "enableGradientEffects": true
+  },
+  "hero": {
+    "enableVideoAutoplay": true,
+    "defaultProfile": "large-hero",
+    "enableCollectionIcons": true
+  },
+  "carousel": {
+    "enableBackgroundArtwork": true,
+    "enableSwipeNavigation": true,
+    "defaultActiveIndex": 0
+  },
+  "artwork": {
+    "defaultQuality": 90,
+    "enableLazyLoading": true,
+    "defaultProfile": "large"
+  },
+  "ambientBackgroundArtwork": {
+    "enableAnimation": true,
+    "enableIntersectionObserver": true,
+    "defaultAspectRatio": "16/9"
+  },
+  "global": {
+    "enableResponsiveDesign": true,
+    "enableReducedMotion": false,
+    "defaultLanguage": "en-US",
+    "supportedLanguages": ["en-US", "zh-CN", "es-ES", "fr-FR", "ar-SA"]
+  }
+}

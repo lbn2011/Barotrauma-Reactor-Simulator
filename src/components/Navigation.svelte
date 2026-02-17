@@ -1,26 +1,28 @@
 <script lang="ts">
-  import { writable } from 'svelte/store';
+  import { writable, get } from 'svelte/store';
   import type {
     WebNavigation,
     WebNavigationLink,
     WebSearchFlowAction,
-  } from '~/types';
+  } from '@/types';
 
-  import AppStoreLogo from '~/components/icons/AppStoreLogo.svelte';
-  import PlatformSelectorDropdown from '~/components/jet/web-navigation/PlatformSelectorDropdown.svelte';
-  import FlowAction from '~/components/jet/action/FlowAction.svelte';
-  import SystemImage from '~/components/SystemImage.svelte';
-  import SearchInput from '~/components/navigation/SearchInput.svelte';
-  import SFSymbol from '~/components/SFSymbol.svelte';
+  import AppStoreLogo from '@/components/icons/AppStoreLogo.svelte';
+  import PlatformSelectorDropdown from '@/components/jet/web-navigation/PlatformSelectorDropdown.svelte';
+  import FlowAction from '@/components/jet/action/FlowAction.svelte';
+  import SystemImage from '@/components/SystemImage.svelte';
+  import SearchInput from '@/components/navigation/SearchInput.svelte';
+  import SFSymbol from '@/components/SFSymbol.svelte';
 
-  import { getJetPerform } from '~/jet';
-  import { getI18n } from '~/stores/i18n';
-  import { sidebarIsHidden } from '~/stores/sidebar-hidden';
-  import mediaQueries from '~/utils/media-queries';
+  import { getJetPerform } from '@/jet';
+  import { getI18n, setLanguage } from '@/stores/i18n';
+  import { sidebarIsHidden } from '@/stores/sidebar-hidden';
+  import mediaQueries from '@/utils/media-queries';
+  import { defaultComponentConfig } from '@/config/components';
+  import { getLanguageName } from '@/utils/i18n';
 
   import { fade, type EasingFunction } from 'svelte/transition';
   import { circOut } from 'svelte/easing';
-  import { flyAndBlur } from '~/utils/transition';
+  import { flyAndBlur } from '@/utils/transition';
 
   const i18n = getI18n();
   const perform = getJetPerform();
@@ -28,8 +30,10 @@
   const categoryTabsCache: Record<string, WebNavigationLink[]> = {};
   let categoryTabLinks: WebNavigationLink[] = [];
   let currentTabStore = writable<string | null>(null);
+  let languageDropdownOpen = false;
 
   export let webNavigation: WebNavigation;
+  export let config = defaultComponentConfig;
 
   function isSystemImageArtwork(artwork: any): boolean {
     return artwork.type === 'system';
@@ -41,6 +45,8 @@
     isXSmallViewport || typeof window === 'undefined'
       ? webNavigation.platforms
       : [];
+  $: supportedLanguages = config.global?.supportedLanguages || ['zh-CN', 'en-US'];
+  $: currentLanguage = i18n?.language || config.global?.defaultLanguage || 'zh-CN';
 
   function updateActiveStates(tabs: WebNavigationLink[]): WebNavigationLink[] {
     return tabs.map((link) => ({
@@ -69,6 +75,11 @@
     const tab = navigationItem.tab;
 
     perform(tab.action);
+  }
+
+  function handleLanguageChange(language: string) {
+    setLanguage(language);
+    languageDropdownOpen = false;
   }
 
   const BASE_DELAY = 80;
@@ -213,6 +224,59 @@
     font: var(--body);
     flex-grow: 1;
   }
+
+  .language-selector {
+    position: relative;
+    margin-left: 16px;
+  }
+
+  .language-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: none;
+    border: 1px solid var(--sidebar-border);
+    border-radius: 6px;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  .language-button:hover {
+    background-color: var(--sidebar-hover);
+  }
+
+  .language-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background-color: var(--sidebar-bg);
+    border: 1px solid var(--sidebar-border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 120px;
+    z-index: 100;
+    overflow: hidden;
+  }
+
+  .language-option {
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+  }
+
+  .language-option:hover {
+    background-color: var(--sidebar-hover);
+  }
+
+  .language-option.active {
+    background-color: var(--nav-item-active);
+    color: var(--nav-item-active-text);
+  }
 </style>
 
 <div class="navigation-wrapper">
@@ -230,6 +294,42 @@
 
       {#if !$sidebarIsHidden && !isXSmallViewport}
         <PlatformSelectorDropdown platformSelectors={webNavigation.platforms} />
+      {/if}
+
+      {#if config.navigation?.showLanguageSelector}
+        <div class="language-selector">
+          <button
+            class="language-button"
+            on:click={() => (languageDropdownOpen = !languageDropdownOpen)}
+            aria-expanded={languageDropdownOpen}
+            aria-haspopup="true"
+          >
+            <span>{getLanguageName(currentLanguage)}</span>
+            <SFSymbol name={languageDropdownOpen ? 'chevron-up' : 'chevron-down'} />
+          </button>
+          
+          {#if languageDropdownOpen}
+            <div class="language-dropdown">
+              {#each supportedLanguages as lang}
+                <button
+                  class="language-option"
+                  class:active={lang === currentLanguage}
+                  on:click={() => handleLanguageChange(lang)}
+                  on:keydown={(e) => {
+                    if (e.key === 'Enter' || e.key === 'Space') {
+                      e.preventDefault();
+                      handleLanguageChange(lang);
+                    }
+                  }}
+                  role="menuitem"
+                  tabindex="-1"
+                >
+                  {getLanguageName(lang)}
+                </button>
+              {/each}
+            </div>
+          {/if}
+        </div>
       {/if}
     </div>
 

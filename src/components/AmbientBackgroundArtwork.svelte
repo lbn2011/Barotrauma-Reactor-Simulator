@@ -1,6 +1,7 @@
 <script lang="ts">
-  import type { Artwork as JetArtworkType } from '~/types';
-  import { colorAsString } from '~/utils/color';
+  import type { Artwork as JetArtworkType } from '@/types';
+  import { colorAsString } from '@/utils/color';
+  import { defaultComponentConfig } from '@/config/components';
 
   // Define ResizeDetector component locally for now
   const ResizeDetector = {
@@ -10,6 +11,7 @@
 
   export let artwork: JetArtworkType;
   export let active: boolean = false;
+  export let config = defaultComponentConfig;
 
   $: isBackgroundImageLoaded = false;
   $: backgroundImage = buildSrc(

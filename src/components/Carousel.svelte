@@ -1,10 +1,12 @@
 <script lang="ts">
-  import type { Item } from '~/types';
+  import type { Item } from '@/types';
   import AmbientBackgroundArtwork from './AmbientBackgroundArtwork.svelte';
-  import { portal } from '~/actions/portal';
+  import { portal } from '@/actions/portal';
+  import { defaultComponentConfig } from '@/config/components';
 
   export let items: Item[];
   export let activeIndex: number = 0;
+  export let config = defaultComponentConfig;
 
   function deriveBackgroundArtworkFromItem(item: Item) {
     // Implement background artwork derivation logic here
@@ -32,11 +34,12 @@
       {#if !import.meta.env.SSR}
         {@const backgroundArtwork = deriveBackgroundArtworkFromItem(item)}
 
-        {#if backgroundArtwork}
+        {#if backgroundArtwork && (config.carousel?.enableBackgroundArtwork || false)}
           <div use:portal={'carousel-background'}>
             <AmbientBackgroundArtwork
               artwork={backgroundArtwork}
               active={activeIndex === index}
+              {config}
             />
           </div>
         {/if}

@@ -39,16 +39,6 @@
     --nav-item-active-text: #121212;
   }
 
-  .dark {
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --sidebar-bg: #1e1e1e;
-    --sidebar-border: #333;
-    --sidebar-hover: #333;
-    --nav-item-active: #00bcd4;
-    --nav-item-active-text: #121212;
-  }
-
   .app-container {
     display: flex;
     flex-direction: column;
@@ -57,11 +47,6 @@
     overflow: hidden;
     background-color: var(--bg-color);
     color: var(--text-color);
-  }
-
-  .top-bar {
-    height: var(--top-bar-height);
-    flex-shrink: 0;
   }
 
   .main-container {

@@ -7,6 +7,13 @@ export default defineConfig({
   resolve: {
     alias: {
       '~': resolve(__dirname, 'src'),
+      '@': resolve(__dirname, 'src'),
+      '@components': resolve(__dirname, 'src/components'),
+      '@config': resolve(__dirname, 'src/config'),
+      '@stores': resolve(__dirname, 'src/stores'),
+      '@utils': resolve(__dirname, 'src/utils'),
+      '@lib': resolve(__dirname, 'src/lib'),
+      '@styles': resolve(__dirname, 'src/styles'),
     },
   },
 });

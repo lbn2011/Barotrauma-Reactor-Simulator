@@ -1,10 +1,20 @@
 <script lang="ts">
-  import type { Opt } from '~/types';
-  import type { Artwork as ArtworkModel, Video as VideoModel } from '~/types';
-  import Artwork from '~/components/Artwork.svelte';
-  import Video from '~/components/Video.svelte';
-  import { prefersReducedMotion } from '~/stores/prefers-reduced-motion';
-  import { getBackgroundGradientCSSVarsFromArtworks, getLuminanceForRGB } from '~/utils/color';
+  import type { Artwork as ArtworkModel } from '@/types';
+  import type { Profile } from './Artwork.svelte';
+  import Artwork from '@/components/Artwork.svelte';
+  import Video from '@/components/Video.svelte';
+  import { prefersReducedMotion } from '@/stores/prefers-reduced-motion';
+  import { getBackgroundGradientCSSVarsFromArtworks, getLuminanceForRGB } from '@/utils/color';
+  import { defaultComponentConfig } from '@/config/components';
+
+  // Define VideoModel type locally since it's not exported from ~/types
+  interface VideoModel {
+    url: string;
+    mimeType?: string;
+  }
+
+  // Define Opt type locally since it's not exported from ~/types
+  type Opt<T> = T | undefined | null;
 
   export let color: string = '#000000';
   export let artwork: Opt<ArtworkModel> = undefined;
@@ -13,6 +23,18 @@
   export let pinArtworkToHorizontalEnd: boolean = false;
   export let pinArtworkToVerticalMiddle: boolean = false;
   export let collectionIcons: ArtworkModel[] | undefined = undefined;
+  export let config = defaultComponentConfig;
+
+  // Convert string profile to Profile tuple for Artwork component
+  function getArtworkProfile(profileName: string): Profile {
+    // Default profile values
+    const defaultSizes = [300];
+    const defaultAspectRatio = 16/9;
+    const defaultCrop = 'sr';
+
+    // Return default profile for now
+    return [defaultSizes, defaultAspectRatio, defaultCrop];
+  }
 
   let collectionIconsBackgroundGradientCssVars: string | undefined = undefined;
 
@@ -229,7 +251,7 @@
       class:pinned-to-vertical-middle={pinArtworkToVerticalMiddle}
       style:--color={color}
     >
-      {#if video && !$prefersReducedMotion}
+      {#if video && !$prefersReducedMotion && (config.hero?.enableVideoAutoplay || false)}
         <Video
           loop
           autoplay
@@ -247,7 +269,7 @@
         />
       {/if}
     </div>
-  {:else if collectionIcons}
+  {:else if collectionIcons && (config.hero?.enableCollectionIcons || false)}
     <ul class="app-icons">
       {#each collectionIcons?.slice(0, 5) as collectionIcon}
         <li class="app-icon-container">

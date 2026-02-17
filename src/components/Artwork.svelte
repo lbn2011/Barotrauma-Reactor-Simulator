@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-  import type { Artwork } from '~/types';
+  import type { Artwork } from '@/types';
 
   export type Profile = [number[], number, string];
 
@@ -17,8 +17,8 @@
 </script>
 
 <script lang="ts">
-  import type { Artwork as ArtworkType } from '~/types';
-  import { colorAsString, isNamedColor } from '~/utils/color';
+  import type { Artwork as ArtworkType } from '@/types';
+  import { colorAsString, isNamedColor } from '@/utils/color';
 
   export let artwork: ArtworkType;
   export let profile: Profile;
