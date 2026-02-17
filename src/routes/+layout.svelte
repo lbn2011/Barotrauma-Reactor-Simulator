@@ -27,9 +27,26 @@
 
 <style>
   :root {
-    --sidebar-width: 280px;
+    --sidebar-width: 240px;
     --sidebar-width-collapsed: 80px;
     --top-bar-height: 4rem;
+    --bg-color: #ffffff;
+    --text-color: #121212;
+    --sidebar-bg: #f8f9fa;
+    --sidebar-border: #dee2e6;
+    --sidebar-hover: #e9ecef;
+    --nav-item-active: #00bcd4;
+    --nav-item-active-text: #121212;
+  }
+
+  .dark {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --sidebar-bg: #1e1e1e;
+    --sidebar-border: #333;
+    --sidebar-hover: #333;
+    --nav-item-active: #00bcd4;
+    --nav-item-active-text: #121212;
   }
 
   .app-container {
@@ -38,8 +55,8 @@
     height: 100vh;
     width: 100vw;
     overflow: hidden;
-    background-color: #121212;
-    color: #e0e0e0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
   }
 
   .top-bar {
@@ -55,8 +72,8 @@
 
   .sidebar {
     width: var(--sidebar-width);
-    background-color: #1e1e1e;
-    border-right: 1px solid #333;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
     transition: width 0.3s ease;
     overflow-y: auto;
     padding: 1rem;
@@ -74,13 +91,13 @@
     justify-content: flex-end;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--sidebar-border);
   }
 
   .sidebar-toggle {
     background: none;
     border: none;
-    color: #e0e0e0;
+    color: var(--text-color);
     cursor: pointer;
     font-size: 1.2rem;
     padding: 0.5rem;
@@ -89,7 +106,7 @@
   }
 
   .sidebar-toggle:hover {
-    background-color: #333;
+    background-color: var(--sidebar-hover);
   }
 
   .nav-menu {
@@ -107,7 +124,7 @@
     cursor: pointer;
     transition: all 0.2s;
     text-decoration: none;
-    color: #e0e0e0;
+    color: var(--text-color);
     background: none;
     border: none;
     width: 100%;
@@ -115,12 +132,12 @@
   }
 
   .nav-item:hover {
-    background-color: #333;
+    background-color: var(--sidebar-hover);
   }
 
   .nav-item.active {
-    background-color: #00bcd4;
-    color: #121212;
+    background-color: var(--nav-item-active);
+    color: var(--nav-item-active-text);
   }
 
   .nav-icon {
@@ -138,6 +155,8 @@
     padding: 2rem;
     height: calc(100vh - var(--top-bar-height)); /* 减去顶部栏的高度 */
     overflow-y: auto;
+    background-color: var(--bg-color);
+    color: var(--text-color);
   }
 
   .sidebar.collapsed .nav-text {

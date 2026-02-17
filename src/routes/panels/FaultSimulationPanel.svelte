@@ -65,9 +65,9 @@
   ];
 
   // 表单状态
-  let selectedFaultType = 'pump'; // 当前选择的故障类型
+  let selectedFaultType: 'pump' | 'valve' | 'sensor' | 'controller' | 'pipe' | 'electrical' | 'cooling' | 'steam' = 'pump'; // 当前选择的故障类型
   let selectedComponentId = 'pump1'; // 当前选择的组件ID
-  let selectedSeverity = 'minor'; // 当前选择的严重程度
+  let selectedSeverity: 'minor' | 'major' | 'critical' = 'minor'; // 当前选择的严重程度
 
   /**
    * 处理故障类型变化
@@ -75,7 +75,7 @@
    */
   function handleFaultTypeChange(e: Event) {
     const target = e.target as HTMLSelectElement;
-    selectedFaultType = target.value as any;
+    selectedFaultType = target.value as 'pump' | 'valve' | 'sensor' | 'controller' | 'pipe' | 'electrical' | 'cooling' | 'steam';
     selectedComponentId = componentIds[selectedFaultType][0];
   }
 
@@ -94,7 +94,7 @@
    */
   function handleSeverityChange(e: Event) {
     const target = e.target as HTMLSelectElement;
-    selectedSeverity = target.value as any;
+    selectedSeverity = target.value as 'minor' | 'major' | 'critical';
   }
 
   /**

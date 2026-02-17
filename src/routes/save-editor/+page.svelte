@@ -184,7 +184,7 @@
 
   // 生成示例存档码
   function generateExampleSaveCode() {
-    const exampleState: Partial<ReactorState> = {
+    const exampleState = {
       powerRegulation: {
         powerLevel: 50,
         targetPower: 50,
@@ -205,7 +205,7 @@
         load: 50,
         speed: 3000
       }
-    };
+    } as Partial<ReactorState>;
 
     // 构建新的存档数据结构
     const saveData = {

@@ -1,11 +1,177 @@
 <script lang="ts">
+  import type { Opt } from '~/types';
+  import type { Artwork as ArtworkModel, Video as VideoModel } from '~/types';
+  import Artwork from '~/components/Artwork.svelte';
+  import Video from '~/components/Video.svelte';
+  import { prefersReducedMotion } from '~/stores/prefers-reduced-motion';
+  import { getBackgroundGradientCSSVarsFromArtworks, getLuminanceForRGB } from '~/utils/color';
+
   export let color: string = '#000000';
+  export let artwork: Opt<ArtworkModel> = undefined;
+  export let video: Opt<VideoModel> = undefined;
+  export let profile: string = 'large-hero';
+  export let pinArtworkToHorizontalEnd: boolean = false;
+  export let pinArtworkToVerticalMiddle: boolean = false;
+  export let collectionIcons: ArtworkModel[] | undefined = undefined;
+
+  let collectionIconsBackgroundGradientCssVars: string | undefined = undefined;
+
+  if (collectionIcons && collectionIcons.length > 1) {
+    // If there are multiple app icons, we build a string of CSS variables from the icons
+    // background colors to fill as many of the lockups quadrants as possible.
+    collectionIconsBackgroundGradientCssVars =
+      getBackgroundGradientCSSVarsFromArtworks(collectionIcons, {
+        // sorts from darkest to lightest
+        sortFn: (a, b) => getLuminanceForRGB(a) - getLuminanceForRGB(b),
+        shouldRemoveGreys: true,
+      });
+  }
 </script>
 
 <style lang="scss">
   .hero {
     position: relative;
     overflow: hidden;
+  }
+
+  .image-container {
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color);
+  }
+
+  .image-container.pinned-to-vertical-middle {
+    display: flex;
+    align-items: center;
+  }
+
+  .image-container.pinned-to-vertical-middle :global(.video-container),
+  .image-container.pinned-to-vertical-middle :global(.artwork-component) {
+    width: 100%;
+    height: auto;
+  }
+
+  .image-container.pinned-to-horizontal-end :global(.artwork-component) {
+    height: 100%;
+    display: flex;
+  }
+
+  .image-container.pinned-to-horizontal-end :global(.artwork-component img) {
+    height: 100%;
+    width: auto;
+    position: absolute;
+    inset-inline-end: 0;
+  }
+
+  .app-icons {
+    display: grid;
+    align-self: center;
+    width: 90%;
+    grid-template-rows: auto auto;
+    grid-auto-flow: column;
+    gap: 24px;
+    margin-inline-start: -4%;
+    position: absolute;
+    inset-inline-end: 24px;
+
+    @media (min-width: 768px) {
+      width: 44%;
+    }
+  }
+
+  .app-icons li:nth-child(even) {
+    inset-inline-start: 44%;
+  }
+
+  .app-icon-container {
+    position: relative;
+    flex-shrink: 0;
+    max-width: 200px;
+  }
+
+  @property --top-left-stop {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 20%;
+  }
+
+  @property --bottom-left-stop {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 40%;
+  }
+
+  @property --top-right-stop {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 55%;
+  }
+
+  @property --bottom-right-stop {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 50%;
+  }
+
+  .collection-icons-background-gradient {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: radial-gradient(
+            circle at 3% -50%,
+            var(--top-left, #000) var(--top-left-stop),
+            transparent 70%
+        ),
+        radial-gradient(
+            circle at -50% 120%,
+            var(--bottom-left, #000) var(--bottom-left-stop),
+            transparent 80%
+        ),
+        radial-gradient(
+            circle at 66% -175%,
+            var(--top-right, #000) var(--top-right-stop),
+            transparent 80%
+        ),
+        radial-gradient(
+            circle at 62% 100%,
+            var(--bottom-right, #000) var(--bottom-right-stop),
+            transparent 100%
+        );
+    animation: collection-icons-background-gradient-shift 16s infinite
+        alternate-reverse;
+    animation-play-state: paused;
+
+    @media (min-width: 768px) {
+      animation-play-state: running;
+    }
+  }
+
+  @keyframes collection-icons-background-gradient-shift {
+    0% {
+      --top-left-stop: 20%;
+      --bottom-left-stop: 40%;
+      --top-right-stop: 55%;
+      --bottom-right-stop: 50%;
+      background-size: 100% 100%;
+    }
+
+    50% {
+      --top-left-stop: 25%;
+      --bottom-left-stop: 15%;
+      --top-right-stop: 70%;
+      --bottom-right-stop: 30%;
+      background-size: 130% 130%;
+    }
+
+    100% {
+      --top-left-stop: 15%;
+      --bottom-left-stop: 20%;
+      --top-right-stop: 55%;
+      --bottom-right-stop: 20%;
+      background-size: 110% 110%;
+    }
   }
 
   .gradient {
@@ -56,6 +222,48 @@
 </style>
 
 <div class="hero">
+  {#if video || artwork}
+    <div
+      class={`image-container ${profile}`}
+      class:pinned-to-horizontal-end={pinArtworkToHorizontalEnd}
+      class:pinned-to-vertical-middle={pinArtworkToVerticalMiddle}
+      style:--color={color}
+    >
+      {#if video && !$prefersReducedMotion}
+        <Video
+          loop
+          autoplay
+          useControls={false}
+          {video}
+          {profile}
+        />
+      {:else if artwork}
+        <Artwork
+          {artwork}
+          profile={profile}
+          noShelfChevronAnchor={true}
+          useCropCodeFromArtwork={false}
+          withoutBorder={true}
+        />
+      {/if}
+    </div>
+  {:else if collectionIcons}
+    <ul class="app-icons">
+      {#each collectionIcons?.slice(0, 5) as collectionIcon}
+        <li class="app-icon-container">
+          <Artwork
+            artwork={collectionIcon}
+            profile="app-icon-large"
+          />
+        </li>
+      {/each}
+    </ul>
+
+    <div
+      class="collection-icons-background-gradient"
+      style={collectionIconsBackgroundGradientCssVars}
+    />
+  {/if}
   <div class="gradient" style="--color: {color};" />
   <slot />
 </div>

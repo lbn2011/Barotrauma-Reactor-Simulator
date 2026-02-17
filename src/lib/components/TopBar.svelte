@@ -1,9 +1,17 @@
 <script lang="ts">
   /**
    * 顶部导航栏组件
-   * 显示应用标题和主题切换功能
+   * 显示应用标题、核心控制按钮和主题切换功能
    */
   import { Button } from '../components/ui/button';
+  import { startSimulation, stopSimulation, resetSimulation } from '../stores/reactorStore';
+  import { reactorStore } from '../stores/reactorStore';
+
+  // 订阅状态
+  let isRunning = $state(false);
+  const unsubscribe = reactorStore.subscribe((state) => {
+    isRunning = state.isRunning;
+  });
 
   // 主题状态管理
   let darkMode = $state(false); // 当前主题模式
@@ -77,17 +85,41 @@
 -->
 
 <div
-  class="top-bar bg-background border-b border-border h-16 flex items-center justify-between px-6 z-50"
+  class="top-bar bg-light-background dark:bg-dark-background border-b border-light-border dark:border-dark-border h-16 flex items-center justify-between px-6 z-50"
 >
   <div class="top-bar-left flex items-center">
-    <h1 class="text-xl font-bold text-foreground">RBMK-1000模拟器</h1>
+    <h1 class="text-lg font-bold text-light-foreground dark:text-dark-foreground">RBMK-1000模拟器</h1>
+  </div>
+
+  <div class="top-bar-center flex items-center gap-3">
+    {#if !isRunning}
+      <Button
+        class="bg-light-primary dark:bg-dark-primary hover:bg-light-primary/90 dark:hover:bg-dark-primary/90 text-light-primary-foreground dark:text-dark-primary-foreground"
+        on:click={startSimulation}
+      >
+        启动模拟
+      </Button>
+    {:else}
+      <Button
+        class="bg-light-secondary dark:bg-dark-secondary hover:bg-light-secondary/90 dark:hover:bg-dark-secondary/90 text-light-secondary-foreground dark:text-dark-secondary-foreground"
+        on:click={stopSimulation}
+      >
+        停止模拟
+      </Button>
+    {/if}
+    <Button
+      class="bg-light-destructive dark:bg-dark-destructive hover:bg-light-destructive/90 dark:hover:bg-dark-destructive/90 text-light-destructive-foreground dark:text-dark-destructive-foreground"
+      on:click={resetSimulation}
+    >
+      重置模拟
+    </Button>
   </div>
 
   <div class="top-bar-right flex items-center gap-4">
     <Button
       variant="ghost"
       size="sm"
-      class="p-2"
+      class="p-2 text-light-foreground dark:text-dark-foreground hover:bg-light-accent dark:hover:bg-dark-accent"
       on:click={toggleTheme}
       aria-label="Toggle theme"
     >

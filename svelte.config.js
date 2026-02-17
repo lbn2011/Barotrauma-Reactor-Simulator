@@ -13,6 +13,8 @@ const config = {
       '$routes/*': 'src/routes/*',
       $assets: 'src/assets',
       '$assets/*': 'src/assets/*',
+      '~': 'src',
+      '~/*': 'src/*',
     },
     appDir: 'internal',
   },

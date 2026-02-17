@@ -2,16 +2,34 @@
   import type { Artwork as JetArtworkType } from '~/types';
   import { colorAsString } from '~/utils/color';
 
+  // Define ResizeDetector component locally for now
+  const ResizeDetector = {
+    props: ['on:resizeUpdate'],
+    render: () => null
+  };
+
   export let artwork: JetArtworkType;
   export let active: boolean = false;
 
   $: isBackgroundImageLoaded = false;
-  $: backgroundImage = artwork?.url || '';
+  $: backgroundImage = buildSrc(
+          artwork
+        ) || '';
 
   $: if (backgroundImage) {
+    // Preload strategy: create image object to load in background
     const img = new Image();
-    img.onload = () => (isBackgroundImageLoaded = true);
+    img.onload = () => {
+      // Progressive display: set loaded state to trigger transition
+      isBackgroundImageLoaded = true;
+    };
+    img.onerror = () => {
+      // Error fallback: handle image load failure
+      isBackgroundImageLoaded = false;
+    };
     img.src = backgroundImage;
+  } else {
+    isBackgroundImageLoaded = false;
   }
 
   let resizing = false;
@@ -22,6 +40,35 @@
   const handleIntersectionOberserverUpdate = (
     isIntersectingViewport: boolean
   ) => (isOutOfView = !isIntersectingViewport);
+
+  /**
+   * Builds a source URL for an artwork based on its template and parameters
+   */
+  function buildSrc(
+    artwork: JetArtworkType,
+    options: {
+      crop?: string;
+      width?: number;
+      height?: number;
+      fileType?: string;
+    } = {}
+  ): string {
+    if (!artwork || !artwork.template) return '';
+
+    const {
+      crop = 'sr',
+      width = 400,
+      height = Math.floor(width / 1.6667),
+      fileType = 'webp',
+    } = options;
+
+    // Build the source URL by replacing placeholders in the template
+    return artwork.template
+      .replace('{w}', width.toString())
+      .replace('{h}', height.toString())
+      .replace('{c}', crop)
+      .replace('{f}', fileType);
+  }
 
   function intersectionObserver(node: HTMLElement, options: any) {
     const observer = new IntersectionObserver(
@@ -188,7 +235,6 @@
       callback: handleIntersectionOberserverUpdate,
       threshold: 0,
     }}
-    use:resizeDetector
   >
     <div class="overlay"></div>
   </div>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { TodayCard } from '~/types';
 
-  import Artwork from '~/components/Artwork.svelte';
+  import Artwork, { type Profile, getNaturalProfile } from '~/components/Artwork.svelte';
   import LineClamp from '~/components/LineClamp.svelte';
   import TodayCardMedia from './TodayCardMedia.svelte';
   import TodayCardOverlay from './TodayCardOverlay.svelte';
@@ -11,26 +11,20 @@
   import { colorAsString } from '~/utils/color';
   import { bestBackgroundColor } from './background-color-utils';
 
-  // Define types and utility functions locally
-  type Profile = {
-    width: number;
-    height: number;
-  };
-
-  function getNaturalProfile(artwork: any): Profile {
-    return {
-      width: artwork.width || 100,
-      height: artwork.height || 100,
-    };
-  }
-
   function isTodayCardMediaList(media: any): boolean {
     return media.kind === 'list';
   }
 
   function sanitizeHtml(html: string): string {
-    // Simple sanitization for demonstration purposes
-    return html;
+    // Basic HTML sanitization for security
+    if (!html) return '';
+    
+    // Remove potentially dangerous tags and attributes
+    return html
+      .replace(/<script[^>]*>.*?<\/script>/gi, '')
+      .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '')
+      .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+      .replace(/javascript:/gi, '');
   }
 
   export let card: TodayCard;
@@ -165,6 +159,8 @@
   }
 
   .information-layer.with-gradient {
+    // A smooth bottom-to-top gradient with an intermediate stop at 60% of the accent color's
+    // opacity to ease the hard transition.
     --gradient-color-end-position: 22%;
     --gradient-fade-end-position: 50%;
     background: linear-gradient(
@@ -172,21 +168,19 @@
       var(--gradient-color) var(--gradient-color-end-position),
       color-mix(in srgb, var(--gradient-color) 60%, transparent)
         calc(
-          (
-              var(--gradient-color-end-position) +
+            (
+                var(--gradient-color-end-position) +
                 var(--gradient-fade-end-position)
-            ) /
-            2
+            ) / 2
         ),
       transparent var(--gradient-fade-end-position)
     );
-    transition:
-      --accent-color-end 500ms ease-out,
-      --fade-end 350ms ease-out,
+    transition: --accent-color-end 500ms ease-out, --fade-end 350ms ease-out,
       --gradient-color 350ms ease-out;
   }
 
   .information-layer.with-gradient.with-action:has(> a:hover) {
+    // Darkens the color used in the gradient on hover
     --gradient-color: color-mix(
       in srgb,
       var(--today-card-accent-color) 93%,
@@ -361,6 +355,9 @@
                   <Artwork
                     artwork={titleArtwork}
                     profile={getNaturalProfile(titleArtwork)}
+                    alt={title || 'Title artwork'}
+                    lazyLoad={true}
+                    quality={85}
                   />
                 </div>
               {/if}
@@ -388,11 +385,14 @@
           <div
             class="overlay"
             class:blur-only={!useProtectionLayer}
-            class:dark={useProtectionLayer ? 'dark' : 'light'}
+            class:dark={useProtectionLayer && style !== 'dark'}
+            class:light={useProtectionLayer && style === 'dark'}
           >
             <TodayCardOverlay
               {overlay}
-              buttonVariant={useProtectionLayer ? 'transparent' : 'dark-gray'}
+              buttonVariant={useProtectionLayer
+                ? 'transparent'
+                : 'dark-gray'}
               --text-color="var(--today-card-text-color)"
               --text-accent-color="var(--today-card-text-accent-color)"
               --text-accent-blend-mode="var(--today-card-text-accent-blend-mode)"
