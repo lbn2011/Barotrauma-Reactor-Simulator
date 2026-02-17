@@ -23,10 +23,10 @@ interface VoidCoefficientOutput {
 /**
  * 计算正空泡系数效应
  * 模拟RBMK-1000反应堆的正空泡系数反馈机制
- * 
+ *
  * @param input 输入参数
  * @returns 空泡系数效应结果
- * 
+ *
  * @description
  * RBMK-1000反应堆正空泡系数特性：
  * 1. 当冷却剂中蒸汽含量（空泡）增加时，反应性上升
@@ -36,7 +36,7 @@ interface VoidCoefficientOutput {
  * 4. 中子吸收减少导致反应性增加，形成正反馈循环
  * 5. 这种正反馈在某些情况下可能导致功率激增，是切尔诺贝利事故的关键因素
  */
-export function calculateVoidCoefficient(
+export function calculateVoidCoefficient (
   input: VoidCoefficientInput
 ): VoidCoefficientOutput {
   // 计算空泡反应性：空泡系数 × 空泡份额变化
@@ -58,12 +58,12 @@ export function calculateVoidCoefficient(
 
 /**
  * 计算空泡份额变化
- * 
+ *
  * @param currentVoidFraction 当前空泡分数
  * @param previousVoidFraction 之前的空泡分数
  * @returns 空泡份额变化
  */
-export function calculateVoidFractionChange(
+export function calculateVoidFractionChange (
   currentVoidFraction: number,
   previousVoidFraction: number
 ): number {
@@ -73,12 +73,12 @@ export function calculateVoidFractionChange(
 /**
  * 计算基于温度的空泡分数
  * 简化模型：当温度超过饱和温度时，开始产生蒸汽
- * 
+ *
  * @param temperature 温度（°C）
  * @param saturationTemperature 饱和温度（°C）
  * @returns 空泡分数
  */
-export function calculateTemperatureBasedVoidFraction(
+export function calculateTemperatureBasedVoidFraction (
   temperature: number,
   saturationTemperature: number
 ): number {

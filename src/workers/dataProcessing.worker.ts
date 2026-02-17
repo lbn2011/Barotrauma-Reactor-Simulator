@@ -117,7 +117,7 @@ interface ReportOutput {
 }
 
 // 计算趋势
-function calculateTrend(history: number[]): 'rising' | 'falling' | 'stable' {
+function calculateTrend (history: number[]): 'rising' | 'falling' | 'stable' {
   if (history.length < 2) return 'stable';
 
   const recent = history.slice(-5);
@@ -131,7 +131,7 @@ function calculateTrend(history: number[]): 'rising' | 'falling' | 'stable' {
 }
 
 // 处理警报数据
-function processAlarmData(data: AlarmDataInput): AlarmDataOutput {
+function processAlarmData (data: AlarmDataInput): AlarmDataOutput {
   const unacknowledgedAlarms = data.alarms.filter(
     (alarm) => !data.acknowledgedAlarms.includes(alarm.id)
   );
@@ -160,7 +160,7 @@ function processAlarmData(data: AlarmDataInput): AlarmDataOutput {
 }
 
 // 处理趋势数据
-function processTrendData(data: TrendDataInput): TrendDataOutput {
+function processTrendData (data: TrendDataInput): TrendDataOutput {
   const recentHistory = data.history.filter(
     (entry) => entry.timestamp >= Date.now() - data.timeWindow
   );
@@ -207,7 +207,7 @@ function processTrendData(data: TrendDataInput): TrendDataOutput {
 }
 
 // 生成报告
-function generateReport(data: ReportInput): ReportOutput {
+function generateReport (data: ReportInput): ReportOutput {
   const duration = data.endTime - data.startTime;
 
   // 按类型分组事件
@@ -252,21 +252,21 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
   let result: any;
 
   switch (type) {
-    case 'processAlarmData':
-      result = processAlarmData(data as AlarmDataInput);
-      break;
+  case 'processAlarmData':
+    result = processAlarmData(data as AlarmDataInput);
+    break;
 
-    case 'processTrendData':
-      result = processTrendData(data as TrendDataInput);
-      break;
+  case 'processTrendData':
+    result = processTrendData(data as TrendDataInput);
+    break;
 
-    case 'generateReport':
-      result = generateReport(data as ReportInput);
-      break;
+  case 'generateReport':
+    result = generateReport(data as ReportInput);
+    break;
 
-    default:
-      console.error('Unknown message type:', type);
-      return;
+  default:
+    console.error('Unknown message type:', type);
+    return;
   }
 
   // 发送响应

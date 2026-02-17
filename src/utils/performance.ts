@@ -15,7 +15,7 @@ export function debounce<T extends (...args: any[]) => any>(
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null;
 
-  return function(...args: Parameters<T>) {
+  return function (...args: Parameters<T>) {
     const later = () => {
       timeout = null;
       if (!immediate) func(...args);
@@ -42,7 +42,7 @@ export function throttle<T extends (...args: any[]) => any>(
 ): (...args: Parameters<T>) => void {
   let inThrottle = false;
 
-  return function(...args: Parameters<T>) {
+  return function (...args: Parameters<T>) {
     if (!inThrottle) {
       func(...args);
       inThrottle = true;
@@ -57,10 +57,7 @@ export function throttle<T extends (...args: any[]) => any>(
  * @param label - Label for the measurement
  * @returns Result of the function
  */
-export function measureExecutionTime<T>(
-  func: () => T,
-  label: string
-): T {
+export function measureExecutionTime<T> (func: () => T, label: string): T {
   const start = performance.now();
   const result = func();
   const end = performance.now();
@@ -73,13 +70,13 @@ export function measureExecutionTime<T>(
  * @param images - Array of image elements to lazy load
  * @param options - Intersection Observer options
  */
-export function lazyLoadImages(
+export function lazyLoadImages (
   images: HTMLImageElement[],
   options: IntersectionObserverInit = {}
 ): void {
   if (!('IntersectionObserver' in window)) {
     // Fallback if Intersection Observer is not supported
-    images.forEach(img => {
+    images.forEach((img) => {
       if (img.dataset.src) {
         img.src = img.dataset.src;
         img.removeAttribute('data-src');
@@ -89,7 +86,7 @@ export function lazyLoadImages(
   }
 
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       if (entry.isIntersecting) {
         const img = entry.target as HTMLImageElement;
         if (img.dataset.src) {
@@ -101,7 +98,7 @@ export function lazyLoadImages(
     });
   }, options);
 
-  images.forEach(img => {
+  images.forEach((img) => {
     if (img.dataset.src) {
       observer.observe(img);
     }
@@ -112,13 +109,15 @@ export function lazyLoadImages(
  * Preload critical resources
  * @param resources - Array of resources to preload
  */
-export function preloadCriticalResources(resources: Array<{
-  href: string;
-  as: string;
-  type?: string;
-  crossorigin?: string;
-}>): void {
-  resources.forEach(resource => {
+export function preloadCriticalResources (
+  resources: Array<{
+    href: string;
+    as: string;
+    type?: string;
+    crossorigin?: string;
+  }>
+): void {
+  resources.forEach((resource) => {
     const link = document.createElement('link');
     link.rel = 'preload';
     link.href = resource.href;
@@ -133,7 +132,7 @@ export function preloadCriticalResources(resources: Array<{
  * Optimize animations for performance
  * @param element - Element to optimize
  */
-export function optimizeForAnimation(element: HTMLElement): void {
+export function optimizeForAnimation (element: HTMLElement): void {
   element.style.transform = 'translateZ(0)';
   element.style.willChange = 'transform';
   element.style.backfaceVisibility = 'hidden';
@@ -144,7 +143,7 @@ export function optimizeForAnimation(element: HTMLElement): void {
  * Check if the browser supports requestAnimationFrame
  * @returns Whether requestAnimationFrame is supported
  */
-export function supportsRequestAnimationFrame(): boolean {
+export function supportsRequestAnimationFrame (): boolean {
   return 'requestAnimationFrame' in window;
 }
 
@@ -153,7 +152,7 @@ export function supportsRequestAnimationFrame(): boolean {
  * @param func - Function to schedule
  * @returns Request ID
  */
-export function scheduleAnimationFrame(func: () => void): number {
+export function scheduleAnimationFrame (func: () => void): number {
   if (supportsRequestAnimationFrame()) {
     return window.requestAnimationFrame(func);
   } else {
@@ -165,7 +164,7 @@ export function scheduleAnimationFrame(func: () => void): number {
  * Cancel a scheduled animation frame
  * @param id - Request ID
  */
-export function cancelAnimationFrame(id: number): void {
+export function cancelAnimationFrame (id: number): void {
   if (supportsRequestAnimationFrame()) {
     window.cancelAnimationFrame(id);
   } else {
@@ -177,19 +176,19 @@ export function cancelAnimationFrame(id: number): void {
  * Detect if the device is low-end
  * @returns Whether the device is low-end
  */
-export function isLowEndDevice(): boolean {
+export function isLowEndDevice (): boolean {
   // Check for memory
   const memory = (navigator as any).deviceMemory || 4;
-  
+
   // Check for CPU cores
   const cores = navigator.hardwareConcurrency || 4;
-  
+
   // Check for screen resolution
   const resolution = window.screen.width * window.screen.height;
-  
+
   // Check for touch support
   const isTouch = 'ontouchstart' in window;
-  
+
   // Combine checks
   return (
     memory < 4 ||
@@ -202,14 +201,14 @@ export function isLowEndDevice(): boolean {
 /**
  * Optimize based on device capabilities
  */
-export function optimizeBasedOnDevice(): void {
+export function optimizeBasedOnDevice (): void {
   if (isLowEndDevice()) {
     // Disable heavy animations
     document.documentElement.classList.add('low-end-device');
-    
+
     // Reduce image quality
     document.documentElement.setAttribute('data-image-quality', 'low');
-    
+
     // Disable some features
     document.documentElement.setAttribute('data-features', 'reduced');
   } else {

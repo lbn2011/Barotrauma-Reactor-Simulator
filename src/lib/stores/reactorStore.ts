@@ -657,7 +657,7 @@ export const reactorStore: Writable<ReactorState> = writable(initialState);
 workerManager.initialize();
 
 // 模拟更新函数
-export async function updateReactorState() {
+export async function updateReactorState () {
   reactorStore.update((state) => {
     if (!state.isRunning) return state;
 
@@ -1271,7 +1271,7 @@ export async function updateReactorState() {
 }
 
 // 控制模拟的函数
-export function startSimulation() {
+export function startSimulation () {
   reactorStore.update((state) => ({
     ...state,
     isRunning: true,
@@ -1290,7 +1290,7 @@ export function startSimulation() {
   }));
 }
 
-export function stopSimulation() {
+export function stopSimulation () {
   reactorStore.update((state) => ({
     ...state,
     isRunning: false,
@@ -1309,12 +1309,12 @@ export function stopSimulation() {
   }));
 }
 
-export function resetSimulation() {
+export function resetSimulation () {
   reactorStore.set(initialState);
 }
 
 // 控制棒操作函数
-export function setControlRodPosition(position: number) {
+export function setControlRodPosition (position: number) {
   reactorStore.update((state) => ({
     ...state,
     controlRods: {
@@ -1325,7 +1325,7 @@ export function setControlRodPosition(position: number) {
 }
 
 // 设置单根控制棒位置
-export function setSingleControlRodPosition(
+export function setSingleControlRodPosition (
   row: number,
   col: number,
   position: number
@@ -1343,7 +1343,7 @@ export function setSingleControlRodPosition(
 }
 
 // 控制棒紧急插入（AZ-5）
-export function emergencyRodInsertion() {
+export function emergencyRodInsertion () {
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
     newState.controlRods.emergencyInsertion = true;
@@ -1367,7 +1367,7 @@ export function emergencyRodInsertion() {
 }
 
 // 切换控制棒自动模式
-export function toggleControlRodAutoMode() {
+export function toggleControlRodAutoMode () {
   reactorStore.update((state) => ({
     ...state,
     controlRods: {
@@ -1378,7 +1378,7 @@ export function toggleControlRodAutoMode() {
 }
 
 // 功率调节函数
-export function setTargetPower(power: number) {
+export function setTargetPower (power: number) {
   reactorStore.update((state) => ({
     ...state,
     powerRegulation: {
@@ -1390,7 +1390,7 @@ export function setTargetPower(power: number) {
 }
 
 // 设置功率设定点
-export function setPowerSetpoint(setpoint: number) {
+export function setPowerSetpoint (setpoint: number) {
   reactorStore.update((state) => ({
     ...state,
     powerRegulation: {
@@ -1402,7 +1402,7 @@ export function setPowerSetpoint(setpoint: number) {
 }
 
 // 切换自动控制模式
-export function toggleAutomaticControl() {
+export function toggleAutomaticControl () {
   reactorStore.update((state) => ({
     ...state,
     powerRegulation: {
@@ -1413,7 +1413,7 @@ export function toggleAutomaticControl() {
 }
 
 // 切换轴向偏移控制
-export function toggleAxialOffsetControl() {
+export function toggleAxialOffsetControl () {
   reactorStore.update((state) => ({
     ...state,
     powerRegulation: {
@@ -1424,7 +1424,7 @@ export function toggleAxialOffsetControl() {
 }
 
 // 触发停堆
-export function tripReactor() {
+export function tripReactor () {
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
     // 紧急插入控制棒
@@ -1464,7 +1464,7 @@ export function tripReactor() {
 // 给水系统控制函数
 
 // 切换隔离阀状态
-export function toggleIsolationValve(
+export function toggleIsolationValve (
   valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet'
 ) {
   reactorStore.update((state) => {
@@ -1480,7 +1480,7 @@ export function toggleIsolationValve(
 }
 
 // 设置隔离阀位置
-export function setIsolationValvePosition(
+export function setIsolationValvePosition (
   valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet',
   position: number
 ) {
@@ -1496,7 +1496,7 @@ export function setIsolationValvePosition(
 }
 
 // 切换给水加热器状态
-export function toggleFeedwaterHeater(heater: 'heater1' | 'heater2') {
+export function toggleFeedwaterHeater (heater: 'heater1' | 'heater2') {
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
     newState.feedwaterSystem.heaters[heater].status =
@@ -1506,7 +1506,7 @@ export function toggleFeedwaterHeater(heater: 'heater1' | 'heater2') {
 }
 
 // 设置给水加热器参数
-export function setFeedwaterHeaterParameter(
+export function setFeedwaterHeaterParameter (
   heater: 'heater1' | 'heater2',
   parameter: 'steamPressure' | 'flowRate',
   value: number
@@ -1519,7 +1519,7 @@ export function setFeedwaterHeaterParameter(
 }
 
 // 泵控制函数
-export function toggleRecirculationPump(pumpNumber: 1 | 2) {
+export function toggleRecirculationPump (pumpNumber: 1 | 2) {
   reactorStore.update((state) => ({
     ...state,
     recirculationPumps: {
@@ -1532,7 +1532,7 @@ export function toggleRecirculationPump(pumpNumber: 1 | 2) {
   }));
 }
 
-export function setRecirculationPumpSpeed(pumpNumber: 1 | 2, speed: number) {
+export function setRecirculationPumpSpeed (pumpNumber: 1 | 2, speed: number) {
   reactorStore.update((state) => ({
     ...state,
     recirculationPumps: {
@@ -1546,7 +1546,7 @@ export function setRecirculationPumpSpeed(pumpNumber: 1 | 2, speed: number) {
 }
 
 // 应急冷却泵控制函数
-export function toggleEmergencyCoolingPump(pumpNumber: 1 | 2) {
+export function toggleEmergencyCoolingPump (pumpNumber: 1 | 2) {
   reactorStore.update((state) => ({
     ...state,
     emergencyCoolingPumps: {
@@ -1559,7 +1559,7 @@ export function toggleEmergencyCoolingPump(pumpNumber: 1 | 2) {
   }));
 }
 
-export function setEmergencyCoolingPumpFlowRate(
+export function setEmergencyCoolingPumpFlowRate (
   pumpNumber: 1 | 2,
   flowRate: number
 ) {
@@ -1576,7 +1576,7 @@ export function setEmergencyCoolingPumpFlowRate(
 }
 
 // 反应堆排水控制函数
-export function toggleReactorDrain() {
+export function toggleReactorDrain () {
   reactorStore.update((state) => ({
     ...state,
     reactorDrain: {
@@ -1586,7 +1586,7 @@ export function toggleReactorDrain() {
   }));
 }
 
-export function setReactorDrainFlowRate(flowRate: number) {
+export function setReactorDrainFlowRate (flowRate: number) {
   reactorStore.update((state) => ({
     ...state,
     reactorDrain: {
@@ -1597,7 +1597,7 @@ export function setReactorDrainFlowRate(flowRate: number) {
 }
 
 // 堆芯离线冷却泵控制函数
-export function toggleCoreCoolingPump() {
+export function toggleCoreCoolingPump () {
   reactorStore.update((state) => ({
     ...state,
     coreCoolingPump: {
@@ -1607,7 +1607,7 @@ export function toggleCoreCoolingPump() {
   }));
 }
 
-export function setCoreCoolingPumpFlowRate(flowRate: number) {
+export function setCoreCoolingPumpFlowRate (flowRate: number) {
   reactorStore.update((state) => ({
     ...state,
     coreCoolingPump: {
@@ -1618,7 +1618,7 @@ export function setCoreCoolingPumpFlowRate(flowRate: number) {
 }
 
 // 汽轮机控制函数
-export function toggleTurbine() {
+export function toggleTurbine () {
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
     newState.turbine.status = !newState.turbine.status;
@@ -1650,7 +1650,7 @@ export function toggleTurbine() {
   });
 }
 
-export function setTurbineLoad(load: number) {
+export function setTurbineLoad (load: number) {
   reactorStore.update((state) => ({
     ...state,
     turbine: {
@@ -1662,7 +1662,7 @@ export function setTurbineLoad(load: number) {
 }
 
 // 设置转速设定点
-export function setTurbineSpeedSetpoint(speed: number) {
+export function setTurbineSpeedSetpoint (speed: number) {
   reactorStore.update((state) => ({
     ...state,
     turbine: {
@@ -1673,7 +1673,7 @@ export function setTurbineSpeedSetpoint(speed: number) {
 }
 
 // 设置负荷设定点
-export function setTurbineLoadSetpoint(load: number) {
+export function setTurbineLoadSetpoint (load: number) {
   reactorStore.update((state) => ({
     ...state,
     turbine: {
@@ -1684,7 +1684,7 @@ export function setTurbineLoadSetpoint(load: number) {
 }
 
 // 切换自动控制模式
-export function toggleTurbineAutomaticControl() {
+export function toggleTurbineAutomaticControl () {
   reactorStore.update((state) => ({
     ...state,
     turbine: {
@@ -1695,7 +1695,7 @@ export function toggleTurbineAutomaticControl() {
 }
 
 // 手动调整汽轮机转速
-export function adjustTurbineSpeed(adjustment: number) {
+export function adjustTurbineSpeed (adjustment: number) {
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
     newState.turbine.speed = Math.max(
@@ -1707,7 +1707,7 @@ export function adjustTurbineSpeed(adjustment: number) {
 }
 
 // 汽轮机复位
-export function resetTurbineTrip() {
+export function resetTurbineTrip () {
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
     newState.turbine.tripStatus = false;
@@ -1724,7 +1724,7 @@ export function resetTurbineTrip() {
 }
 
 // 除氧器控制函数
-export function setDeaeratorPressure(pressure: number) {
+export function setDeaeratorPressure (pressure: number) {
   reactorStore.update((state) => ({
     ...state,
     deaerator: {
@@ -1734,7 +1734,7 @@ export function setDeaeratorPressure(pressure: number) {
   }));
 }
 
-export function setDeaeratorLevel(level: number) {
+export function setDeaeratorLevel (level: number) {
   reactorStore.update((state) => ({
     ...state,
     deaerator: {
@@ -1745,7 +1745,7 @@ export function setDeaeratorLevel(level: number) {
 }
 
 // 凝汽器真空系统控制函数
-export function toggleCondenserVacuum() {
+export function toggleCondenserVacuum () {
   reactorStore.update((state) => ({
     ...state,
     condenserVacuum: {
@@ -1755,7 +1755,7 @@ export function toggleCondenserVacuum() {
   }));
 }
 
-export function setCondenserVacuumLevel(vacuumLevel: number) {
+export function setCondenserVacuumLevel (vacuumLevel: number) {
   reactorStore.update((state) => ({
     ...state,
     condenserVacuum: {
@@ -1766,7 +1766,7 @@ export function setCondenserVacuumLevel(vacuumLevel: number) {
 }
 
 // 蒸汽排汽控制函数
-export function toggleSteamDump() {
+export function toggleSteamDump () {
   reactorStore.update((state) => ({
     ...state,
     steamDump: {
@@ -1776,7 +1776,7 @@ export function toggleSteamDump() {
   }));
 }
 
-export function setSteamDumpCapacity(capacity: number) {
+export function setSteamDumpCapacity (capacity: number) {
   reactorStore.update((state) => ({
     ...state,
     steamDump: {
@@ -1787,7 +1787,7 @@ export function setSteamDumpCapacity(capacity: number) {
 }
 
 // 汽轮机辅助系统控制函数
-export function setLubricationOilPressure(pressure: number) {
+export function setLubricationOilPressure (pressure: number) {
   reactorStore.update((state) => ({
     ...state,
     turbineAuxiliary: {
@@ -1800,7 +1800,7 @@ export function setLubricationOilPressure(pressure: number) {
   }));
 }
 
-export function setLubricationOilTemperature(temperature: number) {
+export function setLubricationOilTemperature (temperature: number) {
   reactorStore.update((state) => ({
     ...state,
     turbineAuxiliary: {
@@ -1813,7 +1813,7 @@ export function setLubricationOilTemperature(temperature: number) {
   }));
 }
 
-export function setSealOilPressure(pressure: number) {
+export function setSealOilPressure (pressure: number) {
   reactorStore.update((state) => ({
     ...state,
     turbineAuxiliary: {
@@ -1827,7 +1827,7 @@ export function setSealOilPressure(pressure: number) {
 }
 
 // 凝汽器热井液位控制函数
-export function setCondenserHotwellLevel(level: number) {
+export function setCondenserHotwellLevel (level: number) {
   reactorStore.update((state) => ({
     ...state,
     condenserHotwell: {
@@ -1837,7 +1837,7 @@ export function setCondenserHotwellLevel(level: number) {
 }
 
 // 凝汽器循环水泵控制函数
-export function toggleCondenserCirculationPump(pumpNumber: 1 | 2) {
+export function toggleCondenserCirculationPump (pumpNumber: 1 | 2) {
   reactorStore.update((state) => ({
     ...state,
     condenserCirculationPumps: {
@@ -1850,7 +1850,7 @@ export function toggleCondenserCirculationPump(pumpNumber: 1 | 2) {
   }));
 }
 
-export function setCondenserCirculationPumpFlowRate(
+export function setCondenserCirculationPumpFlowRate (
   pumpNumber: 1 | 2,
   flowRate: number
 ) {
@@ -1867,7 +1867,7 @@ export function setCondenserCirculationPumpFlowRate(
 }
 
 // 补水系统控制函数
-export function toggleMakeUpWater() {
+export function toggleMakeUpWater () {
   reactorStore.update((state) => ({
     ...state,
     makeUpWater: {
@@ -1877,7 +1877,7 @@ export function toggleMakeUpWater() {
   }));
 }
 
-export function setMakeUpWaterFlowRate(flowRate: number) {
+export function setMakeUpWaterFlowRate (flowRate: number) {
   reactorStore.update((state) => ({
     ...state,
     makeUpWater: {
@@ -1888,7 +1888,7 @@ export function setMakeUpWaterFlowRate(flowRate: number) {
 }
 
 // 反应堆给水泵控制函数
-export function toggleReactorFeedPump(pumpNumber: 1 | 2) {
+export function toggleReactorFeedPump (pumpNumber: 1 | 2) {
   reactorStore.update((state) => ({
     ...state,
     reactorFeedPumps: {
@@ -1901,7 +1901,7 @@ export function toggleReactorFeedPump(pumpNumber: 1 | 2) {
   }));
 }
 
-export function setReactorFeedPumpFlowRate(
+export function setReactorFeedPumpFlowRate (
   pumpNumber: 1 | 2,
   flowRate: number
 ) {
@@ -1918,7 +1918,7 @@ export function setReactorFeedPumpFlowRate(
 }
 
 // HEPA过滤器控制函数
-export function toggleHepaFilters() {
+export function toggleHepaFilters () {
   reactorStore.update((state) => ({
     ...state,
     hepaFilters: {
@@ -1928,7 +1928,7 @@ export function toggleHepaFilters() {
   }));
 }
 
-export function setHepaFilterEfficiency(efficiency: number) {
+export function setHepaFilterEfficiency (efficiency: number) {
   reactorStore.update((state) => ({
     ...state,
     hepaFilters: {
@@ -1941,7 +1941,7 @@ export function setHepaFilterEfficiency(efficiency: number) {
 // 故障模拟系统函数
 
 // 触发特定故障
-export function triggerFault(
+export function triggerFault (
   faultType:
     | 'pump'
     | 'valve'
@@ -1997,7 +1997,7 @@ export function triggerFault(
 }
 
 // 修复故障
-export function fixFault(faultId: string) {
+export function fixFault (faultId: string) {
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
     newState.faultSimulation.activeFaults = repairFault(
@@ -2040,7 +2040,7 @@ export function fixFault(faultId: string) {
 }
 
 // 设置维护水平
-export function setMaintenanceLevel(level: number) {
+export function setMaintenanceLevel (level: number) {
   reactorStore.update((state) => ({
     ...state,
     faultSimulation: {
@@ -2051,7 +2051,7 @@ export function setMaintenanceLevel(level: number) {
 }
 
 // 清除所有故障
-export function clearAllFaults() {
+export function clearAllFaults () {
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
     newState.faultSimulation.activeFaults = [];
@@ -2075,7 +2075,7 @@ export function clearAllFaults() {
 }
 
 // 凝结水系统控制函数
-export function toggleCondensateSystem() {
+export function toggleCondensateSystem () {
   reactorStore.update((state) => ({
     ...state,
     condensateSystem: {
@@ -2085,7 +2085,7 @@ export function toggleCondensateSystem() {
   }));
 }
 
-export function setCondensateSystemFlowRate(flowRate: number) {
+export function setCondensateSystemFlowRate (flowRate: number) {
   reactorStore.update((state) => ({
     ...state,
     condensateSystem: {
@@ -2095,7 +2095,7 @@ export function setCondensateSystemFlowRate(flowRate: number) {
   }));
 }
 
-export function setCondensateSystemTemperature(temperature: number) {
+export function setCondensateSystemTemperature (temperature: number) {
   reactorStore.update((state) => ({
     ...state,
     condensateSystem: {
@@ -2106,7 +2106,7 @@ export function setCondensateSystemTemperature(temperature: number) {
 }
 
 // 汽轮机旁路系统控制函数
-export function toggleSteamBypass() {
+export function toggleSteamBypass () {
   reactorStore.update((state) => ({
     ...state,
     steamBypass: {
@@ -2116,7 +2116,7 @@ export function toggleSteamBypass() {
   }));
 }
 
-export function setSteamBypassPressureSetpoint(pressureSetpoint: number) {
+export function setSteamBypassPressureSetpoint (pressureSetpoint: number) {
   reactorStore.update((state) => ({
     ...state,
     steamBypass: {
@@ -2127,7 +2127,7 @@ export function setSteamBypassPressureSetpoint(pressureSetpoint: number) {
 }
 
 // 堆芯冷却剂净化系统控制函数
-export function toggleCorePurification() {
+export function toggleCorePurification () {
   reactorStore.update((state) => ({
     ...state,
     corePurification: {
@@ -2137,7 +2137,7 @@ export function toggleCorePurification() {
   }));
 }
 
-export function setCorePurificationFlowRate(flowRate: number) {
+export function setCorePurificationFlowRate (flowRate: number) {
   reactorStore.update((state) => ({
     ...state,
     corePurification: {
@@ -2148,7 +2148,7 @@ export function setCorePurificationFlowRate(flowRate: number) {
 }
 
 // 三冲量水位控制系统控制函数
-export function setWaterLevelSetpoint(setpoint: number) {
+export function setWaterLevelSetpoint (setpoint: number) {
   reactorStore.update((state) => ({
     ...state,
     threeImpulseLevelControl: {
@@ -2159,13 +2159,13 @@ export function setWaterLevelSetpoint(setpoint: number) {
 }
 
 // 存档和加载函数
-export function saveState(): string {
+export function saveState (): string {
   let state;
   reactorStore.subscribe((s) => (state = s))();
   return btoa(JSON.stringify(state));
 }
 
-export function loadState(saveCode: string) {
+export function loadState (saveCode: string) {
   try {
     const state = JSON.parse(atob(saveCode));
     reactorStore.set(state);

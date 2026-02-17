@@ -1,100 +1,92 @@
 <script lang="ts">
-  /**
-   * 图表提示框组件
-   * 用于显示图表数据的详细信息
-   */
-  import { cn, type WithElementRef, type WithoutChildren } from '@/lib/utils';
-  import type { HTMLAttributes } from 'svelte/elements';
-  import {
-    getPayloadConfigFromPayload,
-    useChart,
-    type TooltipPayload,
-  } from './chart-utils.js';
-  import { getTooltipContext, Tooltip as TooltipPrimitive } from 'layerchart';
-  import type { Snippet } from 'svelte';
+/**
+ * 图表提示框组件
+ * 用于显示图表数据的详细信息
+ */
+import { cn, type WithElementRef, type WithoutChildren } from '@/lib/utils';
+import type { HTMLAttributes } from 'svelte/elements';
+import { getPayloadConfigFromPayload, useChart, type TooltipPayload } from './chart-utils.js';
+import { getTooltipContext, Tooltip as TooltipPrimitive } from 'layerchart';
+import type { Snippet } from 'svelte';
 
-  /**
-   * 默认标签格式化函数
-   * @param value 标签值
-   * @param _payload 提示框数据
-   * @returns 格式化后的标签
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function defaultFormatter(value: any, _payload: TooltipPayload[]) {
-    return `${value}`;
-  }
+/**
+ * 默认标签格式化函数
+ * @param value 标签值
+ * @param _payload 提示框数据
+ * @returns 格式化后的标签
+ */
 
-  // 组件属性
-  let {
-    ref = $bindable(null), // 元素引用
-    class: className, // 自定义类名
-    hideLabel = false, // 是否隐藏标签
-    indicator = 'dot', // 指示器类型
-    hideIndicator = false, // 是否隐藏指示器
-    labelKey, // 标签键
-    label, // 标签文本
-    labelFormatter = defaultFormatter, // 标签格式化函数
-    labelClassName, // 标签类名
-    formatter, // 自定义格式化片段
-    nameKey, // 名称键
-    color, // 颜色
-    ...restProps // 其他HTML属性
-  }: WithoutChildren<WithElementRef<HTMLAttributes<HTMLDivElement>>> & {
-    hideLabel?: boolean;
-    label?: string;
-    indicator?: 'line' | 'dot' | 'dashed';
-    nameKey?: string;
-    labelKey?: string;
-    hideIndicator?: boolean;
-    labelClassName?: string;
-    labelFormatter?: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      | ((value: any, payload: TooltipPayload[]) => string | number | Snippet)
-      | null;
-    formatter?: Snippet<
-      [
-        {
-          value: unknown;
-          name: string;
-          item: TooltipPayload;
-          index: number;
-          payload: TooltipPayload[];
-        },
-      ]
-    >;
-  } = $props();
+function defaultFormatter (value: any, _payload: TooltipPayload[]) {
+  return `${value}`;
+}
 
-  // 获取图表上下文
-  const chart = useChart();
-  const tooltipCtx = getTooltipContext();
+// 组件属性
+let {
+  ref = $bindable(null), // 元素引用
+  class: className, // 自定义类名
+  hideLabel = false, // 是否隐藏标签
+  indicator = 'dot', // 指示器类型
+  hideIndicator = false, // 是否隐藏指示器
+  labelKey, // 标签键
+  label, // 标签文本
+  labelFormatter = defaultFormatter, // 标签格式化函数
+  labelClassName, // 标签类名
+  formatter, // 自定义格式化片段
+  nameKey, // 名称键
+  color, // 颜色
+  ...restProps // 其他HTML属性
+}: WithoutChildren<WithElementRef<HTMLAttributes<HTMLDivElement>>> & {
+  hideLabel?: boolean;
+  label?: string;
+  indicator?: 'line' | 'dot' | 'dashed';
+  nameKey?: string;
+  labelKey?: string;
+  hideIndicator?: boolean;
+  labelClassName?: string;
+  labelFormatter?: ((value: any, payload: TooltipPayload[]) => string | number | Snippet) | null;
+  formatter?: Snippet<
+    [
+      {
+        value: unknown;
+        name: string;
+        item: TooltipPayload;
+        index: number;
+        payload: TooltipPayload[];
+      },
+    ]
+  >;
+} = $props();
 
-  // 格式化标签
-  const formattedLabel = $derived.by(() => {
-    if (hideLabel || !tooltipCtx.payload?.length) return null;
+// 获取图表上下文
+const chart = useChart();
+const tooltipCtx = getTooltipContext();
 
-    const [item] = tooltipCtx.payload;
-    const key = labelKey ?? item?.label ?? item?.name ?? 'value';
+// 格式化标签
+const formattedLabel = $derived.by(() => {
+  if (hideLabel || !tooltipCtx.payload?.length) return null;
 
-    const itemConfig = getPayloadConfigFromPayload(chart.config, item, key);
+  const [item] = tooltipCtx.payload;
+  const key = labelKey ?? item?.label ?? item?.name ?? 'value';
 
-    const value =
-      !labelKey && typeof label === 'string'
-        ? (chart.config[label as keyof typeof chart.config]?.label ?? label)
-        : (itemConfig?.label ?? item.label);
+  const itemConfig = getPayloadConfigFromPayload(chart.config, item, key);
 
-    if (value === undefined) return null;
-    if (!labelFormatter) return value;
-    return labelFormatter(value, tooltipCtx.payload);
-  });
+  const value =
+    !labelKey && typeof label === 'string'
+      ? (chart.config[label as keyof typeof chart.config]?.label ?? label)
+      : (itemConfig?.label ?? item.label);
 
-  // 是否嵌套标签
-  const nestLabel = $derived(
-    tooltipCtx.payload.length === 1 && indicator !== 'dot'
-  );
+  if (value === undefined) return null;
+  if (!labelFormatter) return value;
+  return labelFormatter(value, tooltipCtx.payload);
+});
+
+// 是否嵌套标签
+const nestLabel = $derived(tooltipCtx.payload.length === 1 && indicator !== 'dot');
 </script>
 
 <!--
   图表提示框组件
-  
+
   功能：
   - 显示图表数据的详细信息
   - 支持自定义标签和格式化
@@ -102,14 +94,14 @@
   - 支持自定义颜色
   - 响应式布局
   - 支持嵌套标签
-  
+
   界面元素：
   - 提示框容器
   - 标签显示
   - 数据项列表
   - 指示器
   - 数据值
-  
+
   技术实现：
   - 使用 LayerChart 的 TooltipPrimitive
   - 使用 Svelte 5 的新语法 ($props, $bindable, $derived)
@@ -145,11 +137,7 @@
     <div class="grid gap-1.5">
       {#each tooltipCtx.payload as item, i (item.key + i)}
         {@const key = `${nameKey || item.key || item.name || 'value'}`}
-        {@const itemConfig = getPayloadConfigFromPayload(
-          chart.config,
-          item,
-          key
-        )}
+        {@const itemConfig = getPayloadConfigFromPayload(chart.config, item, key)}
         {@const indicatorColor = color || item.payload?.color || item.color}
         <div
           class={cn(
@@ -171,16 +159,12 @@
             {:else if !hideIndicator}
               <div
                 style="--color-bg: {indicatorColor}; --color-border: {indicatorColor};"
-                class={cn(
-                  'shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)',
-                  {
-                    'size-2.5': indicator === 'dot',
-                    'h-full w-1': indicator === 'line',
-                    'w-0 border-[1.5px] border-dashed bg-transparent':
-                      indicator === 'dashed',
-                    'my-0.5': nestLabel && indicator === 'dashed',
-                  }
-                )}
+                class={cn('shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)', {
+                  'size-2.5': indicator === 'dot',
+                  'h-full w-1': indicator === 'line',
+                  'w-0 border-[1.5px] border-dashed bg-transparent': indicator === 'dashed',
+                  'my-0.5': nestLabel && indicator === 'dashed',
+                })}
               ></div>
             {/if}
             <div
@@ -198,9 +182,7 @@
                 </span>
               </div>
               {#if item.value !== undefined}
-                <span
-                  class="text-foreground font-mono font-medium tabular-nums"
-                >
+                <span class="text-foreground font-mono font-medium tabular-nums">
                   {item.value.toLocaleString()}
                 </span>
               {/if}

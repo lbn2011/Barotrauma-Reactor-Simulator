@@ -12,15 +12,15 @@ export const breakpoints = {
 } as const;
 
 // Media Query Functions
-export function mediaQuery(minWidth: keyof typeof breakpoints): string {
+export function mediaQuery (minWidth: keyof typeof breakpoints): string {
   return `@media (min-width: ${breakpoints[minWidth]})`;
 }
 
-export function mediaQueryMax(maxWidth: keyof typeof breakpoints): string {
+export function mediaQueryMax (maxWidth: keyof typeof breakpoints): string {
   return `@media (max-width: ${breakpoints[maxWidth]})`;
 }
 
-export function mediaQueryRange(
+export function mediaQueryRange (
   minWidth: keyof typeof breakpoints,
   maxWidth: keyof typeof breakpoints
 ): string {
@@ -28,31 +28,38 @@ export function mediaQueryRange(
 }
 
 // Device Detection
-export function isMobile(): boolean {
+export function isMobile (): boolean {
   return window.innerWidth < 768;
 }
 
-export function isTablet(): boolean {
+export function isTablet (): boolean {
   return window.innerWidth >= 768 && window.innerWidth < 1024;
 }
 
-export function isDesktop(): boolean {
+export function isDesktop (): boolean {
   return window.innerWidth >= 1024;
 }
 
-export function isLargeDesktop(): boolean {
+export function isLargeDesktop (): boolean {
   return window.innerWidth >= 1440;
 }
 
 // Responsive Helpers
-export function getResponsiveValue<T>(
+export function getResponsiveValue<T> (
   values: Partial<Record<keyof typeof breakpoints, T>>,
   defaultValue: T
 ): T {
   const width = window.innerWidth;
-  
+
   if (width >= parseInt(breakpoints['2xl'])) {
-    return values['2xl'] || values.xl || values.lg || values.md || values.sm || defaultValue;
+    return (
+      values['2xl'] ||
+      values.xl ||
+      values.lg ||
+      values.md ||
+      values.sm ||
+      defaultValue
+    );
   } else if (width >= parseInt(breakpoints.xl)) {
     return values.xl || values.lg || values.md || values.sm || defaultValue;
   } else if (width >= parseInt(breakpoints.lg)) {
@@ -67,15 +74,20 @@ export function getResponsiveValue<T>(
 }
 
 // Responsive Class Generator
-export function responsiveClass(baseClass: string, responsiveModifiers: Partial<Record<keyof typeof breakpoints, string>>): string {
+export function responsiveClass (
+  baseClass: string,
+  responsiveModifiers: Partial<Record<keyof typeof breakpoints, string>>
+): string {
   let classes = baseClass;
-  
+
   Object.entries(responsiveModifiers).forEach(([breakpoint, modifier]) => {
     classes += ` ${breakpoint}:${baseClass}${modifier ? `-${modifier}` : ''}`;
   });
-  
+
   return classes;
 }
 
 // Export breakpoints for use in CSS
-export const breakpointValues = Object.values(breakpoints).map(bp => parseInt(bp));
+export const breakpointValues = Object.values(breakpoints).map((bp) =>
+  parseInt(bp)
+);

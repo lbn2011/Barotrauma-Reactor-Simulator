@@ -1,18 +1,18 @@
 <script lang="ts" module>
-  import { Slider as SliderPrimitive } from 'bits-ui';
-  import { cn, type WithoutChildrenOrChild } from '@/lib/utils';
+import { Slider as SliderPrimitive } from 'bits-ui';
+import { cn, type WithoutChildrenOrChild } from '@/lib/utils';
 
-  export type SliderProps = WithoutChildrenOrChild<SliderPrimitive.RootProps>;
+export type SliderProps = WithoutChildrenOrChild<SliderPrimitive.RootProps>;
 </script>
 
 <script lang="ts">
-  let {
-    ref = $bindable(null),
-    value = $bindable(),
-    orientation = 'horizontal',
-    class: className,
-    ...restProps
-  }: SliderProps = $props();
+let {
+  ref = $bindable(null),
+  value = $bindable(),
+  orientation = 'horizontal',
+  class: className,
+  ...restProps
+}: SliderProps = $props();
 </script>
 
 <!--

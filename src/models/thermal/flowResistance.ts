@@ -60,10 +60,10 @@ interface PumpPerformanceOutput {
 /**
  * 计算管道流动阻力
  * 模拟流体在管道中流动时的压力损失
- * 
+ *
  * @param input 输入参数
  * @returns 流动阻力结果
- * 
+ *
  * @description
  * 管道流动阻力公式：ΔP = f × (L/D) × (ρ × v²/2)
  * 其中：
@@ -73,7 +73,7 @@ interface PumpPerformanceOutput {
  * - ρ: 流体密度
  * - v: 流速
  */
-export function calculateFlowResistance(
+export function calculateFlowResistance (
   input: FlowResistanceInput
 ): FlowResistanceOutput {
   // 计算管道流动阻力
@@ -88,10 +88,10 @@ export function calculateFlowResistance(
 /**
  * 计算雷诺数
  * 判断流体流动状态（层流、湍流或过渡流）
- * 
+ *
  * @param input 输入参数
  * @returns 雷诺数结果
- * 
+ *
  * @description
  * 雷诺数公式：Re = ρ × v × D / μ
  * 流动状态判断：
@@ -99,7 +99,7 @@ export function calculateFlowResistance(
  * - 2000 ≤ Re < 4000: 过渡流
  * - Re ≥ 4000: 湍流
  */
-export function calculateReynoldsNumber(
+export function calculateReynoldsNumber (
   input: ReynoldsNumberInput
 ): ReynoldsNumberOutput {
   // 计算雷诺数
@@ -124,10 +124,10 @@ export function calculateReynoldsNumber(
 /**
  * 计算泵性能特性
  * 模拟泵的扬程和功率消耗
- * 
+ *
  * @param input 输入参数
  * @returns 泵性能结果
- * 
+ *
  * @description
  * 扬程公式：H = H_max - k × Q²
  * 泵功率公式：P_pump = ρ × g × H × Q / η_pump
@@ -139,7 +139,7 @@ export function calculateReynoldsNumber(
  * - g: 重力加速度
  * - η_pump: 泵效率
  */
-export function calculatePumpPerformance(
+export function calculatePumpPerformance (
   input: PumpPerformanceInput
 ): PumpPerformanceOutput {
   // 计算扬程
@@ -157,18 +157,18 @@ export function calculatePumpPerformance(
 /**
  * 计算摩擦系数（基于流动状态）
  * 根据雷诺数和管道粗糙度计算摩擦系数
- * 
+ *
  * @param Re 雷诺数
  * @param roughness 管道粗糙度（m）
  * @param D 管道直径（m）
  * @returns 摩擦系数
- * 
+ *
  * @description
  * 摩擦系数计算：
  * - 层流状态：f = 64 / Re
  * - 湍流状态：使用简化的Colebrook公式
  */
-export function calculateFrictionCoefficient(
+export function calculateFrictionCoefficient (
   Re: number,
   roughness: number,
   D: number

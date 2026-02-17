@@ -16,7 +16,7 @@ export const colors = {
     800: '#002966',
     900: '#001433',
   },
-  
+
   // Secondary colors
   secondary: {
     50: '#e6f7ff',
@@ -30,7 +30,7 @@ export const colors = {
     800: '#004466',
     900: '#002233',
   },
-  
+
   // Neutral colors
   neutral: {
     50: '#f5f5f5',
@@ -44,7 +44,7 @@ export const colors = {
     800: '#1a1a1a',
     900: '#0a0a0a',
   },
-  
+
   // Functional colors
   functional: {
     success: '#00c853',
@@ -52,14 +52,14 @@ export const colors = {
     error: '#ff4d4f',
     info: '#2196f3',
   },
-  
+
   // Background colors
   background: {
     primary: '#ffffff',
     secondary: '#f5f5f5',
     tertiary: '#e0e0e0',
   },
-  
+
   // Text colors
   text: {
     primary: '#1a1a1a',
@@ -88,7 +88,7 @@ export const typography = {
     sans: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     mono: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
   },
-  
+
   // Font sizes
   fontSize: {
     xs: '12px',
@@ -102,7 +102,7 @@ export const typography = {
     '5xl': '48px',
     '6xl': '60px',
   },
-  
+
   // Font weights
   fontWeight: {
     light: 300,
@@ -111,14 +111,14 @@ export const typography = {
     semibold: 600,
     bold: 700,
   },
-  
+
   // Line heights
   lineHeight: {
     tight: '1.2',
     normal: '1.5',
     relaxed: '1.75',
   },
-  
+
   // Letter spacing
   letterSpacing: {
     tight: '-0.025em',
@@ -152,7 +152,7 @@ export const shadows = {
   md: '0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)',
   lg: '0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05)',
   xl: '0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.1)',
-}; 
+};
 
 // Animation System
 export const animation = {

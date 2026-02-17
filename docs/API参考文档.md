@@ -535,6 +535,75 @@ updateReactor();
 | `formatTime(seconds: number)`             | seconds: 秒数         | string | 格式化时间为 HH:MM:SS |
 | `calculateElapsedTime(startTime: number)` | startTime: 开始时间戳 | number | 计算经过的时间（秒）  |
 
+### 5.4 日志工具
+
+**文件位置**: `src/lib/utils/logger.ts`
+
+日志工具是一个基于 consola 库的封装，提供了统一的日志接口，支持多种日志级别和彩色输出，可用于替代直接的 `console` 语句。
+
+#### 5.4.1 日志方法
+
+| 方法名        | 参数                | 返回值 | 功能描述       |
+| ------------- | ------------------- | ------ | -------------- |
+| `log.info()`  | ...args: any[]      | void   | 普通信息日志   |
+| `log.success()` | ...args: any[]     | void   | 成功信息日志   |
+| `log.warn()`  | ...args: any[]      | void   | 警告信息日志   |
+| `log.error()` | ...args: any[]      | void   | 错误信息日志   |
+| `log.debug()` | ...args: any[]      | void   | 调试信息日志   |
+| `log.trace()` | ...args: any[]      | void   | 追踪信息日志   |
+| `log.fatal()` | ...args: any[]      | void   | 致命错误日志   |
+| `log.clear()` | 无                  | void   | 清除控制台     |
+| `log.stats()` | obj: Record<string, any> | void   | 统计信息日志   |
+| `log.time()`  | label: string       | void   | 开始时间记录   |
+| `log.timeEnd()` | label: string      | void   | 结束时间记录   |
+
+#### 5.4.2 使用示例
+
+```typescript
+import log from '@/lib/utils/logger';
+
+// 普通信息日志
+log.info('应用启动');
+log.info('当前用户:', { name: '张三', role: 'admin' });
+
+// 成功信息日志
+log.success('数据加载成功');
+log.success('操作完成', { result: 'success' });
+
+// 警告信息日志
+log.warn('内存使用过高');
+log.warn('API 响应缓慢', { responseTime: 1500 });
+
+// 错误信息日志
+log.error('网络请求失败');
+log.error('数据解析错误', { error: 'Invalid JSON' });
+
+// 调试信息日志
+log.debug('组件挂载');
+log.debug('状态更新', { state: { count: 10 } });
+
+// 追踪信息日志
+log.trace('函数执行开始');
+log.trace('循环执行', { iteration: 5 });
+
+// 致命错误信息日志
+log.fatal('数据库连接失败');
+log.fatal('系统崩溃', { error: 'Out of memory' });
+
+// 清除控制台
+log.clear();
+
+// 统计信息日志
+log.stats({ memory: '512MB', cpu: '25%', uptime: '10m' });
+
+// 时间记录
+log.time('API 请求');
+// 模拟 API 请求
+setTimeout(() => {
+  log.timeEnd('API 请求');
+}, 1000);
+```
+
 ## 6. 组件 API
 
 ### 6.1 UI 组件
@@ -559,7 +628,7 @@ updateReactor();
 
 ```svelte
 <script>
-  import Button from '$lib/components/ui/button';
+import Button from '$lib/components/ui/button';
 </script>
 
 <Button variant="default" size="lg" on:click={() => console.log('Clicked')}>启动模拟</Button>
@@ -583,14 +652,14 @@ updateReactor();
 
 ```svelte
 <script>
-  import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from '$lib/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '$lib/components/ui/card';
 </script>
 
 <Card>

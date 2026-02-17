@@ -1,20 +1,20 @@
 <script lang="ts">
-  import type { Page } from '~/types';
+import type { Page } from '~/types';
 
-  export let page: Page;
+export let page: Page;
 </script>
 
 <style lang="scss">
-  .error-page {
-    padding: 24px;
-    text-align: center;
-  }
+.error-page {
+  padding: 24px;
+  text-align: center;
+}
 
-  h1 {
-    font-size: 24px;
-    margin-bottom: 16px;
-    color: #ff3b30;
-  }
+h1 {
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: #ff3b30;
+}
 </style>
 
 <div class="error-page">

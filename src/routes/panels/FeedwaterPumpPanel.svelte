@@ -1,82 +1,80 @@
 <script lang="ts">
-  // 导入反应堆状态管理
-  import {
-    reactorStore,
-    toggleReactorFeedPump,
-    setReactorFeedPumpFlowRate,
-    toggleIsolationValve,
-    setIsolationValvePosition,
-    toggleFeedwaterHeater,
-    setFeedwaterHeaterParameter,
-  } from '../../lib/stores/reactorStore';
-  import { onMount } from 'svelte';
+// 导入反应堆状态管理
+import {
+  reactorStore,
+  toggleReactorFeedPump,
+  setReactorFeedPumpFlowRate,
+  toggleIsolationValve,
+  setIsolationValvePosition,
+  toggleFeedwaterHeater,
+  setFeedwaterHeaterParameter,
+} from '../../lib/stores/reactorStore';
+import { onMount } from 'svelte';
 
-  // 给水泵状态数据
-  let reactorFeedPumps: any;
-  // 给水系统数据
-  let feedwaterSystem: any;
-  // 三冲量水位控制系统数据
-  let threeImpulseLevelControl: any;
-  // 堆芯参数
-  let core: any;
+// 给水泵状态数据
+let reactorFeedPumps: any;
+// 给水系统数据
+let feedwaterSystem: any;
+// 三冲量水位控制系统数据
+let threeImpulseLevelControl: any;
+// 堆芯参数
+let core: any;
 
-  // 组件挂载时订阅状态
-  onMount(() => {
-    const unsubscribe = reactorStore.subscribe((state) => {
-      reactorFeedPumps = state.reactorFeedPumps;
-      feedwaterSystem = state.feedwaterSystem;
-      threeImpulseLevelControl = state.threeImpulseLevelControl;
-      core = state.core;
-    });
-
-    return unsubscribe;
+// 组件挂载时订阅状态
+onMount(() => {
+  const unsubscribe = reactorStore.subscribe((state) => {
+    reactorFeedPumps = state.reactorFeedPumps;
+    feedwaterSystem = state.feedwaterSystem;
+    threeImpulseLevelControl = state.threeImpulseLevelControl;
+    core = state.core;
   });
 
-  // 切换水泵状态
-  function handleTogglePump(pumpNumber: 1 | 2) {
-    toggleReactorFeedPump(pumpNumber);
-  }
+  return unsubscribe;
+});
 
-  // 调整水泵流量
-  function handleFlowRateChange(pumpNumber: 1 | 2, e: Event) {
-    const target = e.target as HTMLInputElement;
-    setReactorFeedPumpFlowRate(pumpNumber, parseFloat(target.value));
-  }
+// 切换水泵状态
+function handleTogglePump (pumpNumber: 1 | 2) {
+  toggleReactorFeedPump(pumpNumber);
+}
 
-  // 切换隔离阀状态
-  function handleToggleValve(
-    valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet'
-  ) {
-    toggleIsolationValve(valve);
-  }
+// 调整水泵流量
+function handleFlowRateChange (pumpNumber: 1 | 2, e: Event) {
+  const target = e.target as HTMLInputElement;
+  setReactorFeedPumpFlowRate(pumpNumber, parseFloat(target.value));
+}
 
-  // 调整隔离阀位置
-  function handleValvePositionChange(
-    valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet',
-    e: Event
-  ) {
-    const target = e.target as HTMLInputElement;
-    setIsolationValvePosition(valve, parseFloat(target.value));
-  }
+// 切换隔离阀状态
+function handleToggleValve (valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet') {
+  toggleIsolationValve(valve);
+}
 
-  // 切换加热器状态
-  function handleToggleHeater(heater: 'heater1' | 'heater2') {
-    toggleFeedwaterHeater(heater);
-  }
+// 调整隔离阀位置
+function handleValvePositionChange (
+  valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet',
+  e: Event
+) {
+  const target = e.target as HTMLInputElement;
+  setIsolationValvePosition(valve, parseFloat(target.value));
+}
 
-  // 调整加热器参数
-  function handleHeaterParameterChange(
-    heater: 'heater1' | 'heater2',
-    parameter: 'steamPressure' | 'flowRate',
-    value: number
-  ) {
-    setFeedwaterHeaterParameter(heater, parameter, value);
-  }
+// 切换加热器状态
+function handleToggleHeater (heater: 'heater1' | 'heater2') {
+  toggleFeedwaterHeater(heater);
+}
+
+// 调整加热器参数
+function handleHeaterParameterChange (
+  heater: 'heater1' | 'heater2',
+  parameter: 'steamPressure' | 'flowRate',
+  value: number
+) {
+  setFeedwaterHeaterParameter(heater, parameter, value);
+}
 </script>
 
 <!--
   反应堆给水泵控制面板组件
-  
+
   功能：
   - 控制两台给水泵的启停
   - 调节给水泵的流量
@@ -85,7 +83,7 @@
   - 调节给水加热器的蒸汽压力
   - 监控三冲量水位控制系统
   - 显示堆芯和给水系统参数
-  
+
   界面元素：
   - 系统参数概览卡片
   - 给水泵控制面板（状态切换、流量调节）
@@ -93,7 +91,7 @@
   - 给水泵状态参数卡片
   - 给水加热器控制面板
   - 三冲量水位控制系统监控
-  
+
   状态管理：
   - 从reactorStore订阅reactorFeedPumps状态
   - 从reactorStore订阅feedwaterSystem状态
@@ -103,175 +101,175 @@
 -->
 
 <style>
-  .panel {
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  }
+.panel {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
 
-  .panel-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #00bcd4;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #333;
-  }
+.panel-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #00bcd4;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #333;
+}
 
-  .pump-container {
-    margin-bottom: 3rem;
-  }
+.pump-container {
+  margin-bottom: 3rem;
+}
 
-  .pump-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-  }
+.pump-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
 
-  .pump-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #e0e0e0;
-  }
+.pump-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
 
-  .pump-status {
-    font-size: 0.9rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-weight: 500;
-  }
+.pump-status {
+  font-size: 0.9rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
 
-  .pump-status.active {
-    background-color: rgba(76, 175, 80, 0.2);
-    color: #4caf50;
-  }
+.pump-status.active {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
 
-  .pump-status.inactive {
-    background-color: rgba(244, 67, 54, 0.2);
-    color: #f44336;
-  }
+.pump-status.inactive {
+  background-color: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+}
 
-  .control-group {
-    margin-bottom: 1.5rem;
-  }
+.control-group {
+  margin-bottom: 1.5rem;
+}
 
-  .control-label {
-    display: block;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #e0e0e0;
-    margin-bottom: 0.75rem;
-  }
+.control-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e0e0e0;
+  margin-bottom: 0.75rem;
+}
 
-  .status-toggle {
-    margin-bottom: 1.5rem;
-  }
+.status-toggle {
+  margin-bottom: 1.5rem;
+}
 
-  .toggle-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+.toggle-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-  .toggle-button.active {
-    background-color: #4caf50;
-    color: white;
-  }
+.toggle-button.active {
+  background-color: #4caf50;
+  color: white;
+}
 
-  .toggle-button.inactive {
-    background-color: #f44336;
-    color: white;
-  }
+.toggle-button.inactive {
+  background-color: #f44336;
+  color: white;
+}
 
-  .slider-container {
-    position: relative;
-    margin: 1rem 0;
-  }
+.slider-container {
+  position: relative;
+  margin: 1rem 0;
+}
 
-  .slider {
-    width: 100%;
-    height: 8px;
-    border-radius: 4px;
-    background: #333;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-  }
+.slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #333;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
 
-  .slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #00bcd4;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #00bcd4;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
 
-  .slider::-webkit-slider-thumb:hover {
-    background: #00acc1;
-  }
+.slider::-webkit-slider-thumb:hover {
+  background: #00acc1;
+}
 
-  .slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #00bcd4;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.2s;
-  }
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #00bcd4;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
 
-  .slider::-moz-range-thumb:hover {
-    background: #00acc1;
-  }
+.slider::-moz-range-thumb:hover {
+  background: #00acc1;
+}
 
-  .value-display {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #00bcd4;
-    text-align: center;
-    margin-top: 0.5rem;
-  }
+.value-display {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #00bcd4;
+  text-align: center;
+  margin-top: 0.5rem;
+}
 
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-  }
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
 
-  .info-card {
-    background-color: #2d2d2d;
-    padding: 1.5rem;
-    border-radius: 6px;
-    border-left: 4px solid #00bcd4;
-  }
+.info-card {
+  background-color: #2d2d2d;
+  padding: 1.5rem;
+  border-radius: 6px;
+  border-left: 4px solid #00bcd4;
+}
 
-  .info-card-title {
-    font-size: 0.9rem;
-    color: #9e9e9e;
-    margin-bottom: 0.5rem;
-  }
+.info-card-title {
+  font-size: 0.9rem;
+  color: #9e9e9e;
+  margin-bottom: 0.5rem;
+}
 
-  .info-card-value {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #e0e0e0;
-  }
+.info-card-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
 
-  .divider {
-    height: 1px;
-    background-color: #333;
-    margin: 2rem 0;
-  }
+.divider {
+  height: 1px;
+  background-color: #333;
+  margin: 2rem 0;
+}
 </style>
 
 <div class="panel">
@@ -382,22 +380,14 @@
       <h3 class="control-label">隔离阀控制</h3>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
         <div>
-          <div
-            class="control-label"
-            style="font-size: 0.9rem; margin-bottom: 0.5rem;"
-          >
-            入口阀
-          </div>
+          <div class="control-label" style="font-size: 0.9rem; margin-bottom: 0.5rem;">入口阀</div>
           <button
             class="toggle-button"
             class:active={feedwaterSystem?.isolationValves?.pump1Inlet?.status}
-            class:inactive={!feedwaterSystem?.isolationValves?.pump1Inlet
-              ?.status}
+            class:inactive={!feedwaterSystem?.isolationValves?.pump1Inlet?.status}
             on:click={() => handleToggleValve('pump1Inlet')}
           >
-            {feedwaterSystem?.isolationValves?.pump1Inlet?.status
-              ? '关闭'
-              : '打开'}
+            {feedwaterSystem?.isolationValves?.pump1Inlet?.status ? '关闭' : '打开'}
           </button>
           <div class="slider-container" style="margin-top: 0.5rem;">
             <input
@@ -406,8 +396,7 @@
               min="0"
               max="100"
               step="1"
-              value={feedwaterSystem?.isolationValves?.pump1Inlet?.position ||
-                0}
+              value={feedwaterSystem?.isolationValves?.pump1Inlet?.position || 0}
               on:input={(e) => handleValvePositionChange('pump1Inlet', e)}
             />
           </div>
@@ -416,22 +405,14 @@
           </div>
         </div>
         <div>
-          <div
-            class="control-label"
-            style="font-size: 0.9rem; margin-bottom: 0.5rem;"
-          >
-            出口阀
-          </div>
+          <div class="control-label" style="font-size: 0.9rem; margin-bottom: 0.5rem;">出口阀</div>
           <button
             class="toggle-button"
             class:active={feedwaterSystem?.isolationValves?.pump1Outlet?.status}
-            class:inactive={!feedwaterSystem?.isolationValves?.pump1Outlet
-              ?.status}
+            class:inactive={!feedwaterSystem?.isolationValves?.pump1Outlet?.status}
             on:click={() => handleToggleValve('pump1Outlet')}
           >
-            {feedwaterSystem?.isolationValves?.pump1Outlet?.status
-              ? '关闭'
-              : '打开'}
+            {feedwaterSystem?.isolationValves?.pump1Outlet?.status ? '关闭' : '打开'}
           </button>
           <div class="slider-container" style="margin-top: 0.5rem;">
             <input
@@ -440,15 +421,12 @@
               min="0"
               max="100"
               step="1"
-              value={feedwaterSystem?.isolationValves?.pump1Outlet?.position ||
-                0}
+              value={feedwaterSystem?.isolationValves?.pump1Outlet?.position || 0}
               on:input={(e) => handleValvePositionChange('pump1Outlet', e)}
             />
           </div>
           <div class="value-display" style="font-size: 0.8rem;">
-            {feedwaterSystem?.isolationValves?.pump1Outlet?.position.toFixed(
-              0
-            )}%
+            {feedwaterSystem?.isolationValves?.pump1Outlet?.position.toFixed(0)}%
           </div>
         </div>
       </div>
@@ -530,22 +508,14 @@
       <h3 class="control-label">隔离阀控制</h3>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
         <div>
-          <div
-            class="control-label"
-            style="font-size: 0.9rem; margin-bottom: 0.5rem;"
-          >
-            入口阀
-          </div>
+          <div class="control-label" style="font-size: 0.9rem; margin-bottom: 0.5rem;">入口阀</div>
           <button
             class="toggle-button"
             class:active={feedwaterSystem?.isolationValves?.pump2Inlet?.status}
-            class:inactive={!feedwaterSystem?.isolationValves?.pump2Inlet
-              ?.status}
+            class:inactive={!feedwaterSystem?.isolationValves?.pump2Inlet?.status}
             on:click={() => handleToggleValve('pump2Inlet')}
           >
-            {feedwaterSystem?.isolationValves?.pump2Inlet?.status
-              ? '关闭'
-              : '打开'}
+            {feedwaterSystem?.isolationValves?.pump2Inlet?.status ? '关闭' : '打开'}
           </button>
           <div class="slider-container" style="margin-top: 0.5rem;">
             <input
@@ -554,8 +524,7 @@
               min="0"
               max="100"
               step="1"
-              value={feedwaterSystem?.isolationValves?.pump2Inlet?.position ||
-                0}
+              value={feedwaterSystem?.isolationValves?.pump2Inlet?.position || 0}
               on:input={(e) => handleValvePositionChange('pump2Inlet', e)}
             />
           </div>
@@ -564,22 +533,14 @@
           </div>
         </div>
         <div>
-          <div
-            class="control-label"
-            style="font-size: 0.9rem; margin-bottom: 0.5rem;"
-          >
-            出口阀
-          </div>
+          <div class="control-label" style="font-size: 0.9rem; margin-bottom: 0.5rem;">出口阀</div>
           <button
             class="toggle-button"
             class:active={feedwaterSystem?.isolationValves?.pump2Outlet?.status}
-            class:inactive={!feedwaterSystem?.isolationValves?.pump2Outlet
-              ?.status}
+            class:inactive={!feedwaterSystem?.isolationValves?.pump2Outlet?.status}
             on:click={() => handleToggleValve('pump2Outlet')}
           >
-            {feedwaterSystem?.isolationValves?.pump2Outlet?.status
-              ? '关闭'
-              : '打开'}
+            {feedwaterSystem?.isolationValves?.pump2Outlet?.status ? '关闭' : '打开'}
           </button>
           <div class="slider-container" style="margin-top: 0.5rem;">
             <input
@@ -588,15 +549,12 @@
               min="0"
               max="100"
               step="1"
-              value={feedwaterSystem?.isolationValves?.pump2Outlet?.position ||
-                0}
+              value={feedwaterSystem?.isolationValves?.pump2Outlet?.position || 0}
               on:input={(e) => handleValvePositionChange('pump2Outlet', e)}
             />
           </div>
           <div class="value-display" style="font-size: 0.8rem;">
-            {feedwaterSystem?.isolationValves?.pump2Outlet?.position.toFixed(
-              0
-            )}%
+            {feedwaterSystem?.isolationValves?.pump2Outlet?.position.toFixed(0)}%
           </div>
         </div>
       </div>

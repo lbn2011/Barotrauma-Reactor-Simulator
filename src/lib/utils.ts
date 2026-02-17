@@ -9,14 +9,14 @@ import { twMerge } from 'tailwind-merge';
 /**
  * 合并CSS类名
  * 结合clsx和tailwind-merge的功能，处理条件类名和Tailwind类名冲突
- * 
+ *
  * @param inputs 类名输入
  * @returns 合并后的类名字符串
- * 
+ *
  * @example
  * cn('class1', { 'class2': true }, ['class3'])
  */
-export function cn(...inputs: ClassValue[]) {
+export function cn (...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
@@ -24,14 +24,14 @@ export function cn(...inputs: ClassValue[]) {
  * 移除类型中的child属性
  * @template T 原始类型
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
 
 /**
  * 移除类型中的children属性
  * @template T 原始类型
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export type WithoutChildren<T> = T extends { children?: any }
   ? Omit<T, 'children'>
   : T;

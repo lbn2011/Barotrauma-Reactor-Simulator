@@ -94,57 +94,104 @@ export const defaultComponentConfig: ComponentConfig = {
 };
 
 // Get Component Config with defaults
-export function getComponentConfig(config?: Partial<ComponentConfig>): ComponentConfig {
+export function getComponentConfig (
+  config?: Partial<ComponentConfig>
+): ComponentConfig {
   return {
     navigation: {
       ...defaultComponentConfig.navigation,
       ...config?.navigation,
-      showLanguageSelector: config?.navigation?.showLanguageSelector ?? defaultComponentConfig.navigation.showLanguageSelector,
-      showSearch: config?.navigation?.showSearch ?? defaultComponentConfig.navigation.showSearch,
-      collapsedByDefault: config?.navigation?.collapsedByDefault ?? defaultComponentConfig.navigation.collapsedByDefault,
+      showLanguageSelector:
+        config?.navigation?.showLanguageSelector ??
+        defaultComponentConfig.navigation.showLanguageSelector,
+      showSearch:
+        config?.navigation?.showSearch ??
+        defaultComponentConfig.navigation.showSearch,
+      collapsedByDefault:
+        config?.navigation?.collapsedByDefault ??
+        defaultComponentConfig.navigation.collapsedByDefault,
     },
     todayCard: {
       ...defaultComponentConfig.todayCard,
       ...config?.todayCard,
-      defaultStyle: config?.todayCard?.defaultStyle ?? defaultComponentConfig.todayCard.defaultStyle,
-      enableTextProtection: config?.todayCard?.enableTextProtection ?? defaultComponentConfig.todayCard.enableTextProtection,
-      enableGradientEffects: config?.todayCard?.enableGradientEffects ?? defaultComponentConfig.todayCard.enableGradientEffects,
+      defaultStyle:
+        config?.todayCard?.defaultStyle ??
+        defaultComponentConfig.todayCard.defaultStyle,
+      enableTextProtection:
+        config?.todayCard?.enableTextProtection ??
+        defaultComponentConfig.todayCard.enableTextProtection,
+      enableGradientEffects:
+        config?.todayCard?.enableGradientEffects ??
+        defaultComponentConfig.todayCard.enableGradientEffects,
     },
     hero: {
       ...defaultComponentConfig.hero,
       ...config?.hero,
-      enableVideoAutoplay: config?.hero?.enableVideoAutoplay ?? defaultComponentConfig.hero.enableVideoAutoplay,
-      defaultProfile: config?.hero?.defaultProfile ?? defaultComponentConfig.hero.defaultProfile,
-      enableCollectionIcons: config?.hero?.enableCollectionIcons ?? defaultComponentConfig.hero.enableCollectionIcons,
+      enableVideoAutoplay:
+        config?.hero?.enableVideoAutoplay ??
+        defaultComponentConfig.hero.enableVideoAutoplay,
+      defaultProfile:
+        config?.hero?.defaultProfile ??
+        defaultComponentConfig.hero.defaultProfile,
+      enableCollectionIcons:
+        config?.hero?.enableCollectionIcons ??
+        defaultComponentConfig.hero.enableCollectionIcons,
     },
     carousel: {
       ...defaultComponentConfig.carousel,
       ...config?.carousel,
-      enableBackgroundArtwork: config?.carousel?.enableBackgroundArtwork ?? defaultComponentConfig.carousel.enableBackgroundArtwork,
-      enableSwipeNavigation: config?.carousel?.enableSwipeNavigation ?? defaultComponentConfig.carousel.enableSwipeNavigation,
-      defaultActiveIndex: config?.carousel?.defaultActiveIndex ?? defaultComponentConfig.carousel.defaultActiveIndex,
+      enableBackgroundArtwork:
+        config?.carousel?.enableBackgroundArtwork ??
+        defaultComponentConfig.carousel.enableBackgroundArtwork,
+      enableSwipeNavigation:
+        config?.carousel?.enableSwipeNavigation ??
+        defaultComponentConfig.carousel.enableSwipeNavigation,
+      defaultActiveIndex:
+        config?.carousel?.defaultActiveIndex ??
+        defaultComponentConfig.carousel.defaultActiveIndex,
     },
     artwork: {
       ...defaultComponentConfig.artwork,
       ...config?.artwork,
-      defaultQuality: config?.artwork?.defaultQuality ?? defaultComponentConfig.artwork.defaultQuality,
-      enableLazyLoading: config?.artwork?.enableLazyLoading ?? defaultComponentConfig.artwork.enableLazyLoading,
-      defaultProfile: config?.artwork?.defaultProfile ?? defaultComponentConfig.artwork.defaultProfile,
+      defaultQuality:
+        config?.artwork?.defaultQuality ??
+        defaultComponentConfig.artwork.defaultQuality,
+      enableLazyLoading:
+        config?.artwork?.enableLazyLoading ??
+        defaultComponentConfig.artwork.enableLazyLoading,
+      defaultProfile:
+        config?.artwork?.defaultProfile ??
+        defaultComponentConfig.artwork.defaultProfile,
     },
     ambientBackgroundArtwork: {
       ...defaultComponentConfig.ambientBackgroundArtwork,
       ...config?.ambientBackgroundArtwork,
-      enableAnimation: config?.ambientBackgroundArtwork?.enableAnimation ?? defaultComponentConfig.ambientBackgroundArtwork.enableAnimation,
-      enableIntersectionObserver: config?.ambientBackgroundArtwork?.enableIntersectionObserver ?? defaultComponentConfig.ambientBackgroundArtwork.enableIntersectionObserver,
-      defaultAspectRatio: config?.ambientBackgroundArtwork?.defaultAspectRatio ?? defaultComponentConfig.ambientBackgroundArtwork.defaultAspectRatio,
+      enableAnimation:
+        config?.ambientBackgroundArtwork?.enableAnimation ??
+        defaultComponentConfig.ambientBackgroundArtwork.enableAnimation,
+      enableIntersectionObserver:
+        config?.ambientBackgroundArtwork?.enableIntersectionObserver ??
+        defaultComponentConfig.ambientBackgroundArtwork
+          .enableIntersectionObserver,
+      defaultAspectRatio:
+        config?.ambientBackgroundArtwork?.defaultAspectRatio ??
+        defaultComponentConfig.ambientBackgroundArtwork.defaultAspectRatio,
     },
     global: {
       ...defaultComponentConfig.global,
       ...config?.global,
-      enableResponsiveDesign: config?.global?.enableResponsiveDesign ?? defaultComponentConfig.global.enableResponsiveDesign,
-      enableReducedMotion: config?.global?.enableReducedMotion ?? defaultComponentConfig.global.enableReducedMotion,
-      defaultLanguage: config?.global?.defaultLanguage ?? defaultComponentConfig.global.defaultLanguage,
-      supportedLanguages: config?.global?.supportedLanguages ?? defaultComponentConfig.global.supportedLanguages,
+      enableResponsiveDesign:
+        config?.global?.enableResponsiveDesign ??
+        defaultComponentConfig.global.enableResponsiveDesign,
+      enableReducedMotion:
+        config?.global?.enableReducedMotion ??
+        defaultComponentConfig.global.enableReducedMotion,
+      defaultLanguage:
+        config?.global?.defaultLanguage ??
+        defaultComponentConfig.global.defaultLanguage,
+      supportedLanguages:
+        config?.global?.supportedLanguages ??
+        defaultComponentConfig.global.supportedLanguages,
     },
   };
 }

@@ -5,7 +5,7 @@
  * @param pressure 压力（MPa）
  * @returns 饱和温度（°C）
  */
-export function calculateSaturationTemperature(pressure: number): number {
+export function calculateSaturationTemperature (pressure: number): number {
   // 使用简化公式计算饱和温度
   // 参考：Antoine方程
   const A = 8.07131;
@@ -29,9 +29,9 @@ export function calculateSaturationTemperature(pressure: number): number {
  * @param pressure 压力（MPa）
  * @returns 水的焓值（kJ/kg）
  */
-export function calculateWaterEnthalpy(
+export function calculateWaterEnthalpy (
   temperature: number,
-  pressure: number
+  _pressure: number
 ): number {
   // 简化计算：假设压力对液体焓影响较小
   // 参考值：0°C时水的焓为0 kJ/kg，100°C时为419 kJ/kg
@@ -44,7 +44,7 @@ export function calculateWaterEnthalpy(
  * @param pressure 压力（MPa）
  * @returns 蒸汽的焓值（kJ/kg）
  */
-export function calculateSteamEnthalpy(
+export function calculateSteamEnthalpy (
   temperature: number,
   pressure: number
 ): number {
@@ -67,9 +67,9 @@ export function calculateSteamEnthalpy(
  * @param pressure 压力（MPa）
  * @returns 水的密度（kg/m³）
  */
-export function calculateWaterDensity(
+export function calculateWaterDensity (
   temperature: number,
-  pressure: number
+  _pressure: number
 ): number {
   // 简化计算：假设压力对液体密度影响较小
   // 参考值：20°C时水的密度为998 kg/m³
@@ -82,7 +82,7 @@ export function calculateWaterDensity(
  * @param pressure 压力（MPa）
  * @returns 蒸汽的密度（kg/m³）
  */
-export function calculateSteamDensity(
+export function calculateSteamDensity (
   temperature: number,
   pressure: number
 ): number {
@@ -101,7 +101,7 @@ export function calculateSteamDensity(
  * @param ρ_g 蒸汽密度
  * @returns 空泡分数
  */
-export function calculateVoidFraction(
+export function calculateVoidFraction (
   ρ_mix: number,
   ρ_f: number,
   ρ_g: number
@@ -116,7 +116,7 @@ export function calculateVoidFraction(
  * @param ρ_g 蒸汽密度
  * @returns 混合密度
  */
-export function calculateMixedDensity(
+export function calculateMixedDensity (
   α: number,
   ρ_f: number,
   ρ_g: number

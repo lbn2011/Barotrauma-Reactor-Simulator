@@ -1,13 +1,13 @@
-export function getJetPerform() {
-  return function perform(action: any) {
+export function getJetPerform () {
+  return function perform (action: any) {
     // Implement action performance logic here
     console.log('Performing action:', action);
   };
 }
 
-export function getJet() {
+export function getJet () {
   return {
-    dispatch: async (intent: any) => {
+    dispatch: async (_intent: any) => {
       // Implement intent dispatch logic here
       return [];
     },

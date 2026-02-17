@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CondensateSystemPanel from '../CondensateSystemPanel.svelte';
+import CondensateSystemPanel from '../CondensateSystemPanel.svelte';
 </script>
 
 <CondensateSystemPanel />

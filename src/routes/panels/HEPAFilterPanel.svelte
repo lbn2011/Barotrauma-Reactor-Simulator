@@ -1,52 +1,52 @@
 <script lang="ts">
-  // 导入反应堆状态管理
-  import {
-    reactorStore,
-    toggleHepaFilters,
-    setHepaFilterEfficiency,
-  } from '../../lib/stores/reactorStore';
-  import { onMount } from 'svelte';
+// 导入反应堆状态管理
+import {
+  reactorStore,
+  toggleHepaFilters,
+  setHepaFilterEfficiency,
+} from '../../lib/stores/reactorStore';
+import { onMount } from 'svelte';
 
-  // HEPA过滤器系统数据
-  let hepaFilters: any;
+// HEPA过滤器系统数据
+let hepaFilters: any;
 
-  // 组件挂载时订阅状态
-  onMount(() => {
-    const unsubscribe = reactorStore.subscribe((state) => {
-      hepaFilters = state.hepaFilters;
-    });
-
-    return unsubscribe;
+// 组件挂载时订阅状态
+onMount(() => {
+  const unsubscribe = reactorStore.subscribe((state) => {
+    hepaFilters = state.hepaFilters;
   });
 
-  // 切换过滤器状态
-  function handleToggle() {
-    toggleHepaFilters();
-  }
+  return unsubscribe;
+});
 
-  // 调整过滤器效率
-  function handleEfficiencyChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    setHepaFilterEfficiency(parseFloat(target.value));
-  }
+// 切换过滤器状态
+function handleToggle () {
+  toggleHepaFilters();
+}
+
+// 调整过滤器效率
+function handleEfficiencyChange (e: Event) {
+  const target = e.target as HTMLInputElement;
+  setHepaFilterEfficiency(parseFloat(target.value));
+}
 </script>
 
 <!--
   HEPA过滤器控制面板组件
-  
+
   功能：
   - 控制HEPA过滤器系统的启停
   - 调节HEPA过滤器的效率
   - 实时显示过滤器状态
   - 监控过滤效率水平
-  
+
   界面元素：
   - 系统状态切换按钮
   - 状态指示器
   - 过滤效率调节滑块
   - 系统参数信息卡片
   - 操作警告框
-  
+
   状态管理：
   - 从reactorStore订阅hepaFilters状态
   - 调用toggleHepaFilters切换系统状态
@@ -54,176 +54,176 @@
 -->
 
 <style>
-  .panel {
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  }
+.panel {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
 
-  .panel-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #00bcd4;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #333;
-  }
+.panel-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #00bcd4;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #333;
+}
 
-  .control-group {
-    margin-bottom: 2rem;
-  }
+.control-group {
+  margin-bottom: 2rem;
+}
 
-  .control-label {
-    display: block;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #e0e0e0;
-    margin-bottom: 0.75rem;
-  }
+.control-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e0e0e0;
+  margin-bottom: 0.75rem;
+}
 
-  .status-toggle {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
+.status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
 
-  .toggle-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+.toggle-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-  .toggle-button.active {
-    background-color: #4caf50;
-    color: white;
-  }
+.toggle-button.active {
+  background-color: #4caf50;
+  color: white;
+}
 
-  .toggle-button.inactive {
-    background-color: #f44336;
-    color: white;
-  }
+.toggle-button.inactive {
+  background-color: #f44336;
+  color: white;
+}
 
-  .status-indicator {
-    font-size: 0.9rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-weight: 500;
-  }
+.status-indicator {
+  font-size: 0.9rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
 
-  .status-indicator.active {
-    background-color: rgba(76, 175, 80, 0.2);
-    color: #4caf50;
-  }
+.status-indicator.active {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
 
-  .status-indicator.inactive {
-    background-color: rgba(244, 67, 54, 0.2);
-    color: #f44336;
-  }
+.status-indicator.inactive {
+  background-color: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+}
 
-  .slider-container {
-    position: relative;
-    margin: 1rem 0;
-  }
+.slider-container {
+  position: relative;
+  margin: 1rem 0;
+}
 
-  .slider {
-    width: 100%;
-    height: 8px;
-    border-radius: 4px;
-    background: #333;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-  }
+.slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #333;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
 
-  .slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #00bcd4;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #00bcd4;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
 
-  .slider::-webkit-slider-thumb:hover {
-    background: #00acc1;
-  }
+.slider::-webkit-slider-thumb:hover {
+  background: #00acc1;
+}
 
-  .slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #00bcd4;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.2s;
-  }
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #00bcd4;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
 
-  .slider::-moz-range-thumb:hover {
-    background: #00acc1;
-  }
+.slider::-moz-range-thumb:hover {
+  background: #00acc1;
+}
 
-  .value-display {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #00bcd4;
-    text-align: center;
-    margin-top: 0.5rem;
-  }
+.value-display {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #00bcd4;
+  text-align: center;
+  margin-top: 0.5rem;
+}
 
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-  }
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
 
-  .info-card {
-    background-color: #2d2d2d;
-    padding: 1.5rem;
-    border-radius: 6px;
-    border-left: 4px solid #00bcd4;
-  }
+.info-card {
+  background-color: #2d2d2d;
+  padding: 1.5rem;
+  border-radius: 6px;
+  border-left: 4px solid #00bcd4;
+}
 
-  .info-card-title {
-    font-size: 0.9rem;
-    color: #9e9e9e;
-    margin-bottom: 0.5rem;
-  }
+.info-card-title {
+  font-size: 0.9rem;
+  color: #9e9e9e;
+  margin-bottom: 0.5rem;
+}
 
-  .info-card-value {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #e0e0e0;
-  }
+.info-card-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
 
-  .warning-box {
-    background-color: rgba(255, 152, 0, 0.1);
-    border: 1px solid #ff9800;
-    border-radius: 6px;
-    padding: 1.5rem;
-    margin-top: 2rem;
-  }
+.warning-box {
+  background-color: rgba(255, 152, 0, 0.1);
+  border: 1px solid #ff9800;
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
 
-  .warning-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #ff9800;
-    margin-bottom: 0.5rem;
-  }
+.warning-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ff9800;
+  margin-bottom: 0.5rem;
+}
 
-  .warning-text {
-    font-size: 0.9rem;
-    color: #e0e0e0;
-    line-height: 1.4;
-  }
+.warning-text {
+  font-size: 0.9rem;
+  color: #e0e0e0;
+  line-height: 1.4;
+}
 </style>
 
 <div class="panel">
@@ -284,10 +284,7 @@
     </div>
     <div class="info-card">
       <div class="info-card-title">状态指示</div>
-      <div
-        class="info-card-value"
-        style="color: {hepaFilters?.status ? '#4caf50' : '#f44336'}"
-      >
+      <div class="info-card-value" style="color: {hepaFilters?.status ? '#4caf50' : '#f44336'}">
         {hepaFilters?.status ? '正常' : '关闭'}
       </div>
     </div>

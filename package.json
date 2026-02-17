@@ -27,7 +27,10 @@
     "autoprefixer": "^10.4.24",
     "bits-ui": "^2.15.5",
     "eslint": "^9.39.2",
+    "eslint-plugin-html": "^8.1.4",
     "eslint-plugin-svelte": "^3.14.0",
+    "eslint-plugin-toml": "^1.1.0",
+    "eslint-plugin-yml": "^3.2.0",
     "layerchart": "2.0.0-next.43",
     "postcss": "^8.5.6",
     "prettier": "^3.8.1",
@@ -50,6 +53,7 @@
   "dependencies": {
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",
+    "consola": "^3.4.2",
     "idb-keyval": "^6.2.2",
     "svelte-chartjs": "^3.1.5",
     "tailwind-merge": "^3.4.0"

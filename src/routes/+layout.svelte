@@ -1,152 +1,153 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
-  import TopBar from '../lib/components/TopBar.svelte';
-  import { reactorStore, updateReactorState } from '../lib/stores/reactorStore';
-  import { page } from '$app/stores';
+import { onMount, onDestroy } from 'svelte';
+import TopBar from '../lib/components/TopBar.svelte';
+import { updateReactorState } from '../lib/stores/reactorStore';
+import { page } from '$app/stores';
+import { resolve } from '$app/paths';
 
-  let sidebarOpen: boolean = true;
+let sidebarOpen: boolean = true;
 
-  // 模拟更新定时器
-  let updateInterval: number;
+// 模拟更新定时器
+let updateInterval: number;
 
-  onMount(() => {
-    // 启动模拟更新
-    updateInterval = window.setInterval(updateReactorState, 1000);
-  });
+onMount(() => {
+  // 启动模拟更新
+  updateInterval = window.setInterval(updateReactorState, 1000);
+});
 
-  onDestroy(() => {
-    // 清除定时器
-    clearInterval(updateInterval);
-  });
+onDestroy(() => {
+  // 清除定时器
+  clearInterval(updateInterval);
+});
 
-  // 切换侧边栏
-  function toggleSidebar() {
-    sidebarOpen = !sidebarOpen;
-  }
+// 切换侧边栏
+function toggleSidebar () {
+  sidebarOpen = !sidebarOpen;
+}
 </script>
 
 <style>
-  :root {
-    --sidebar-width: 240px;
-    --sidebar-width-collapsed: 80px;
-    --top-bar-height: 4rem;
-    --bg-color: #ffffff;
-    --text-color: #121212;
-    --sidebar-bg: #f8f9fa;
-    --sidebar-border: #dee2e6;
-    --sidebar-hover: #e9ecef;
-    --nav-item-active: #00bcd4;
-    --nav-item-active-text: #121212;
-  }
+:root {
+  --sidebar-width: 240px;
+  --sidebar-width-collapsed: 80px;
+  --top-bar-height: 4rem;
+  --bg-color: #ffffff;
+  --text-color: #121212;
+  --sidebar-bg: #f8f9fa;
+  --sidebar-border: #dee2e6;
+  --sidebar-hover: #e9ecef;
+  --nav-item-active: #00bcd4;
+  --nav-item-active-text: #121212;
+}
 
-  .app-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-  }
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
 
-  .main-container {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-  }
+.main-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
 
-  .sidebar {
-    width: var(--sidebar-width);
-    background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--sidebar-border);
-    transition: width 0.3s ease;
-    overflow-y: auto;
-    padding: 1rem;
-    height: calc(100vh - var(--top-bar-height)); /* 减去顶部栏的高度 */
-    position: relative;
-  }
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  transition: width 0.3s ease;
+  overflow-y: auto;
+  padding: 1rem;
+  height: calc(100vh - var(--top-bar-height)); /* 减去顶部栏的高度 */
+  position: relative;
+}
 
-  .sidebar.collapsed {
-    width: var(--sidebar-width-collapsed);
-  }
+.sidebar.collapsed {
+  width: var(--sidebar-width-collapsed);
+}
 
-  .sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--sidebar-border);
-  }
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--sidebar-border);
+}
 
-  .sidebar-toggle {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-  }
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
 
-  .sidebar-toggle:hover {
-    background-color: var(--sidebar-hover);
-  }
+.sidebar-toggle:hover {
+  background-color: var(--sidebar-hover);
+}
 
-  .nav-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-    color: var(--text-color);
-    background: none;
-    border: none;
-    width: 100%;
-    text-align: left;
-  }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: var(--text-color);
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
 
-  .nav-item:hover {
-    background-color: var(--sidebar-hover);
-  }
+.nav-item:hover {
+  background-color: var(--sidebar-hover);
+}
 
-  .nav-item.active {
-    background-color: var(--nav-item-active);
-    color: var(--nav-item-active-text);
-  }
+.nav-item.active {
+  background-color: var(--nav-item-active);
+  color: var(--nav-item-active-text);
+}
 
-  .nav-icon {
-    font-size: 1.2rem;
-    min-width: 24px;
-  }
+.nav-icon {
+  font-size: 1.2rem;
+  min-width: 24px;
+}
 
-  .nav-text {
-    font-size: 0.9rem;
-  }
+.nav-text {
+  font-size: 0.9rem;
+}
 
-  .main-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 2rem;
-    height: calc(100vh - var(--top-bar-height)); /* 减去顶部栏的高度 */
-    overflow-y: auto;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-  }
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  height: calc(100vh - var(--top-bar-height)); /* 减去顶部栏的高度 */
+  overflow-y: auto;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
 
-  .sidebar.collapsed .nav-text {
-    display: none;
-  }
+.sidebar.collapsed .nav-text {
+  display: none;
+}
 </style>
 
 <div class="app-container">
@@ -160,13 +161,13 @@
       </div>
 
       <div class="nav-menu">
-        <a href="/" class="nav-item" class:active={$page.url.pathname === '/'}>
+        <a href={resolve('/')} class="nav-item" class:active={$page.url.pathname === '/'}>
           <span class="nav-icon">📊</span>
           <span class="nav-text">概述</span>
         </a>
 
         <a
-          href="/panels/control-rod"
+          href={resolve('/panels/control-rod')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/control-rod'}
         >
@@ -175,7 +176,7 @@
         </a>
 
         <a
-          href="/panels/power-control"
+          href={resolve('/panels/power-control')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/power-control'}
         >
@@ -184,7 +185,7 @@
         </a>
 
         <a
-          href="/panels/recirculation-pump"
+          href={resolve('/panels/recirculation-pump')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/recirculation-pump'}
         >
@@ -193,7 +194,7 @@
         </a>
 
         <a
-          href="/panels/emergency-cooling-pump"
+          href={resolve('/panels/emergency-cooling-pump')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/emergency-cooling-pump'}
         >
@@ -202,7 +203,7 @@
         </a>
 
         <a
-          href="/panels/drain-control"
+          href={resolve('/panels/drain-control')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/drain-control'}
         >
@@ -211,7 +212,7 @@
         </a>
 
         <a
-          href="/panels/offline-cooling-pump"
+          href={resolve('/panels/offline-cooling-pump')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/offline-cooling-pump'}
         >
@@ -220,7 +221,7 @@
         </a>
 
         <a
-          href="/panels/turbine-control"
+          href={resolve('/panels/turbine-control')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/turbine-control'}
         >
@@ -229,7 +230,7 @@
         </a>
 
         <a
-          href="/panels/deaerator-steam"
+          href={resolve('/panels/deaerator-steam')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/deaerator-steam'}
         >
@@ -238,7 +239,7 @@
         </a>
 
         <a
-          href="/panels/condenser-vacuum"
+          href={resolve('/panels/condenser-vacuum')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/condenser-vacuum'}
         >
@@ -247,7 +248,7 @@
         </a>
 
         <a
-          href="/panels/steam-exhaust"
+          href={resolve('/panels/steam-exhaust')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/steam-exhaust'}
         >
@@ -256,7 +257,7 @@
         </a>
 
         <a
-          href="/panels/turbine-auxiliary"
+          href={resolve('/panels/turbine-auxiliary')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/turbine-auxiliary'}
         >
@@ -265,7 +266,7 @@
         </a>
 
         <a
-          href="/panels/hotwell-level"
+          href={resolve('/panels/hotwell-level')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/hotwell-level'}
         >
@@ -274,17 +275,16 @@
         </a>
 
         <a
-          href="/panels/condenser-circulation-pump"
+          href={resolve('/panels/condenser-circulation-pump')}
           class="nav-item"
-          class:active={$page.url.pathname ===
-            '/panels/condenser-circulation-pump'}
+          class:active={$page.url.pathname === '/panels/condenser-circulation-pump'}
         >
           <span class="nav-icon">🌊</span>
           <span class="nav-text">15. 循环水泵</span>
         </a>
 
         <a
-          href="/panels/makeup-water"
+          href={resolve('/panels/makeup-water')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/makeup-water'}
         >
@@ -293,7 +293,7 @@
         </a>
 
         <a
-          href="/panels/feedwater-pump"
+          href={resolve('/panels/feedwater-pump')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/feedwater-pump'}
         >
@@ -302,7 +302,7 @@
         </a>
 
         <a
-          href="/panels/data-trend"
+          href={resolve('/panels/data-trend')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/data-trend'}
         >
@@ -311,7 +311,7 @@
         </a>
 
         <a
-          href="/panels/hepa-filter"
+          href={resolve('/panels/hepa-filter')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/hepa-filter'}
         >
@@ -320,7 +320,7 @@
         </a>
 
         <a
-          href="/panels/alarm-crt"
+          href={resolve('/panels/alarm-crt')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/alarm-crt'}
         >
@@ -329,7 +329,7 @@
         </a>
 
         <a
-          href="/panels/schematic-crt"
+          href={resolve('/panels/schematic-crt')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/schematic-crt'}
         >
@@ -338,7 +338,7 @@
         </a>
 
         <a
-          href="/panels/condensate-system"
+          href={resolve('/panels/condensate-system')}
           class="nav-item"
           class:active={$page.url.pathname === '/panels/condensate-system'}
         >
@@ -347,7 +347,7 @@
         </a>
 
         <a
-          href="/save-editor"
+          href={resolve('/save-editor')}
           class="nav-item"
           class:active={$page.url.pathname === '/save-editor'}
         >

@@ -24,6 +24,7 @@ module.exports = {
   svelteSortOrder: 'scripts-styles-markup-options',
   svelteStrictMode: false,
   svelteAllowShorthand: true,
+  svelteIndentScriptAndStyle: false,
 
   // 覆盖配置
   overrides: [
@@ -37,6 +38,42 @@ module.exports = {
       files: '*.json',
       options: {
         printWidth: 200,
+      },
+    },
+    {
+      files: '*.yaml',
+      options: {
+        printWidth: 120,
+      },
+    },
+    {
+      files: '*.yml',
+      options: {
+        printWidth: 120,
+      },
+    },
+    {
+      files: '*.toml',
+      options: {
+        printWidth: 120,
+      },
+    },
+    {
+      files: '*.html',
+      options: {
+        printWidth: 120,
+      },
+    },
+    {
+      files: '*.css',
+      options: {
+        printWidth: 100,
+      },
+    },
+    {
+      files: '*.svelte',
+      options: {
+        printWidth: 100,
       },
     },
   ],

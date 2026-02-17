@@ -1,77 +1,77 @@
 <script lang="ts">
-  // 导入反应堆状态管理
-  import {
-    reactorStore,
-    startSimulation,
-    stopSimulation,
-    resetSimulation,
-    emergencyRodInsertion,
-    tripReactor,
-  } from '../../lib/stores/reactorStore';
+// 导入反应堆状态管理
+import {
+  reactorStore,
+  startSimulation,
+  stopSimulation,
+  resetSimulation,
+  emergencyRodInsertion,
+  tripReactor,
+} from '../../lib/stores/reactorStore';
 
-  // 模拟状态数据
-  let isRunning: boolean;
-  let simulationTime: number;
-  // 核心系统数据
-  let core: any;
-  let powerRegulation: any;
-  let controlRods: any;
-  // 辅助系统数据
-  let turbine: any;
-  let feedwaterSystem: any;
-  let emergencyCoolingPumps: any;
-  // 安全和故障数据
-  let faultSimulation: any;
-  let alarms: any;
+// 模拟状态数据
+let isRunning: boolean;
+let simulationTime: number;
+// 核心系统数据
+let core: any;
+let powerRegulation: any;
+let controlRods: any;
+// 辅助系统数据
+let turbine: any;
+let feedwaterSystem: any;
+let emergencyCoolingPumps: any;
+// 安全和故障数据
+let faultSimulation: any;
+let alarms: any;
 
-  // 订阅状态变化
-  reactorStore.subscribe((state) => {
-    isRunning = state.isRunning;
-    simulationTime = state.simulationTime;
-    core = state.core;
-    powerRegulation = state.powerRegulation;
-    controlRods = state.controlRods;
-    turbine = state.turbine;
-    feedwaterSystem = state.feedwaterSystem;
-    emergencyCoolingPumps = state.emergencyCoolingPumps;
-    faultSimulation = state.faultSimulation;
-    alarms = state.alarms;
-  });
+// 订阅状态变化
+reactorStore.subscribe((state) => {
+  isRunning = state.isRunning;
+  simulationTime = state.simulationTime;
+  core = state.core;
+  powerRegulation = state.powerRegulation;
+  controlRods = state.controlRods;
+  turbine = state.turbine;
+  feedwaterSystem = state.feedwaterSystem;
+  emergencyCoolingPumps = state.emergencyCoolingPumps;
+  faultSimulation = state.faultSimulation;
+  alarms = state.alarms;
+});
 
-  // 处理模拟控制
-  function handleStartSimulation() {
-    startSimulation();
-  }
+// 处理模拟控制
+function handleStartSimulation () {
+  startSimulation();
+}
 
-  function handleStopSimulation() {
-    stopSimulation();
-  }
+function handleStopSimulation () {
+  stopSimulation();
+}
 
-  function handleResetSimulation() {
-    resetSimulation();
-  }
+function handleResetSimulation () {
+  resetSimulation();
+}
 
-  // 处理紧急操作
-  function handleEmergencyRodInsertion() {
-    emergencyRodInsertion();
-  }
+// 处理紧急操作
+function handleEmergencyRodInsertion () {
+  emergencyRodInsertion();
+}
 
-  function handleTripReactor() {
-    tripReactor();
-  }
+function handleTripReactor () {
+  tripReactor();
+}
 
-  // 格式化时间
-  function formatTime(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  }
+// 格式化时间
+function formatTime (seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
 </script>
 
 <!--
   系统概览面板组件
-  
+
   功能：
   - 提供模拟控制功能（启动、停止、重置）
   - 执行紧急操作（紧急停堆、触发停堆）
@@ -79,7 +79,7 @@
   - 监控各系统状态（控制棒、汽轮机、给水、安全系统）
   - 显示故障模拟系统状态
   - 实时更新模拟时间
-  
+
   界面元素：
   - 模拟控制按钮
   - 紧急操作按钮
@@ -87,303 +87,303 @@
   - 系统状态卡片
   - 模拟时间显示
   - 状态指示器
-  
+
   状态管理：
   - 从reactorStore订阅多个状态
   - 调用相关函数控制模拟和执行紧急操作
 -->
 
 <style>
-  .panel-container {
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    padding: 2rem;
-    border: 1px solid #333;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
+.panel-container {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-  .panel-title {
-    margin-top: 0;
-    margin-bottom: 2rem;
-    color: #00bcd4;
-    font-size: 1.5rem;
-    text-align: center;
-  }
+.panel-title {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: #00bcd4;
+  font-size: 1.5rem;
+  text-align: center;
+}
 
-  .control-section {
-    margin-bottom: 3rem;
-  }
+.control-section {
+  margin-bottom: 3rem;
+}
 
-  .control-card {
-    background-color: #121212;
-    border-radius: 6px;
-    padding: 1.5rem;
-    border: 1px solid #333;
-    margin-bottom: 1.5rem;
-  }
+.control-card {
+  background-color: #121212;
+  border-radius: 6px;
+  padding: 1.5rem;
+  border: 1px solid #333;
+  margin-bottom: 1.5rem;
+}
 
-  .control-title {
-    color: #00bcd4;
-    font-size: 1.2rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
+.control-title {
+  color: #00bcd4;
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
 
-  .control-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
+.control-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
 
-  .control-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.2s;
-    flex: 1;
-  }
+.control-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  flex: 1;
+}
 
-  .btn-start {
-    background-color: #4caf50;
-    color: white;
-  }
+.btn-start {
+  background-color: #4caf50;
+  color: white;
+}
 
-  .btn-start:hover {
-    background-color: #45a049;
-  }
+.btn-start:hover {
+  background-color: #45a049;
+}
 
-  .btn-stop {
-    background-color: #f44336;
-    color: white;
-  }
+.btn-stop {
+  background-color: #f44336;
+  color: white;
+}
 
-  .btn-stop:hover {
-    background-color: #e53935;
-  }
+.btn-stop:hover {
+  background-color: #e53935;
+}
 
-  .btn-reset {
-    background-color: #ff9800;
-    color: white;
-  }
+.btn-reset {
+  background-color: #ff9800;
+  color: white;
+}
 
-  .btn-reset:hover {
-    background-color: #f57c00;
-  }
+.btn-reset:hover {
+  background-color: #f57c00;
+}
 
-  .btn-emergency {
-    background-color: #9c27b0;
-    color: white;
-    animation: pulse 2s infinite;
-  }
+.btn-emergency {
+  background-color: #9c27b0;
+  color: white;
+  animation: pulse 2s infinite;
+}
 
-  .btn-emergency:hover {
-    background-color: #7b1fa2;
-  }
+.btn-emergency:hover {
+  background-color: #7b1fa2;
+}
 
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba(156, 39, 176, 0.4);
-    }
-    70% {
-      box-shadow: 0 0 0 10px rgba(156, 39, 176, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(156, 39, 176, 0);
-    }
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(156, 39, 176, 0.4);
   }
+  70% {
+    box-shadow: 0 0 0 10px rgba(156, 39, 176, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(156, 39, 176, 0);
+  }
+}
 
-  .status-section {
-    margin-bottom: 3rem;
-  }
+.status-section {
+  margin-bottom: 3rem;
+}
 
-  .status-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
 
-  .status-card {
-    background-color: #121212;
-    border-radius: 6px;
-    padding: 1.5rem;
-    border: 1px solid #333;
-    transition:
-      transform 0.2s,
-      box-shadow 0.2s;
-  }
+.status-card {
+  background-color: #121212;
+  border-radius: 6px;
+  padding: 1.5rem;
+  border: 1px solid #333;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
 
-  .status-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 188, 212, 0.2);
-  }
+.status-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 188, 212, 0.2);
+}
 
-  .status-card.critical {
-    border-left: 4px solid #f44336;
-  }
+.status-card.critical {
+  border-left: 4px solid #f44336;
+}
 
-  .status-card.warning {
-    border-left: 4px solid #ff9800;
-  }
+.status-card.warning {
+  border-left: 4px solid #ff9800;
+}
 
-  .status-card.normal {
-    border-left: 4px solid #4caf50;
-  }
+.status-card.normal {
+  border-left: 4px solid #4caf50;
+}
 
-  .status-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
 
-  .status-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #00bcd4;
-    margin: 0;
-  }
+.status-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #00bcd4;
+  margin: 0;
+}
 
-  .status-indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  }
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
 
-  .status-indicator.normal {
-    background-color: #4caf50;
-    box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
-  }
+.status-indicator.normal {
+  background-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+}
 
-  .status-indicator.warning {
-    background-color: #ff9800;
-    box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
-  }
+.status-indicator.warning {
+  background-color: #ff9800;
+  box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+}
 
-  .status-indicator.critical {
-    background-color: #f44336;
-    box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
-  }
+.status-indicator.critical {
+  background-color: #f44336;
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+}
 
-  .status-value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #e0e0e0;
-    margin: 0.5rem 0;
-  }
+.status-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #e0e0e0;
+  margin: 0.5rem 0;
+}
 
-  .status-unit {
-    font-size: 0.9rem;
-    color: #aaa;
-  }
+.status-unit {
+  font-size: 0.9rem;
+  color: #aaa;
+}
 
-  .status-detail {
-    font-size: 0.9rem;
-    color: #aaa;
-    margin-top: 1rem;
-  }
+.status-detail {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-top: 1rem;
+}
 
-  .system-section {
-    margin-bottom: 3rem;
-  }
+.system-section {
+  margin-bottom: 3rem;
+}
 
-  .system-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
+.system-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
 
-  .system-card {
-    background-color: #121212;
-    border-radius: 6px;
-    padding: 1.5rem;
-    border: 1px solid #333;
-  }
+.system-card {
+  background-color: #121212;
+  border-radius: 6px;
+  padding: 1.5rem;
+  border: 1px solid #333;
+}
 
-  .system-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #00bcd4;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-  }
+.system-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #00bcd4;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
 
-  .parameter-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+.parameter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-  .parameter-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #333;
-  }
+.parameter-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #333;
+}
 
-  .parameter-item:last-child {
-    border-bottom: none;
-  }
+.parameter-item:last-child {
+  border-bottom: none;
+}
 
-  .parameter-label {
-    font-size: 0.9rem;
-    color: #aaa;
-  }
+.parameter-label {
+  font-size: 0.9rem;
+  color: #aaa;
+}
 
-  .parameter-value {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #e0e0e0;
-  }
+.parameter-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
 
-  .parameter-value.critical {
-    color: #f44336;
-  }
+.parameter-value.critical {
+  color: #f44336;
+}
 
-  .parameter-value.warning {
-    color: #ff9800;
-  }
+.parameter-value.warning {
+  color: #ff9800;
+}
 
-  .parameter-value.normal {
-    color: #4caf50;
-  }
+.parameter-value.normal {
+  color: #4caf50;
+}
 
-  .emergency-section {
-    margin-top: 3rem;
-  }
+.emergency-section {
+  margin-top: 3rem;
+}
 
-  .emergency-buttons {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
+.emergency-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
 
-  .time-display {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #00bcd4;
-    text-align: center;
-    margin: 1rem 0;
-  }
+.time-display {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #00bcd4;
+  text-align: center;
+  margin: 1rem 0;
+}
 
-  .simulation-status {
-    font-size: 1.1rem;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
+.simulation-status {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
 
-  .simulation-status.running {
-    color: #4caf50;
-  }
+.simulation-status.running {
+  color: #4caf50;
+}
 
-  .simulation-status.stopped {
-    color: #f44336;
-  }
+.simulation-status.stopped {
+  color: #f44336;
+}
 </style>
 
 <div class="panel-container">
@@ -414,10 +414,7 @@
         >
           停止模拟
         </button>
-        <button
-          class="control-button btn-reset"
-          on:click={handleResetSimulation}
-        >
+        <button class="control-button btn-reset" on:click={handleResetSimulation}>
           重置模拟
         </button>
       </div>
@@ -429,16 +426,10 @@
     <div class="control-card">
       <h2 class="control-title">紧急操作</h2>
       <div class="emergency-buttons">
-        <button
-          class="control-button btn-emergency"
-          on:click={handleEmergencyRodInsertion}
-        >
+        <button class="control-button btn-emergency" on:click={handleEmergencyRodInsertion}>
           紧急停堆 (AZ-5)
         </button>
-        <button
-          class="control-button btn-emergency"
-          on:click={handleTripReactor}
-        >
+        <button class="control-button btn-emergency" on:click={handleTripReactor}>
           触发停堆
         </button>
       </div>
@@ -533,25 +524,17 @@
         <ul class="parameter-list">
           <li class="parameter-item">
             <span class="parameter-label">控制棒位置</span>
-            <span class="parameter-value"
-              >{controlRods.position.toFixed(1)}%</span
-            >
+            <span class="parameter-value">{controlRods.position.toFixed(1)}%</span>
           </li>
           <li class="parameter-item">
             <span class="parameter-label">紧急插入状态</span>
-            <span
-              class="parameter-value {controlRods.emergencyInsertion
-                ? 'critical'
-                : 'normal'}"
-            >
+            <span class="parameter-value {controlRods.emergencyInsertion ? 'critical' : 'normal'}">
               {controlRods.emergencyInsertion ? '已触发' : '正常'}
             </span>
           </li>
           <li class="parameter-item">
             <span class="parameter-label">自动模式</span>
-            <span class="parameter-value"
-              >{controlRods.autoMode ? '开启' : '关闭'}</span
-            >
+            <span class="parameter-value">{controlRods.autoMode ? '开启' : '关闭'}</span>
           </li>
           <li class="parameter-item">
             <span class="parameter-label">活跃控制棒</span>
@@ -566,9 +549,7 @@
         <ul class="parameter-list">
           <li class="parameter-item">
             <span class="parameter-label">汽轮机状态</span>
-            <span
-              class="parameter-value {!turbine.status ? 'critical' : 'normal'}"
-            >
+            <span class="parameter-value {!turbine.status ? 'critical' : 'normal'}">
               {turbine.status ? '运行中' : '已停止'}
             </span>
           </li>
@@ -582,17 +563,11 @@
           </li>
           <li class="parameter-item">
             <span class="parameter-label">蒸汽压力</span>
-            <span class="parameter-value"
-              >{turbine.steamPressure.toFixed(2)} MPa</span
-            >
+            <span class="parameter-value">{turbine.steamPressure.toFixed(2)} MPa</span>
           </li>
           <li class="parameter-item">
             <span class="parameter-label">跳闸状态</span>
-            <span
-              class="parameter-value {turbine.tripStatus
-                ? 'critical'
-                : 'normal'}"
-            >
+            <span class="parameter-value {turbine.tripStatus ? 'critical' : 'normal'}">
               {turbine.tripStatus ? '已跳闸' : '正常'}
             </span>
           </li>
@@ -605,9 +580,7 @@
         <ul class="parameter-list">
           <li class="parameter-item">
             <span class="parameter-label">总给水流量</span>
-            <span class="parameter-value"
-              >{feedwaterSystem.system.totalFlowRate.toFixed(1)}%</span
-            >
+            <span class="parameter-value">{feedwaterSystem.system.totalFlowRate.toFixed(1)}%</span>
           </li>
           <li class="parameter-item">
             <span class="parameter-label">给水压力</span>
@@ -635,9 +608,7 @@
           <li class="parameter-item">
             <span class="parameter-label">应急冷却泵1</span>
             <span
-              class="parameter-value {emergencyCoolingPumps.pump1.status
-                ? 'warning'
-                : 'normal'}"
+              class="parameter-value {emergencyCoolingPumps.pump1.status ? 'warning' : 'normal'}"
             >
               {emergencyCoolingPumps.pump1.status ? '运行中' : '已停止'}
             </span>
@@ -645,9 +616,7 @@
           <li class="parameter-item">
             <span class="parameter-label">应急冷却泵2</span>
             <span
-              class="parameter-value {emergencyCoolingPumps.pump2.status
-                ? 'warning'
-                : 'normal'}"
+              class="parameter-value {emergencyCoolingPumps.pump2.status ? 'warning' : 'normal'}"
             >
               {emergencyCoolingPumps.pump2.status ? '运行中' : '已停止'}
             </span>
@@ -656,26 +625,19 @@
             <span class="parameter-label">总冷却流量</span>
             <span class="parameter-value"
               >{(
-                emergencyCoolingPumps.pump1.flowRate +
-                emergencyCoolingPumps.pump2.flowRate
+                emergencyCoolingPumps.pump1.flowRate + emergencyCoolingPumps.pump2.flowRate
               ).toFixed(1)}%</span
             >
           </li>
           <li class="parameter-item">
             <span class="parameter-label">活跃报警</span>
-            <span
-              class="parameter-value {alarms.active ? 'critical' : 'normal'}"
-            >
+            <span class="parameter-value {alarms.active ? 'critical' : 'normal'}">
               {alarms.active ? '是' : '否'}
             </span>
           </li>
           <li class="parameter-item">
             <span class="parameter-label">报警数量</span>
-            <span
-              class="parameter-value {alarms.messages?.length > 0
-                ? 'warning'
-                : 'normal'}"
-            >
+            <span class="parameter-value {alarms.messages?.length > 0 ? 'warning' : 'normal'}">
               {alarms.messages?.length || 0}
             </span>
           </li>
@@ -722,9 +684,7 @@
           </li>
           <li class="parameter-item">
             <span class="parameter-label">维护水平</span>
-            <span class="parameter-value"
-              >{faultSimulation.maintenanceLevel}%</span
-            >
+            <span class="parameter-value">{faultSimulation.maintenanceLevel}%</span>
           </li>
         </ul>
       </div>

@@ -23,10 +23,10 @@ interface ControlRodPhysicsOutput {
 /**
  * 计算控制棒物理特性
  * 模拟RBMK-1000反应堆控制棒的石墨尖端效应和吸收效应
- * 
+ *
  * @param input 输入参数
  * @returns 控制棒物理特性结果
- * 
+ *
  * @description
  * RBMK-1000反应堆控制棒设计特点：
  * 1. 控制棒前端有石墨段，用于置换水（慢化剂）
@@ -34,7 +34,7 @@ interface ControlRodPhysicsOutput {
  * 3. 当控制棒完全插入（超过20%深度）后，吸收剂开始发挥作用，产生负反应性
  * 4. 这种设计在紧急停堆时可能导致初始功率上升，这是切尔诺贝利事故的原因之一
  */
-export function calculateControlRodPhysics(
+export function calculateControlRodPhysics (
   input: ControlRodPhysicsInput
 ): ControlRodPhysicsOutput {
   let ρ_tip = 0; // 石墨尖端效应反应性
@@ -65,22 +65,22 @@ export function calculateControlRodPhysics(
 /**
  * 计算控制棒插入速度
  * 将厘米/秒转换为米/秒
- * 
+ *
  * @param speed_cm_s 速度（厘米/秒）
  * @returns 速度（米/秒）
  */
-export function calculateControlRodSpeed(speed_cm_s: number): number {
+export function calculateControlRodSpeed (speed_cm_s: number): number {
   return speed_cm_s / 100; // 转换为米/秒
 }
 
 /**
  * 计算控制棒完全插入时间
- * 
+ *
  * @param L 控制棒总长度（米）
  * @param speed 插入速度（米/秒）
  * @returns 完全插入时间（秒）
  */
-export function calculateControlRodInsertionTime(
+export function calculateControlRodInsertionTime (
   L: number,
   speed: number
 ): number {
@@ -90,19 +90,19 @@ export function calculateControlRodInsertionTime(
 /**
  * 计算紧急停堆过程中的功率变化
  * 模拟RBMK-1000反应堆紧急停堆时的功率响应
- * 
+ *
  * @param P_initial 初始功率
  * @param z 控制棒插入深度
  * @param L 控制棒总长度
  * @returns 停堆过程中的功率
- * 
+ *
  * @description
  * RBMK-1000紧急停堆特性：
  * 1. 控制棒开始插入时（前20%深度），石墨尖端效应导致功率短暂上升（约5%）
  * 2. 当控制棒插入超过20%深度后，吸收效应开始主导，功率快速下降
  * 3. 完全插入时功率降至接近零
  */
-export function calculateScramPower(
+export function calculateScramPower (
   P_initial: number,
   z: number,
   L: number

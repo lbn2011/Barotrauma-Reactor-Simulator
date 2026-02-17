@@ -19,7 +19,7 @@ export const M = 18.015268; // 摩尔质量（g/mol）
  * @param P 压力（MPa）
  * @returns 区域标识符
  */
-export function getRegion(T: number, P: number): string {
+export function getRegion (T: number, P: number): string {
   // 检查是否在临界温度以上
   if (T > T_CRIT) {
     return REGION_2;
@@ -42,7 +42,7 @@ export function getRegion(T: number, P: number): string {
  * @param T 温度（K）
  * @returns 饱和压力（MPa）
  */
-export function calculateSaturationPressure(T: number): number {
+export function calculateSaturationPressure (T: number): number {
   if (T <= 0) {
     return 0;
   }
@@ -72,7 +72,7 @@ export function calculateSaturationPressure(T: number): number {
  * @param P 压力（MPa）
  * @returns 饱和温度（K）
  */
-export function calculateSaturationTemperature(P: number): number {
+export function calculateSaturationTemperature (P: number): number {
   if (P <= 0) {
     return 273.15; // 0°C
   }
@@ -121,7 +121,7 @@ export function calculateSaturationTemperature(P: number): number {
  * @param P 压力（MPa）
  * @returns 比容（m³/kg）
  */
-function calculateLiquidSpecificVolume(T: number, P: number): number {
+function calculateLiquidSpecificVolume (T: number, P: number): number {
   // 液态水的近似比容计算
   // 基于 20°C 时的密度 998.2 kg/m³
   const rho20 = 998.2; // kg/m³
@@ -143,7 +143,7 @@ function calculateLiquidSpecificVolume(T: number, P: number): number {
  * @param P 压力（MPa）
  * @returns 比容（m³/kg）
  */
-function calculateVaporSpecificVolume(T: number, P: number): number {
+function calculateVaporSpecificVolume (T: number, P: number): number {
   // 使用理想气体定律近似
   // 对于低压蒸汽，理想气体定律是一个合理的近似
   const P_pa = P * 1e6; // 转换为帕斯卡
@@ -156,7 +156,7 @@ function calculateVaporSpecificVolume(T: number, P: number): number {
  * @param P 压力（MPa）
  * @returns 比容（m³/kg）
  */
-export function calculateSpecificVolume(T: number, P: number): number {
+export function calculateSpecificVolume (T: number, P: number): number {
   const region = getRegion(T, P);
 
   if (region === REGION_1) {
@@ -174,7 +174,7 @@ export function calculateSpecificVolume(T: number, P: number): number {
  * @param T 温度（K）
  * @returns 比内能（kJ/kg）
  */
-function calculateLiquidInternalEnergy(T: number): number {
+function calculateLiquidInternalEnergy (T: number): number {
   // 液态水的近似内能计算
   // 基于 0°C 时的内能为 0
   const Tc = T - 273.15; // °C
@@ -189,9 +189,8 @@ function calculateLiquidInternalEnergy(T: number): number {
  * @param P 压力（MPa）
  * @returns 比内能（kJ/kg）
  */
-function calculateVaporInternalEnergy(T: number, P: number): number {
+function calculateVaporInternalEnergy (T: number, _P: number): number {
   // 蒸汽的近似内能计算
-  const Tc = T - 273.15; // °C
   const hfg = 2257; // 汽化潜热 kJ/kg
 
   // 基于液态水内能加上汽化潜热
@@ -205,7 +204,7 @@ function calculateVaporInternalEnergy(T: number, P: number): number {
  * @param P 压力（MPa）
  * @returns 比内能（kJ/kg）
  */
-export function calculateInternalEnergy(T: number, P: number): number {
+export function calculateInternalEnergy (T: number, P: number): number {
   const region = getRegion(T, P);
 
   if (region === REGION_1) {
@@ -224,7 +223,7 @@ export function calculateInternalEnergy(T: number, P: number): number {
  * @param P 压力（MPa）
  * @returns 焓（kJ/kg）
  */
-export function calculateEnthalpy(T: number, P: number): number {
+export function calculateEnthalpy (T: number, P: number): number {
   const u = calculateInternalEnergy(T, P);
   const v = calculateSpecificVolume(T, P);
 
@@ -237,12 +236,11 @@ export function calculateEnthalpy(T: number, P: number): number {
  * @param P 压力（MPa）
  * @returns 熵（kJ/(kg·K)）
  */
-export function calculateEntropy(T: number, P: number): number {
+export function calculateEntropy (T: number, P: number): number {
   const region = getRegion(T, P);
 
   if (region === REGION_1) {
     // 液态水的近似熵计算
-    const Tc = T - 273.15; // °C
     const cp = 4.186; // 比热容 kJ/(kg·K)
     return cp * Math.log(T / 273.15);
   } else if (region === REGION_2) {
@@ -252,7 +250,6 @@ export function calculateEntropy(T: number, P: number): number {
     return (h - u) / T;
   } else {
     // 饱和线上，返回液相值
-    const Tc = T - 273.15; // °C
     const cp = 4.186; // 比热容 kJ/(kg·K)
     return cp * Math.log(T / 273.15);
   }
@@ -264,7 +261,7 @@ export function calculateEntropy(T: number, P: number): number {
  * @param P 压力（MPa）
  * @returns 定压比热容（kJ/(kg·K)）
  */
-export function calculateSpecificHeatCapacityP(T: number, P: number): number {
+export function calculateSpecificHeatCapacityP (T: number, P: number): number {
   const region = getRegion(T, P);
 
   if (region === REGION_1) {
@@ -285,7 +282,7 @@ export function calculateSpecificHeatCapacityP(T: number, P: number): number {
  * @param P 压力（MPa）
  * @returns 定容比热容（kJ/(kg·K)）
  */
-export function calculateSpecificHeatCapacityV(T: number, P: number): number {
+export function calculateSpecificHeatCapacityV (T: number, P: number): number {
   const region = getRegion(T, P);
 
   if (region === REGION_1) {

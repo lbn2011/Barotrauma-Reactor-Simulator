@@ -1,17 +1,17 @@
 <script lang="ts" module>
-  import type { HTMLAttributes } from 'svelte/elements';
-  import { cn, type WithElementRef } from '@/lib/utils';
+import type { HTMLAttributes } from 'svelte/elements';
+import { cn, type WithElementRef } from '@/lib/utils';
 
-  export type CardProps = WithElementRef<HTMLAttributes<HTMLDivElement>>;
+export type CardProps = WithElementRef<HTMLAttributes<HTMLDivElement>>;
 </script>
 
 <script lang="ts">
-  let {
-    ref = $bindable(null),
-    class: className,
-    children,
-    ...restProps
-  }: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+let {
+  ref = $bindable(null),
+  class: className,
+  children,
+  ...restProps
+}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 
 <div

@@ -6,293 +6,293 @@ TodayCard组件实现了经典的毛玻璃效果，用于保护文本内容的�
 
 ```svelte
 <script lang="ts">
-  import type { TodayCard } from '@jet-app/app-store/api/models';
+import type { TodayCard } from '@jet-app/app-store/api/models';
 
-  import Artwork, { type Profile, getNaturalProfile } from '~/components/Artwork.svelte';
-  import LineClamp from '@amp/web-app-components/src/components/LineClamp/LineClamp.svelte';
-  import { sanitizeHtml } from '@amp/web-app-components/src/utils/sanitize-html';
-  import TodayCardMedia from '~/components/jet/today-card/TodayCardMedia.svelte';
-  import TodayCardOverlay from '~/components/jet/today-card/TodayCardOverlay.svelte';
-  import { isTodayCardMediaList } from '~/components/jet/today-card/media/TodayCardMediaList.svelte';
-  import LinkWrapper from '~/components/LinkWrapper.svelte';
+import Artwork, { type Profile, getNaturalProfile } from '~/components/Artwork.svelte';
+import LineClamp from '@amp/web-app-components/src/components/LineClamp/LineClamp.svelte';
+import { sanitizeHtml } from '@amp/web-app-components/src/utils/sanitize-html';
+import TodayCardMedia from '~/components/jet/today-card/TodayCardMedia.svelte';
+import TodayCardOverlay from '~/components/jet/today-card/TodayCardOverlay.svelte';
+import { isTodayCardMediaList } from '~/components/jet/today-card/media/TodayCardMediaList.svelte';
+import LinkWrapper from '~/components/LinkWrapper.svelte';
 
-  import { colorAsString } from '~/utils/color';
-  import { bestBackgroundColor } from './background-color-utils';
+import { colorAsString } from '~/utils/color';
+import { bestBackgroundColor } from './background-color-utils';
 
-  export let card: TodayCard;
+export let card: TodayCard;
 
-  /**
-   * When set to `true`, this component will not enable the `clickAction` provided by the
-   * `card`
-   *
-   * This can be useful on the "story" page, where the card will link back to the page
-   * currently being viewed
-   */
-  export let suppressClickAction: boolean = false;
+/**
+ * When set to `true`, this component will not enable the `clickAction` provided by the
+ * `card`
+ *
+ * This can be useful on the "story" page, where the card will link back to the page
+ * currently being viewed
+ */
+export let suppressClickAction: boolean = false;
 
-  /**
-   * A `Profile` to override the default for the card's media
-   */
-  export let artworkProfile: Profile | undefined = undefined;
+/**
+ * A `Profile` to override the default for the card's media
+ */
+export let artworkProfile: Profile | undefined = undefined;
 
-  let useProtectionLayer: boolean;
-  let useBlurryProtectionLayer: boolean;
-  let useGradientProtectionLayer: boolean;
-  let useListStyle: boolean;
-  let accentColor: string;
+let useProtectionLayer: boolean;
+let useBlurryProtectionLayer: boolean;
+let useGradientProtectionLayer: boolean;
+let useListStyle: boolean;
+let accentColor: string;
 
-  $: ({
-    heading,
-    title,
-    inlineDescription,
-    titleArtwork,
-    overlay,
-    media,
-    editorialDisplayOptions,
-    style = 'light',
-    clickAction,
-  } = card);
-  $: action = suppressClickAction ? undefined : clickAction;
+$: ({
+  heading,
+  title,
+  inlineDescription,
+  titleArtwork,
+  overlay,
+  media,
+  editorialDisplayOptions,
+  style = 'light',
+  clickAction,
+} = card);
+$: action = suppressClickAction ? undefined : clickAction;
 
-  $: {
-    const isAppEvent = media?.kind === 'appEvent';
-    const isList = !!media && isTodayCardMediaList(media);
+$: {
+  const isAppEvent = media?.kind === 'appEvent';
+  const isList = !!media && isTodayCardMediaList(media);
 
-    useListStyle = isList;
-    useProtectionLayer =
-      editorialDisplayOptions?.useTextProtectionColor ||
-      editorialDisplayOptions?.useMaterialBlur ||
-      false;
-    useBlurryProtectionLayer = useProtectionLayer && !isAppEvent && !isList;
-    useGradientProtectionLayer = useProtectionLayer && isAppEvent;
-    accentColor = colorAsString(bestBackgroundColor(card.media));
-  }
+  useListStyle = isList;
+  useProtectionLayer =
+    editorialDisplayOptions?.useTextProtectionColor ||
+    editorialDisplayOptions?.useMaterialBlur ||
+    false;
+  useBlurryProtectionLayer = useProtectionLayer && !isAppEvent && !isList;
+  useGradientProtectionLayer = useProtectionLayer && isAppEvent;
+  accentColor = colorAsString(bestBackgroundColor(card.media));
+}
 </script>
 
 <style lang="scss">
-  @property --gradient-color {
-    syntax: '<color>';
-    inherits: true;
-    initial-value: #000;
-  }
+@property --gradient-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #000;
+}
 
-  .today-card {
-    --today-card-gutter: 16px;
-    --today-card-border-radius: var(--border-radius, var(--global-border-radius-large));
-    --protection-layer-bottom-offset: 0px;
-    --gradient-color: var(--today-card-accent-color);
-    background-color: var(--today-card-accent-color);
-    position: relative;
-    display: flex;
-    align-items: end;
-    height: 100%;
-    overflow: hidden;
-    color: var(--today-card-text-color);
-    container-type: size;
-    container-name: today-card;
-    border-radius: var(--today-card-border-radius);
-    box-shadow: var(--shadow-small);
-  }
+.today-card {
+  --today-card-gutter: 16px;
+  --today-card-border-radius: var(--border-radius, var(--global-border-radius-large));
+  --protection-layer-bottom-offset: 0px;
+  --gradient-color: var(--today-card-accent-color);
+  background-color: var(--today-card-accent-color);
+  position: relative;
+  display: flex;
+  align-items: end;
+  height: 100%;
+  overflow: hidden;
+  color: var(--today-card-text-color);
+  container-type: size;
+  container-name: today-card;
+  border-radius: var(--today-card-border-radius);
+  box-shadow: var(--shadow-small);
+}
 
-  .today-card.with-overlay {
-    --protection-layer-bottom-offset: 80px;
-  }
+.today-card.with-overlay {
+  --protection-layer-bottom-offset: 80px;
+}
 
-  .today-card.light,
-  .today-card.dark {
-    --today-card-text-color: rgb(255, 255, 255);
-    --today-card-text-accent-color: rgba(255, 255, 255, 0.56);
-    --today-card-text-accent-blend-mode: plus-lighter;
-    --today-card-background-tint-color: rgba(0, 0, 0, 0.18);
-  }
+.today-card.light,
+.today-card.dark {
+  --today-card-text-color: rgb(255, 255, 255);
+  --today-card-text-accent-color: rgba(255, 255, 255, 0.56);
+  --today-card-text-accent-blend-mode: plus-lighter;
+  --today-card-background-tint-color: rgba(0, 0, 0, 0.18);
+}
 
-  .today-card.white {
-    --today-card-text-color: var(--systemPrimary-onLight);
-    --today-card-text-accent-color: rgba(0, 0, 0, 0.56);
-    --today-card-background-tint-color: rgba(255, 255, 255, 0.33);
-    --today-card-text-accent-blend-mode: revert;
-  }
+.today-card.white {
+  --today-card-text-color: var(--systemPrimary-onLight);
+  --today-card-text-accent-color: rgba(0, 0, 0, 0.56);
+  --today-card-background-tint-color: rgba(255, 255, 255, 0.33);
+  --today-card-text-accent-blend-mode: revert;
+}
 
-  .today-card :global(.artwork-component) {
-    z-index: unset;
-  }
+.today-card :global(.artwork-component) {
+  z-index: unset;
+}
 
-  .wrapper {
-    position: absolute;
-    display: flex;
-    width: 100%;
-    height: 100%;
-  }
+.wrapper {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
 
-  .content-container {
-    position: relative;
-  }
+.content-container {
+  position: relative;
+}
 
-  .information-layer {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    align-self: flex-end;
-    width: 100%;
-    height: 100%;
-    border-radius: var(--today-card-border-radius);
-    overflow: hidden;
-  }
+.information-layer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-self: flex-end;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--today-card-border-radius);
+  overflow: hidden;
+}
 
-  .information-layer > :global(a) {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-    justify-content: end;
-  }
+.information-layer > :global(a) {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: end;
+}
 
+.information-layer.with-gradient {
+  // A smooth bottom-to-top gradient with an intermediate stop at 60% of the accent color's
+  // opacity to ease the hard transition.
+  --gradient-color-end-position: 22%;
+  --gradient-fade-end-position: 50%;
+  background: linear-gradient(
+    0deg,
+    var(--gradient-color) var(--gradient-color-end-position),
+    color-mix(in srgb, var(--gradient-color) 60%, transparent)
+      calc((var(--gradient-color-end-position) + var(--gradient-fade-end-position)) / 2),
+    transparent var(--gradient-fade-end-position)
+  );
+  transition:
+    --accent-color-end 500ms ease-out,
+    --fade-end 350ms ease-out,
+    --gradient-color 350ms ease-out;
+}
+
+.information-layer.with-gradient.with-action:has(> a:hover) {
+  // Darkens the color used in the gradient on hover
+  --gradient-color: color-mix(in srgb, var(--today-card-accent-color) 93%, black);
+}
+
+@container today-card (aspect-ratio >= 16/9) {
   .information-layer.with-gradient {
-    // A smooth bottom-to-top gradient with an intermediate stop at 60% of the accent color's
-    // opacity to ease the hard transition.
-    --gradient-color-end-position: 22%;
-    --gradient-fade-end-position: 50%;
-    background: linear-gradient(
-      0deg,
-      var(--gradient-color) var(--gradient-color-end-position),
-      color-mix(in srgb, var(--gradient-color) 60%, transparent)
-        calc((var(--gradient-color-end-position) + var(--gradient-fade-end-position)) / 2),
-      transparent var(--gradient-fade-end-position)
-    );
-    transition:
-      --accent-color-end 500ms ease-out,
-      --fade-end 350ms ease-out,
-      --gradient-color 350ms ease-out;
+    --accent-color-end: 30%;
   }
+}
 
-  .information-layer.with-gradient.with-action:has(> a:hover) {
-    // Darkens the color used in the gradient on hover
-    --gradient-color: color-mix(in srgb, var(--today-card-accent-color) 93%, black);
+.protection-layer {
+  --brightness: 0.95;
+  position: absolute;
+  width: 100%;
+  // On cards with overlays (app lockups at the bottom), we increase the height of the
+  // protection layer and shift it downward the same amount, so it is aligned to bottom
+  // of the overlay.
+  height: calc(100% + var(--protection-layer-bottom-offset) + 60px);
+  bottom: calc(-1 * var(--protection-layer-bottom-offset));
+  background: var(--today-card-background-tint-color);
+  backdrop-filter: blur(34px) brightness(var(--brightness)) saturate(1.6) contrast(1.1);
+  mask-image: linear-gradient(
+    to top,
+    black 30%,
+    rgba(0, 0, 0, 0.75) 70%,
+    rgba(0, 0, 0, 0.4) 86%,
+    transparent 100%
+  );
+  transition: backdrop-filter 210ms ease-in;
+}
+
+.information-layer:has(> a:hover) .protection-layer {
+  --brightness: 0.88;
+}
+
+.badge {
+  font: var(--callout-emphasized);
+  margin-bottom: 4px;
+  mix-blend-mode: var(--today-card-text-accent-blend-mode);
+  color: var(--today-card-text-accent-color);
+}
+
+.title-container {
+  width: auto;
+  position: relative;
+  padding: 0 var(--today-card-gutter) var(--today-card-gutter);
+}
+
+@container today-card (orientation: landscape) {
+  .title-artwork-container {
+    width: 33%;
+    min-width: 200px;
+    max-width: 300px;
+    padding-bottom: 8px;
   }
+}
 
-  @container today-card (aspect-ratio >= 16/9) {
-    .information-layer.with-gradient {
-      --accent-color-end: 30%;
+@container today-card (orientation: portrait) {
+  .title-artwork-container {
+    max-width: 75%;
+    padding-bottom: 8px;
+  }
+}
+
+.title {
+  font: var(--header-emphasized);
+  color: var(--today-card-text-color);
+  text-wrap: pretty;
+}
+
+.description {
+  font: var(--body);
+  padding-top: calc(var(--today-card-gutter) / 2);
+  mix-blend-mode: var(--today-card-text-accent-blend-mode);
+  color: var(--today-card-text-accent-color);
+  text-wrap: pretty;
+  z-index: 1;
+  position: relative;
+}
+
+.overlay {
+  z-index: 1;
+  position: relative;
+  padding: var(--today-card-gutter);
+}
+
+.overlay.blur-only {
+  backdrop-filter: blur(50px);
+}
+
+.overlay.light {
+  background-image: linear-gradient(rgba(225, 225, 225, 0.15) 0 0);
+}
+
+.overlay.dark {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.15) 0 0);
+}
+
+.list {
+  background: var(--systemPrimary-onDark);
+  padding: var(--today-card-gutter) 0;
+  width: 100%;
+  flex-direction: column;
+
+  @media (prefers-color-scheme: dark) {
+    --title-color: var(--systemPrimary);
+    background: var(--systemQuaternary);
+
+    .title {
+      --today-card-text-color: var(--systemPrimary);
+    }
+
+    .badge {
+      --today-card-text-accent-color: var(--systemSecondary);
     }
   }
+}
 
-  .protection-layer {
-    --brightness: 0.95;
-    position: absolute;
-    width: 100%;
-    // On cards with overlays (app lockups at the bottom), we increase the height of the
-    // protection layer and shift it downward the same amount, so it is aligned to bottom
-    // of the overlay.
-    height: calc(100% + var(--protection-layer-bottom-offset) + 60px);
-    bottom: calc(-1 * var(--protection-layer-bottom-offset));
-    background: var(--today-card-background-tint-color);
-    backdrop-filter: blur(34px) brightness(var(--brightness)) saturate(1.6) contrast(1.1);
-    mask-image: linear-gradient(
-      to top,
-      black 30%,
-      rgba(0, 0, 0, 0.75) 70%,
-      rgba(0, 0, 0, 0.4) 86%,
-      transparent 100%
-    );
-    transition: backdrop-filter 210ms ease-in;
-  }
+.list .wrapper {
+  position: relative;
+  height: auto;
+  width: 100%;
+}
 
-  .information-layer:has(> a:hover) .protection-layer {
-    --brightness: 0.88;
-  }
-
-  .badge {
-    font: var(--callout-emphasized);
-    margin-bottom: 4px;
-    mix-blend-mode: var(--today-card-text-accent-blend-mode);
-    color: var(--today-card-text-accent-color);
-  }
-
-  .title-container {
-    width: auto;
-    position: relative;
-    padding: 0 var(--today-card-gutter) var(--today-card-gutter);
-  }
-
-  @container today-card (orientation: landscape) {
-    .title-artwork-container {
-      width: 33%;
-      min-width: 200px;
-      max-width: 300px;
-      padding-bottom: 8px;
-    }
-  }
-
-  @container today-card (orientation: portrait) {
-    .title-artwork-container {
-      max-width: 75%;
-      padding-bottom: 8px;
-    }
-  }
-
-  .title {
-    font: var(--header-emphasized);
-    color: var(--today-card-text-color);
-    text-wrap: pretty;
-  }
-
-  .description {
-    font: var(--body);
-    padding-top: calc(var(--today-card-gutter) / 2);
-    mix-blend-mode: var(--today-card-text-accent-blend-mode);
-    color: var(--today-card-text-accent-color);
-    text-wrap: pretty;
-    z-index: 1;
-    position: relative;
-  }
-
-  .overlay {
-    z-index: 1;
-    position: relative;
-    padding: var(--today-card-gutter);
-  }
-
-  .overlay.blur-only {
-    backdrop-filter: blur(50px);
-  }
-
-  .overlay.light {
-    background-image: linear-gradient(rgba(225, 225, 225, 0.15) 0 0);
-  }
-
-  .overlay.dark {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.15) 0 0);
-  }
-
-  .list {
-    background: var(--systemPrimary-onDark);
-    padding: var(--today-card-gutter) 0;
-    width: 100%;
-    flex-direction: column;
-
-    @media (prefers-color-scheme: dark) {
-      --title-color: var(--systemPrimary);
-      background: var(--systemQuaternary);
-
-      .title {
-        --today-card-text-color: var(--systemPrimary);
-      }
-
-      .badge {
-        --today-card-text-accent-color: var(--systemSecondary);
-      }
-    }
-  }
-
-  .list .wrapper {
-    position: relative;
-    height: auto;
-    width: 100%;
-  }
-
-  .list .information-layer {
-    padding-top: 0;
-  }
+.list .information-layer {
+  padding-top: 0;
+}
 </style>
 
 <!--
@@ -432,25 +432,25 @@ GradientOverlay是一个简单的组件，用于创建带模糊效果的渐变�
 
 ```svelte
 <script lang="ts">
-  export let shouldDarken: boolean = true;
+export let shouldDarken: boolean = true;
 </script>
 
 <style>
-  .gradient-overlay {
-    position: absolute;
-    z-index: 1;
-    bottom: 0;
-    width: 100%;
-    height: var(--height, 60%);
-    border-radius: var(--border-radius, var(--global-border-radius-large));
-    background: linear-gradient(
-      transparent,
-      var(--color, var(--systemSecondary-onLight)) var(--height, 100%)
-    );
-    backdrop-filter: blur(10px);
-    filter: saturate(1.5) brightness(var(--brightness));
-    mask-image: linear-gradient(180deg, transparent 6%, rgb(0, 0, 0.5) 85%);
-  }
+.gradient-overlay {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  width: 100%;
+  height: var(--height, 60%);
+  border-radius: var(--border-radius, var(--global-border-radius-large));
+  background: linear-gradient(
+    transparent,
+    var(--color, var(--systemSecondary-onLight)) var(--height, 100%)
+  );
+  backdrop-filter: blur(10px);
+  filter: saturate(1.5) brightness(var(--brightness));
+  mask-image: linear-gradient(180deg, transparent 6%, rgb(0, 0, 0.5) 85%);
+}
 </style>
 
 <div class="gradient-overlay" style:--brightness={shouldDarken ? 0.85 : 1} />
@@ -470,59 +470,59 @@ GradientOverlay是一个简单的组件，用于创建带模糊效果的渐变�
 
 ```svelte
 <script lang="ts">
-  import type { Artwork as JetArtworkType } from '@jet-app/app-store/api/models';
-  import { intersectionObserver } from '@amp/web-app-components/src/actions/intersection-observer';
-  import { buildSrc } from '@amp/web-app-components/src/components/Artwork/utils/srcset';
-  import ResizeDetector from '@amp/web-app-components/src/components/helpers/ResizeDetector.svelte';
-  import { colorAsString } from '~/utils/color';
+import type { Artwork as JetArtworkType } from '@jet-app/app-store/api/models';
+import { intersectionObserver } from '@amp/web-app-components/src/actions/intersection-observer';
+import { buildSrc } from '@amp/web-app-components/src/components/Artwork/utils/srcset';
+import ResizeDetector from '@amp/web-app-components/src/components/helpers/ResizeDetector.svelte';
+import { colorAsString } from '~/utils/color';
 
-  export let artwork: JetArtworkType;
-  export let active: boolean = false;
+export let artwork: JetArtworkType;
+export let active: boolean = false;
 
-  $: isBackgroundImageLoaded = false;
-  $: backgroundImage = artwork
-    ? buildSrc(
-        artwork.template,
-        {
-          crop: 'sr',
-          width: 400,
-          height: Math.floor(400 / 1.6667),
-          fileType: 'webp',
-        },
-        {}
-      )
-    : undefined;
+$: isBackgroundImageLoaded = false;
+$: backgroundImage = artwork
+  ? buildSrc(
+      artwork.template,
+      {
+        crop: 'sr',
+        width: 400,
+        height: Math.floor(400 / 1.6667),
+        fileType: 'webp',
+      },
+      {}
+    )
+  : undefined;
 
-  $: if (backgroundImage) {
-    const img = new Image();
-    img.onload = () => (isBackgroundImageLoaded = true);
-    img.src = backgroundImage;
-  }
+$: if (backgroundImage) {
+  const img = new Image();
+  img.onload = () => (isBackgroundImageLoaded = true);
+  img.src = backgroundImage;
+}
 
-  let resizing = false;
-  const handleResizeUpdate = (e: CustomEvent<{ isResizing: boolean }>) =>
-    (resizing = e.detail.isResizing);
+let resizing = false;
+const handleResizeUpdate = (e: CustomEvent<{ isResizing: boolean }>) =>
+  (resizing = e.detail.isResizing);
 
-  let isOutOfView = true;
-  const handleIntersectionOberserverUpdate = (isIntersectingViewport: boolean) =>
-    (isOutOfView = !isIntersectingViewport);
+let isOutOfView = true;
+const handleIntersectionOberserverUpdate = (isIntersectingViewport: boolean) =>
+  (isOutOfView = !isIntersectingViewport);
 </script>
 
 <style>
-  .container {
-    --veil: rgb(240, 240, 240, 0.65);
-    --speed: 0.66s;
-    --aspect-ratio: 16/9;
-    --scale: 1.2;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    aspect-ratio: var(--aspect-ratio);
-    max-height: 900px;
-    opacity: 0;
+.container {
+  --veil: rgb(240, 240, 240, 0.65);
+  --speed: 0.66s;
+  --aspect-ratio: 16/9;
+  --scale: 1.2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: var(--aspect-ratio);
+  max-height: 900px;
+  opacity: 0;
 
-    /*
+  /*
             This stack of background images represents the following three layers, listed front-to-back:
 
             1) A gradient from transparent to white that acts as a mask for the entire container.
@@ -533,31 +533,31 @@ GradientOverlay是一个简单的组件，用于创建带模糊效果的渐变�
                used in `background-image`.
             3) The joe color of the background image that will eventualy be loaded.
         */
-    background-image:
-      linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, var(--pageBg) 80%),
-      linear-gradient(0deg, var(--veil) 0%, var(--veil) 80%),
-      linear-gradient(0deg, var(--background-color) 0%, var(--background-color) 80%);
-    background-position: center;
-    background-size: 120%;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, var(--pageBg) 80%),
+    linear-gradient(0deg, var(--veil) 0%, var(--veil) 80%),
+    linear-gradient(0deg, var(--background-color) 0%, var(--background-color) 80%);
+  background-position: center;
+  background-size: 120%;
 
-    /*
+  /*
             Blurring via the CSS filter does not extend edge-to-edge of the contents width, but we
             can mitigate that by ever-so-slightly bumping up the `scale` of content so it bleeds off
             the page cleanly.
         */
-    filter: blur(20px) saturate(1.3);
-    transform: scale(var(--scale));
-    transition:
-      opacity calc(var(--speed) * 2) ease-out,
-      background-size var(--speed) ease-in;
+  filter: blur(20px) saturate(1.3);
+  transform: scale(var(--scale));
+  transition:
+    opacity calc(var(--speed) * 2) ease-out,
+    background-size var(--speed) ease-in;
 
-    @media (prefers-color-scheme: dark) {
-      --veil: rgba(0, 0, 0, 0.5);
-    }
+  @media (prefers-color-scheme: dark) {
+    --veil: rgba(0, 0, 0, 0.5);
   }
+}
 
-  .container.loaded {
-    /*
+.container.loaded {
+  /*
             This stack of background images represents the following three layers, listed front-to-front:
 
             1) A gradient from transparent to white that acts as a mask for the entire container.
@@ -568,75 +568,75 @@ GradientOverlay是一个简单的组件，用于创建带模糊效果的渐变�
                used in `background-image`.
             3) The actual background image.
         */
-    background-image:
-      linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, var(--pageBg) 80%),
-      linear-gradient(0deg, var(--veil) 0%, var(--veil) 80%), var(--background-image);
-  }
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, var(--pageBg) 80%),
+    linear-gradient(0deg, var(--veil) 0%, var(--veil) 80%), var(--background-image);
+}
 
-  .container.active {
-    opacity: 1;
-    transition: opacity calc(var(--speed) / 2) ease-in;
-    background-size: 100%;
-  }
+.container.active {
+  opacity: 1;
+  transition: opacity calc(var(--speed) / 2) ease-in;
+  background-size: 100%;
+}
 
-  .overlay {
-    position: absolute;
-    z-index: 2;
-    top: 0;
-    left: 0;
-    width: 100%;
-    aspect-ratio: var(--aspect-ratio);
-    max-height: 900px;
-    opacity: 0;
-    background-image: var(--background-image);
-    background-position: 100% 100%;
+.overlay {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: var(--aspect-ratio);
+  max-height: 900px;
+  opacity: 0;
+  background-image: var(--background-image);
+  background-position: 100% 100%;
+  background-size: 250%;
+  filter: brightness(1.3) saturate(0);
+  mix-blend-mode: overlay;
+  will-change: opacity, background-position;
+  animation: shift-background 60s infinite linear alternate;
+  animation-play-state: paused;
+  transition: opacity var(--speed) ease-in;
+}
+
+.active .overlay {
+  opacity: 0.3;
+  animation-play-state: running;
+  transition: opacity calc(var(--speed) * 2) ease-in calc(var(--speed) * 2);
+}
+
+.active.out-of-view .overlay,
+.active.resizing .overlay {
+  animation-play-state: paused;
+  opacity: 0;
+}
+
+@keyframes shift-background {
+  0% {
+    background-position: 0% 50%;
     background-size: 250%;
-    filter: brightness(1.3) saturate(0);
-    mix-blend-mode: overlay;
-    will-change: opacity, background-position;
-    animation: shift-background 60s infinite linear alternate;
-    animation-play-state: paused;
-    transition: opacity var(--speed) ease-in;
   }
 
-  .active .overlay {
-    opacity: 0.3;
-    animation-play-state: running;
-    transition: opacity calc(var(--speed) * 2) ease-in calc(var(--speed) * 2);
+  25% {
+    background-position: 60% 20%;
+    background-size: 300%;
   }
 
-  .active.out-of-view .overlay,
-  .active.resizing .overlay {
-    animation-play-state: paused;
-    opacity: 0;
+  50% {
+    background-position: 100% 50%;
+    background-size: 320%;
   }
 
-  @keyframes shift-background {
-    0% {
-      background-position: 0% 50%;
-      background-size: 250%;
-    }
-
-    25% {
-      background-position: 60% 20%;
-      background-size: 300%;
-    }
-
-    50% {
-      background-position: 100% 50%;
-      background-size: 320%;
-    }
-
-    75% {
-      background-position: 40% 100%;
-      background-size: 220%;
-    }
-
-    100% {
-      background-position: 20% 50%;
-      background-size: 300%;
-    }
+  75% {
+    background-position: 40% 100%;
+    background-size: 220%;
   }
+
+  100% {
+    background-position: 20% 50%;
+    background-size: 300%;
+  }
+}
 </style>
 
 {#if backgroundImage}
@@ -866,313 +866,313 @@ Carousel组件协调多个Hero组件的背景模糊效果。
 
 ```svelte
 <script lang="ts">
-  import { writable } from 'svelte/store';
-  import { isSome } from '@jet/environment/types/optional';
-  import type {
-    WebNavigation,
-    WebNavigationLink,
-  } from '@jet-app/app-store/api/models/web-navigation';
-  import type { WebSearchFlowAction } from '@jet-app/app-store/common/search/web-search-action';
-  import { isSearchResultsPageIntent } from '@jet-app/app-store/api/intents/search-results-page-intent';
+import { writable } from 'svelte/store';
+import { isSome } from '@jet/environment/types/optional';
+import type {
+  WebNavigation,
+  WebNavigationLink,
+} from '@jet-app/app-store/api/models/web-navigation';
+import type { WebSearchFlowAction } from '@jet-app/app-store/common/search/web-search-action';
+import { isSearchResultsPageIntent } from '@jet-app/app-store/api/intents/search-results-page-intent';
 
-  import Navigation from '@amp/web-app-components/src/components/Navigation/Navigation.svelte';
-  import { sidebarIsHidden } from '@amp/web-app-components/src/stores/sidebar-hidden';
+import Navigation from '@amp/web-app-components/src/components/Navigation/Navigation.svelte';
+import { sidebarIsHidden } from '@amp/web-app-components/src/stores/sidebar-hidden';
 
-  import AppStoreLogo from '~/components/icons/AppStoreLogo.svg';
-  import PlatformSelectorDropdown from '~/components/jet/web-navigation/PlatformSelectorDropdown.svelte';
-  import FlowAction from '~/components/jet/action/FlowAction.svelte';
-  import SystemImage, { isSystemImageArtwork } from '~/components/SystemImage.svelte';
-  import SearchInput from '~/components/navigation/SearchInput.svelte';
-  import SFSymbol from '~/components/SFSymbol.svelte';
+import AppStoreLogo from '~/components/icons/AppStoreLogo.svg';
+import PlatformSelectorDropdown from '~/components/jet/web-navigation/PlatformSelectorDropdown.svelte';
+import FlowAction from '~/components/jet/action/FlowAction.svelte';
+import SystemImage, { isSystemImageArtwork } from '~/components/SystemImage.svelte';
+import SearchInput from '~/components/navigation/SearchInput.svelte';
+import SFSymbol from '~/components/SFSymbol.svelte';
 
-  import { getJetPerform } from '~/jet';
-  import { getI18n } from '~/stores/i18n';
-  import {
-    type NavigationItemWithTab,
-    navigationIdFromLink,
-    makeNavLinks,
-  } from '~/components/navigation/navigation-items';
-  import mediaQueries from '~/utils/media-queries';
+import { getJetPerform } from '~/jet';
+import { getI18n } from '~/stores/i18n';
+import {
+  type NavigationItemWithTab,
+  navigationIdFromLink,
+  makeNavLinks,
+} from '~/components/navigation/navigation-items';
+import mediaQueries from '~/utils/media-queries';
 
-  import { fade, type EasingFunction } from 'svelte/transition';
-  import { circOut } from 'svelte/easing';
-  import { flyAndBlur } from '~/utils/transition';
-  import { makeCategoryTabsIntent } from '@jet-app/app-store/api/intents/category-tabs-intent';
-  import { getJet } from '~/jet';
-  import { getPlatformFromPage } from '~/utils/seo/common';
-  import type { NavigationId } from '@amp/web-app-components/src/types';
+import { fade, type EasingFunction } from 'svelte/transition';
+import { circOut } from 'svelte/easing';
+import { flyAndBlur } from '~/utils/transition';
+import { makeCategoryTabsIntent } from '@jet-app/app-store/api/intents/category-tabs-intent';
+import { getJet } from '~/jet';
+import { getPlatformFromPage } from '~/utils/seo/common';
+import type { NavigationId } from '@amp/web-app-components/src/types';
 
-  const i18n = getI18n();
-  const perform = getJetPerform();
-  const jet = getJet();
+const i18n = getI18n();
+const perform = getJetPerform();
+const jet = getJet();
 
-  const categoryTabsCache: Record<string, WebNavigationLink[]> = {};
-  let categoryTabLinks: WebNavigationLink[] = [];
-  let currentTabStore = writable<NavigationId | null>(null);
+const categoryTabsCache: Record<string, WebNavigationLink[]> = {};
+let categoryTabLinks: WebNavigationLink[] = [];
+let currentTabStore = writable<NavigationId | null>(null);
 
-  export let webNavigation: WebNavigation;
+export let webNavigation: WebNavigation;
 
-  $: isXSmallViewport = $mediaQueries === 'xsmall';
-  $: searchAction = webNavigation.searchAction as WebSearchFlowAction;
-  // Mobile first means the inline items are hidden
-  // However, we still want the list visible in SSR (which is fine for mobile
-  // since the menu won't be expanded by default)
-  $: inlinePlatformItems =
-    isXSmallViewport || typeof window === 'undefined' ? webNavigation.platforms : [];
+$: isXSmallViewport = $mediaQueries === 'xsmall';
+$: searchAction = webNavigation.searchAction as WebSearchFlowAction;
+// Mobile first means the inline items are hidden
+// However, we still want the list visible in SSR (which is fine for mobile
+// since the menu won't be expanded by default)
+$: inlinePlatformItems =
+  isXSmallViewport || typeof window === 'undefined' ? webNavigation.platforms : [];
 
-  $: if (webNavigation && typeof window !== 'undefined') {
-    fetchCategoryTabs(webNavigation);
+$: if (webNavigation && typeof window !== 'undefined') {
+  fetchCategoryTabs(webNavigation);
+}
+
+async function fetchCategoryTabs(nav: WebNavigation) {
+  const platform = getPlatformFromPage({
+    webNavigation: nav,
+  });
+
+  if (!platform) {
+    categoryTabLinks = [];
+    return;
   }
 
-  async function fetchCategoryTabs(nav: WebNavigation) {
-    const platform = getPlatformFromPage({
-      webNavigation: nav,
-    });
+  if (categoryTabsCache[platform]) {
+    categoryTabLinks = updateActiveStates(categoryTabsCache[platform]);
+  } else {
+    try {
+      const data = await jet.dispatch(
+        makeCategoryTabsIntent({
+          platform,
+        })
+      );
 
-    if (!platform) {
+      categoryTabsCache[platform] = data;
+      categoryTabLinks = updateActiveStates(data);
+    } catch (error) {
       categoryTabLinks = [];
-      return;
     }
-
-    if (categoryTabsCache[platform]) {
-      categoryTabLinks = updateActiveStates(categoryTabsCache[platform]);
-    } else {
-      try {
-        const data = await jet.dispatch(
-          makeCategoryTabsIntent({
-            platform,
-          })
-        );
-
-        categoryTabsCache[platform] = data;
-        categoryTabLinks = updateActiveStates(data);
-      } catch (error) {
-        categoryTabLinks = [];
-      }
-    }
-
-    updateCurrentTab();
   }
 
-  function updateActiveStates(tabs: WebNavigationLink[]): WebNavigationLink[] {
-    return tabs.map((link) => ({
-      ...link,
-      isActive: link.action?.destination?.id
-        ? window.location.pathname.includes(link.action.destination.id)
-        : false,
-    }));
-  }
+  updateCurrentTab();
+}
 
-  function updateCurrentTab() {
-    const allLinks: WebNavigationLink[] = [...categoryTabLinks, ...webNavigation.tabs];
+function updateActiveStates(tabs: WebNavigationLink[]): WebNavigationLink[] {
+  return tabs.map((link) => ({
+    ...link,
+    isActive: link.action?.destination?.id
+      ? window.location.pathname.includes(link.action.destination.id)
+      : false,
+  }));
+}
 
-    const activeLink = allLinks.find((link) => link.isActive);
-    currentTabStore.set(activeLink ? navigationIdFromLink(activeLink) : null);
-  }
+function updateCurrentTab() {
+  const allLinks: WebNavigationLink[] = [...categoryTabLinks, ...webNavigation.tabs];
 
-  function handleMenuItemClick(event: CustomEvent<NavigationItemWithTab>) {
-    const navigationItem = event.detail;
-    const tab = navigationItem.tab;
+  const activeLink = allLinks.find((link) => link.isActive);
+  currentTabStore.set(activeLink ? navigationIdFromLink(activeLink) : null);
+}
 
-    perform(tab.action);
-  }
+function handleMenuItemClick(event: CustomEvent<NavigationItemWithTab>) {
+  const navigationItem = event.detail;
+  const tab = navigationItem.tab;
 
-  const BASE_DELAY = 80;
-  const BASE_DURATION = 150;
-  const DURATION_SPREAD = 300;
+  perform(tab.action);
+}
 
-  // Returns an eased duration for a list item based on its index, e.g. items later in the list
-  // get longer durations, between BASE_DURATION and BASE_DURATION + DURATION_SPREAD.
-  function getEasedDuration({
-    i,
-    totalNumberOfItems,
-    easing = circOut,
-  }: {
-    i: number;
-    totalNumberOfItems: number;
-    easing?: EasingFunction;
-  }) {
-    const t = i / (totalNumberOfItems - 1);
-    return BASE_DURATION + easing(t) * DURATION_SPREAD;
-  }
+const BASE_DELAY = 80;
+const BASE_DURATION = 150;
+const DURATION_SPREAD = 300;
+
+// Returns an eased duration for a list item based on its index, e.g. items later in the list
+// get longer durations, between BASE_DURATION and BASE_DURATION + DURATION_SPREAD.
+function getEasedDuration({
+  i,
+  totalNumberOfItems,
+  easing = circOut,
+}: {
+  i: number;
+  totalNumberOfItems: number;
+  easing?: EasingFunction;
+}) {
+  const t = i / (totalNumberOfItems - 1);
+  return BASE_DURATION + easing(t) * DURATION_SPREAD;
+}
 </script>
 
 <style lang="scss">
-  .navigation-wrapper {
-    display: contents;
+.navigation-wrapper {
+  display: contents;
+}
+
+.platform-selector-container {
+  --header-gap: 3px;
+  --platform-selector-trigger-gap: var(--header-gap);
+  display: flex;
+  gap: var(--header-gap);
+  position: relative;
+
+  @media (--sidebar-visible) {
+    padding: 19px 25px 14px;
   }
+}
 
-  .platform-selector-container {
-    --header-gap: 3px;
-    --platform-selector-trigger-gap: var(--header-gap);
-    display: flex;
-    gap: var(--header-gap);
-    position: relative;
+// Japanese and Catalonian both require scaling down the platform selector in order to make it
+// fit cleanly in the sidebar, due to their longer character lengths.
+.platform-selector-container:lang(ja),
+.platform-selector-container:lang(ca) {
+  --scale-factor: 0.1;
+  z-index: 3;
+  transform: scale(calc(1 - var(--scale-factor)));
+  transform-origin: center left;
 
-    @media (--sidebar-visible) {
-      padding: 19px 25px 14px;
-    }
-  }
-
-  // Japanese and Catalonian both require scaling down the platform selector in order to make it
-  // fit cleanly in the sidebar, due to their longer character lengths.
-  .platform-selector-container:lang(ja),
-  .platform-selector-container:lang(ca) {
-    --scale-factor: 0.1;
-    z-index: 3;
-    transform: scale(calc(1 - var(--scale-factor)));
+  & :global(dialog) {
+    top: 60px;
+    // Since the `dialog` is a child of `platform-selector-container, we re-scale it back
+    // to it's original size by applying the inverse scale transformation.
+    transform: scale(calc(1 + var(--scale-factor)));
     transform-origin: center left;
-
-    & :global(dialog) {
-      top: 60px;
-      // Since the `dialog` is a child of `platform-selector-container, we re-scale it back
-      // to it's original size by applying the inverse scale transformation.
-      transform: scale(calc(1 + var(--scale-factor)));
-      transform-origin: center left;
-    }
   }
+}
 
-  .app-store-icon-container {
-    display: flex;
-    align-items: center;
-    gap: var(--header-gap);
-    font: var(--title-1);
-    font-weight: 600;
-  }
+.app-store-icon-container {
+  display: flex;
+  align-items: center;
+  gap: var(--header-gap);
+  font: var(--title-1);
+  font-weight: 600;
+}
 
-  .app-store-icon-container :global(svg) {
-    height: 18px;
-    position: relative;
-    top: 0.33px;
+.app-store-icon-container :global(svg) {
+  height: 18px;
+  position: relative;
+  top: 0.33px;
+  width: auto;
+
+  @media (--sidebar-visible) and (--range-xsmall-only) {
+    height: 22px;
     width: auto;
-
-    @media (--sidebar-visible) and (--range-xsmall-only) {
-      height: 22px;
-      width: auto;
-    }
   }
+}
 
-  .search-input-container {
-    margin: 0 25px;
-  }
+.search-input-container {
+  margin: 0 25px;
+}
 
-  .navigation-wrapper :global(.navigation__header) {
-    @media (--sidebar-visible) {
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
-  .navigation-wrapper :global(.navigation-item__link) {
-    height: 100%;
-    display: flex;
-  }
-
-  .navigation-wrapper :global(.navigation-item__icon) {
-    --navigation-item-icon-size: 32px;
-    width: var(--navigation-item-icon-size);
-    height: var(--navigation-item-icon-size);
-    display: flex;
-    justify-content: center;
-
-    @media (--sidebar-visible) {
-      --navigation-item-icon-size: 24px;
-    }
-  }
-
-  // Our SVG icons for the landing pages are sized differently than other Onyx apps,
-  // so we have to reach into the navigation component and style them so they look
-  // visually similar to the other Onyx apps
-  .navigation-wrapper :global(.navigation-item__icon svg) {
-    color: var(--keyColor);
-    width: 20px;
-
-    @media (--sidebar-visible) {
-      width: 18px;
-    }
-  }
-
-  // Below is styling for the "inline" version of the Platform Selector
-  .platform-selector-inline {
-    margin: 8px 32px;
-  }
-
-  ul {
+.navigation-wrapper :global(.navigation__header) {
+  @media (--sidebar-visible) {
     display: flex;
     flex-direction: column;
-    gap: 5px;
   }
+}
 
-  h3 {
-    color: var(--systemTertiary);
-    font: var(--body-emphasized);
-    margin: 0 0 10px;
-    padding-top: 20px;
+.navigation-wrapper :global(.navigation-item__link) {
+  height: 100%;
+  display: flex;
+}
 
-    @media (--sidebar-visible) {
-      font: var(--footnote-emphasized);
-      margin: 0 0 6px;
-      padding-top: 7px;
-    }
+.navigation-wrapper :global(.navigation-item__icon) {
+  --navigation-item-icon-size: 32px;
+  width: var(--navigation-item-icon-size);
+  height: var(--navigation-item-icon-size);
+  display: flex;
+  justify-content: center;
+
+  @media (--sidebar-visible) {
+    --navigation-item-icon-size: 24px;
   }
+}
 
-  .platform {
-    display: flex;
-    gap: 10px;
-    padding: 8px 0;
-    color: var(--systemTertiary);
+// Our SVG icons for the landing pages are sized differently than other Onyx apps,
+// so we have to reach into the navigation component and style them so they look
+// visually similar to the other Onyx apps
+.navigation-wrapper :global(.navigation-item__icon svg) {
+  color: var(--keyColor);
+  width: 20px;
 
-    @media (prefers-color-scheme: dark) {
-      color: var(--systemSecondary);
-    }
-  }
-
-  .platform,
-  .platform :global(svg) {
-    transition: color 210ms ease-out;
-  }
-
-  .platform:not(.is-active):hover,
-  .platform:not(.is-active):hover :global(svg) {
-    color: var(--systemPrimary);
-  }
-
-  .platform.is-active {
-    color: var(--systemPrimary);
-    font: var(--body-emphasized);
-  }
-
-  .platform.is-active :global(svg) {
-    color: currentColor;
-  }
-
-  .icon-container {
-    display: flex;
-  }
-
-  .icon-container :global(svg) {
-    color: var(--systemTertiary);
+  @media (--sidebar-visible) {
     width: 18px;
-    max-height: 16px;
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--systemSecondary);
-    }
   }
+}
 
-  .search-icon-container {
-    display: flex;
-  }
+// Below is styling for the "inline" version of the Platform Selector
+.platform-selector-inline {
+  margin: 8px 32px;
+}
 
-  .search-icon-container :global(svg) {
-    fill: var(--systemSecondary);
-    width: 16px;
-  }
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
-  .platform-title {
-    font: var(--body);
-    flex-grow: 1;
+h3 {
+  color: var(--systemTertiary);
+  font: var(--body-emphasized);
+  margin: 0 0 10px;
+  padding-top: 20px;
+
+  @media (--sidebar-visible) {
+    font: var(--footnote-emphasized);
+    margin: 0 0 6px;
+    padding-top: 7px;
   }
+}
+
+.platform {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  color: var(--systemTertiary);
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--systemSecondary);
+  }
+}
+
+.platform,
+.platform :global(svg) {
+  transition: color 210ms ease-out;
+}
+
+.platform:not(.is-active):hover,
+.platform:not(.is-active):hover :global(svg) {
+  color: var(--systemPrimary);
+}
+
+.platform.is-active {
+  color: var(--systemPrimary);
+  font: var(--body-emphasized);
+}
+
+.platform.is-active :global(svg) {
+  color: currentColor;
+}
+
+.icon-container {
+  display: flex;
+}
+
+.icon-container :global(svg) {
+  color: var(--systemTertiary);
+  width: 18px;
+  max-height: 16px;
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--systemSecondary);
+  }
+}
+
+.search-icon-container {
+  display: flex;
+}
+
+.search-icon-container :global(svg) {
+  fill: var(--systemSecondary);
+  width: 16px;
+}
+
+.platform-title {
+  font: var(--body);
+  flex-grow: 1;
+}
 </style>
 
 <div class="navigation-wrapper">
@@ -1284,40 +1284,40 @@ Carousel组件协调多个Hero组件的背景模糊效果。
 
 ```svelte
 <script lang="ts">
-  import {
-    type Page,
-    hasVisionProUrl,
-    isAppEventDetailPage,
-    isArticlePage,
-    isChartsHubPage,
-    isGenericPage,
-    isSearchLandingPage,
-    isShelfBasedProductPage,
-    isTopChartsPage,
-    isTodayPage,
-    isSearchResultsPage,
-    isStaticMessagePage,
-    isSeeAllPage,
-    isErrorPage,
-  } from '~/jet/models';
+import {
+  type Page,
+  hasVisionProUrl,
+  isAppEventDetailPage,
+  isArticlePage,
+  isChartsHubPage,
+  isGenericPage,
+  isSearchLandingPage,
+  isShelfBasedProductPage,
+  isTopChartsPage,
+  isTodayPage,
+  isSearchResultsPage,
+  isStaticMessagePage,
+  isSeeAllPage,
+  isErrorPage,
+} from '~/jet/models';
 
-  import AppEventDetailPage from './pages/AppEventDetailPage.svelte';
-  import ArticlePage from './pages/ArticlePage.svelte';
-  import ChartsHubPage from './pages/ChartsHubPage.svelte';
-  import DefaultPage from './pages/DefaultPage.svelte';
-  import ErrorPage from './pages/ErrorPage.svelte';
-  import ProductPage from './pages/ProductPage.svelte';
-  import VisionProPage from './pages/VisionProPage.svelte';
-  import StaticMessagePageComponent from './pages/StaticMessagePage.svelte';
-  import SearchLandingPage from './pages/SearchLandingPage.svelte';
-  import SearchResultsPage from './pages/SearchResultsPage.svelte';
-  import TopChartsPage from './pages/TopChartsPage.svelte';
-  import TodayPage from './pages/TodayPage.svelte';
-  import SeeAllPage from './pages/SeeAllPage.svelte';
-  import MetaTags from '~/components/structure/MetaTags.svelte';
-  import PageModal from '~/components/PageModal.svelte';
+import AppEventDetailPage from './pages/AppEventDetailPage.svelte';
+import ArticlePage from './pages/ArticlePage.svelte';
+import ChartsHubPage from './pages/ChartsHubPage.svelte';
+import DefaultPage from './pages/DefaultPage.svelte';
+import ErrorPage from './pages/ErrorPage.svelte';
+import ProductPage from './pages/ProductPage.svelte';
+import VisionProPage from './pages/VisionProPage.svelte';
+import StaticMessagePageComponent from './pages/StaticMessagePage.svelte';
+import SearchLandingPage from './pages/SearchLandingPage.svelte';
+import SearchResultsPage from './pages/SearchResultsPage.svelte';
+import TopChartsPage from './pages/TopChartsPage.svelte';
+import TodayPage from './pages/TodayPage.svelte';
+import SeeAllPage from './pages/SeeAllPage.svelte';
+import MetaTags from '~/components/structure/MetaTags.svelte';
+import PageModal from '~/components/PageModal.svelte';
 
-  export let page: Page;
+export let page: Page;
 </script>
 
 <MetaTags {page} />
@@ -1363,14 +1363,14 @@ Carousel组件协调多个Hero组件的背景模糊效果。
 
 ```svelte
 <script lang="ts">
-  import type { Page } from '~/jet/models';
+import type { Page } from '~/jet/models';
 
-  import PageComponent from '~/components/Page.svelte';
-  import ErrorComponent from '~/components/Error.svelte';
-  import LoadingSpinner from '@amp/web-app-components/src/components/LoadingSpinner/LoadingSpinner.svelte';
+import PageComponent from '~/components/Page.svelte';
+import ErrorComponent from '~/components/Error.svelte';
+import LoadingSpinner from '@amp/web-app-components/src/components/LoadingSpinner/LoadingSpinner.svelte';
 
-  export let page: Promise<Page> | Page;
-  export let isFirstPage: boolean;
+export let page: Promise<Page> | Page;
+export let isFirstPage: boolean;
 </script>
 
 {#await page}
@@ -1524,9 +1524,9 @@ import { FILE_TO_MIME_TYPE } from './constants';
 
 ```svelte
 <script lang="ts">
-  export let artwork: Artwork;
-  export let alt: string = '';
-  export let profile: Profile | string;
+export let artwork: Artwork;
+export let alt: string = '';
+export let profile: Profile | string;
 </script>
 ```
 

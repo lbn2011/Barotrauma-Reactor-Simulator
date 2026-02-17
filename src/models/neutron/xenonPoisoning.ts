@@ -29,10 +29,10 @@ interface XenonPoisoningOutput {
 /**
  * 计算氙-135中毒效应
  * 模拟裂变产物氙-135对反应堆反应性的影响
- * 
+ *
  * @param input 输入参数
  * @returns 氙中毒效应结果
- * 
+ *
  * @description
  * 氙-135中毒特性：
  * 1. 氙-135是铀裂变的副产品，通过碘-135衰变产生
@@ -41,7 +41,7 @@ interface XenonPoisoningOutput {
  * 4. 氙中毒在反应堆停堆后会先增加后减少，形成"氙峰"
  * 5. 这可能导致反应堆在停堆后短时间内无法重启
  */
-export function calculateXenonPoisoning(
+export function calculateXenonPoisoning (
   input: XenonPoisoningInput
 ): XenonPoisoningOutput {
   // 氙-135动力学方程
@@ -51,7 +51,7 @@ export function calculateXenonPoisoning(
     input.λ_Xe * input.Xe -
     input.σ_Xe * input.φ * input.Xe +
     input.γ_Xe * input.Σ_f * input.φ;
-  
+
   // 碘-135动力学方程
   // 碘-135浓度变化率 = 裂变直接产生 - 碘-135衰变
   const dI_dt = input.γ_I * input.Σ_f * input.φ - input.λ_I * input.I;
@@ -73,10 +73,10 @@ export function calculateXenonPoisoning(
 /**
  * 获取默认的衰变常数和产额值
  * 提供RBMK-1000反应堆氙中毒计算的默认参数
- * 
+ *
  * @returns 默认参数
  */
-export function getDefaultXenonParameters() {
+export function getDefaultXenonParameters () {
   return {
     λ_Xe: 2.95e-5, // 氙-135衰变常数（s⁻¹），半衰期约9.2小时
     λ_I: 2.87e-5, // 碘-135衰变常数（s⁻¹），半衰期约6.7小时

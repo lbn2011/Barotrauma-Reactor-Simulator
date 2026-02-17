@@ -9,7 +9,9 @@ import { defaultComponentConfig } from '@/config/components';
  * @param configPath - Path to configuration JSON file
  * @returns Component configuration object
  */
-export async function loadComponentConfig(configPath?: string): Promise<ComponentConfig> {
+export async function loadComponentConfig (
+  configPath?: string
+): Promise<ComponentConfig> {
   try {
     if (configPath) {
       // In a browser environment, we would use fetch
@@ -20,7 +22,10 @@ export async function loadComponentConfig(configPath?: string): Promise<Componen
     }
     return defaultComponentConfig;
   } catch (error) {
-    console.warn('Failed to load component configuration, using defaults:', error);
+    console.warn(
+      'Failed to load component configuration, using defaults:',
+      error
+    );
     return defaultComponentConfig;
   }
 }
@@ -31,7 +36,7 @@ export async function loadComponentConfig(configPath?: string): Promise<Componen
  * @param userConfig - User-provided component configuration
  * @returns Merged component configuration
  */
-export function mergeComponentConfig(
+export function mergeComponentConfig (
   defaultConfig: ComponentConfig,
   userConfig: Partial<ComponentConfig>
 ): ComponentConfig {
@@ -72,14 +77,16 @@ export function mergeComponentConfig(
  * @param baseConfig - Base component configuration
  * @returns Configuration factory function
  */
-export function createConfigFactory(baseConfig: ComponentConfig) {
+export function createConfigFactory (baseConfig: ComponentConfig) {
   return {
     /**
      * Get configuration for a specific component
      * @param componentName - Name of the component
      * @returns Component-specific configuration
      */
-    getConfig: <T extends keyof ComponentConfig>(componentName: T): ComponentConfig[T] => {
+    getConfig: <T extends keyof ComponentConfig>(
+      componentName: T
+    ): ComponentConfig[T] => {
       return baseConfig[componentName] as ComponentConfig[T];
     },
 
@@ -109,7 +116,9 @@ export function createConfigFactory(baseConfig: ComponentConfig) {
  * @param config - Optional configuration object
  * @returns Component configuration
  */
-export function loadConfigSync(config?: Partial<ComponentConfig>): ComponentConfig {
+export function loadConfigSync (
+  config?: Partial<ComponentConfig>
+): ComponentConfig {
   if (config) {
     return mergeComponentConfig(defaultComponentConfig, config);
   }

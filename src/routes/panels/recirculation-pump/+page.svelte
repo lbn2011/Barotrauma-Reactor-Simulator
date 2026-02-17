@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RecirculationPumpPanel from '../RecirculationPumpPanel.svelte';
+import RecirculationPumpPanel from '../RecirculationPumpPanel.svelte';
 </script>
 
 <RecirculationPumpPanel />

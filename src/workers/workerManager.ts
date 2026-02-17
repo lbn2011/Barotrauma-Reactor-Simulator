@@ -12,14 +12,6 @@ const enum WorkerType {
 }
 
 /**
- * Worker消息接口
- */
-interface WorkerMessage {
-  type: string; // 消息类型
-  data: any; // 消息数据
-}
-
-/**
  * Worker响应接口
  */
 interface WorkerResponse {
@@ -47,7 +39,7 @@ class WorkerManager {
    * 初始化Worker
    * 创建物理计算和数据处理Worker
    */
-  initialize() {
+  initialize () {
     if (this.isInitialized) return;
 
     // 创建物理计算Worker
@@ -104,7 +96,7 @@ class WorkerManager {
    * @param workerType Worker类型
    * @param response 响应数据
    */
-  private handleWorkerMessage(
+  private handleWorkerMessage (
     workerType: WorkerType,
     response: WorkerResponse
   ) {
@@ -125,7 +117,7 @@ class WorkerManager {
    * @param data 消息数据
    * @returns Promise<any> 处理结果
    */
-  sendMessage(workerType: WorkerType, type: string, data: any): Promise<any> {
+  sendMessage (workerType: WorkerType, type: string, data: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const workerInstance = this.workers.get(workerType);
       if (!workerInstance) {
@@ -161,7 +153,7 @@ class WorkerManager {
    * @param data 输入数据
    * @returns Promise<any> 计算结果
    */
-  async calculateMassBalance(data: any): Promise<any> {
+  async calculateMassBalance (data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateMassBalance',
@@ -174,7 +166,7 @@ class WorkerManager {
    * @param data 输入数据
    * @returns Promise<any> 计算结果
    */
-  async calculateEnergyBalance(data: any): Promise<any> {
+  async calculateEnergyBalance (data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateEnergyBalance',
@@ -187,7 +179,7 @@ class WorkerManager {
    * @param data 输入数据
    * @returns Promise<any> 计算结果
    */
-  async calculateVoidCoefficient(data: any): Promise<any> {
+  async calculateVoidCoefficient (data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateVoidCoefficient',
@@ -200,7 +192,7 @@ class WorkerManager {
    * @param data 输入数据
    * @returns Promise<any> 计算结果
    */
-  async calculateXenonPoisoning(data: any): Promise<any> {
+  async calculateXenonPoisoning (data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateXenonPoisoning',
@@ -213,7 +205,7 @@ class WorkerManager {
    * @param data 输入数据
    * @returns Promise<any> 计算结果
    */
-  async calculateControlRodPhysics(data: any): Promise<any> {
+  async calculateControlRodPhysics (data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateControlRodPhysics',
@@ -226,7 +218,7 @@ class WorkerManager {
    * @param data 输入数据
    * @returns Promise<any> 计算结果
    */
-  async calculateReactorCore(data: any): Promise<any> {
+  async calculateReactorCore (data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateReactorCore',
@@ -239,7 +231,7 @@ class WorkerManager {
    * @param data 输入数据
    * @returns Promise<any> 处理结果
    */
-  async processAlarmData(data: any): Promise<any> {
+  async processAlarmData (data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.DATA_PROCESSING,
       'processAlarmData',
@@ -252,7 +244,7 @@ class WorkerManager {
    * @param data 输入数据
    * @returns Promise<any> 处理结果
    */
-  async processTrendData(data: any): Promise<any> {
+  async processTrendData (data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.DATA_PROCESSING,
       'processTrendData',
@@ -265,7 +257,7 @@ class WorkerManager {
    * @param data 输入数据
    * @returns Promise<any> 处理结果
    */
-  async generateReport(data: any): Promise<any> {
+  async generateReport (data: any): Promise<any> {
     return this.sendMessage(WorkerType.DATA_PROCESSING, 'generateReport', data);
   }
 
@@ -273,7 +265,7 @@ class WorkerManager {
    * 终止Worker
    * 清理所有Worker实例
    */
-  terminate() {
+  terminate () {
     this.workers.forEach((workerInstance) => {
       workerInstance.worker.terminate();
     });

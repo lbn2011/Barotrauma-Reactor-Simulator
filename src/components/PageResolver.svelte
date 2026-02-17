@@ -1,24 +1,24 @@
 <script lang="ts">
-  import type { Page } from '~/types';
+import type { Page } from '~/types';
 
-  import PageComponent from '~/components/Page.svelte';
-  import ErrorComponent from '~/components/Error.svelte';
-  import { defaultComponentConfig } from '~/config/components';
+import PageComponent from '~/components/Page.svelte';
+import ErrorComponent from '~/components/Error.svelte';
+import { defaultComponentConfig } from '~/config/components';
 
-  export let page: Promise<Page> | Page;
-  export let isFirstPage: boolean;
-  export let config = defaultComponentConfig;
+export let page: Promise<Page> | Page;
+export let isFirstPage: boolean;
+export let config = defaultComponentConfig;
 </script>
 
 <style lang="scss">
-  .loading-spinner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 200px;
-    font-size: 16px;
-    color: #666;
-  }
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  font-size: 16px;
+  color: #666;
+}
 </style>
 
 {#await page}

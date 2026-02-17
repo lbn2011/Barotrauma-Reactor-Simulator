@@ -26,33 +26,33 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
   let result: any;
 
   switch (type) {
-    case 'calculateMassBalance':
-      result = calculateMassBalance(data);
-      break;
+  case 'calculateMassBalance':
+    result = calculateMassBalance(data);
+    break;
 
-    case 'calculateEnergyBalance':
-      result = calculateEnergyBalance(data);
-      break;
+  case 'calculateEnergyBalance':
+    result = calculateEnergyBalance(data);
+    break;
 
-    case 'calculateVoidCoefficient':
-      result = calculateVoidCoefficient(data);
-      break;
+  case 'calculateVoidCoefficient':
+    result = calculateVoidCoefficient(data);
+    break;
 
-    case 'calculateXenonPoisoning':
-      result = calculateXenonPoisoning(data);
-      break;
+  case 'calculateXenonPoisoning':
+    result = calculateXenonPoisoning(data);
+    break;
 
-    case 'calculateControlRodPhysics':
-      result = calculateControlRodPhysics(data);
-      break;
+  case 'calculateControlRodPhysics':
+    result = calculateControlRodPhysics(data);
+    break;
 
-    case 'calculateReactorCore':
-      result = calculateReactorCore(data);
-      break;
+  case 'calculateReactorCore':
+    result = calculateReactorCore(data);
+    break;
 
-    default:
-      console.error('Unknown message type:', type);
-      return;
+  default:
+    console.error('Unknown message type:', type);
+    return;
   }
 
   // 发送响应

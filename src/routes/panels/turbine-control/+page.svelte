@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TurbineControlPanel from '../TurbineControlPanel.svelte';
+import TurbineControlPanel from '../TurbineControlPanel.svelte';
 </script>
 
 <TurbineControlPanel />

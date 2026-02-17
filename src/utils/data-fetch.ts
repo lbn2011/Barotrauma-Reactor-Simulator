@@ -42,7 +42,7 @@ export interface FetchError {
  * @param options - Fetch options
  * @returns Promise with the response data
  */
-export async function fetchWithCache<T>(
+export async function fetchWithCache<T> (
   url: string,
   options: FetchOptions = {}
 ): Promise<T> {
@@ -92,7 +92,7 @@ export async function fetchWithCache<T>(
 
       // If this is not the last attempt, wait and retry
       if (attempt < retries - 1) {
-        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
       }
     }
   }
@@ -106,7 +106,7 @@ export async function fetchWithCache<T>(
  * @param key - Cache key
  * @returns Cached data if available and not expired, otherwise null
  */
-export function getCachedResponse<T>(key: string): T | null {
+export function getCachedResponse<T> (key: string): T | null {
   try {
     const cachedString = localStorage.getItem(`cache_${key}`);
     if (!cachedString) {
@@ -135,7 +135,11 @@ export function getCachedResponse<T>(key: string): T | null {
  * @param data - Data to cache
  * @param expiration - Expiration time in milliseconds
  */
-export function setCachedResponse(key: string, data: any, expiration?: number): void {
+export function setCachedResponse (
+  key: string,
+  data: any,
+  expiration?: number
+): void {
   try {
     const cached: CachedResponse = {
       data,
@@ -153,7 +157,7 @@ export function setCachedResponse(key: string, data: any, expiration?: number): 
  * Clear cached response from local storage
  * @param key - Cache key
  */
-export function clearCachedResponse(key: string): void {
+export function clearCachedResponse (key: string): void {
   try {
     localStorage.removeItem(`cache_${key}`);
   } catch (error) {
@@ -164,9 +168,9 @@ export function clearCachedResponse(key: string): void {
 /**
  * Clear all cached responses
  */
-export function clearAllCachedResponses(): void {
+export function clearAllCachedResponses (): void {
   try {
-    Object.keys(localStorage).forEach(key => {
+    Object.keys(localStorage).forEach((key) => {
       if (key.startsWith('cache_')) {
         localStorage.removeItem(key);
       }
@@ -183,7 +187,7 @@ export function clearAllCachedResponses(): void {
  * @param timeout - Timeout in milliseconds
  * @returns Promise with the response data
  */
-export async function fetchWithTimeout<T>(
+export async function fetchWithTimeout<T> (
   url: string,
   options: FetchOptions = {},
   timeout: number = 30000
@@ -212,7 +216,7 @@ export async function fetchWithTimeout<T>(
  * @param requests - Array of fetch requests
  * @returns Promise with array of responses
  */
-export async function batchFetch<T>(
+export async function batchFetch<T> (
   requests: Array<{ url: string; options?: FetchOptions }>
 ): Promise<T[]> {
   const fetchPromises = requests.map(({ url, options }) =>

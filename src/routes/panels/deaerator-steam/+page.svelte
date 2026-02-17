@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DeaeratorSteamPanel from '../DeaeratorSteamPanel.svelte';
+import DeaeratorSteamPanel from '../DeaeratorSteamPanel.svelte';
 </script>
 
 <DeaeratorSteamPanel />

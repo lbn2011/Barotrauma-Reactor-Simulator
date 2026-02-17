@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CondenserVacuumPanel from '../CondenserVacuumPanel.svelte';
+import CondenserVacuumPanel from '../CondenserVacuumPanel.svelte';
 </script>
 
 <CondenserVacuumPanel />

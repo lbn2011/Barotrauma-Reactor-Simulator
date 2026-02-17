@@ -30,19 +30,19 @@ interface ThreeImpulseLevelControlOutput {
 /**
  * 计算三冲量水位控制
  * 模拟核电站蒸汽发生器的水位控制系统
- * 
+ *
  * @param input 输入参数
  * @returns 三冲量水位控制结果
- * 
+ *
  * @description
  * 三冲量水位控制是核电站广泛使用的水位控制方法：
  * 1. 第一冲量：水位信号（反馈信号）
  * 2. 第二冲量：蒸汽流量信号（前馈信号）
  * 3. 第三冲量：给水流量信号（反馈信号）
- * 
+ *
  * 这种控制方法可以快速响应负荷变化，提高水位控制精度
  */
-export function calculateThreeImpulseLevelControl(
+export function calculateThreeImpulseLevelControl (
   input: ThreeImpulseLevelControlInput
 ): ThreeImpulseLevelControlOutput {
   // 计算水位误差：设定值 - 实际值
@@ -91,12 +91,12 @@ export function calculateThreeImpulseLevelControl(
 /**
  * 计算水位警报阈值
  * 评估水位状态并生成相应的警报消息
- * 
+ *
  * @param waterLevel 实际水位（%）
  * @param waterLevelSetpoint 水位设定值（%）
  * @returns 水位状态和消息
  */
-export function calculateWaterLevelStatus(
+export function calculateWaterLevelStatus (
   waterLevel: number,
   waterLevelSetpoint: number
 ): {

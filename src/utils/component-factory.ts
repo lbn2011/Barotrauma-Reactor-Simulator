@@ -12,7 +12,7 @@ interface ComponentFactoryOptions<T> {
 }
 
 // Create a configured component instance
-export function createComponent<T>({
+export function createComponent<T> ({
   component,
   config,
   props = {},
@@ -22,7 +22,7 @@ export function createComponent<T>({
   props: Record<string, any>;
 } {
   const resolvedConfig = getComponentConfig(config);
-  
+
   return {
     component,
     config: resolvedConfig,
@@ -31,7 +31,7 @@ export function createComponent<T>({
 }
 
 // Create a responsive component with breakpoints
-export function createResponsiveComponent<T>({
+export function createResponsiveComponent<T> ({
   component,
   config,
   props = {},
@@ -50,7 +50,7 @@ export function createResponsiveComponent<T>({
   breakpoints: Record<string, Record<string, any>>;
 } {
   const resolvedConfig = getComponentConfig(config);
-  
+
   return {
     component,
     config: resolvedConfig,
@@ -60,7 +60,7 @@ export function createResponsiveComponent<T>({
 }
 
 // Create a localized component with i18n support
-export function createLocalizedComponent<T>({
+export function createLocalizedComponent<T> ({
   component,
   config,
   props = {},
@@ -74,7 +74,7 @@ export function createLocalizedComponent<T>({
   translations: Record<string, Record<string, string>>;
 } {
   const resolvedConfig = getComponentConfig(config);
-  
+
   return {
     component,
     config: resolvedConfig,
@@ -87,19 +87,19 @@ export function createLocalizedComponent<T>({
 class ComponentRegistry {
   private components = new Map<string, any>();
 
-  register(name: string, component: any): void {
+  register (name: string, component: any): void {
     this.components.set(name, component);
   }
 
-  get(name: string): any | undefined {
+  get (name: string): any | undefined {
     return this.components.get(name);
   }
 
-  has(name: string): boolean {
+  has (name: string): boolean {
     return this.components.has(name);
   }
 
-  getAll(): Map<string, any> {
+  getAll (): Map<string, any> {
     return this.components;
   }
 }
@@ -107,7 +107,7 @@ class ComponentRegistry {
 export const componentRegistry = new ComponentRegistry();
 
 // Helper function to register components in bulk
-export function registerComponents(components: Record<string, any>): void {
+export function registerComponents (components: Record<string, any>): void {
   Object.entries(components).forEach(([name, component]) => {
     componentRegistry.register(name, component);
   });

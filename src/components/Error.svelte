@@ -1,30 +1,30 @@
 <script lang="ts">
-  export let error: any;
+export let error: any;
 </script>
 
 <style lang="scss">
-  .error-component {
-    padding: 24px;
-    text-align: center;
-  }
+.error-component {
+  padding: 24px;
+  text-align: center;
+}
 
-  h1 {
-    font-size: 24px;
-    margin-bottom: 16px;
-    color: #ff3b30;
-  }
+h1 {
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: #ff3b30;
+}
 
-  pre {
-    background: #f5f5f5;
-    padding: 16px;
-    border-radius: 8px;
-    margin-top: 16px;
-    overflow-x: auto;
-    text-align: left;
-    font-family: monospace;
-    font-size: 14px;
-    color: #333;
-  }
+pre {
+  background: #f5f5f5;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  overflow-x: auto;
+  text-align: left;
+  font-family: monospace;
+  font-size: 14px;
+  color: #333;
+}
 </style>
 
 <div class="error-component">

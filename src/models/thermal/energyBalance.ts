@@ -31,10 +31,10 @@ interface EnergyBalanceOutput {
 /**
  * 计算能量守恒方程
  * 模拟核电站各系统的能量转换
- * 
+ *
  * @param input 输入参数
  * @returns 能量平衡结果
- * 
+ *
  * @description
  * 核电站能量转换过程：
  * 1. 反应堆：核能 → 热能（Q_thermal）
@@ -42,16 +42,16 @@ interface EnergyBalanceOutput {
  * 3. 汽轮机：蒸汽焓 → 机械功（P_mechanical）
  * 4. 发电机：机械功 → 电能（P_electrical）
  */
-export function calculateEnergyBalance(
+export function calculateEnergyBalance (
   input: EnergyBalanceInput
 ): EnergyBalanceOutput {
   // 反应堆系统能量平衡
   // 热功率 = 核功率 × 热效率
   const Q_thermal = input.P_nuclear * input.η_thermal;
-  
+
   // 蒸汽流量 = 热功率 / (蒸汽焓 - 给水焓)
   const m_steam = Q_thermal / (input.h_steam - input.h_feedwater);
-  
+
   // 冷却剂温度变化 = 热功率 / (冷却剂流量 × 比热容)
   const ΔT_coolant = Q_thermal / (input.m_coolant * input.c_p);
 
@@ -76,7 +76,7 @@ export function calculateEnergyBalance(
 /**
  * 计算汽轮机效率
  * 考虑蒸汽参数和负荷对效率的影响
- * 
+ *
  * @param η_base 基础效率
  * @param P_steam 蒸汽压力
  * @param P_rated 额定蒸汽压力
@@ -85,7 +85,7 @@ export function calculateEnergyBalance(
  * @param loadFactor 负荷因子
  * @returns 汽轮机效率
  */
-export function calculateTurbineEfficiency(
+export function calculateTurbineEfficiency (
   η_base: number,
   P_steam: number,
   P_rated: number,
@@ -107,12 +107,12 @@ export function calculateTurbineEfficiency(
 /**
  * 计算除氧器效率
  * 基于温度差计算除氧效果
- * 
+ *
  * @param T_sat 饱和温度（℃）
  * @param T_condensate 凝结水温度（℃）
  * @returns 除氧器效率
  */
-export function calculateDeaeratorEfficiency(
+export function calculateDeaeratorEfficiency (
   T_sat: number,
   T_condensate: number
 ): number {
@@ -123,12 +123,12 @@ export function calculateDeaeratorEfficiency(
 /**
  * 计算含氧量
  * 基于除氧器效率计算水中剩余含氧量
- * 
+ *
  * @param O2_max 最大含氧量
  * @param η_deaerator 除氧器效率
  * @returns 含氧量
  */
-export function calculateOxygenContent(
+export function calculateOxygenContent (
   O2_max: number,
   η_deaerator: number
 ): number {

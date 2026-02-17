@@ -1,5 +1,5 @@
 <script lang="ts">
-  import MakeupWaterPanel from '../MakeupWaterPanel.svelte';
+import MakeupWaterPanel from '../MakeupWaterPanel.svelte';
 </script>
 
 <MakeupWaterPanel />

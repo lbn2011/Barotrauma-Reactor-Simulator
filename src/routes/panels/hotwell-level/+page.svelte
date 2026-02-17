@@ -1,5 +1,5 @@
 <script lang="ts">
-  import HotwellLevelPanel from '../HotwellLevelPanel.svelte';
+import HotwellLevelPanel from '../HotwellLevelPanel.svelte';
 </script>
 
 <HotwellLevelPanel />

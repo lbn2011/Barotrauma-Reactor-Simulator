@@ -1,307 +1,305 @@
 <script lang="ts">
-  /**
-   * 功率控制面板组件
-   * 模拟RBMK-1000反应堆的功率调节系统
-   */
-  
-  // 导入反应堆状态管理相关函数
-  import {
-    reactorStore,
-    setTargetPower,
-    setPowerSetpoint,
-    toggleAutomaticControl,
-    toggleAxialOffsetControl,
-  } from '../../lib/stores/reactorStore';
-  import { Card, CardContent } from '../../lib/components/ui/card';
-  import { Button } from '../../lib/components/ui/button';
+/**
+ * 功率控制面板组件
+ * 模拟RBMK-1000反应堆的功率调节系统
+ */
 
-  // 订阅状态变量
-  let powerRegulation: {
-    powerLevel: number; // 当前功率水平
-    targetPower: number; // 目标功率
-    reactivity: number; // 反应性
-    powerRate: number; // 功率变化率
-    neutronFlux: number; // 中子通量
-    neutronFluxLog: number; // 中子通量对数
-    controlError: number; // 控制误差
-    automaticControl: boolean; // 自动控制模式
-    axialOffsetControl: boolean; // 轴向偏移控制
-    powerSetpoint: number; // 功率设定点
-  };
-  
-  let core: { 
-    temperature: number; // 堆芯温度
-    pressure: number; // 堆芯压力
-    waterLevel: number; // 堆芯水位
-  };
+// 导入反应堆状态管理相关函数
+import {
+  reactorStore,
+  setTargetPower,
+  setPowerSetpoint,
+  toggleAutomaticControl,
+  toggleAxialOffsetControl,
+} from '../../lib/stores/reactorStore';
 
-  /**
-   * 订阅反应堆状态变化
-   * 实时更新功率调节系统状态和堆芯参数
-   */
-  reactorStore.subscribe((state) => {
-    powerRegulation = state.powerRegulation;
-    core = state.core;
-  });
+// 订阅状态变量
+let powerRegulation: {
+  powerLevel: number; // 当前功率水平
+  targetPower: number; // 目标功率
+  reactivity: number; // 反应性
+  powerRate: number; // 功率变化率
+  neutronFlux: number; // 中子通量
+  neutronFluxLog: number; // 中子通量对数
+  controlError: number; // 控制误差
+  automaticControl: boolean; // 自动控制模式
+  axialOffsetControl: boolean; // 轴向偏移控制
+  powerSetpoint: number; // 功率设定点
+};
 
-  /**
-   * 处理目标功率变化
-   * @param e 事件对象
-   */
-  function handleTargetPowerChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    const power = parseFloat(target.value);
-    setTargetPower(power);
-  }
+let core: {
+  temperature: number; // 堆芯温度
+  pressure: number; // 堆芯压力
+  waterLevel: number; // 堆芯水位
+};
 
-  /**
-   * 处理功率设定点变化
-   * @param e 事件对象
-   */
-  function handlePowerSetpointChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    const setpoint = parseFloat(target.value);
-    setPowerSetpoint(setpoint);
-  }
+/**
+ * 订阅反应堆状态变化
+ * 实时更新功率调节系统状态和堆芯参数
+ */
+reactorStore.subscribe((state) => {
+  powerRegulation = state.powerRegulation;
+  core = state.core;
+});
 
-  /**
-   * 快速设置功率水平
-   * @param power 目标功率（%）
-   */
-  function setPowerQuickly(power: number) {
-    setTargetPower(power);
-  }
+/**
+ * 处理目标功率变化
+ * @param e 事件对象
+ */
+function handleTargetPowerChange (e: Event) {
+  const target = e.target as HTMLInputElement;
+  const power = parseFloat(target.value);
+  setTargetPower(power);
+}
 
-  /**
-   * 切换自动控制模式
-   */
-  function handleAutomaticControlToggle() {
-    toggleAutomaticControl();
-  }
+/**
+ * 处理功率设定点变化
+ * @param e 事件对象
+ */
+function handlePowerSetpointChange (e: Event) {
+  const target = e.target as HTMLInputElement;
+  const setpoint = parseFloat(target.value);
+  setPowerSetpoint(setpoint);
+}
 
-  /**
-   * 切换轴向偏移控制
-   * 轴向偏移控制可以优化堆芯功率分布
-   */
-  function handleAxialOffsetControlToggle() {
-    toggleAxialOffsetControl();
-  }
+/**
+ * 快速设置功率水平
+ * @param power 目标功率（%）
+ */
+function setPowerQuickly (power: number) {
+  setTargetPower(power);
+}
+
+/**
+ * 切换自动控制模式
+ */
+function handleAutomaticControlToggle () {
+  toggleAutomaticControl();
+}
+
+/**
+ * 切换轴向偏移控制
+ * 轴向偏移控制可以优化堆芯功率分布
+ */
+function handleAxialOffsetControlToggle () {
+  toggleAxialOffsetControl();
+}
 </script>
 
 <style>
-  .panel-container {
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    padding: 2rem;
-    border: 1px solid #333;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
+.panel-container {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-  .panel-title {
-    margin-top: 0;
-    margin-bottom: 2rem;
-    color: #00bcd4;
-    font-size: 1.5rem;
-  }
+.panel-title {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: #00bcd4;
+  font-size: 1.5rem;
+}
 
-  .control-section {
-    margin-bottom: 2rem;
-  }
+.control-section {
+  margin-bottom: 2rem;
+}
 
-  .section-title {
-    margin-bottom: 1rem;
-    color: #e0e0e0;
-    font-size: 1.1rem;
-  }
+.section-title {
+  margin-bottom: 1rem;
+  color: #e0e0e0;
+  font-size: 1.1rem;
+}
 
-  .position-control {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+.position-control {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
-  .position-slider {
-    width: 100%;
-  }
+.position-slider {
+  width: 100%;
+}
 
-  .slider-container {
-    position: relative;
-    margin: 1rem 0;
-  }
+.slider-container {
+  position: relative;
+  margin: 1rem 0;
+}
 
-  .slider-container label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #aaa;
-    font-size: 0.9rem;
-  }
+.slider-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #aaa;
+  font-size: 0.9rem;
+}
 
-  input[type='range'] {
-    width: 100%;
-    height: 8px;
-    border-radius: 4px;
-    background: #333;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-  }
+input[type='range'] {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #333;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
 
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #00bcd4;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #00bcd4;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-  input[type='range']::-webkit-slider-thumb:hover {
-    background: #00acc1;
-    transform: scale(1.1);
-  }
+input[type='range']::-webkit-slider-thumb:hover {
+  background: #00acc1;
+  transform: scale(1.1);
+}
 
-  input[type='range']::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #00bcd4;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-  }
+input[type='range']::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #00bcd4;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
 
-  input[type='range']::-moz-range-thumb:hover {
-    background: #00acc1;
-    transform: scale(1.1);
-  }
+input[type='range']::-moz-range-thumb:hover {
+  background: #00acc1;
+  transform: scale(1.1);
+}
 
-  .position-value {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #00bcd4;
-    text-align: center;
-    margin: 1rem 0;
-  }
+.position-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #00bcd4;
+  text-align: center;
+  margin: 1rem 0;
+}
 
-  .quick-controls {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-  }
+.quick-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
 
-  .quick-btn {
-    padding: 1rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #333;
-    color: #e0e0e0;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all 0.2s;
-  }
+.quick-btn {
+  padding: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #333;
+  color: #e0e0e0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
 
-  .quick-btn:hover {
-    background-color: #444;
-    transform: translateY(-2px);
-  }
+.quick-btn:hover {
+  background-color: #444;
+  transform: translateY(-2px);
+}
 
-  .quick-btn:active {
-    transform: translateY(0);
-  }
+.quick-btn:active {
+  transform: translateY(0);
+}
 
-  .control-btn {
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #333;
-    color: #e0e0e0;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all 0.2s;
-    margin-right: 1rem;
-  }
+.control-btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #333;
+  color: #e0e0e0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  margin-right: 1rem;
+}
 
-  .control-btn:hover {
-    background-color: #444;
-  }
+.control-btn:hover {
+  background-color: #444;
+}
 
-  .control-btn.active {
-    background-color: #00bcd4;
-    color: white;
-  }
+.control-btn.active {
+  background-color: #00bcd4;
+  color: white;
+}
 
-  .mode-controls {
-    margin-bottom: 2rem;
-  }
+.mode-controls {
+  margin-bottom: 2rem;
+}
 
-  .status-indicators {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
+.status-indicators {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
 
-  .indicator-card {
-    background-color: #121212;
-    border-radius: 6px;
-    padding: 1.5rem;
-    border: 1px solid #333;
-  }
+.indicator-card {
+  background-color: #121212;
+  border-radius: 6px;
+  padding: 1.5rem;
+  border: 1px solid #333;
+}
 
-  .indicator-label {
-    font-size: 0.9rem;
-    color: #aaa;
-    margin-bottom: 0.5rem;
-  }
+.indicator-label {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 0.5rem;
+}
 
-  .indicator-value {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #e0e0e0;
-  }
+.indicator-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
 
-  .reactivity-positive {
-    color: #f44336;
-  }
+.reactivity-positive {
+  color: #f44336;
+}
 
-  .reactivity-negative {
-    color: #4caf50;
-  }
+.reactivity-negative {
+  color: #4caf50;
+}
 
-  .control-rod-diagram {
-    margin: 2rem 0;
-    padding: 2rem;
-    background-color: #121212;
-    border-radius: 6px;
-    border: 1px solid #333;
-  }
+.control-rod-diagram {
+  margin: 2rem 0;
+  padding: 2rem;
+  background-color: #121212;
+  border-radius: 6px;
+  border: 1px solid #333;
+}
 
-  .diagram-title {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: #00bcd4;
-  }
+.diagram-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #00bcd4;
+}
 
-  .bg-muted {
-    background-color: #333;
-  }
+.bg-muted {
+  background-color: #333;
+}
 
-  .bg-card {
-    background-color: #121212;
-  }
+.bg-card {
+  background-color: #121212;
+}
 
-  .bg-primary {
-    background-color: #00bcd4;
-  }
+.bg-primary {
+  background-color: #00bcd4;
+}
 
-  .text-muted-foreground {
-    color: #aaa;
-  }
+.text-muted-foreground {
+  color: #aaa;
+}
 </style>
 
 <div class="panel-container">
@@ -321,9 +319,7 @@
         class={`control-btn ${powerRegulation.axialOffsetControl ? 'active' : ''}`}
         on:click={handleAxialOffsetControlToggle}
       >
-        {powerRegulation.axialOffsetControl
-          ? '轴向偏移控制: 开启'
-          : '轴向偏移控制: 关闭'}
+        {powerRegulation.axialOffsetControl ? '轴向偏移控制: 开启' : '轴向偏移控制: 关闭'}
       </button>
     </div>
   </div>
@@ -372,21 +368,11 @@
       </div>
 
       <div class="quick-controls">
-        <button class="quick-btn" on:click={() => setPowerQuickly(0)}>
-          0%
-        </button>
-        <button class="quick-btn" on:click={() => setPowerQuickly(25)}>
-          25%
-        </button>
-        <button class="quick-btn" on:click={() => setPowerQuickly(50)}>
-          50%
-        </button>
-        <button class="quick-btn" on:click={() => setPowerQuickly(75)}>
-          75%
-        </button>
-        <button class="quick-btn" on:click={() => setPowerQuickly(100)}>
-          100%
-        </button>
+        <button class="quick-btn" on:click={() => setPowerQuickly(0)}> 0% </button>
+        <button class="quick-btn" on:click={() => setPowerQuickly(25)}> 25% </button>
+        <button class="quick-btn" on:click={() => setPowerQuickly(50)}> 50% </button>
+        <button class="quick-btn" on:click={() => setPowerQuickly(75)}> 75% </button>
+        <button class="quick-btn" on:click={() => setPowerQuickly(100)}> 100% </button>
       </div>
     </div>
   </div>
@@ -395,9 +381,7 @@
   <div class="control-rod-diagram">
     <h3 class="diagram-title">功率水平指示器</h3>
     <div class="relative w-[300px] h-[150px] mx-auto">
-      <div
-        class="absolute inset-0 rounded-t-[150px] bg-muted overflow-hidden"
-      ></div>
+      <div class="absolute inset-0 rounded-t-[150px] bg-muted overflow-hidden"></div>
       <div
         class="absolute inset-0 rounded-t-[150px] bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 transform rotate-180"
       ></div>
@@ -475,24 +459,12 @@
     >
       <ul style="margin: 0; padding-left: 1.5rem; color: #e0e0e0;">
         <li style="margin-bottom: 0.5rem;">功率水平范围: 0% 到 100%</li>
-        <li style="margin-bottom: 0.5rem;">
-          调节目标功率后，反应堆会逐渐调整到该功率水平
-        </li>
-        <li style="margin-bottom: 0.5rem;">
-          功率水平影响堆芯温度和压力，功率越高温度和压力越大
-        </li>
-        <li style="margin-bottom: 0.5rem;">
-          正常运行时，功率水平通常保持在 30-70% 之间
-        </li>
-        <li style="margin-bottom: 0.5rem;">
-          功率水平的变化会受到控制棒位置的影响
-        </li>
-        <li style="margin-bottom: 0.5rem;">
-          自动控制模式下，系统会根据设定点自动调整功率
-        </li>
-        <li style="margin-bottom: 0.5rem;">
-          轴向偏移控制可以优化功率分布，提高反应堆效率
-        </li>
+        <li style="margin-bottom: 0.5rem;">调节目标功率后，反应堆会逐渐调整到该功率水平</li>
+        <li style="margin-bottom: 0.5rem;">功率水平影响堆芯温度和压力，功率越高温度和压力越大</li>
+        <li style="margin-bottom: 0.5rem;">正常运行时，功率水平通常保持在 30-70% 之间</li>
+        <li style="margin-bottom: 0.5rem;">功率水平的变化会受到控制棒位置的影响</li>
+        <li style="margin-bottom: 0.5rem;">自动控制模式下，系统会根据设定点自动调整功率</li>
+        <li style="margin-bottom: 0.5rem;">轴向偏移控制可以优化功率分布，提高反应堆效率</li>
         <li>中子通量是反应堆活性的直接指标，应密切监控</li>
       </ul>
     </div>
