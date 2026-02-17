@@ -1,3 +1,24 @@
+<script lang="ts" module>
+  export interface QuickAction {
+    id: string;
+    name: string;
+    icon: string;
+    category: 'startup' | 'shutdown' | 'emergency' | 'routine';
+    shortcut: string;
+    riskLevel: 'low' | 'medium' | 'high' | 'critical';
+    usageFrequency: number;
+    lastUsedTime: number;
+    enabled: boolean;
+    action: () => void;
+  }
+
+  export interface QuickActionsProps {
+    actions?: QuickAction[];
+    layout?: 'grid' | 'list';
+    showLabels?: boolean;
+  }
+</script>
+
 <script lang="ts">
   /**
    * 快捷操作组件

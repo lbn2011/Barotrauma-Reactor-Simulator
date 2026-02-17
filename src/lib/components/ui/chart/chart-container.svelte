@@ -3,7 +3,7 @@
    * 图表容器组件
    * 用于包装和配置 LayerChart 图表
    */
-  import { cn, type WithElementRef } from '$lib/utils.js';
+  import { cn, type WithElementRef } from '@/lib/utils';
   import type { HTMLAttributes } from 'svelte/elements';
   import ChartStyle from './chart-style.svelte';
   import { setChartContext, type ChartConfig } from './chart-utils.js';

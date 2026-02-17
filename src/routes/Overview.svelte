@@ -2,25 +2,34 @@
   import { TodayCard, Carousel, ResponsiveContainer } from '@/components/shared';
   import { defaultComponentConfig } from '@/config/components';
   import i18nStore from '@/stores/i18n';
+  import type { TodayCard as TodayCardType, Item, Artwork } from '@/types';
+
+  interface CarouselItem extends Item {
+    id: number;
+    title: string;
+    description: string;
+  }
 
   // Mock data for TodayCard
-  const mockCard = {
+  const mockCard: TodayCardType = {
     heading: 'Reactor Simulator',
     title: 'Overview',
-    inlineDescription: 'This is the overview page for the reactor simulator, providing real-time monitoring and control capabilities.',
+    inlineDescription: 'This is overview page for reactor simulator, providing real-time monitoring and control capabilities.',
     media: {
-      kind: 'image',
+      kind: 'image' as const,
       url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=nuclear%20reactor%20control%20room%20with%20multiple%20screens%20and%20gauges%2C%20modern%20design%2C%20blue%20lighting%2C%20high%20detail&image_size=landscape_16_9',
     },
     style: 'dark',
     clickAction: {
-      kind: 'navigate',
-      destination: '/',
+      title: 'View Overview',
+      destination: {
+        url: '/',
+      },
     },
   };
 
   // Mock data for Carousel
-  const mockCarouselItems = [
+  const mockCarouselItems: CarouselItem[] = [
     {
       id: 1,
       title: 'Reactor Control',
@@ -97,24 +106,6 @@
     color: var(--text-primary, #1a1a1a);
   }
 
-  .carousel-item {
-    padding: 24px;
-    background: var(--background-secondary, #f5f5f5);
-    border-radius: 8px;
-  }
-
-  .carousel-item h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--text-primary, #1a1a1a);
-  }
-
-  .carousel-item p {
-    font-size: 14px;
-    color: var(--text-secondary, #666666);
-  }
-
   @media (min-width: 768px) {
     .page-title {
       font-size: 32px;
@@ -126,18 +117,6 @@
 
     .section-title {
       font-size: 24px;
-    }
-
-    .carousel-item {
-      padding: 32px;
-    }
-
-    .carousel-item h3 {
-      font-size: 20px;
-    }
-
-    .carousel-item p {
-      font-size: 16px;
     }
   }
 </style>

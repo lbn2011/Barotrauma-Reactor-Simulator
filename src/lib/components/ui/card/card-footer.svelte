@@ -1,7 +1,11 @@
-<script lang="ts">
-  import { cn, type WithElementRef } from '$lib/utils.js';
+<script lang="ts" module>
+  import { cn, type WithElementRef } from '@/lib/utils';
   import type { HTMLAttributes } from 'svelte/elements';
 
+  export type CardFooterProps = WithElementRef<HTMLAttributes<HTMLDivElement>>;
+</script>
+
+<script lang="ts">
   let {
     ref = $bindable(null),
     class: className,

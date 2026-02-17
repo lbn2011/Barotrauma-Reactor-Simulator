@@ -154,7 +154,7 @@ function createI18nStore() {
         const translation = langTranslations[key] || key;
         if (options) {
           return Object.entries(options).reduce((result, [placeholder, value]) => {
-            return result.replace(new RegExp(`\\{${placeholder}\\}`, 'g'), value);
+            return result.replace(new RegExp(`\\{${placeholder}\\}`, 'g'), String(value));
           }, translation);
         }
         return translation;
@@ -192,9 +192,9 @@ export default i18nStore;
 
 // 导出getI18n函数，保持向后兼容
 export function getI18n() {
-  let storeValue: I18nStore;
+  let storeValue: I18nStore | undefined;
   i18nStore.subscribe(value => storeValue = value)();
-  return storeValue;
+  return storeValue!;
 }
 
 // 导出setLanguage函数

@@ -1,3 +1,24 @@
+<script lang="ts" module>
+  export interface HistoryData {
+    timestamp: number;
+    parameters: Record<string, number>;
+  }
+
+  export interface ChartConfig {
+    id: string;
+    name: string;
+    color: string;
+    unit: string;
+    visible: boolean;
+  }
+
+  export interface HistoryViewerProps {
+    historyData?: HistoryData[];
+    chartConfigs?: ChartConfig[];
+    timeRange?: '1h' | '6h' | '24h' | '7d';
+  }
+</script>
+
 <script lang="ts">
   /**
    * 历史数据查看器组件

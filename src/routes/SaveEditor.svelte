@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Page, Navigation, AmbientBackgroundArtwork, GradientOverlay, Hero, TodayCard, ResponsiveContainer } from '@/components/shared';
+  import { Hero, TodayCard, ResponsiveContainer } from '@/components/shared';
   import type { ReactorState } from '@/lib/stores/reactorStore';
+  import type { TodayCard as TodayCardType } from '@/types';
   import { defaultComponentConfig } from '@/config/components';
   import i18nStore from '@/stores/i18n';
 
@@ -152,18 +153,20 @@
   }
 
   // Mock data for TodayCard
-  const mockCard = {
+  const mockCard: TodayCardType = {
     heading: '存档编辑器',
     title: 'Save Editor',
     inlineDescription: '使用存档码编辑器导入、编辑和导出反应堆模拟器的存档状态。',
     media: {
-      kind: 'image',
+      kind: 'image' as const,
       url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=save%20code%20editor%20interface%20with%20code%20snippets%20and%20buttons%2C%20modern%20design%2C%20blue%20lighting%2C%20high%20detail&image_size=landscape_16_9',
     },
     style: 'dark',
     clickAction: {
-      kind: 'navigate',
-      destination: '/SaveEditor',
+      title: 'View Save Editor',
+      destination: {
+        url: '/SaveEditor',
+      },
     },
   };
 </script>
@@ -363,17 +366,12 @@
   }
 </style>
 
-<Page config={defaultComponentConfig}>
-  <Navigation slot="navigation" />
-  <AmbientBackgroundArtwork slot="background" />
-  <GradientOverlay slot="overlay" />
-  
-  <div class="save-editor-container">
-    <Hero
-      color="#0066ff"
-      profile="large-hero"
-      config={defaultComponentConfig}
-    >
+<div class="save-editor-container">
+  <Hero
+    color="#0066ff"
+    profile="large-hero"
+    config={defaultComponentConfig}
+  >
       <div class="hero-content">
         <h1>{$i18nStore.t('SaveEditor')}</h1>
         <p>使用存档码编辑器导入、编辑和导出反应堆模拟器的存档状态。</p>
@@ -897,5 +895,4 @@
         </div>
       {/if}
     </ResponsiveContainer>
-  </div>
-</Page>
+</div>

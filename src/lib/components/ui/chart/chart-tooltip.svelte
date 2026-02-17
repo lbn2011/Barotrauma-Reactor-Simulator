@@ -3,7 +3,7 @@
    * 图表提示框组件
    * 用于显示图表数据的详细信息
    */
-  import { cn, type WithElementRef, type WithoutChildren } from '$lib/utils.js';
+  import { cn, type WithElementRef, type WithoutChildren } from '@/lib/utils';
   import type { HTMLAttributes } from 'svelte/elements';
   import {
     getPayloadConfigFromPayload,
