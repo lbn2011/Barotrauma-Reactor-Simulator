@@ -10,6 +10,7 @@ import {
   setFeedwaterHeaterParameter,
 } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
+import log from '@/utils/logger';
 
 // 给水泵状态数据
 let reactorFeedPumps: any;
@@ -22,30 +23,39 @@ let core: any;
 
 // 组件挂载时订阅状态
 onMount(() => {
+  log.info('Feedwater pump control panel component mounting');
   const unsubscribe = reactorStore.subscribe((state) => {
     reactorFeedPumps = state.reactorFeedPumps;
     feedwaterSystem = state.feedwaterSystem;
     threeImpulseLevelControl = state.threeImpulseLevelControl;
     core = state.core;
   });
-
+  log.success('Feedwater pump control panel component mounted successfully');
   return unsubscribe;
 });
 
 // 切换水泵状态
 function handleTogglePump (pumpNumber: 1 | 2) {
+  log.info(`Toggling feedwater pump ${pumpNumber} status`);
   toggleReactorFeedPump(pumpNumber);
+  const newStatus = !reactorFeedPumps?.[`pump${pumpNumber}`]?.status;
+  log.success(`Feedwater pump ${pumpNumber} ${newStatus ? 'started' : 'stopped'}`);
 }
 
 // 调整水泵流量
 function handleFlowRateChange (pumpNumber: 1 | 2, e: Event) {
   const target = e.target as HTMLInputElement;
-  setReactorFeedPumpFlowRate(pumpNumber, parseFloat(target.value));
+  const flowRate = parseFloat(target.value);
+  log.debug(`Adjusting feedwater pump ${pumpNumber} flow rate: ${flowRate}%`);
+  setReactorFeedPumpFlowRate(pumpNumber, flowRate);
 }
 
 // 切换隔离阀状态
 function handleToggleValve (valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet') {
+  log.info(`Toggling isolation valve ${valve} status`);
   toggleIsolationValve(valve);
+  const newStatus = !feedwaterSystem?.isolationValves?.[valve]?.status;
+  log.success(`Isolation valve ${valve} ${newStatus ? 'opened' : 'closed'}`);
 }
 
 // 调整隔离阀位置
@@ -54,12 +64,17 @@ function handleValvePositionChange (
   e: Event
 ) {
   const target = e.target as HTMLInputElement;
-  setIsolationValvePosition(valve, parseFloat(target.value));
+  const position = parseFloat(target.value);
+  log.debug(`Adjusting isolation valve ${valve} position: ${position}%`);
+  setIsolationValvePosition(valve, position);
 }
 
 // 切换加热器状态
 function handleToggleHeater (heater: 'heater1' | 'heater2') {
+  log.info(`Toggling feedwater heater ${heater} status`);
   toggleFeedwaterHeater(heater);
+  const newStatus = !feedwaterSystem?.heaters?.[heater]?.status;
+  log.success(`Feedwater heater ${heater} ${newStatus ? 'started' : 'stopped'}`);
 }
 
 // 调整加热器参数
@@ -68,6 +83,7 @@ function handleHeaterParameterChange (
   parameter: 'steamPressure' | 'flowRate',
   value: number
 ) {
+  log.debug(`Adjusting feedwater heater ${heater} ${parameter}: ${value}`);
   setFeedwaterHeaterParameter(heater, parameter, value);
 }
 </script>

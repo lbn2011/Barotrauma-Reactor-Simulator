@@ -1,5 +1,6 @@
 <script lang="ts">
 import { breakpoints, getResponsiveValue } from '@/utils/responsive';
+import { logger } from '../../lib/utils/logger';
 
 interface Props {
   /** Container max width for different breakpoints */
@@ -33,6 +34,15 @@ const props = withDefaults(defineProps<Props>(), {
   }),
   centered: true,
   class: '',
+});
+
+// Log ResponsiveContainer initialization
+logger.debug('ResponsiveContainer initialized', {
+  centered: props.centered,
+  hasCustomClass: !!props.class,
+  maxWidth: props.maxWidth,
+  padding: props.padding,
+  margin: props.margin
 });
 
 // Generate inline styles

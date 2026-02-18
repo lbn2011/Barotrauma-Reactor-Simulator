@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Video as VideoModel } from '~/types';
+import { logger } from '../lib/utils/logger';
 
 export let video: VideoModel;
 export let loop: boolean = false;
@@ -14,11 +15,13 @@ let loadError: boolean = false;
 function handleVideoLoad () {
   isLoaded = true;
   loadError = false;
+  logger.info('Video loaded successfully', { url: video.url, profile });
 }
 
 function handleVideoError () {
   isLoaded = false;
   loadError = true;
+  logger.error('Video failed to load', { url: video.url, error: 'Video loading error' });
 }
 </script>
 

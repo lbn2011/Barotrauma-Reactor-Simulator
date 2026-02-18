@@ -6,29 +6,43 @@ import {
   setDeaeratorLevel,
 } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
+import log from '@/utils/logger';
+
+// Component initialization logs
+log.info('DeaeratorSteamPanel component initialized');
 
 // 除氧器数据
 let deaerator: any;
 
 // 组件挂载时订阅状态
 onMount(() => {
+  log.debug('DeaeratorSteamPanel mounting, subscribing to reactor store');
+  
   const unsubscribe = reactorStore.subscribe((state) => {
+    log.trace('DeaeratorSteamPanel state updated', { deaerator: state.deaerator });
     deaerator = state.deaerator;
   });
 
+  log.debug('DeaeratorSteamPanel mounted successfully');
   return unsubscribe;
 });
 
 // 调整除氧器压力
 function handlePressureChange (e: Event) {
   const target = e.target as HTMLInputElement;
-  setDeaeratorPressure(parseFloat(target.value));
+  const value = parseFloat(target.value);
+  log.debug('Changing deaerator pressure', { value });
+  setDeaeratorPressure(value);
+  log.success('Deaerator pressure updated successfully', { value });
 }
 
 // 调整除氧器液位
 function handleLevelChange (e: Event) {
   const target = e.target as HTMLInputElement;
-  setDeaeratorLevel(parseFloat(target.value));
+  const value = parseFloat(target.value);
+  log.debug('Changing deaerator level', { value });
+  setDeaeratorLevel(value);
+  log.success('Deaerator level updated successfully', { value });
 }
 </script>
 

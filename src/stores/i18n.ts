@@ -1,18 +1,19 @@
 import { writable } from 'svelte/store';
+import log from '../lib/utils/logger';
 
-// 定义翻译类型
+// Define translation type
 export interface Translations {
   [key: string]: string;
 }
 
-// 定义本地化选项类型
+// Define localization options type
 export interface LocalizationOptions {
   locale: string;
   direction: 'ltr' | 'rtl';
   translations: Translations;
 }
 
-// 定义i18n存储类型
+// Define i18n store type
 export interface I18nStore {
   language: string;
   direction: 'ltr' | 'rtl';
@@ -29,7 +30,7 @@ export interface I18nStore {
   ) => string;
 }
 
-// 默认翻译
+// Default translations
 const defaultTranslations: Translations = {
   'ASE.Web.AppStore.Navigation.AX.AppStoreLogo': 'App Store Logo',
   'ASE.Web.AppStore.Navigation.PlatformHeading': 'Platforms',
@@ -44,7 +45,7 @@ const defaultTranslations: Translations = {
     'This is the overview page for the reactor simulator.',
 };
 
-// 中文翻译
+// Chinese translations
 const zhCNTranslations: Translations = {
   ...defaultTranslations,
   'ASE.Web.AppStore.Navigation.AX.AppStoreLogo': 'App Store 标志',
@@ -63,7 +64,7 @@ const zhCNTranslations: Translations = {
     '这是反应堆模拟器的概述页面。',
 };
 
-// 英语翻译
+// English translations
 const enUSTranslations: Translations = {
   ...defaultTranslations,
   Spanish: 'Spanish',
@@ -71,7 +72,7 @@ const enUSTranslations: Translations = {
   Arabic: 'Arabic',
 };
 
-// 西班牙语翻译
+// Spanish translations
 const esESTranslations: Translations = {
   ...defaultTranslations,
   'ASE.Web.AppStore.Navigation.AX.AppStoreLogo': 'Logotipo de App Store',
@@ -88,7 +89,7 @@ const esESTranslations: Translations = {
   Arabic: 'Árabe',
 };
 
-// 法语翻译
+// French translations
 const frFRTranslations: Translations = {
   ...defaultTranslations,
   'ASE.Web.AppStore.Navigation.AX.AppStoreLogo': 'Logo de l’App Store',
@@ -105,7 +106,7 @@ const frFRTranslations: Translations = {
   Arabic: 'Arabe',
 };
 
-// 阿拉伯语翻译
+// Arabic translations
 const arSATranslations: Translations = {
   ...defaultTranslations,
   'ASE.Web.AppStore.Navigation.AX.AppStoreLogo': 'شعار متجر التطبيقات',
@@ -122,7 +123,7 @@ const arSATranslations: Translations = {
   Arabic: 'العربية',
 };
 
-// 所有翻译
+// All translations
 const translations: Record<string, Translations> = {
   'zh-CN': zhCNTranslations,
   'en-US': enUSTranslations,
@@ -131,7 +132,7 @@ const translations: Record<string, Translations> = {
   'ar-SA': arSATranslations,
 };
 
-// 语言方向
+// Language directions
 const languageDirections: Record<string, 'ltr' | 'rtl'> = {
   'zh-CN': 'ltr',
   'en-US': 'ltr',
@@ -140,8 +141,9 @@ const languageDirections: Record<string, 'ltr' | 'rtl'> = {
   'ar-SA': 'rtl',
 };
 
-// 创建i18n存储
+// Create i18n store
 function createI18nStore () {
+  log.info('Starting to create internationalization store');
   const { subscribe, set } = writable<I18nStore>({
     language: 'zh-CN',
     direction: 'ltr',
@@ -151,55 +153,72 @@ function createI18nStore () {
     formatCurrency: (value: number) => value.toFixed(2),
   });
 
-  // 更新存储
+  // Update store
   function updateStore (language: string) {
+    log.info(`Starting to update internationalization store, language: ${language}`);
     const direction = languageDirections[language] || 'ltr';
     const langTranslations = translations[language] || defaultTranslations;
+    log.debug('Language direction and translations loaded', { language, direction, hasTranslations: !!translations[language] });
 
     set({
       language,
       direction,
       t: (key: string, options?: any) => {
+        log.trace('Executing translation', { key, options });
         const translation = langTranslations[key] || key;
         if (options) {
-          return Object.entries(options).reduce(
+          const result = Object.entries(options).reduce(
             (result, [placeholder, value]) => {
               return result.replace(
-                new RegExp(`\\{${placeholder}\\}`, 'g'),
+                new RegExp(`\{${placeholder}\}', 'g'),
                 String(value)
               );
             },
             translation
           );
+          log.trace('Translation with parameters completed', { key, result });
+          return result;
         }
+        log.trace('Translation completed', { key, translation });
         return translation;
       },
       formatNumber: (value: number, options?: Intl.NumberFormatOptions) => {
-        return new Intl.NumberFormat(language, options).format(value);
+        log.trace('Executing number formatting', { value, options });
+        const result = new Intl.NumberFormat(language, options).format(value);
+        log.trace('Number formatting completed', { value, result });
+        return result;
       },
       formatDate: (
         value: Date | string,
         options?: Intl.DateTimeFormatOptions
       ) => {
-        return new Intl.DateTimeFormat(language, options).format(
+        log.trace('Executing date formatting', { value, options });
+        const result = new Intl.DateTimeFormat(language, options).format(
           new Date(value)
         );
+        log.trace('Date formatting completed', { value, result });
+        return result;
       },
       formatCurrency: (
         value: number,
         currency: string = 'USD',
         options?: Intl.NumberFormatOptions
       ) => {
-        return new Intl.NumberFormat(language, {
+        log.trace('Executing currency formatting', { value, currency, options });
+        const result = new Intl.NumberFormat(language, {
           style: 'currency',
           currency,
           ...options,
         }).format(value);
+        log.trace('Currency formatting completed', { value, currency, result });
+        return result;
       },
     });
+    log.success('Internationalization store updated successfully', { language, direction });
   }
 
-  // 初始更新
+  // Initial update
+  log.debug('Executing initial language setup');
   updateStore('zh-CN');
 
   return {
@@ -210,18 +229,24 @@ function createI18nStore () {
   };
 }
 
-// 导出i18n存储
+// Export i18n store
 const i18nStore = createI18nStore();
 export default i18nStore;
 
-// 导出getI18n函数，保持向后兼容
+// Export getI18n function for backward compatibility
 export function getI18n () {
+  log.trace('Getting internationalization store instance');
   let storeValue: I18nStore | undefined;
   i18nStore.subscribe((value) => (storeValue = value))();
+  log.debug('Internationalization store value:', storeValue);
   return storeValue!;
 }
 
-// 导出setLanguage函数
+// Export setLanguage function
 export function setLanguage (language: string) {
+  log.info(`Setting language: ${language}`);
   i18nStore.setLanguage(language);
 }
+
+// Internationalization module loaded log
+log.success('Internationalization store module loaded successfully, supporting 5 languages');

@@ -6,28 +6,41 @@ import {
   setHepaFilterEfficiency,
 } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
+import log from '@/utils/logger';
+
+// Component initialization logs
+log.info('HEPAFilterPanel component initialized');
 
 // HEPA过滤器系统数据
 let hepaFilters: any;
 
 // 组件挂载时订阅状态
 onMount(() => {
+  log.debug('HEPAFilterPanel mounting, subscribing to reactor store');
+  
   const unsubscribe = reactorStore.subscribe((state) => {
+    log.trace('HEPAFilterPanel state updated', { hepaFilters: state.hepaFilters });
     hepaFilters = state.hepaFilters;
   });
 
+  log.debug('HEPAFilterPanel mounted successfully');
   return unsubscribe;
 });
 
 // 切换过滤器状态
 function handleToggle () {
+  log.info('Toggling HEPA filter system status', { currentStatus: hepaFilters?.status });
   toggleHepaFilters();
+  log.success('HEPA filter system status toggled successfully');
 }
 
 // 调整过滤器效率
 function handleEfficiencyChange (e: Event) {
   const target = e.target as HTMLInputElement;
-  setHepaFilterEfficiency(parseFloat(target.value));
+  const value = parseFloat(target.value);
+  log.debug('Changing HEPA filter efficiency', { value });
+  setHepaFilterEfficiency(value);
+  log.success('HEPA filter efficiency updated successfully', { value });
 }
 </script>
 

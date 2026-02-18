@@ -1,6 +1,7 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import i18nStore, { setLanguage } from '@/stores/i18n';
+import { logger } from '../../lib/utils/logger';
 
 interface Props {
   config?: any;
@@ -12,7 +13,7 @@ let isOpen = false;
 let currentLanguage: string;
 let currentDirection: 'ltr' | 'rtl';
 
-// 支持的语言列表
+// Supported languages list
 const supportedLanguages = [
   { code: 'en-US', name: 'English' },
   { code: 'zh-CN', name: 'Chinese' },
@@ -21,46 +22,74 @@ const supportedLanguages = [
   { code: 'ar-SA', name: 'Arabic' },
 ];
 
-// 订阅语言变化
+// Log LanguageSelector initialization
+logger.info('LanguageSelector initialized', {
+  supportedLanguageCount: supportedLanguages.length
+});
+
+// Subscribe to language changes
 i18nStore.subscribe((value) => {
   currentLanguage = value.language;
   currentDirection = value.direction;
+  logger.debug('Language changed', {
+    language: value.language,
+    direction: value.direction
+  });
 });
 
-// 切换语言
+// Change language
 function handleLanguageChange (languageCode: string) {
+  logger.info('Language change requested', {
+    from: currentLanguage,
+    to: languageCode
+  });
   setLanguage(languageCode);
-  // 保存语言偏好到本地存储
+  // Save language preference to local storage
   localStorage.setItem('preferredLanguage', languageCode);
+  logger.debug('Language preference saved to local storage', {
+    language: languageCode
+  });
   isOpen = false;
 }
 
-// 切换下拉菜单
+// Toggle dropdown
 function toggleDropdown () {
   isOpen = !isOpen;
+  logger.debug('Language selector dropdown toggled', {
+    isOpen
+  });
 }
 
-// 点击外部关闭下拉菜单
+// Close dropdown when clicking outside
 function handleClickOutside (event: MouseEvent) {
   const target = event.target as HTMLElement;
   if (!target.closest('.language-selector')) {
     isOpen = false;
+    logger.debug('Language selector dropdown closed (click outside)');
   }
 }
 
-// 初始化时加载保存的语言偏好
+// Load saved language preference on initialization
 onMount(() => {
+  logger.debug('LanguageSelector mounting');
   const savedLanguage = localStorage.getItem('preferredLanguage');
   if (savedLanguage && supportedLanguages.some((lang) => lang.code === savedLanguage)) {
+    logger.info('Loading saved language preference', {
+      language: savedLanguage
+    });
     setLanguage(savedLanguage);
+  } else {
+    logger.debug('No saved language preference found');
   }
 
-  // 添加点击外部事件监听器
+  // Add click outside event listener
   document.addEventListener('click', handleClickOutside);
+  logger.debug('LanguageSelector click outside listener added');
 
-  // 清理函数
+  // Cleanup function
   return () => {
     document.removeEventListener('click', handleClickOutside);
+    logger.debug('LanguageSelector click outside listener removed');
   };
 });
 </script>

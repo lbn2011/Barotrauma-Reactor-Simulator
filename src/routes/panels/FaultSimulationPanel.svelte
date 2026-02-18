@@ -10,6 +10,10 @@ import {
   setMaintenanceLevel,
   clearAllFaults,
 } from '../../lib/stores/reactorStore';
+import log from '@/utils/logger';
+
+// Component initialization logs
+log.info('FaultSimulationPanel component initialized');
 
 // 订阅状态
 let faultSimulation: any; // 故障模拟系统状态
@@ -19,6 +23,7 @@ let faultSimulation: any; // 故障模拟系统状态
  * 实时更新故障模拟状态
  */
 reactorStore.subscribe((state) => {
+  log.trace('FaultSimulationPanel state updated', { faultSimulation: state.faultSimulation });
   faultSimulation = state.faultSimulation;
 });
 
@@ -82,6 +87,7 @@ function handleFaultTypeChange (e: Event) {
     | 'cooling'
     | 'steam';
   selectedComponentId = componentIds[selectedFaultType][0];
+  log.debug('Fault type changed', { selectedFaultType, selectedComponentId });
 }
 
 /**
@@ -91,6 +97,7 @@ function handleFaultTypeChange (e: Event) {
 function handleComponentIdChange (e: Event) {
   const target = e.target as HTMLSelectElement;
   selectedComponentId = target.value;
+  log.debug('Component ID changed', { selectedComponentId });
 }
 
 /**
@@ -100,6 +107,7 @@ function handleComponentIdChange (e: Event) {
 function handleSeverityChange (e: Event) {
   const target = e.target as HTMLSelectElement;
   selectedSeverity = target.value as 'minor' | 'major' | 'critical';
+  log.debug('Severity level changed', { selectedSeverity });
 }
 
 /**
@@ -107,7 +115,9 @@ function handleSeverityChange (e: Event) {
  * 生成指定类型、组件和严重程度的故障
  */
 function handleTriggerFault () {
+  log.info('Triggering fault', { faultType: selectedFaultType, componentId: selectedComponentId, severity: selectedSeverity });
   triggerFault(selectedFaultType, selectedComponentId, selectedSeverity);
+  log.success('Fault triggered successfully', { faultType: selectedFaultType, componentId: selectedComponentId, severity: selectedSeverity });
 }
 
 /**
@@ -117,7 +127,9 @@ function handleTriggerFault () {
 function handleMaintenanceLevelChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const level = parseFloat(target.value);
+  log.debug('Changing maintenance level', { level });
   setMaintenanceLevel(level);
+  log.success('Maintenance level updated successfully', { level });
 }
 
 /**
@@ -125,7 +137,9 @@ function handleMaintenanceLevelChange (e: Event) {
  * 重置故障模拟系统到初始状态
  */
 function handleClearAllFaults () {
+  log.info('Clearing all faults', { activeFaultsCount: faultSimulation?.activeFaults?.length || 0 });
   clearAllFaults();
+  log.success('All faults cleared successfully');
 }
 </script>
 

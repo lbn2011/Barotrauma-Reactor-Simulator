@@ -1,8 +1,14 @@
 <script lang="ts">
 import type { WebSearchFlowAction } from '@/types';
 import { getJetPerform } from '@/jet';
+import { logger } from '../../lib/utils/logger';
 
 export let searchAction: WebSearchFlowAction;
+
+// Log SearchInput initialization
+logger.info('SearchInput initialized', {
+  hasSearchAction: !!searchAction
+});
 
 let searchQuery: string = '';
 const perform = getJetPerform();
@@ -10,7 +16,16 @@ const perform = getJetPerform();
 function handleSubmit (event: Event) {
   event.preventDefault();
   if (searchQuery.trim() && searchAction) {
+    logger.info('Search submitted', {
+      query: searchQuery.trim(),
+      actionType: searchAction.type
+    });
     perform(searchAction);
+  } else {
+    logger.debug('Search submission skipped', {
+      hasQuery: !!searchQuery.trim(),
+      hasSearchAction: !!searchAction
+    });
   }
 }
 </script>

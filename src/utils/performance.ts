@@ -1,6 +1,8 @@
 // Performance Optimization Utilities
 // This module provides utilities for optimizing application performance
 
+import log from '../lib/utils/logger';
+
 /**
  * Debounce function to limit the rate at which a function can fire
  * @param func - Function to debounce
@@ -13,6 +15,7 @@ export function debounce<T extends (...args: any[]) => any>(
   wait: number,
   immediate: boolean = false
 ): (...args: Parameters<T>) => void {
+  log.debug(`Creating debounce function, wait time: ${wait}ms, immediate: ${immediate}`);
   let timeout: NodeJS.Timeout | null = null;
 
   return function (...args: Parameters<T>) {
@@ -40,6 +43,7 @@ export function throttle<T extends (...args: any[]) => any>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
+  log.debug(`Creating throttle function, limit time: ${limit}ms`);
   let inThrottle = false;
 
   return function (...args: Parameters<T>) {
@@ -58,10 +62,12 @@ export function throttle<T extends (...args: any[]) => any>(
  * @returns Result of the function
  */
 export function measureExecutionTime<T> (func: () => T, label: string): T {
+  log.time(label);
   const start = performance.now();
   const result = func();
   const end = performance.now();
-  console.log(`${label} took ${end - start}ms`);
+  log.timeEnd(label);
+  log.debug(`${label} execution time: ${end - start}ms`);
   return result;
 }
 
@@ -74,8 +80,11 @@ export function lazyLoadImages (
   images: HTMLImageElement[],
   options: IntersectionObserverInit = {}
 ): void {
+  log.info(`Starting lazy loading for ${images.length} images`);
+
   if (!('IntersectionObserver' in window)) {
     // Fallback if Intersection Observer is not supported
+    log.warn('Browser does not support Intersection Observer, using fallback');
     images.forEach((img) => {
       if (img.dataset.src) {
         img.src = img.dataset.src;
@@ -90,6 +99,7 @@ export function lazyLoadImages (
       if (entry.isIntersecting) {
         const img = entry.target as HTMLImageElement;
         if (img.dataset.src) {
+          log.trace(`Loading image: ${img.dataset.src}`);
           img.src = img.dataset.src;
           img.removeAttribute('data-src');
         }
@@ -103,6 +113,8 @@ export function lazyLoadImages (
       observer.observe(img);
     }
   });
+
+  log.success('Image lazy loading setup completed');
 }
 
 /**
@@ -117,7 +129,10 @@ export function preloadCriticalResources (
     crossorigin?: string;
   }>
 ): void {
+  log.info(`Preloading ${resources.length} critical resources`);
+
   resources.forEach((resource) => {
+    log.trace(`Preloading resource: ${resource.href} (${resource.as})`);
     const link = document.createElement('link');
     link.rel = 'preload';
     link.href = resource.href;
@@ -126,6 +141,8 @@ export function preloadCriticalResources (
     if (resource.crossorigin) link.crossOrigin = resource.crossorigin;
     document.head.appendChild(link);
   });
+
+  log.success('Critical resources preloading completed');
 }
 
 /**
@@ -133,6 +150,7 @@ export function preloadCriticalResources (
  * @param element - Element to optimize
  */
 export function optimizeForAnimation (element: HTMLElement): void {
+  log.trace('Optimizing element animation performance');
   element.style.transform = 'translateZ(0)';
   element.style.willChange = 'transform';
   element.style.backfaceVisibility = 'hidden';
@@ -144,7 +162,9 @@ export function optimizeForAnimation (element: HTMLElement): void {
  * @returns Whether requestAnimationFrame is supported
  */
 export function supportsRequestAnimationFrame (): boolean {
-  return 'requestAnimationFrame' in window;
+  const result = 'requestAnimationFrame' in window;
+  log.trace(`Browser supports requestAnimationFrame: ${result}`);
+  return result;
 }
 
 /**
@@ -153,9 +173,11 @@ export function supportsRequestAnimationFrame (): boolean {
  * @returns Request ID
  */
 export function scheduleAnimationFrame (func: () => void): number {
+  log.trace('Scheduling animation frame function execution');
   if (supportsRequestAnimationFrame()) {
     return window.requestAnimationFrame(func);
   } else {
+    log.warn('Browser does not support requestAnimationFrame, falling back to setTimeout');
     return window.setTimeout(func, 16); // Fallback to ~60fps
   }
 }
@@ -165,6 +187,7 @@ export function scheduleAnimationFrame (func: () => void): number {
  * @param id - Request ID
  */
 export function cancelAnimationFrame (id: number): void {
+  log.trace('Cancelling animation frame function execution');
   if (supportsRequestAnimationFrame()) {
     window.cancelAnimationFrame(id);
   } else {
@@ -177,33 +200,43 @@ export function cancelAnimationFrame (id: number): void {
  * @returns Whether the device is low-end
  */
 export function isLowEndDevice (): boolean {
+  log.trace('Detecting device performance level');
   // Check for memory
   const memory = (navigator as any).deviceMemory || 4;
+  log.trace(`Device memory: ${memory}GB`);
 
   // Check for CPU cores
   const cores = navigator.hardwareConcurrency || 4;
+  log.trace(`CPU cores: ${cores}`);
 
   // Check for screen resolution
   const resolution = window.screen.width * window.screen.height;
+  log.trace(`Screen resolution: ${resolution}`);
 
   // Check for touch support
   const isTouch = 'ontouchstart' in window;
+  log.trace(`Touch support: ${isTouch}`);
 
   // Combine checks
-  return (
+  const result = (
     memory < 4 ||
     cores < 4 ||
     resolution < 1024 * 768 ||
     (isTouch && memory < 2)
   );
+
+  log.info(`Device performance level: ${result ? 'Low' : 'High'}`);
+  return result;
 }
 
 /**
  * Optimize based on device capabilities
  */
 export function optimizeBasedOnDevice (): void {
+  log.info('Optimizing application based on device performance');
   if (isLowEndDevice()) {
     // Disable heavy animations
+    log.warn('Low-performance device detected, applying performance optimizations');
     document.documentElement.classList.add('low-end-device');
 
     // Reduce image quality
@@ -211,9 +244,12 @@ export function optimizeBasedOnDevice (): void {
 
     // Disable some features
     document.documentElement.setAttribute('data-features', 'reduced');
+    log.success('Low-performance device optimization completed');
   } else {
+    log.info('High-performance device detected, enabling full features');
     document.documentElement.classList.remove('low-end-device');
     document.documentElement.setAttribute('data-image-quality', 'high');
     document.documentElement.setAttribute('data-features', 'full');
+    log.success('High-performance device configuration completed');
   }
 }

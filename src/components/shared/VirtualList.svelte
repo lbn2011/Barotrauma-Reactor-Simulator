@@ -1,10 +1,19 @@
 <script lang="ts">
 import { onMount, onDestroy, tick } from 'svelte';
+import { logger } from '../../lib/utils/logger';
 
 export let items: any[];
 export let itemHeight: number = 50;
 export let containerHeight: number = 500;
 export let overscan: number = 5;
+
+// Log VirtualList initialization
+logger.info('VirtualList initialized', {
+  itemCount: items.length,
+  itemHeight,
+  containerHeight,
+  overscan
+});
 
 let container: HTMLElement | null = null;
 let startIndex = 0;
@@ -20,14 +29,29 @@ function calculateVisibleRange () {
     items.length,
     Math.ceil((scrollTop + containerHeight) / itemHeight) + overscan
   );
+  
+  logger.debug('VirtualList visible range calculated', {
+    startIndex,
+    endIndex,
+    visibleItemCount: endIndex - startIndex,
+    scrollTop,
+    totalItems: items.length
+  });
 }
 
 function handleScroll () {
+  logger.debug('VirtualList scroll event triggered');
   calculateVisibleRange();
 }
 
 function getVisibleItems () {
-  return items.slice(startIndex, endIndex);
+  const visibleItems = items.slice(startIndex, endIndex);
+  logger.debug('VirtualList getting visible items', {
+    visibleItemCount: visibleItems.length,
+    startIndex,
+    endIndex
+  });
+  return visibleItems;
 }
 
 function getItemStyle (index: number) {
@@ -40,17 +64,22 @@ function getItemStyle (index: number) {
 }
 
 onMount(async () => {
+  logger.debug('VirtualList mounting');
   await tick();
   calculateVisibleRange();
   if (container) {
     container.addEventListener('scroll', handleScroll);
+    logger.debug('VirtualList scroll listener added');
   }
+  logger.info('VirtualList mounted successfully');
 });
 
 onDestroy(() => {
   if (container) {
     container.removeEventListener('scroll', handleScroll);
+    logger.debug('VirtualList scroll listener removed');
   }
+  logger.info('VirtualList destroyed');
 });
 </script>
 

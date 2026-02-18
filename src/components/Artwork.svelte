@@ -19,6 +19,7 @@ export function getNaturalProfile (
 <script lang="ts">
 import type { Artwork as ArtworkType } from '@/types';
 import { isNamedColor } from '@/utils/color';
+import { logger } from '../lib/utils/logger';
 
 export let artwork: ArtworkType;
 export let profile: Profile;
@@ -39,6 +40,14 @@ export let hasTransparentBackground: boolean =
 export let useCropCodeFromArtwork: boolean = true;
 export let withoutBorder: boolean = false;
 
+// Log Artwork component initialization
+logger.info('Artwork component rendered', {
+  hasArtwork: !!artwork,
+  hasUrl: !!artwork.url,
+  hasTemplate: !!artwork.template,
+  profile
+});
+
 let computedProfileAttributes: Profile | undefined;
 let isLoading: boolean = true;
 let loadError: boolean = false;
@@ -46,26 +55,36 @@ let imageUrl: string = '';
 
 // Build image URL with dynamic parameters
 function buildSrc (artwork: ArtworkType, profile: Profile): string {
-  if (!artwork.template && !artwork.url) return '';
+  if (!artwork.template && !artwork.url) {
+    logger.debug('No artwork template or URL provided');
+    return '';
+  }
 
-  if (artwork.url) return artwork.url;
+  if (artwork.url) {
+    logger.debug('Using direct artwork URL', { url: artwork.url });
+    return artwork.url;
+  }
 
   const [sizes, , crop] = profile;
   const width = sizes[0] || 300;
   const height = Math.round(width / (artwork.width / artwork.height)) || 200;
 
   // Simple template replacement for demonstration
-  return artwork.template
+  const imageUrl = artwork.template
     .replace('{w}', width.toString())
     .replace('{h}', height.toString())
     .replace('{c}', crop)
     .replace('{f}', 'webp');
+
+  logger.debug('Built artwork image URL', { url: imageUrl, width, height, crop });
+  return imageUrl;
 }
 
 $: {
   if (useCropCodeFromArtwork && artwork?.crop && profile) {
     computedProfileAttributes = [...profile] as Profile;
     computedProfileAttributes[2] = artwork.crop;
+    logger.debug('Using crop code from artwork', { crop: artwork.crop });
   } else {
     computedProfileAttributes = profile;
   }
@@ -80,11 +99,13 @@ $: {
 function handleImageLoad () {
   isLoading = false;
   loadError = false;
+  logger.info('Artwork image loaded successfully', { url: imageUrl });
 }
 
 function handleImageError () {
   isLoading = false;
   loadError = true;
+  logger.error('Artwork image failed to load', { url: imageUrl, error: 'Image loading error' });
 }
 </script>
 

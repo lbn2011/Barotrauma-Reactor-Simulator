@@ -1,6 +1,11 @@
 // State Management Index
 // This file serves as the entry point for all state management stores
 
+import log from '../lib/utils/logger';
+
+log.info('State management module initialized');
+log.debug('Starting to load all state management stores');
+
 // Import existing stores
 import i18nStore, { getI18n, setLanguage } from './i18n';
 import { prefersReducedMotion } from './prefers-reduced-motion';
@@ -45,78 +50,108 @@ export enum UIIntentType {
 
 // Create Intent Handler
 export function handleIntent (intent: Intent) {
-  switch (intent.type) {
-  // Reactor Intents
-  case ReactorIntentType.START_SIMULATION:
-    startSimulation();
-    break;
-  case ReactorIntentType.STOP_SIMULATION:
-    stopSimulation();
-    break;
-  case ReactorIntentType.RESET_SIMULATION:
-    resetSimulation();
-    break;
-  case ReactorIntentType.SET_CONTROL_ROD_POSITION:
-    if (intent.payload?.position !== undefined) {
+  log.info(`Processing intent: ${intent.type}`);
+  log.debug('Intent payload:', intent.payload);
+
+  try {
+    switch (intent.type) {
+    // Reactor Intents
+    case ReactorIntentType.START_SIMULATION:
+      log.info('Starting reactor simulation');
+      startSimulation();
+      break;
+    case ReactorIntentType.STOP_SIMULATION:
+      log.info('Stopping reactor simulation');
+      stopSimulation();
+      break;
+    case ReactorIntentType.RESET_SIMULATION:
+      log.info('Resetting reactor simulation');
+      resetSimulation();
+      break;
+    case ReactorIntentType.SET_CONTROL_ROD_POSITION:
+      if (intent.payload?.position !== undefined) {
+        log.debug(`Setting control rod position: ${intent.payload.position}`);
+        import('../lib/stores/reactorStore').then(
+          ({ setControlRodPosition }) => {
+            setControlRodPosition(intent.payload.position);
+          }
+        );
+      } else {
+        log.warn('Failed to set control rod position: missing position parameter');
+      }
+      break;
+    case ReactorIntentType.EMERGENCY_ROD_INSERTION:
+      log.warn('Performing emergency rod insertion');
+      import('../lib/stores/reactorStore').then(({ emergencyRodInsertion }) => {
+        emergencyRodInsertion();
+      });
+      break;
+    case ReactorIntentType.SET_POWER_SETPOINT:
+      if (intent.payload?.setpoint !== undefined) {
+        log.debug(`Setting power setpoint: ${intent.payload.setpoint}`);
+        import('../lib/stores/reactorStore').then(({ setPowerSetpoint }) => {
+          setPowerSetpoint(intent.payload.setpoint);
+        });
+      } else {
+        log.warn('Failed to set power setpoint: missing setpoint parameter');
+      }
+      break;
+    case ReactorIntentType.TOGGLE_AUTOMATIC_CONTROL:
+      log.info('Toggling automatic control mode');
       import('../lib/stores/reactorStore').then(
-        ({ setControlRodPosition }) => {
-          setControlRodPosition(intent.payload.position);
+        ({ toggleAutomaticControl }) => {
+          toggleAutomaticControl();
         }
       );
-    }
-    break;
-  case ReactorIntentType.EMERGENCY_ROD_INSERTION:
-    import('../lib/stores/reactorStore').then(({ emergencyRodInsertion }) => {
-      emergencyRodInsertion();
-    });
-    break;
-  case ReactorIntentType.SET_POWER_SETPOINT:
-    if (intent.payload?.setpoint !== undefined) {
-      import('../lib/stores/reactorStore').then(({ setPowerSetpoint }) => {
-        setPowerSetpoint(intent.payload.setpoint);
+      break;
+    case ReactorIntentType.TRIP_REACTOR:
+      log.error('Tripping reactor');
+      import('../lib/stores/reactorStore').then(({ tripReactor }) => {
+        tripReactor();
       });
-    }
-    break;
-  case ReactorIntentType.TOGGLE_AUTOMATIC_CONTROL:
-    import('../lib/stores/reactorStore').then(
-      ({ toggleAutomaticControl }) => {
-        toggleAutomaticControl();
+      break;
+    case ReactorIntentType.UPDATE_STATE:
+      log.trace('Updating reactor state');
+      updateReactorState();
+      break;
+
+      // I18n Intents
+    case I18nIntentType.SET_LANGUAGE:
+      if (intent.payload?.language) {
+        log.info(`Setting language: ${intent.payload.language}`);
+        setLanguage(intent.payload.language);
+      } else {
+        log.warn('Failed to set language: missing language parameter');
       }
-    );
-    break;
-  case ReactorIntentType.TRIP_REACTOR:
-    import('../lib/stores/reactorStore').then(({ tripReactor }) => {
-      tripReactor();
-    });
-    break;
-  case ReactorIntentType.UPDATE_STATE:
-    updateReactorState();
-    break;
+      break;
 
-    // I18n Intents
-  case I18nIntentType.SET_LANGUAGE:
-    if (intent.payload?.language) {
-      setLanguage(intent.payload.language);
+      // UI Intents
+    case UIIntentType.TOGGLE_SIDEBAR:
+      log.info('Toggling sidebar visibility');
+      sidebarIsHidden.update((hidden) => !hidden);
+      break;
+    case UIIntentType.SET_REDUCED_MOTION:
+      if (intent.payload?.enabled !== undefined) {
+        log.debug(`Setting reduced motion: ${intent.payload.enabled}`);
+        // Note: prefersReducedMotion is a readonly store based on media query
+        // This intent would typically be used to store user preference in localStorage
+        localStorage.setItem(
+          'reducedMotion',
+          intent.payload.enabled.toString()
+        );
+        log.success('Reduced motion preference saved to local storage');
+      } else {
+        log.warn('Failed to set reduced motion: missing enabled parameter');
+      }
+      break;
+
+    default:
+      log.warn('Unknown intent type:', intent.type);
     }
-    break;
 
-    // UI Intents
-  case UIIntentType.TOGGLE_SIDEBAR:
-    sidebarIsHidden.update((hidden) => !hidden);
-    break;
-  case UIIntentType.SET_REDUCED_MOTION:
-    if (intent.payload?.enabled !== undefined) {
-      // Note: prefersReducedMotion is a readonly store based on media query
-      // This intent would typically be used to store user preference in localStorage
-      localStorage.setItem(
-        'reducedMotion',
-        intent.payload.enabled.toString()
-      );
-    }
-    break;
-
-  default:
-    console.warn('Unknown intent type:', intent.type);
+    log.trace('Intent processing completed');
+  } catch (error) {
+    log.error('Error processing intent:', error);
   }
 }
 
@@ -138,3 +173,6 @@ export {
 export type { I18nStore } from './i18n';
 
 export type { ReactorState } from '../lib/stores/reactorStore';
+
+// State management module loaded successfully
+log.success('State management module loaded successfully, including 4 stores and intent processing system');

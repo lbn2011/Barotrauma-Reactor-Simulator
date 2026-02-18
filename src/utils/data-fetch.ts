@@ -1,6 +1,8 @@
 // Data Fetching Utility
 // This utility provides a unified data fetching layer with caching, retry, and error handling
 
+import log from '../lib/utils/logger';
+
 /**
  * Fetch options with retry and cache support
  */
@@ -55,10 +57,14 @@ export async function fetchWithCache<T> (
     ...fetchOptions
   } = options;
 
+  log.info(`Starting request: ${url}`);
+  log.debug(`Request options: retries=${retries}, delay=${retryDelay}ms, cache=${cache}`);
+
   // Check if we have a cached response
   if (cache) {
     const cachedData = getCachedResponse<T>(cacheKey);
     if (cachedData) {
+      log.success(`Using cached data: ${url}`);
       return cachedData;
     }
   }
@@ -68,6 +74,7 @@ export async function fetchWithCache<T> (
   // Attempt to fetch with retries
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
+      log.debug(`Request attempt ${attempt + 1}/${retries}`);
       const response = await fetch(url, fetchOptions);
 
       if (!response.ok) {
@@ -75,12 +82,15 @@ export async function fetchWithCache<T> (
       }
 
       const data = await response.json();
+      log.debug(`Request successful: ${url}`);
 
       // Cache the response if enabled
       if (cache) {
+        log.debug(`Caching response: ${url}`);
         setCachedResponse(cacheKey, data, cacheExpiration);
       }
 
+      log.success(`Request completed: ${url}`);
       return data;
     } catch (error) {
       lastError = {
@@ -89,15 +99,18 @@ export async function fetchWithCache<T> (
         url,
         originalError: error instanceof Error ? error : undefined,
       };
+      log.error(`Request failed (${attempt + 1}/${retries}): ${url}`, error);
 
       // If this is not the last attempt, wait and retry
       if (attempt < retries - 1) {
+        log.debug(`Waiting ${retryDelay}ms before retrying`);
         await new Promise((resolve) => setTimeout(resolve, retryDelay));
       }
     }
   }
 
   // If all attempts failed, throw the last error
+  log.fatal(`All request attempts failed: ${url}`);
   throw lastError;
 }
 
@@ -108,8 +121,10 @@ export async function fetchWithCache<T> (
  */
 export function getCachedResponse<T> (key: string): T | null {
   try {
+    log.trace(`Getting cache: ${key}`);
     const cachedString = localStorage.getItem(`cache_${key}`);
     if (!cachedString) {
+      log.trace(`Cache not found: ${key}`);
       return null;
     }
 
@@ -118,13 +133,15 @@ export function getCachedResponse<T> (key: string): T | null {
 
     // Check if the cache has expired
     if (cached.expiration && now > cached.expiration) {
+      log.trace(`Cache expired: ${key}`);
       localStorage.removeItem(`cache_${key}`);
       return null;
     }
 
+    log.trace(`Cache hit: ${key}`);
     return cached.data;
   } catch (error) {
-    console.warn('Error getting cached response:', error);
+    log.error('Error getting cache:', error);
     return null;
   }
 }
@@ -141,6 +158,7 @@ export function setCachedResponse (
   expiration?: number
 ): void {
   try {
+    log.trace(`Setting cache: ${key}`);
     const cached: CachedResponse = {
       data,
       timestamp: Date.now(),
@@ -148,8 +166,9 @@ export function setCachedResponse (
     };
 
     localStorage.setItem(`cache_${key}`, JSON.stringify(cached));
+    log.trace(`Cache set successfully: ${key}`);
   } catch (error) {
-    console.warn('Error setting cached response:', error);
+    log.error('Error setting cache:', error);
   }
 }
 
@@ -159,9 +178,11 @@ export function setCachedResponse (
  */
 export function clearCachedResponse (key: string): void {
   try {
+    log.trace(`Clearing cache: ${key}`);
     localStorage.removeItem(`cache_${key}`);
+    log.trace(`Cache cleared successfully: ${key}`);
   } catch (error) {
-    console.warn('Error clearing cached response:', error);
+    log.error('Error clearing cache:', error);
   }
 }
 
@@ -170,13 +191,17 @@ export function clearCachedResponse (key: string): void {
  */
 export function clearAllCachedResponses (): void {
   try {
+    log.info('Clearing all caches');
+    let count = 0;
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith('cache_')) {
         localStorage.removeItem(key);
+        count++;
       }
     });
+    log.success(`Cleared ${count} cache items`);
   } catch (error) {
-    console.warn('Error clearing all cached responses:', error);
+    log.error('Error clearing all caches:', error);
   }
 }
 
@@ -192,6 +217,7 @@ export async function fetchWithTimeout<T> (
   options: FetchOptions = {},
   timeout: number = 30000
 ): Promise<T> {
+  log.info(`Request with timeout: ${url} (${timeout}ms)`);
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
@@ -201,10 +227,12 @@ export async function fetchWithTimeout<T> (
       signal: controller.signal,
     });
     clearTimeout(timeoutId);
+    log.success(`Request with timeout completed: ${url}`);
     return response;
   } catch (error) {
     clearTimeout(timeoutId);
     if (error.name === 'AbortError') {
+      log.error(`Request timeout: ${url}`);
       throw new Error('Fetch timeout');
     }
     throw error;
@@ -219,9 +247,13 @@ export async function fetchWithTimeout<T> (
 export async function batchFetch<T> (
   requests: Array<{ url: string; options?: FetchOptions }>
 ): Promise<T[]> {
-  const fetchPromises = requests.map(({ url, options }) =>
-    fetchWithCache<T>(url, options)
-  );
+  log.info(`Batch request: ${requests.length} URLs`);
+  const fetchPromises = requests.map(({ url, options }, index) => {
+    log.trace(`Batch request ${index + 1}: ${url}`);
+    return fetchWithCache<T>(url, options);
+  });
 
-  return Promise.all(fetchPromises);
+  const results = await Promise.all(fetchPromises);
+  log.success(`Batch request completed: ${requests.length} URLs`);
+  return results;
 }

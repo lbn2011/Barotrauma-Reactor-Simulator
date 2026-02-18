@@ -1,8 +1,16 @@
 <script lang="ts">
 import type { WebNavigationLink } from '~/types';
 import FlowAction from '../action/FlowAction.svelte';
+import { logger } from '~/lib/utils/logger';
 
 export let platformSelectors: WebNavigationLink[];
+
+$: {
+  logger.debug('PlatformSelectorDropdown initialized', {
+    selectorCount: platformSelectors.length,
+    selectors: platformSelectors.map(s => s.action.title)
+  });
+}
 </script>
 
 <style lang="scss">

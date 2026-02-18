@@ -7,6 +7,10 @@ const logger = consola.create({
   },
 });
 
+// Set default log level to info (3) and above to reduce noise in production
+// Levels: 0=fatal, 1=error, 2=warn, 3=info, 4=debug, 5=trace
+logger.level = 3;
+
 // Export logger methods
 const log = {
   /**

@@ -1,35 +1,38 @@
 /**
- * 工具函数库
- * 包含CSS类名合并和TypeScript类型工具
+ * Utility functions library
+ * Contains CSS class name merging and TypeScript type utilities
  */
 
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { logger } from './utils/logger';
 
 /**
- * 合并CSS类名
- * 结合clsx和tailwind-merge的功能，处理条件类名和Tailwind类名冲突
+ * Merge CSS class names
+ * Combines the functionality of clsx and tailwind-merge to handle conditional class names and Tailwind class name conflicts
  *
- * @param inputs 类名输入
- * @returns 合并后的类名字符串
+ * @param inputs Class name inputs
+ * @returns Merged class name string
  *
  * @example
  * cn('class1', { 'class2': true }, ['class3'])
  */
 export function cn (...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  const mergedClasses = twMerge(clsx(inputs));
+  logger.debug('Utils', `Merged classes: ${mergedClasses}`);
+  return mergedClasses;
 }
 
 /**
- * 移除类型中的child属性
- * @template T 原始类型
+ * Remove child property from type
+ * @template T Original type
  */
 
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
 
 /**
- * 移除类型中的children属性
- * @template T 原始类型
+ * Remove children property from type
+ * @template T Original type
  */
 
 export type WithoutChildren<T> = T extends { children?: any }
@@ -37,15 +40,15 @@ export type WithoutChildren<T> = T extends { children?: any }
   : T;
 
 /**
- * 移除类型中的child和children属性
- * @template T 原始类型
+ * Remove child and children properties from type
+ * @template T Original type
  */
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 
 /**
- * 为类型添加元素引用属性
- * @template T 原始类型
- * @template U 元素类型，默认为HTMLElement
+ * Add element reference property to type
+ * @template T Original type
+ * @template U Element type, defaults to HTMLElement
  */
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & {
   ref?: U | null;

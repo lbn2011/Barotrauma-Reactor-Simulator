@@ -68,6 +68,13 @@ Icon?
 .c8/
 .nyc_output/
 
+# Project specific directories
+.trae/
+.wrangler/
+
+# Specific documentation files
+docs/appstore报告.md
+
 # Temporary files
 .tmp/
 .temp/

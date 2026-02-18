@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Item } from '@/types';
+import { logger } from '../lib/utils/logger';
 import AmbientBackgroundArtwork from './AmbientBackgroundArtwork.svelte';
 import { portal } from '@/actions/portal';
 import { defaultComponentConfig } from '@/config/components';
@@ -8,9 +9,23 @@ export let items: Item[];
 export let activeIndex: number = 0;
 export let config = defaultComponentConfig;
 
+// Log Carousel component initialization
+logger.info('Carousel component rendered', {
+  itemCount: items.length,
+  initialActiveIndex: activeIndex,
+  enableBackgroundArtwork: config.carousel?.enableBackgroundArtwork || false
+});
+
 function deriveBackgroundArtworkFromItem (item: Item) {
   // Implement background artwork derivation logic here
-  return item.artwork;
+  const artwork = item.artwork;
+  if (artwork) {
+    logger.debug('Background artwork derived from item', {
+      itemIndex: items.indexOf(item),
+      hasArtwork: !!artwork
+    });
+  }
+  return artwork;
 }
 </script>
 

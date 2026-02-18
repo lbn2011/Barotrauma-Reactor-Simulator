@@ -2,6 +2,7 @@
 import type { Action } from '~/types';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
+import { logger } from '../lib/utils/logger';
 
 export let action: Action | undefined | null;
 
@@ -13,9 +14,12 @@ function handleClick (event: MouseEvent) {
       action.destination.url.startsWith('http://') ||
       action.destination.url.startsWith('https://')
     ) {
+      logger.info('External link opened', { url: action.destination.url });
       window.open(action.destination.url, '_blank');
     } else {
-      goto(resolve(action.destination.url));
+      const resolvedUrl = resolve(action.destination.url);
+      logger.info('Internal navigation', { url: resolvedUrl });
+      goto(resolvedUrl);
     }
   }
 }

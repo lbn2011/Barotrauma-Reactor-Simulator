@@ -13,6 +13,23 @@ import {
   adjustTurbineSpeed,
   resetTurbineTrip,
 } from '../../lib/stores/reactorStore';
+import log from '../../lib/utils/logger';
+import { onMount, onDestroy } from 'svelte';
+
+// Component initialization logs
+log.info('Turbine Control Panel component initialized');
+log.debug('Starting to load component dependencies and state');
+
+onMount(() => {
+  log.success('Turbine Control Panel component mounted successfully');
+  log.info('Component ready, starting to monitor turbine status');
+});
+
+onDestroy(() => {
+  log.info('Turbine Control Panel component destroying');
+  log.debug('Cleaning up component resources');
+});
+
 
 // 订阅状态
 let turbine: any; // 汽轮机系统状态
@@ -21,76 +38,96 @@ let steamBypass: any; // 蒸汽旁路系统状态
 let condenserVacuum: any; // 凝汽器真空系统状态
 
 /**
- * 订阅反应堆状态变化
- * 实时更新汽轮机相关参数
+ * Subscribe to reactor state changes
+ * Real-time update of turbine-related parameters
  */
 reactorStore.subscribe((state) => {
+  log.trace('Reactor state updated, synchronizing turbine parameters');
   turbine = state.turbine;
   turbineAuxiliary = state.turbineAuxiliary;
   steamBypass = state.steamBypass;
   condenserVacuum = state.condenserVacuum;
+  log.trace('Turbine parameters synchronized successfully', { 
+    turbineStatus: turbine?.status, 
+    turbineLoad: turbine?.load, 
+    turbineSpeed: turbine?.speed 
+  });
 });
 
 /**
- * 处理汽轮机状态切换
- * 启动或停止汽轮机
+ * Handle turbine state toggle
+ * Start or stop the turbine
  */
 function handleTurbineToggle () {
+  log.info('Starting to toggle turbine state', { currentStatus: turbine?.status });
   toggleTurbine();
+  log.success('Turbine state toggle command executed');
 }
 
 /**
- * 处理负载变化
- * @param e 事件对象
+ * Handle load change
+ * @param e Event object
  */
 function handleLoadChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const load = parseFloat(target.value);
+  log.info('Starting to adjust turbine load', { load });
   setTurbineLoad(load);
+  log.success('Turbine load adjustment command executed', { load });
 }
 
 /**
- * 处理转速设定点变化
- * @param e 事件对象
+ * Handle speed setpoint change
+ * @param e Event object
  */
 function handleSpeedSetpointChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const speed = parseFloat(target.value);
+  log.info('Starting to adjust turbine speed setpoint', { speed });
   setTurbineSpeedSetpoint(speed);
+  log.success('Turbine speed setpoint adjustment command executed', { speed });
 }
 
 /**
- * 处理负荷设定点变化
- * @param e 事件对象
+ * Handle load setpoint change
+ * @param e Event object
  */
 function handleLoadSetpointChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const load = parseFloat(target.value);
+  log.info('Starting to adjust turbine load setpoint', { load });
   setTurbineLoadSetpoint(load);
+  log.success('Turbine load setpoint adjustment command executed', { load });
 }
 
 /**
- * 切换自动控制模式
- * 在自动和手动控制模式之间切换
+ * Toggle automatic control mode
+ * Switch between automatic and manual control modes
  */
 function handleAutomaticControlToggle () {
+  log.info('Starting to toggle turbine control mode', { currentMode: turbine?.automaticControl ? 'automatic' : 'manual' });
   toggleTurbineAutomaticControl();
+  log.success('Turbine control mode toggle command executed');
 }
 
 /**
- * 手动调整转速
- * @param adjustment 调整值
+ * Manually adjust speed
+ * @param adjustment Adjustment value
  */
 function handleSpeedAdjustment (adjustment: number) {
+  log.info('Starting to manually adjust turbine speed', { adjustment });
   adjustTurbineSpeed(adjustment);
+  log.success('Turbine speed manual adjustment command executed', { adjustment });
 }
 
 /**
- * 复位汽轮机跳闸
- * 清除汽轮机跳闸状态，允许重新启动
+ * Reset turbine trip
+ * Clear turbine trip status, allowing restart
  */
 function handleResetTrip () {
+  log.info('Starting to reset turbine trip status', { tripReason: turbine?.tripReason });
   resetTurbineTrip();
+  log.success('Turbine trip reset command executed');
 }
 </script>
 

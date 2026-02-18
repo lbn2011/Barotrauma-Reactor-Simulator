@@ -1,7 +1,12 @@
 <script lang="ts">
 import type { Page } from '~/types';
+import log from '../lib/utils/logger';
 
 export let page: Page;
+
+// Component initialization logging
+log.error('ErrorPage component initialized');
+log.debug('Error page data:', { errorMessage: page.errorMessage });
 </script>
 
 <style lang="scss">

@@ -1,5 +1,9 @@
 <script lang="ts">
 export let clamp: number = 2;
+import { logger } from '../lib/utils/logger';
+
+// Log LineClamp usage for debugging
+logger.debug('LineClamp component rendered', { clamp });
 </script>
 
 <style lang="scss">

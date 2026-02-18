@@ -10,6 +10,7 @@ import LinkWrapper from '@/components/LinkWrapper.svelte';
 import { colorAsString } from '@/utils/color';
 import { bestBackgroundColor } from './background-color-utils';
 import { defaultComponentConfig } from '@/config/components';
+import { logger } from '@/lib/utils/logger';
 
 function isTodayCardMediaList (media: any): boolean {
   return media.kind === 'list';
@@ -54,17 +55,17 @@ let useGradientProtectionLayer: boolean;
 let useListStyle: boolean;
 let accentColor: string;
 
-$: ({
-  heading,
-  title,
-  inlineDescription,
-  titleArtwork,
-  overlay,
-  media,
-  editorialDisplayOptions,
-  style = 'light',
-  clickAction,
-} = card);
+$: {
+  ({  heading,  title,  inlineDescription,  titleArtwork,  overlay,  media,  editorialDisplayOptions,  style = 'light',  clickAction,} = card);
+  logger.debug('TodayCard initialized', {
+    title: title || 'No title',
+    hasMedia: !!media,
+    mediaKind: media?.kind,
+    style,
+    hasAction: !!clickAction,
+    hasOverlay: !!overlay
+  });
+}
 $: action = suppressClickAction ? undefined : clickAction;
 
 $: {

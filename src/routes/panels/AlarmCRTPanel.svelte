@@ -2,16 +2,24 @@
 // 导入反应堆状态管理
 import { reactorStore } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
+import log from '@/utils/logger';
+
+// Component initialization logs
+log.info('AlarmCRTPanel component initialized');
 
 // 警报数据
 let alarms: any;
 
 // 组件挂载时订阅状态
 onMount(() => {
+  log.debug('AlarmCRTPanel mounting, subscribing to reactor store');
+  
   const unsubscribe = reactorStore.subscribe((state) => {
+    log.trace('AlarmCRTPanel state updated', { alarms: state.alarms });
     alarms = state.alarms;
   });
 
+  log.debug('AlarmCRTPanel mounted successfully');
   return unsubscribe;
 });
 </script>

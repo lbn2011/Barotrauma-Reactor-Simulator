@@ -4,25 +4,38 @@ import TopBar from '../lib/components/TopBar.svelte';
 import { updateReactorState } from '../lib/stores/reactorStore';
 import { page } from '$app/stores';
 import { resolve } from '$app/paths';
+import log from '@/utils/logger';
 
 let sidebarOpen: boolean = true;
 
-// 模拟更新定时器
+// Simulation update timer
 let updateInterval: number;
 
+// Component initialization logs
+log.info('+layout.svelte component initialized');
+log.debug('Starting to load layout dependencies and state');
+
 onMount(() => {
-  // 启动模拟更新
+  log.info('+layout.svelte component mounting started');
+  // Start simulation updates
   updateInterval = window.setInterval(updateReactorState, 1000);
+  log.success('Reactor state update timer started', { interval: 1000 });
+  log.info('+layout.svelte component mounting completed');
 });
 
 onDestroy(() => {
-  // 清除定时器
+  log.info('+layout.svelte component destruction started');
+  // Clear timer
   clearInterval(updateInterval);
+  log.success('Reactor state update timer cleared');
+  log.info('+layout.svelte component destruction completed');
 });
 
-// 切换侧边栏
+// Toggle sidebar
 function toggleSidebar () {
+  log.debug('Starting to toggle sidebar state', { currentState: sidebarOpen });
   sidebarOpen = !sidebarOpen;
+  log.success('Sidebar state toggled', { newState: sidebarOpen });
 }
 </script>
 

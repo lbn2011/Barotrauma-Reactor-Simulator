@@ -8,6 +8,23 @@ import {
   emergencyRodInsertion,
   tripReactor,
 } from '../../lib/stores/reactorStore';
+import log from '../../lib/utils/logger';
+import { onMount, onDestroy } from 'svelte';
+
+// Component initialization logs
+log.info('System Overview Panel component initialized');
+log.debug('Starting to load component dependencies and state');
+
+onMount(() => {
+  log.success('System Overview Panel component mounted successfully');
+  log.info('Component ready, starting to monitor system status');
+});
+
+onDestroy(() => {
+  log.info('System Overview Panel component destroying');
+  log.debug('Cleaning up component resources');
+});
+
 
 // 模拟状态数据
 let isRunning: boolean;
@@ -24,8 +41,9 @@ let emergencyCoolingPumps: any;
 let faultSimulation: any;
 let alarms: any;
 
-// 订阅状态变化
+// Subscribe to state changes
 reactorStore.subscribe((state) => {
+  log.trace('Reactor state updated, synchronizing system overview parameters');
   isRunning = state.isRunning;
   simulationTime = state.simulationTime;
   core = state.core;
@@ -36,36 +54,56 @@ reactorStore.subscribe((state) => {
   emergencyCoolingPumps = state.emergencyCoolingPumps;
   faultSimulation = state.faultSimulation;
   alarms = state.alarms;
+  log.trace('System overview parameters synchronized successfully', { 
+    isRunning, 
+    simulationTime, 
+    powerLevel: powerRegulation?.powerLevel, 
+    coreTemperature: core?.temperature, 
+    corePressure: core?.pressure 
+  });
 });
 
-// 处理模拟控制
+// Handle simulation control
 function handleStartSimulation () {
+  log.info('Starting simulation');
   startSimulation();
+  log.success('Simulation start command executed');
 }
 
 function handleStopSimulation () {
+  log.info('Stopping simulation');
   stopSimulation();
+  log.success('Simulation stop command executed');
 }
 
 function handleResetSimulation () {
+  log.info('Resetting simulation');
   resetSimulation();
+  log.success('Simulation reset command executed');
 }
 
-// 处理紧急操作
+// Handle emergency operations
 function handleEmergencyRodInsertion () {
+  log.info('Starting emergency shutdown operation (AZ-5)');
   emergencyRodInsertion();
+  log.success('Emergency shutdown command executed');
 }
 
 function handleTripReactor () {
+  log.info('Starting reactor trip operation');
   tripReactor();
+  log.success('Reactor trip command executed');
 }
 
-// 格式化时间
+// Format time
 function formatTime (seconds: number): string {
+  log.trace('Starting to format time', { seconds });
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = Math.floor(seconds % 60);
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  log.trace('Time formatting completed', { seconds, formattedTime });
+  return formattedTime;
 }
 </script>
 

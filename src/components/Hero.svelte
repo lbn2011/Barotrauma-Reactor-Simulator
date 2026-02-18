@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Artwork as ArtworkModel } from '@/types';
+import { logger } from '../lib/utils/logger';
 import Artwork from '@/components/Artwork.svelte';
 import Video from '@/components/Video.svelte';
 import { prefersReducedMotion } from '@/stores/prefers-reduced-motion';
@@ -24,11 +25,22 @@ export let pinArtworkToVerticalMiddle: boolean = false;
 export let collectionIcons: ArtworkModel[] | undefined = undefined;
 export let config = defaultComponentConfig;
 
+// Log Hero component initialization
+logger.info('Hero component rendered', {
+  hasArtwork: !!artwork,
+  hasVideo: !!video,
+  hasCollectionIcons: !!collectionIcons,
+  profile
+});
+
 let collectionIconsBackgroundGradientCssVars: string | undefined = undefined;
 
 if (collectionIcons && collectionIcons.length > 1) {
   // If there are multiple app icons, we build a string of CSS variables from the icons
   // background colors to fill as many of the lockups quadrants as possible.
+  logger.debug('Generating collection icons background gradient', {
+    iconCount: collectionIcons.length
+  });
   collectionIconsBackgroundGradientCssVars = getBackgroundGradientCSSVarsFromArtworks(
     collectionIcons,
     {

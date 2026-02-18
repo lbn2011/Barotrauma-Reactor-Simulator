@@ -10,6 +10,18 @@ import {
 import type { ReactorState } from '@/lib/stores/reactorStore';
 import { defaultComponentConfig } from '@/config/components';
 import i18nStore from '@/stores/i18n';
+import log from '@/utils/logger';
+import { onMount } from 'svelte';
+
+// Component initialization logs
+log.info('Save Editor page component initialized');
+log.debug('Starting to load page dependencies and state');
+
+onMount(() => {
+  log.success('Save Editor page component mounted successfully');
+  log.info('Page loaded successfully, ready to receive user operations');
+});
+
 
 // 输入和输出
 let saveCodeInput: string = '';
@@ -17,178 +29,235 @@ let parsedState: Partial<ReactorState> | null = null;
 let errorMessage: string = '';
 let successMessage: string = '';
 
-// 解析存档码
+// Parse save code
 function parseSaveCode () {
+  log.info('Starting to parse save code');
+  
   if (!saveCodeInput.trim()) {
-    errorMessage = '请输入存档码';
+    log.warning('Save code input is empty');
+    errorMessage = 'Please enter save code';
     parsedState = null;
     return;
   }
+  
   try {
-    // 尝试解码 Base64 并解析 JSON
+    // Try to decode Base64 and parse JSON
+    log.debug('Starting to decode Base64 save code');
     const decoded = atob(saveCodeInput.trim());
+    log.trace('Base64 decoding successful, starting to parse JSON');
     const saveData = JSON.parse(decoded);
 
-    // 验证存档数据结构
+    // Validate save data structure
     if (typeof saveData === 'object' && saveData !== null) {
-      // 检查是否为新版本格式
+      // Check if it's a new version format
       if (saveData.version) {
-        // 验证校验和
+        log.debug('Detected new version save format', { version: saveData.version });
+        // Validate checksum
         const calculatedChecksum = calculateChecksum(saveData.data);
+        log.trace('Checksum calculation completed', { calculatedChecksum });
+        
         if (saveData.checksum === calculatedChecksum) {
+          log.success('Save code verification successful, parsing completed');
           parsedState = saveData.data;
           errorMessage = '';
-          successMessage = `存档码解析成功！版本: ${saveData.version}`;
+          successMessage = `Save code parsed successfully! Version: ${saveData.version}`;
         } else {
-          throw new Error('存档码校验失败，数据可能已损坏');
+          log.error('Save code verification failed, data may be corrupted', { expectedChecksum: saveData.checksum, calculatedChecksum });
+          throw new Error('Save code verification failed, data may be corrupted');
         }
       } else {
-        // 旧版本格式，直接使用数据
+        // Old version format, use data directly
+        log.info('Detected old version save format, using data directly');
         parsedState = saveData;
         errorMessage = '';
-        successMessage = '存档码解析成功！(旧版本格式)';
+        successMessage = 'Save code parsed successfully! (Old version format)';
       }
 
-      // 3秒后清除成功消息
+      // Clear success message after 3 seconds
       setTimeout(() => {
         successMessage = '';
+        log.trace('Success message cleared');
       }, 3000);
     } else {
-      throw new Error('无效的存档码格式');
+      log.error('Invalid save code format, not a valid object');
+      throw new Error('Invalid save code format');
     }
   } catch (error) {
-    console.error('解析存档码时出错:', error);
-    errorMessage = '存档码格式错误，请检查输入是否正确';
+    log.error('Error parsing save code:', error);
+    errorMessage = 'Save code format error, please check your input';
     parsedState = null;
     successMessage = '';
   }
 }
 
-// 重新编码存档码
+// Re-encode save code
 function encodeSaveCode () {
+  log.info('Starting to encode save code');
+  
   if (!parsedState) {
-    errorMessage = '没有可编码的数据';
+    log.warning('No data to encode');
+    errorMessage = 'No data to encode';
     return;
   }
 
   try {
-    // 构建新的存档数据结构
+    // Build new save data structure
+    log.debug('Starting to build save data structure');
     const saveData = {
       version: '1.0',
       metadata: {
         createdAt: new Date().toISOString(),
-        description: 'RBMK-1000 反应堆存档',
+        description: 'RBMK-1000 reactor save',
       },
       data: parsedState,
       checksum: calculateChecksum(parsedState),
     };
+    log.trace('Save data structure built, checksum calculated');
 
+    log.debug('Starting to serialize and encode save data');
     const encoded = btoa(JSON.stringify(saveData));
+    log.trace('Base64 encoding successful');
     saveCodeInput = encoded;
     errorMessage = '';
-    successMessage = '存档码编码成功！';
+    successMessage = 'Save code encoded successfully!';
+    log.success('Save code encoded successfully');
 
-    // 3秒后清除成功消息
+    // Clear success message after 3 seconds
     setTimeout(() => {
       successMessage = '';
+      log.trace('Success message cleared');
     }, 3000);
   } catch (error) {
-    console.error('编码存档码时出错:', error);
-    errorMessage = '编码存档码时发生错误';
+    log.error('Error encoding save code:', error);
+    errorMessage = 'Error encoding save code';
     successMessage = '';
   }
 }
 
-// 计算校验和
+// Calculate checksum
 function calculateChecksum (data: any): string {
+  log.debug('Starting to calculate data checksum');
   const jsonString = JSON.stringify(data);
+  log.trace('Data serialization completed, starting checksum calculation');
   let checksum = 0;
   for (let i = 0; i < jsonString.length; i++) {
     checksum += jsonString.charCodeAt(i);
   }
-  return checksum.toString(16);
+  const hexChecksum = checksum.toString(16);
+  log.trace('Checksum calculation completed', { checksum: hexChecksum });
+  return hexChecksum;
 }
 
-// 复制存档码到剪贴板
+// Copy save code to clipboard
 async function copyToClipboard () {
+  log.info('Starting to copy save code to clipboard');
+  
   if (saveCodeInput) {
     try {
+      log.debug('Executing clipboard write operation');
       await navigator.clipboard.writeText(saveCodeInput);
-      successMessage = '存档码已复制到剪贴板！';
+      log.success('Save code copied to clipboard successfully');
+      successMessage = 'Save code copied to clipboard!';
 
-      // 3秒后清除成功消息
+      // Clear success message after 3 seconds
       setTimeout(() => {
         successMessage = '';
+        log.trace('Success message cleared');
       }, 3000);
     } catch (error) {
-      console.error('复制到剪贴板时出错:', error);
-      errorMessage = '无法复制到剪贴板';
+      log.error('Error copying to clipboard:', error);
+      errorMessage = 'Cannot copy to clipboard';
     }
+  } else {
+    log.warning('No save code to copy');
   }
 }
 
-// 重置表单
+// Reset form
 function resetForm () {
+  log.info('Starting to reset form');
   saveCodeInput = '';
   parsedState = null;
   errorMessage = '';
   successMessage = '';
+  log.success('Form reset successfully');
 }
 
-// 更新数值参数的安全函数
+// Safe function to update numeric parameters
 function updateValue (path: string, value: any) {
-  if (!parsedState) return;
+  log.debug('Starting to update parameter value', { path, value });
+  
+  if (!parsedState) {
+    log.warning('Cannot update value: parsedState is null');
+    return;
+  }
 
   const parts = path.split('.');
   let current: any = parsedState;
 
   for (let i = 0; i < parts.length - 1; i++) {
     if (!current[parts[i]]) {
+      log.trace('Creating nested object path', { path: parts[i] });
       current[parts[i]] = {};
     }
     current = current[parts[i]];
   }
 
   const lastPart = parts[parts.length - 1];
+  let convertedValue: any = value;
+  
   if (typeof value === 'string') {
-    // 如果是字符串，尝试转换为适当类型
+    // If string, try to convert to appropriate type
     if (value === 'true') {
-      current[lastPart] = true;
+      convertedValue = true;
+      log.trace('Converting string value to boolean', { original: value, converted: convertedValue });
     } else if (value === 'false') {
-      current[lastPart] = false;
+      convertedValue = false;
+      log.trace('Converting string value to boolean', { original: value, converted: convertedValue });
     } else if (!isNaN(Number(value))) {
-      // 如果是数字字符串，则转换为数字
-      current[lastPart] = parseFloat(value);
+      // If numeric string, convert to number
+      convertedValue = parseFloat(value);
+      log.trace('Converting string value to number', { original: value, converted: convertedValue });
     } else {
-      // 否则保持为字符串
-      current[lastPart] = value;
+      // Otherwise keep as string
+      log.trace('Keeping string value unchanged', { value });
     }
-  } else if (typeof value === 'number') {
-    current[lastPart] = value;
-  } else {
-    current[lastPart] = value;
   }
+  
+  current[lastPart] = convertedValue;
+  log.success('Parameter value updated successfully', { path, value: convertedValue });
 }
 
-// 获取嵌套值的安全函数
+// Safe function to get nested values
 function getValue (path: string, defaultValue: any = '') {
-  if (!parsedState) return defaultValue;
+  log.debug('Starting to get parameter value', { path, defaultValue });
+  
+  if (!parsedState) {
+    log.trace('parsedState is null, returning default value', { defaultValue });
+    return defaultValue;
+  }
 
   const parts = path.split('.');
   let current: any = parsedState;
 
   for (const part of parts) {
     if (current === null || current === undefined || typeof current !== 'object') {
+      log.trace('Path does not exist, returning default value', { path, part, defaultValue });
       return defaultValue;
     }
     current = current[part];
   }
 
-  return current !== undefined ? current : defaultValue;
+  const result = current !== undefined ? current : defaultValue;
+  log.trace('Parameter value retrieved successfully', { path, result });
+  return result;
 }
 
-// 生成示例存档码
+// Generate example save code
 function generateExampleSaveCode () {
+  log.info('Starting to generate example save code');
+  
+  log.debug('Creating example reactor state data');
   const exampleState = {
     powerRegulation: {
       powerLevel: 50,
@@ -212,26 +281,30 @@ function generateExampleSaveCode () {
     },
   } as Partial<ReactorState>;
 
-  // 构建新的存档数据结构
+  // Build new save data structure
+  log.debug('Building save data structure');
   const saveData = {
     version: '1.0',
     metadata: {
       createdAt: new Date().toISOString(),
-      description: '示例 RBMK-1000 反应堆存档',
+      description: 'Example RBMK-1000 reactor save',
     },
     data: exampleState,
     checksum: calculateChecksum(exampleState),
   };
 
-  // 转换为 JSON 字符串并编码为 Base64
+  // Convert to JSON string and encode as Base64
+  log.debug('Serializing and encoding example save data');
   const jsonString = JSON.stringify(saveData);
   const encoded = btoa(jsonString);
   saveCodeInput = encoded;
-  successMessage = '已生成示例存档码！';
+  successMessage = 'Example save code generated!';
+  log.success('Example save code generated successfully');
 
-  // 3秒后清除成功消息
+  // Clear success message after 3 seconds
   setTimeout(() => {
     successMessage = '';
+    log.trace('Success message cleared');
   }, 3000);
 }
 

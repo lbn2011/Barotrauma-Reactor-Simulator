@@ -12,6 +12,10 @@ import {
   toggleAutomaticControl,
   toggleAxialOffsetControl,
 } from '../../lib/stores/reactorStore';
+import log from '@/utils/logger';
+
+// Component initialization logs
+log.info('PowerControlPanel component initialized');
 
 // 订阅状态变量
 let powerRegulation: {
@@ -38,6 +42,10 @@ let core: {
  * 实时更新功率调节系统状态和堆芯参数
  */
 reactorStore.subscribe((state) => {
+  log.trace('PowerControlPanel state updated', {
+    powerRegulation: state.powerRegulation,
+    core: state.core
+  });
   powerRegulation = state.powerRegulation;
   core = state.core;
 });
@@ -49,7 +57,9 @@ reactorStore.subscribe((state) => {
 function handleTargetPowerChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const power = parseFloat(target.value);
+  log.debug('Changing target power', { power });
   setTargetPower(power);
+  log.success('Target power updated successfully', { power });
 }
 
 /**
@@ -59,7 +69,9 @@ function handleTargetPowerChange (e: Event) {
 function handlePowerSetpointChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const setpoint = parseFloat(target.value);
+  log.debug('Changing power setpoint', { setpoint });
   setPowerSetpoint(setpoint);
+  log.success('Power setpoint updated successfully', { setpoint });
 }
 
 /**
@@ -67,14 +79,19 @@ function handlePowerSetpointChange (e: Event) {
  * @param power 目标功率（%）
  */
 function setPowerQuickly (power: number) {
+  log.info('Quick setting power level', { power });
   setTargetPower(power);
+  log.success('Power level set quickly', { power });
 }
 
 /**
  * 切换自动控制模式
  */
 function handleAutomaticControlToggle () {
+  log.info('Toggling automatic control mode', { currentMode: powerRegulation.automaticControl });
   toggleAutomaticControl();
+  const newMode = !powerRegulation.automaticControl;
+  log.success('Automatic control mode toggled', { newMode });
 }
 
 /**
@@ -82,7 +99,10 @@ function handleAutomaticControlToggle () {
  * 轴向偏移控制可以优化堆芯功率分布
  */
 function handleAxialOffsetControlToggle () {
+  log.info('Toggling axial offset control', { currentMode: powerRegulation.axialOffsetControl });
   toggleAxialOffsetControl();
+  const newMode = !powerRegulation.axialOffsetControl;
+  log.success('Axial offset control toggled', { newMode });
 }
 </script>
 

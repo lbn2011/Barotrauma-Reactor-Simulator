@@ -1,5 +1,9 @@
 <script lang="ts">
 export let shouldDarken: boolean = true;
+import { logger } from '../lib/utils/logger';
+
+// Log GradientOverlay usage for debugging
+logger.debug('GradientOverlay component rendered', { shouldDarken });
 </script>
 
 <style>

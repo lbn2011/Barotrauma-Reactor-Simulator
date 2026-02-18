@@ -6,28 +6,41 @@ import {
   setReactorDrainFlowRate,
 } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
+import log from '@/utils/logger';
+
+// Component initialization logs
+log.info('DrainControlPanel component initialized');
 
 // 反应堆排水系统数据
 let reactorDrain: any;
 
 // 组件挂载时订阅状态
 onMount(() => {
+  log.debug('DrainControlPanel mounting, subscribing to reactor store');
+  
   const unsubscribe = reactorStore.subscribe((state) => {
+    log.trace('DrainControlPanel state updated', { reactorDrain: state.reactorDrain });
     reactorDrain = state.reactorDrain;
   });
 
+  log.debug('DrainControlPanel mounted successfully');
   return unsubscribe;
 });
 
 // 切换排水状态
 function handleToggle () {
+  log.info('Toggling reactor drain system status', { currentStatus: reactorDrain?.status });
   toggleReactorDrain();
+  log.success('Reactor drain system status toggled successfully');
 }
 
 // 调整排水流量
 function handleFlowRateChange (e: Event) {
   const target = e.target as HTMLInputElement;
-  setReactorDrainFlowRate(parseFloat(target.value));
+  const value = parseFloat(target.value);
+  log.debug('Changing reactor drain flow rate', { value });
+  setReactorDrainFlowRate(value);
+  log.success('Reactor drain flow rate updated successfully', { value });
 }
 </script>
 

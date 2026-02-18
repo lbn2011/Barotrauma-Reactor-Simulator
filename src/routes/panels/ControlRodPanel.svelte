@@ -1,10 +1,12 @@
 <script lang="ts">
 /**
- * 控制棒面板组件
- * 模拟RBMK-1000反应堆的控制棒系统
+ * Control Rod Panel Component
+ * Simulates the control rod system of an RBMK-1000 reactor
  */
 
-// 导入反应堆状态管理相关函数
+import log from '../../lib/utils/logger';
+
+// Import reactor state management functions
 import {
   reactorStore,
   setControlRodPosition,
@@ -13,139 +15,164 @@ import {
   toggleControlRodAutoMode,
 } from '../../lib/stores/reactorStore';
 
-// 订阅状态变量
-let controlRods: any; // 控制棒系统状态
-let reactivity: number; // 反应堆反应性
-let powerLevel: number; // 反应堆功率水平
+// Component initialization logs
+log.info('ControlRodPanel component initialized');
+log.debug('Starting to load control rod panel dependencies and state');
+
+// Subscribe to state variables
+let controlRods: any; // Control rod system state
+let reactivity: number; // Reactor reactivity
+let powerLevel: number; // Reactor power level
 
 /**
- * 订阅反应堆状态变化
- * 实时更新控制棒状态、反应性和功率水平
+ * Subscribe to reactor state changes
+ * Real-time updates for control rod status, reactivity, and power level
  */
 reactorStore.subscribe((state) => {
+  log.trace('Reactor state update received', { controlRods: state.controlRods.position, reactivity: state.powerRegulation.reactivity, powerLevel: state.powerRegulation.powerLevel });
   controlRods = state.controlRods;
   reactivity = state.powerRegulation.reactivity;
   powerLevel = state.powerRegulation.powerLevel;
 });
 
 /**
- * 处理控制棒位置变化
- * @param e 事件对象
+ * Handle control rod position change
+ * @param e Event object
  */
 function handlePositionChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const position = parseFloat(target.value);
+  log.info(`Control rod position changing to: ${position}%`);
   setControlRodPosition(position);
+  log.success(`Control rod position set to: ${position}%`);
 }
 
 /**
- * 处理控制棒移动速度变化
- * @param e 事件对象
+ * Handle control rod insertion speed change
+ * @param e Event object
  */
 function handleInsertionSpeedChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const speed = parseFloat(target.value);
-  // 这里需要在reactorStore中添加相应的函数
-  console.log(`Insertion speed changed to: ${speed}`);
+  log.info(`Control rod insertion speed changing to: ${speed}%/s`);
+  // This would need corresponding function in reactorStore
+  log.debug(`Insertion speed changed to: ${speed}%/s`);
 }
 
 /**
- * 快速设置控制棒位置
- * @param position 目标位置（%）
+ * Quickly set control rod position
+ * @param position Target position (%)
  */
 function setPositionQuickly (position: number) {
+  log.info(`Quickly setting control rod position to: ${position}%`);
   setControlRodPosition(position);
+  log.success(`Control rod position quickly set to: ${position}%`);
 }
 
 /**
- * 处理单根控制棒位置变化
- * @param row 行索引
- * @param col 列索引
- * @param e 事件对象
+ * Handle single control rod position change
+ * @param row Row index
+ * @param col Column index
+ * @param e Event object
  */
 function handleSingleRodChange (row: number, col: number, e: Event) {
   const target = e.target as HTMLInputElement;
   const position = parseFloat(target.value);
+  log.info(`Changing single control rod position at (${row}, ${col}) to: ${position}%`);
   setSingleControlRodPosition(row, col, position);
+  log.success(`Single control rod at (${row}, ${col}) set to: ${position}%`);
 }
 
 /**
- * 触发紧急插入（AZ-5）
- * 模拟切尔诺贝利事故中的紧急停堆操作
+ * Trigger emergency insertion (AZ-5)
+ * Simulates emergency shutdown operation from Chernobyl accident
  */
 function handleEmergencyInsertion () {
+  log.warn('EMERGENCY: Initiating emergency rod insertion (AZ-5)');
   emergencyRodInsertion();
+  log.success('Emergency rod insertion (AZ-5) completed');
 }
 
 /**
- * 切换控制棒自动模式
+ * Toggle control rod auto mode
  */
 function handleAutoModeToggle () {
+  const currentMode = controlRods.autoMode;
+  const newMode = !currentMode;
+  log.info(`Toggling control rod mode from ${currentMode ? 'auto' : 'manual'} to ${newMode ? 'auto' : 'manual'}`);
   toggleControlRodAutoMode();
+  log.success(`Control rod mode toggled to ${newMode ? 'auto' : 'manual'}`);
 }
 
 /**
- * 获取控制棒状态颜色
- * @param status 控制棒状态
- * @returns 状态对应的颜色
+ * Get control rod status color
+ * @param status Control rod status
+ * @returns Color corresponding to status
  */
 function getRodStatusColor (status: string) {
+  log.trace(`Getting status color for rod status: ${status}`);
   switch (status) {
   case 'normal':
-    return '#4caf50'; // 正常 - 绿色
+    return '#4caf50'; // Normal - Green
   case 'fault':
-    return '#f44336'; // 故障 - 红色
+    return '#f44336'; // Fault - Red
   case 'maintenance':
-    return '#ff9800'; // 维护 - 橙色
+    return '#ff9800'; // Maintenance - Orange
   default:
+    log.warn(`Unknown rod status: ${status}, using default color`);
     return '#4caf50';
   }
 }
 
 /**
- * 获取控制棒类型标签
- * @param type 控制棒类型
- * @returns 类型对应的标签
+ * Get control rod type label
+ * @param type Control rod type
+ * @returns Label corresponding to type
  */
 function getRodTypeLabel (type: string) {
+  log.trace(`Getting type label for rod type: ${type}`);
   switch (type) {
   case 'control':
-    return '控制'; // 控制棒
+    return 'Control'; // Control rod
   case 'shutdown':
-    return '停堆'; // 停堆棒
+    return 'Shutdown'; // Shutdown rod
   case 'automatic':
-    return '自动'; // 自动棒
+    return 'Auto'; // Automatic rod
   default:
-    return '控制';
+    log.warn(`Unknown rod type: ${type}, using default label`);
+    return 'Control';
   }
 }
 
 /**
- * 获取控制棒类型颜色
- * @param type 控制棒类型
- * @returns 类型对应的颜色
+ * Get control rod type color
+ * @param type Control rod type
+ * @returns Color corresponding to type
  */
 function getRodTypeColor (type: string) {
+  log.trace(`Getting type color for rod type: ${type}`);
   switch (type) {
   case 'control':
-    return '#2196f3'; // 控制棒 - 蓝色
+    return '#2196f3'; // Control rod - Blue
   case 'shutdown':
-    return '#f44336'; // 停堆棒 - 红色
+    return '#f44336'; // Shutdown rod - Red
   case 'automatic':
-    return '#4caf50'; // 自动棒 - 绿色
+    return '#4caf50'; // Automatic rod - Green
   default:
+    log.warn(`Unknown rod type: ${type}, using default color`);
     return '#2196f3';
   }
 }
 
 /**
- * 模拟燃料更换
- * @param row 行索引
- * @param col 列索引
+ * Simulate fuel reload
+ * @param row Row index
+ * @param col Column index
  */
 function handleFuelReload (row: number, col: number) {
-  // 这里可以实现燃料更换的逻辑
-  console.log(`Fuel reload initiated for rod at ${row}, ${col}`);
+  log.info(`Fuel reload initiated for rod at position (${row}, ${col})`);
+  // Fuel reload logic could be implemented here
+  log.debug(`Fuel reload process started for rod at ${row}, ${col}`);
 }
 </script>
 

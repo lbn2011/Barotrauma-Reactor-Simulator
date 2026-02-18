@@ -6,36 +6,65 @@ import {
   setLubricationOilTemperature,
   setSealOilPressure,
 } from '../../lib/stores/reactorStore';
-import { onMount } from 'svelte';
+import { onMount, onDestroy } from 'svelte';
+import log from '../../lib/utils/logger';
+
+// Component initialization logs
+log.info('Turbine Auxiliary System Panel component initialized');
+log.debug('Starting to load component dependencies and state');
+
 
 // 汽轮机辅助系统数据
 let turbineAuxiliary: any;
 
-// 组件挂载时订阅状态
+// Subscribe to state when component mounts
 onMount(() => {
+  log.info('Turbine Auxiliary System Panel component mounting');
+  log.debug('Starting to subscribe to reactor state changes');
   const unsubscribe = reactorStore.subscribe((state) => {
+    log.trace('Reactor state updated, synchronizing turbine auxiliary system parameters');
     turbineAuxiliary = state.turbineAuxiliary;
+    log.trace('Turbine auxiliary system parameters synchronized successfully', { 
+      lubricationOilPressure: turbineAuxiliary?.lubricationOil?.pressure,
+      lubricationOilTemperature: turbineAuxiliary?.lubricationOil?.temperature,
+      sealOilPressure: turbineAuxiliary?.sealOil?.pressure
+    });
   });
-
+  log.success('Turbine Auxiliary System Panel component mounted successfully');
   return unsubscribe;
 });
 
-// 调整润滑油压力
+// Clean up when component destroys
+onDestroy(() => {
+  log.info('Turbine Auxiliary System Panel component destroying');
+  log.debug('Cleaning up component resources');
+});
+
+// Adjust lubrication oil pressure
 function handleLubricationOilPressureChange (e: Event) {
   const target = e.target as HTMLInputElement;
-  setLubricationOilPressure(parseFloat(target.value));
+  const pressure = parseFloat(target.value);
+  log.info('Starting to adjust lubrication oil pressure', { pressure });
+  setLubricationOilPressure(pressure);
+  log.success('Lubrication oil pressure adjustment command executed', { pressure });
 }
 
-// 调整润滑油温度
+// Adjust lubrication oil temperature
 function handleLubricationOilTemperatureChange (e: Event) {
   const target = e.target as HTMLInputElement;
-  setLubricationOilTemperature(parseFloat(target.value));
+  const temperature = parseFloat(target.value);
+  log.info('Starting to adjust lubrication oil temperature', { temperature });
+  setLubricationOilTemperature(temperature);
+  log.success('Lubrication oil temperature adjustment command executed', { temperature });
 }
 
-// 调整密封油压力
+// Adjust seal oil pressure
 function handleSealOilPressureChange (e: Event) {
   const target = e.target as HTMLInputElement;
-  setSealOilPressure(parseFloat(target.value));
+  const pressure = parseFloat(target.value);
+  log.info('Starting to adjust seal oil pressure', { pressure });
+  setSealOilPressure(pressure);
+  log.success('Seal oil pressure adjustment command executed', { pressure });
 }
 </script>
 

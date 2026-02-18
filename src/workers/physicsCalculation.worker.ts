@@ -1,4 +1,4 @@
-// 物理计算Web Worker
+// Physics Calculation Web Worker
 
 import { calculateMassBalance } from '../models/thermal/massBalance';
 import { calculateEnergyBalance } from '../models/thermal/energyBalance';
@@ -7,59 +7,117 @@ import { calculateXenonPoisoning } from '../models/neutron/xenonPoisoning';
 import { calculateControlRodPhysics } from '../models/neutron/controlRodPhysics';
 import { calculateReactorCore } from '../models/systems/reactorCore';
 
-// 定义消息类型
+// Log function
+function log (message: string, level: 'info' | 'debug' | 'error' | 'warn' = 'info') {
+  console[level](`[Physics Worker] ${message}`);
+}
+
+// Initialization logs
+log('Physics calculation worker initialized');
+log('Loading physics model calculation functions');
+log('Worker ready to process calculation tasks');
+
+// Define message types
 interface WorkerMessage {
   type: string;
   data: any;
 }
 
-// 定义响应类型
+// Define response types
 interface WorkerResponse {
   type: string;
   data: any;
 }
 
-// 处理消息
+// Process messages
 self.onmessage = (e: MessageEvent<WorkerMessage>) => {
   const { type, data } = e.data;
+  log(`Received message: ${type}`, 'debug');
+  log(`Message data: ${JSON.stringify(data)}`, 'debug');
 
   let result: any;
 
-  switch (type) {
-  case 'calculateMassBalance':
-    result = calculateMassBalance(data);
-    break;
+  try {
+    switch (type) {
+    case 'calculateMassBalance':
+      log('Starting mass balance calculation', 'debug');
+      log('Mass balance input data received', 'debug');
+      result = calculateMassBalance(data);
+      log('Mass balance calculation completed successfully', 'debug');
+      log(`Mass balance result: ${JSON.stringify(result)}`, 'debug');
+      break;
 
-  case 'calculateEnergyBalance':
-    result = calculateEnergyBalance(data);
-    break;
+    case 'calculateEnergyBalance':
+      log('Starting energy balance calculation', 'debug');
+      log('Energy balance input data received', 'debug');
+      result = calculateEnergyBalance(data);
+      log('Energy balance calculation completed successfully', 'debug');
+      log(`Energy balance result: ${JSON.stringify(result)}`, 'debug');
+      break;
 
-  case 'calculateVoidCoefficient':
-    result = calculateVoidCoefficient(data);
-    break;
+    case 'calculateVoidCoefficient':
+      log('Starting void coefficient calculation', 'debug');
+      log('Void coefficient input data received', 'debug');
+      result = calculateVoidCoefficient(data);
+      log('Void coefficient calculation completed successfully', 'debug');
+      log(`Void coefficient result: ${JSON.stringify(result)}`, 'debug');
+      break;
 
-  case 'calculateXenonPoisoning':
-    result = calculateXenonPoisoning(data);
-    break;
+    case 'calculateXenonPoisoning':
+      log('Starting xenon poisoning calculation', 'debug');
+      log('Xenon poisoning input data received', 'debug');
+      result = calculateXenonPoisoning(data);
+      log('Xenon poisoning calculation completed successfully', 'debug');
+      log(`Xenon poisoning result: ${JSON.stringify(result)}`, 'debug');
+      break;
 
-  case 'calculateControlRodPhysics':
-    result = calculateControlRodPhysics(data);
-    break;
+    case 'calculateControlRodPhysics':
+      log('Starting control rod physics calculation', 'debug');
+      log('Control rod physics input data received', 'debug');
+      result = calculateControlRodPhysics(data);
+      log('Control rod physics calculation completed successfully', 'debug');
+      log(`Control rod physics result: ${JSON.stringify(result)}`, 'debug');
+      break;
 
-  case 'calculateReactorCore':
-    result = calculateReactorCore(data);
-    break;
+    case 'calculateReactorCore':
+      log('Starting reactor core status calculation', 'debug');
+      log('Reactor core input data received', 'debug');
+      result = calculateReactorCore(data);
+      log('Reactor core status calculation completed successfully', 'debug');
+      log(`Reactor core result: ${JSON.stringify(result)}`, 'debug');
+      break;
 
-  default:
-    console.error('Unknown message type:', type);
-    return;
+    default:
+      log(`Unknown message type: ${type}`, 'error');
+      log(`Message data for unknown type: ${JSON.stringify(data)}`, 'error');
+      return;
+    }
+
+    // Send response
+    const response: WorkerResponse = {
+      type: `${type}Result`,
+      data: result,
+    };
+
+    log(`Sending response: ${response.type}`, 'debug');
+    log(`Response data: ${JSON.stringify(response.data)}`, 'debug');
+    self.postMessage(response);
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    log(`Error during ${type} calculation: ${errorMessage}`, 'error');
+    if (errorStack) {
+      log(`Error stack: ${errorStack}`, 'error');
+    }
+    const errorResponse: WorkerResponse = {
+      type: `${type}Error`,
+      data: {
+        error: errorMessage,
+        stack: errorStack
+      }
+    };
+    log(`Sending error response: ${errorResponse.type}`, 'debug');
+    self.postMessage(errorResponse);
   }
-
-  // 发送响应
-  const response: WorkerResponse = {
-    type: `${type}Result`,
-    data: result,
-  };
-
-  self.postMessage(response);
 };

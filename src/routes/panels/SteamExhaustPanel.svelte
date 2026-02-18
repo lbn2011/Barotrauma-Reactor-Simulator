@@ -1,29 +1,53 @@
 <script lang="ts">
 // 导入反应堆状态管理
 import { reactorStore, toggleSteamDump, setSteamDumpCapacity } from '../../lib/stores/reactorStore';
-import { onMount } from 'svelte';
+import { onMount, onDestroy } from 'svelte';
+import log from '../../lib/utils/logger';
+
+// Component initialization logs
+log.info('Steam Exhaust Control Panel component initialized');
+log.debug('Starting to load component dependencies and state');
+
 
 // 蒸汽排汽系统数据
 let steamDump: any;
 
-// 组件挂载时订阅状态
+// Subscribe to state when component mounts
 onMount(() => {
+  log.info('Steam Exhaust Control Panel component mounting');
+  log.debug('Starting to subscribe to reactor state changes');
   const unsubscribe = reactorStore.subscribe((state) => {
+    log.trace('Reactor state updated, synchronizing steam exhaust system parameters');
     steamDump = state.steamDump;
+    log.trace('Steam exhaust system parameters synchronized successfully', { 
+      status: steamDump?.status, 
+      capacity: steamDump?.capacity 
+    });
   });
-
+  log.success('Steam Exhaust Control Panel component mounted successfully');
   return unsubscribe;
 });
 
-// 切换蒸汽排汽状态
+// Clean up when component destroys
+onDestroy(() => {
+  log.info('Steam Exhaust Control Panel component destroying');
+  log.debug('Cleaning up component resources');
+});
+
+// Toggle steam exhaust state
 function handleToggle () {
+  log.info('Starting to toggle steam exhaust system state', { currentStatus: steamDump?.status });
   toggleSteamDump();
+  log.success('Steam exhaust system state toggle command executed');
 }
 
-// 调整排汽容量
+// Adjust exhaust capacity
 function handleCapacityChange (e: Event) {
   const target = e.target as HTMLInputElement;
-  setSteamDumpCapacity(parseFloat(target.value));
+  const capacity = parseFloat(target.value);
+  log.info('Starting to adjust steam exhaust capacity', { capacity });
+  setSteamDumpCapacity(capacity);
+  log.success('Steam exhaust capacity adjustment command executed', { capacity });
 }
 </script>
 

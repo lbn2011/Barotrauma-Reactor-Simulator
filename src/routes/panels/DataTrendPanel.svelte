@@ -6,6 +6,10 @@ import { reactorStore } from '../../lib/stores/reactorStore';
 // 导入UI组件
 import { Button } from '../../lib/components/ui/button';
 import { Card, CardContent } from '../../lib/components/ui/card';
+import log from '@/utils/logger';
+
+// Component initialization logs
+log.info('DataTrendPanel component initialized');
 
 // 趋势数据
 let trends: {
@@ -17,6 +21,7 @@ let trends: {
 
 // 订阅状态变化
 reactorStore.subscribe((state) => {
+  log.trace('DataTrendPanel state updated', { trends: state.trends });
   trends = state.trends;
   updateChartData();
 });
@@ -74,6 +79,7 @@ const chartOptions = {
 async function loadChartJS () {
   if (isChartLoaded) return;
 
+  log.info('Loading Chart.js library');
   isLoading = true;
   try {
     const chartModule = await import('chart.js');
@@ -85,22 +91,29 @@ async function loadChartJS () {
 
     ChartJS = Chart;
     isChartLoaded = true;
+    log.success('Chart.js library loaded successfully');
   } catch (error) {
-    console.error('Failed to load Chart.js:', error);
+    log.error('Failed to load Chart.js:', error);
   } finally {
     isLoading = false;
+    log.debug('Chart.js loading process completed');
   }
 }
 
 // 更新图表数据
 async function updateChartData () {
+  log.debug('Updating chart data', { hasCanvas: !!chartCanvas, hasTrends: !!trends });
+  
   if (!chartCanvas || !trends) return;
 
   if (!isChartLoaded) {
     await loadChartJS();
   }
 
-  if (!ChartJS) return;
+  if (!ChartJS) {
+    log.warning('ChartJS not available, cannot update chart');
+    return;
+  }
 
   const chartData = {
     labels: trends.timePoints.map((t) => `t=${t}`),
@@ -132,6 +145,7 @@ async function updateChartData () {
   if (chart) {
     chart.data = chartData;
     chart.update('none');
+    log.debug('Chart updated successfully');
   } else {
     const ctx = chartCanvas.getContext('2d');
     if (ctx) {
@@ -141,27 +155,34 @@ async function updateChartData () {
           data: chartData,
           options: chartOptions,
         });
+        log.success('Chart created successfully');
       } catch (error) {
-        console.error('Failed to create chart:', error);
+        log.error('Failed to create chart:', error);
       }
+    } else {
+      log.warning('Canvas context not available, cannot create chart');
     }
   }
 }
 
 // 组件挂载时加载图表
 onMount(async () => {
+  log.debug('DataTrendPanel mounting');
   await loadChartJS();
   updateChartData();
+  log.debug('DataTrendPanel mounted successfully');
 });
 
 // 组件销毁时清理图表
 onDestroy(() => {
+  log.debug('DataTrendPanel destroying, cleaning up chart');
   if (chart) {
     try {
       chart.destroy();
       chart = null;
+      log.success('Chart destroyed successfully');
     } catch (error) {
-      console.error('Failed to destroy chart:', error);
+      log.error('Failed to destroy chart:', error);
     }
   }
 });

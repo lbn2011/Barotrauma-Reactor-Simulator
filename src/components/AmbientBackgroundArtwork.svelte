@@ -2,10 +2,18 @@
 import type { Artwork as JetArtworkType } from '@/types';
 import { colorAsString } from '@/utils/color';
 import { defaultComponentConfig } from '@/config/components';
+import { logger } from '../lib/utils/logger';
 
 export let artwork: JetArtworkType;
 export let active: boolean = false;
 export let config = defaultComponentConfig;
+
+// Log AmbientBackgroundArtwork component initialization
+logger.info('AmbientBackgroundArtwork component rendered', {
+  hasArtwork: !!artwork,
+  hasTemplate: !!artwork?.template,
+  isActive: active
+});
 
 let isBackgroundImageLoaded = false;
 let backgroundImage = buildSrc(artwork) || '';
@@ -17,14 +25,17 @@ function loadBackgroundImage () {
     img.onload = () => {
       // Progressive display: set loaded state to trigger transition
       isBackgroundImageLoaded = true;
+      logger.info('Ambient background image loaded successfully', { url: backgroundImage });
     };
     img.onerror = () => {
       // Error fallback: handle image load failure
       isBackgroundImageLoaded = false;
+      logger.error('Ambient background image failed to load', { url: backgroundImage, error: 'Image loading error' });
     };
     img.src = backgroundImage;
   } else {
     isBackgroundImageLoaded = false;
+    logger.debug('No background image URL provided');
   }
 }
 
@@ -35,8 +46,13 @@ $: {
 }
 
 let isOutOfView = true;
-const handleIntersectionOberserverUpdate = (isIntersectingViewport: boolean) =>
-  (isOutOfView = !isIntersectingViewport);
+const handleIntersectionOberserverUpdate = (isIntersectingViewport: boolean) => {
+  isOutOfView = !isIntersectingViewport;
+  logger.debug('AmbientBackgroundArtwork visibility changed', {
+    isIntersecting: isIntersectingViewport,
+    isOutOfView
+  });
+};
 
 /**
  * Builds a source URL for an artwork based on its template and parameters
@@ -50,7 +66,10 @@ function buildSrc (
     fileType?: string;
   } = {}
 ): string {
-  if (!artwork || !artwork.template) return '';
+  if (!artwork || !artwork.template) {
+    logger.debug('No artwork template provided for ambient background');
+    return '';
+  }
 
   const {
     crop = 'sr',
@@ -60,11 +79,14 @@ function buildSrc (
   } = options;
 
   // Build the source URL by replacing placeholders in the template
-  return artwork.template
+  const imageUrl = artwork.template
     .replace('{w}', width.toString())
     .replace('{h}', height.toString())
     .replace('{c}', crop)
     .replace('{f}', fileType);
+
+  logger.debug('Built ambient background image URL', { url: imageUrl, width, height, crop, fileType });
+  return imageUrl;
 }
 
 function intersectionObserver (node: HTMLElement, options: any) {

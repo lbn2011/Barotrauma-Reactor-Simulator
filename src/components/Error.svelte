@@ -1,5 +1,12 @@
 <script lang="ts">
 export let error: any;
+import { logger } from '../lib/utils/logger';
+
+// Log error information for debugging and monitoring
+logger.error('Error component rendered', {
+  message: error.message || 'An unknown error occurred',
+  stack: error.stack || 'No stack trace available'
+});
 </script>
 
 <style lang="scss">

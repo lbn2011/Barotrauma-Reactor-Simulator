@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { WebNavigation, WebSearchFlowAction } from '@/types';
+import { logger } from '../lib/utils/logger';
 
 import AppStoreLogo from '@/components/icons/AppStoreLogo.svelte';
 import PlatformSelectorDropdown from '@/components/jet/web-navigation/PlatformSelectorDropdown.svelte';
@@ -24,6 +25,12 @@ let languageDropdownOpen = false;
 export let webNavigation: WebNavigation;
 export let config = defaultComponentConfig;
 
+// Log navigation component initialization
+logger.info('Navigation component initialized', {
+  platformCount: webNavigation.platforms.length,
+  hasSearchAction: !!webNavigation.searchAction
+});
+
 function isSystemImageArtwork (artwork: any): boolean {
   return artwork.type === 'system';
 }
@@ -36,6 +43,7 @@ $: supportedLanguages = config.global?.supportedLanguages || ['zh-CN', 'en-US'];
 $: currentLanguage = i18n?.language || config.global?.defaultLanguage || 'zh-CN';
 
 function handleLanguageChange (language: string) {
+  logger.info('Language changed', { from: currentLanguage, to: language });
   setLanguage(language);
   languageDropdownOpen = false;
 }

@@ -3,6 +3,7 @@
 
 import type { ComponentConfig } from '../config/components';
 import { getComponentConfig } from '../config/components';
+import log from '../lib/utils/logger';
 
 // Component factory options
 interface ComponentFactoryOptions<T> {
@@ -21,13 +22,21 @@ export function createComponent<T> ({
   config: ComponentConfig;
   props: Record<string, any>;
 } {
-  const resolvedConfig = getComponentConfig(config);
+  log.info('Starting component instance creation');
+  log.debug('Component type:', typeof component);
+  log.trace('Using config:', config ? 'custom config' : 'default config');
 
-  return {
+  const resolvedConfig = getComponentConfig(config);
+  log.trace('Config resolution completed');
+
+  const result = {
     component,
     config: resolvedConfig,
     props,
   };
+
+  log.success('Component instance created successfully');
+  return result;
 }
 
 // Create a responsive component with breakpoints
@@ -49,14 +58,23 @@ export function createResponsiveComponent<T> ({
   props: Record<string, any>;
   breakpoints: Record<string, Record<string, any>>;
 } {
-  const resolvedConfig = getComponentConfig(config);
+  log.info('Starting responsive component instance creation');
+  log.debug('Component type:', typeof component);
+  log.trace('Using config:', config ? 'custom config' : 'default config');
+  log.trace('Breakpoint config:', Object.keys(breakpoints));
 
-  return {
+  const resolvedConfig = getComponentConfig(config);
+  log.trace('Config resolution completed');
+
+  const result = {
     component,
     config: resolvedConfig,
     props,
     breakpoints,
   };
+
+  log.success('Responsive component instance created successfully');
+  return result;
 }
 
 // Create a localized component with i18n support
@@ -73,14 +91,23 @@ export function createLocalizedComponent<T> ({
   props: Record<string, any>;
   translations: Record<string, Record<string, string>>;
 } {
-  const resolvedConfig = getComponentConfig(config);
+  log.info('Starting localized component instance creation');
+  log.debug('Component type:', typeof component);
+  log.trace('Using config:', config ? 'custom config' : 'default config');
+  log.trace('Translation language count:', Object.keys(translations).length);
 
-  return {
+  const resolvedConfig = getComponentConfig(config);
+  log.trace('Config resolution completed');
+
+  const result = {
     component,
     config: resolvedConfig,
     props,
     translations,
   };
+
+  log.success('Localized component instance created successfully');
+  return result;
 }
 
 // Component registry for dynamic component loading
@@ -88,18 +115,31 @@ class ComponentRegistry {
   private components = new Map<string, any>();
 
   register (name: string, component: any): void {
+    log.info(`Registering component: ${name}`);
+    log.debug('Component type:', typeof component);
     this.components.set(name, component);
+    log.success(`Component ${name} registered successfully`);
   }
 
   get (name: string): any | undefined {
-    return this.components.get(name);
+    log.trace(`Getting component: ${name}`);
+    const component = this.components.get(name);
+    if (component) {
+      log.debug(`Component ${name} retrieved successfully`);
+    } else {
+      log.warn(`Component ${name} not found`);
+    }
+    return component;
   }
 
   has (name: string): boolean {
-    return this.components.has(name);
+    const exists = this.components.has(name);
+    log.trace(`Checking if component ${name} exists: ${exists}`);
+    return exists;
   }
 
   getAll (): Map<string, any> {
+    log.debug(`Getting all registered components, total: ${this.components.size}`);
     return this.components;
   }
 }
@@ -108,7 +148,12 @@ export const componentRegistry = new ComponentRegistry();
 
 // Helper function to register components in bulk
 export function registerComponents (components: Record<string, any>): void {
+  const componentCount = Object.keys(components).length;
+  log.info(`Starting bulk component registration, total: ${componentCount}`);
+
   Object.entries(components).forEach(([name, component]) => {
     componentRegistry.register(name, component);
   });
+
+  log.success(`Bulk registration completed, successfully registered ${componentCount} components`);
 }

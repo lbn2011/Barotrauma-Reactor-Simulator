@@ -1,18 +1,28 @@
-// 数据处理Web Worker
+// Data Processing Web Worker
 
-// 定义消息类型
+// Log function
+function log (message: string, level: 'info' | 'debug' | 'error' | 'warn' = 'info') {
+  console[level](`[Data Worker] ${message}`);
+}
+
+// Initialization logs
+log('Data processing worker initialized');
+log('Loading data processing functions');
+log('Worker ready to process data tasks');
+
+// Define message types
 interface WorkerMessage {
   type: string;
   data: any;
 }
 
-// 定义响应类型
+// Define response types
 interface WorkerResponse {
   type: string;
   data: any;
 }
 
-// 定义警报数据输入
+// Define alarm data input
 interface AlarmDataInput {
   alarms: Array<{
     id: string;
@@ -24,7 +34,7 @@ interface AlarmDataInput {
   acknowledgedAlarms: string[];
 }
 
-// 定义警报数据输出
+// Define alarm data output
 interface AlarmDataOutput {
   unacknowledgedAlarms: Array<{
     id: string;
@@ -53,7 +63,7 @@ interface AlarmDataOutput {
   };
 }
 
-// 定义趋势数据输入
+// Define trend data input
 interface TrendDataInput {
   history: Array<{
     timestamp: number;
@@ -63,7 +73,7 @@ interface TrendDataInput {
   timeWindow: number;
 }
 
-// 定义趋势数据输出
+// Define trend data output
 interface TrendDataOutput {
   recentHistory: Array<{
     timestamp: number;
@@ -78,7 +88,7 @@ interface TrendDataOutput {
   }>;
 }
 
-// 定义报告输入
+// Define report input
 interface ReportInput {
   startTime: number;
   endTime: number;
@@ -90,7 +100,7 @@ interface ReportInput {
   }>;
 }
 
-// 定义报告输出
+// Define report output
 interface ReportOutput {
   summary: {
     startTime: number;
@@ -116,29 +126,47 @@ interface ReportOutput {
   };
 }
 
-// 计算趋势
+// Calculate trend
 function calculateTrend (history: number[]): 'rising' | 'falling' | 'stable' {
-  if (history.length < 2) return 'stable';
+  if (history.length < 2) {
+    log('Insufficient data points for trend calculation, returning stable', 'debug');
+    return 'stable';
+  }
 
+  log(`Calculating trend with ${history.length} data points`, 'debug');
   const recent = history.slice(-5);
   const first = recent[0];
   const last = recent[recent.length - 1];
   const change = last - first;
   const threshold = Math.abs(first) * 0.01 || 0.1;
 
-  if (Math.abs(change) < threshold) return 'stable';
-  return change > 0 ? 'rising' : 'falling';
+  log(`Trend calculation: first=${first}, last=${last}, change=${change}, threshold=${threshold}`, 'debug');
+
+  if (Math.abs(change) < threshold) {
+    log('Change within threshold, trend is stable', 'debug');
+    return 'stable';
+  }
+
+  const trend = change > 0 ? 'rising' : 'falling';
+  log(`Trend calculated: ${trend}`, 'debug');
+  return trend;
 }
 
-// 处理警报数据
+// Process alarm data
 function processAlarmData (data: AlarmDataInput): AlarmDataOutput {
+  log(`Processing alarm data: ${data.alarms.length} total alarms, ${data.acknowledgedAlarms.length} acknowledged alarms`, 'debug');
+
   const unacknowledgedAlarms = data.alarms.filter(
     (alarm) => !data.acknowledgedAlarms.includes(alarm.id)
   );
 
+  log(`Found ${unacknowledgedAlarms.length} unacknowledged alarms`, 'debug');
+
   const criticalAlarms = unacknowledgedAlarms.filter(
     (alarm) => alarm.severity === 'critical'
   );
+
+  log(`Found ${criticalAlarms.length} critical unacknowledged alarms`, 'debug');
 
   const alarmSummary = {
     total: data.alarms.length,
@@ -152,6 +180,8 @@ function processAlarmData (data: AlarmDataInput): AlarmDataOutput {
     },
   };
 
+  log(`Alarm processing summary: ${alarmSummary.total} total, ${alarmSummary.unacknowledged} unacknowledged, ${alarmSummary.critical} critical`, 'debug');
+
   return {
     unacknowledgedAlarms,
     criticalAlarms,
@@ -159,13 +189,17 @@ function processAlarmData (data: AlarmDataInput): AlarmDataOutput {
   };
 }
 
-// 处理趋势数据
+// Process trend data
 function processTrendData (data: TrendDataInput): TrendDataOutput {
+  log(`Processing trend data: ${data.history.length} total entries, time window: ${data.timeWindow}ms`, 'debug');
+
   const recentHistory = data.history.filter(
     (entry) => entry.timestamp >= Date.now() - data.timeWindow
   );
 
-  // 按参数分组
+  log(`Filtered to ${recentHistory.length} recent entries`, 'debug');
+
+  // Group by parameter
   const parameterGroups: Record<
     string,
     Array<{
@@ -184,9 +218,12 @@ function processTrendData (data: TrendDataInput): TrendDataOutput {
     });
   });
 
-  // 计算每个参数的趋势
+  log(`Grouped data into ${Object.keys(parameterGroups).length} parameters`, 'debug');
+
+  // Calculate trend for each parameter
   const trends = Object.entries(parameterGroups).map(
     ([parameterId, entries]) => {
+      log(`Calculating trend for parameter ${parameterId} with ${entries.length} data points`, 'debug');
       const values = entries.map((e) => e.value);
       const trend = calculateTrend(values);
       const latestEntry = entries[entries.length - 1];
@@ -200,23 +237,30 @@ function processTrendData (data: TrendDataInput): TrendDataOutput {
     }
   );
 
+  log(`Calculated trends for ${trends.length} parameters`, 'debug');
+
   return {
     recentHistory,
     trends,
   };
 }
 
-// 生成报告
+// Generate report
 function generateReport (data: ReportInput): ReportOutput {
-  const duration = data.endTime - data.startTime;
+  log(`Generating report: ${data.events.length} events from ${new Date(data.startTime).toISOString()} to ${new Date(data.endTime).toISOString()}`, 'debug');
 
-  // 按类型分组事件
+  const duration = data.endTime - data.startTime;
+  log(`Report duration: ${duration}ms`, 'debug');
+
+  // Group events by type
   const eventsByType: Record<string, number> = {};
   data.events.forEach((event) => {
     eventsByType[event.type] = (eventsByType[event.type] || 0) + 1;
   });
 
-  // 按严重性分组事件
+  log(`Events by type: ${JSON.stringify(eventsByType)}`, 'debug');
+
+  // Group events by severity
   const eventsBySeverity = {
     info: data.events.filter((e) => e.severity === 'info').length,
     warning: data.events.filter((e) => e.severity === 'warning').length,
@@ -224,10 +268,14 @@ function generateReport (data: ReportInput): ReportOutput {
     critical: data.events.filter((e) => e.severity === 'critical').length,
   };
 
-  // 计算每小时平均事件数
+  log(`Events by severity: ${JSON.stringify(eventsBySeverity)}`, 'debug');
+
+  // Calculate average events per hour
   const hoursDuration = duration / (1000 * 60 * 60);
   const averageEventsPerHour =
     hoursDuration > 0 ? data.events.length / hoursDuration : 0;
+
+  log(`Average events per hour: ${averageEventsPerHour.toFixed(2)}`, 'debug');
 
   return {
     summary: {
@@ -245,35 +293,56 @@ function generateReport (data: ReportInput): ReportOutput {
   };
 }
 
-// 处理消息
+// Process messages
 self.onmessage = (e: MessageEvent<WorkerMessage>) => {
   const { type, data } = e.data;
+  log(`Received message: ${type}`, 'debug');
 
   let result: any;
 
-  switch (type) {
-  case 'processAlarmData':
-    result = processAlarmData(data as AlarmDataInput);
-    break;
+  try {
+    switch (type) {
+    case 'processAlarmData':
+      log('Starting to process alarm data', 'debug');
+      log(`Processing ${(data as AlarmDataInput).alarms.length} alarms`, 'debug');
+      result = processAlarmData(data as AlarmDataInput);
+      log('Alarm data processing completed', 'debug');
+      break;
 
-  case 'processTrendData':
-    result = processTrendData(data as TrendDataInput);
-    break;
+    case 'processTrendData':
+      log('Starting to process trend data', 'debug');
+      log(`Processing ${(data as TrendDataInput).history.length} historical data entries`, 'debug');
+      result = processTrendData(data as TrendDataInput);
+      log('Trend data processing completed', 'debug');
+      break;
 
-  case 'generateReport':
-    result = generateReport(data as ReportInput);
-    break;
+    case 'generateReport':
+      log('Starting to generate report', 'debug');
+      log(`Processing ${(data as ReportInput).events.length} events`, 'debug');
+      result = generateReport(data as ReportInput);
+      log('Report generation completed', 'debug');
+      break;
 
-  default:
-    console.error('Unknown message type:', type);
-    return;
+    default:
+      log(`Unknown message type: ${type}`, 'error');
+      return;
+    }
+
+    // Send response
+    const response: WorkerResponse = {
+      type: `${type}Result`,
+      data: result,
+    };
+
+    log(`Sending response: ${response.type}`, 'debug');
+    self.postMessage(response);
+
+  } catch (error) {
+    log(`Error during data processing: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+    const errorResponse: WorkerResponse = {
+      type: `${type}Error`,
+      data: { error: error instanceof Error ? error.message : 'Unknown error' }
+    };
+    self.postMessage(errorResponse);
   }
-
-  // 发送响应
-  const response: WorkerResponse = {
-    type: `${type}Result`,
-    data: result,
-  };
-
-  self.postMessage(response);
 };

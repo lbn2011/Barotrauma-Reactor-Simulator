@@ -3,6 +3,7 @@
 
 import type { ComponentConfig } from '@/config/components';
 import { defaultComponentConfig } from '@/config/components';
+import log from '../lib/utils/logger';
 
 /**
  * Load component configuration from JSON file
@@ -12,20 +13,23 @@ import { defaultComponentConfig } from '@/config/components';
 export async function loadComponentConfig (
   configPath?: string
 ): Promise<ComponentConfig> {
+  log.info('Starting component configuration loading');
   try {
     if (configPath) {
+      log.debug(`Loading config file: ${configPath}`);
       // In a browser environment, we would use fetch
       // For now, we'll use dynamic import for SSR compatibility
       const configModule = await import(configPath);
       const userConfig = configModule.default || configModule;
-      return mergeComponentConfig(defaultComponentConfig, userConfig);
+      log.success('Config file loaded successfully');
+      const mergedConfig = mergeComponentConfig(defaultComponentConfig, userConfig);
+      log.debug('Config merging completed');
+      return mergedConfig;
     }
+    log.info('No config path provided, using default config');
     return defaultComponentConfig;
   } catch (error) {
-    console.warn(
-      'Failed to load component configuration, using defaults:',
-      error
-    );
+    log.error('Failed to load component config, using default config:', error);
     return defaultComponentConfig;
   }
 }
@@ -40,7 +44,8 @@ export function mergeComponentConfig (
   defaultConfig: ComponentConfig,
   userConfig: Partial<ComponentConfig>
 ): ComponentConfig {
-  return {
+  log.trace('Starting config merging');
+  const mergedConfig = {
     navigation: {
       ...defaultConfig.navigation,
       ...userConfig.navigation,
@@ -70,6 +75,8 @@ export function mergeComponentConfig (
       ...userConfig.global,
     },
   };
+  log.trace('Config merging completed');
+  return mergedConfig;
 }
 
 /**
@@ -78,6 +85,7 @@ export function mergeComponentConfig (
  * @returns Configuration factory function
  */
 export function createConfigFactory (baseConfig: ComponentConfig) {
+  log.info('Creating config factory');
   return {
     /**
      * Get configuration for a specific component
@@ -87,6 +95,7 @@ export function createConfigFactory (baseConfig: ComponentConfig) {
     getConfig: <T extends keyof ComponentConfig>(
       componentName: T
     ): ComponentConfig[T] => {
+      log.trace(`Getting component config: ${componentName}`);
       return baseConfig[componentName] as ComponentConfig[T];
     },
 
@@ -100,13 +109,16 @@ export function createConfigFactory (baseConfig: ComponentConfig) {
       componentName: T,
       config: Partial<ComponentConfig[T]>
     ): ComponentConfig => {
-      return {
+      log.debug(`Updating component config: ${componentName}`);
+      const updatedConfig = {
         ...baseConfig,
         [componentName]: {
           ...baseConfig[componentName],
           ...config,
         },
       };
+      log.trace('Component config update completed');
+      return updatedConfig;
     },
   };
 }
@@ -119,8 +131,11 @@ export function createConfigFactory (baseConfig: ComponentConfig) {
 export function loadConfigSync (
   config?: Partial<ComponentConfig>
 ): ComponentConfig {
+  log.info('Loading config synchronously (SSR)');
   if (config) {
+    log.debug('Using provided config object');
     return mergeComponentConfig(defaultComponentConfig, config);
   }
+  log.info('No config provided, using default config');
   return defaultComponentConfig;
 }

@@ -6,28 +6,41 @@ import {
   setCoreCoolingPumpFlowRate,
 } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
+import log from '@/utils/logger';
+
+// Component initialization logs
+log.info('OfflineCoolingPumpPanel component initialized');
 
 // 堆芯离线冷却泵数据
 let coreCoolingPump: any;
 
 // 组件挂载时订阅状态
 onMount(() => {
+  log.debug('OfflineCoolingPumpPanel mounting, subscribing to reactor store');
+  
   const unsubscribe = reactorStore.subscribe((state) => {
+    log.trace('OfflineCoolingPumpPanel state updated', { coreCoolingPump: state.coreCoolingPump });
     coreCoolingPump = state.coreCoolingPump;
   });
 
+  log.debug('OfflineCoolingPumpPanel mounted successfully');
   return unsubscribe;
 });
 
 // 切换冷却泵状态
 function handleToggle () {
+  log.info('Toggling core cooling pump status', { currentStatus: coreCoolingPump?.status });
   toggleCoreCoolingPump();
+  log.success('Core cooling pump status toggled successfully');
 }
 
 // 调整冷却流量
 function handleFlowRateChange (e: Event) {
   const target = e.target as HTMLInputElement;
-  setCoreCoolingPumpFlowRate(parseFloat(target.value));
+  const value = parseFloat(target.value);
+  log.debug('Changing core cooling pump flow rate', { value });
+  setCoreCoolingPumpFlowRate(value);
+  log.success('Core cooling pump flow rate updated successfully', { value });
 }
 </script>
 

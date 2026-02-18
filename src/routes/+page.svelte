@@ -3,6 +3,17 @@ import { Hero } from '@/components/shared';
 import Overview from './Overview.svelte';
 import { defaultComponentConfig } from '@/config/components';
 import i18nStore from '@/stores/i18n';
+import log from '@/utils/logger';
+import { onMount } from 'svelte';
+
+// Component initialization logs
+log.info('+page.svelte component initialized');
+log.debug('Starting to load page dependencies and components');
+
+onMount(() => {
+  log.success('+page.svelte component mounted successfully');
+  log.info('Page loaded successfully, displaying Overview component');
+});
 </script>
 
 <style>

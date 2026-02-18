@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Page } from '~/types';
+import { logger } from '../lib/utils/logger';
 
 import MetaTags from '~/components/structure/MetaTags.svelte';
 import PageModal from '~/components/PageModal.svelte';
@@ -11,6 +12,9 @@ import { defaultComponentConfig } from '~/config/components';
 
 export let page: Page;
 export let config = defaultComponentConfig;
+
+// Log page rendering
+logger.info('Page component rendered', { pageType: page.type });
 
 // Page type guards
 function isAppEventDetailPage (page: Page): boolean {

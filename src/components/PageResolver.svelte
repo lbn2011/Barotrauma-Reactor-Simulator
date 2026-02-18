@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Page } from '~/types';
+import { logger } from '../lib/utils/logger';
 
 import PageComponent from '~/components/Page.svelte';
 import ErrorComponent from '~/components/Error.svelte';
@@ -8,6 +9,25 @@ import { defaultComponentConfig } from '~/config/components';
 export let page: Promise<Page> | Page;
 export let isFirstPage: boolean;
 export let config = defaultComponentConfig;
+
+// Log page loading start
+logger.info('Page loading started', { isFirstPage });
+
+// Function to log page load success
+function handlePageLoadSuccess(loadedPage: Page) {
+  logger.info('Page loaded successfully', { 
+    pageType: loadedPage.type, 
+    isFirstPage 
+  });
+}
+
+// Function to log page load error
+function handlePageLoadError(error: any) {
+  logger.error('Page failed to load', { 
+    error: error instanceof Error ? error.message : error,
+    isFirstPage 
+  });
+}
 </script>
 
 <style lang="scss">
@@ -31,7 +51,9 @@ export let config = defaultComponentConfig;
     <div class="loading-spinner">Loading...</div>
   </div>
 {:then page}
+  {handlePageLoadSuccess(page)}
   <PageComponent {page} {config} />
 {:catch error}
+  {handlePageLoadError(error)}
   <ErrorComponent {error} />
 {/await}

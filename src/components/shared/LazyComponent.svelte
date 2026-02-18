@@ -1,5 +1,6 @@
 <script lang="ts">
 import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+import { logger } from '../../lib/utils/logger';
 
 export let component: () => Promise<{ default: any }>;
 export let props: Record<string, any> = {};
@@ -7,6 +8,13 @@ export let placeholder: string = 'Loading...';
 export let threshold: number = 0.1;
 export let rootMargin: string = '0px';
 export let immediate: boolean = false;
+
+// Log LazyComponent initialization
+logger.debug('LazyComponent initialized', {
+  immediate,
+  threshold,
+  rootMargin
+});
 
 let loadedComponent: any = null;
 let isLoading = false;
@@ -21,27 +29,34 @@ async function loadComponent () {
 
   isLoading = true;
   dispatch('loading');
+  logger.info('LazyComponent loading started');
 
   try {
     const module = await component();
     loadedComponent = module.default;
     isLoading = false;
     dispatch('loaded');
+    logger.info('LazyComponent loaded successfully');
   } catch (e) {
     error = e as Error;
     isLoading = false;
     dispatch('error', e);
+    logger.error('LazyComponent failed to load', {
+      error: error?.message || 'Unknown error'
+    });
   } finally {
     // Clean up observer once component is loaded
     if (observer) {
       observer.disconnect();
       observer = null;
+      logger.debug('LazyComponent intersection observer disconnected');
     }
   }
 }
 
 onMount(() => {
   if (immediate) {
+    logger.debug('LazyComponent immediate loading triggered');
     loadComponent();
     return;
   }
@@ -50,6 +65,7 @@ onMount(() => {
     observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
+          logger.debug('LazyComponent intersection observer triggered');
           loadComponent();
         }
       },
@@ -60,8 +76,10 @@ onMount(() => {
     );
 
     observer.observe(container);
+    logger.debug('LazyComponent intersection observer initialized');
   } else {
     // Fallback if Intersection Observer is not supported
+    logger.debug('LazyComponent using fallback loading (IntersectionObserver not supported)');
     loadComponent();
   }
 });
@@ -69,6 +87,7 @@ onMount(() => {
 onDestroy(() => {
   if (observer) {
     observer.disconnect();
+    logger.debug('LazyComponent destroyed - observer disconnected');
   }
 });
 </script>
