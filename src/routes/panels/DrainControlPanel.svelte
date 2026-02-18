@@ -28,14 +28,14 @@ onMount(() => {
 });
 
 // 切换排水状态
-function handleToggle() {
+function handleToggle () {
   log.info('Toggling reactor drain system status', { currentStatus: reactorDrain?.status });
   toggleReactorDrain();
   log.success('Reactor drain system status toggled successfully');
 }
 
 // 调整排水流量
-function handleFlowRateChange(e: Event) {
+function handleFlowRateChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing reactor drain flow rate', { value });

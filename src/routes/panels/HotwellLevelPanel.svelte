@@ -24,7 +24,7 @@ onMount(() => {
 });
 
 // 调整热井液位
-function handleLevelChange(e: Event) {
+function handleLevelChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing condenser hotwell level', { value });

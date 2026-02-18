@@ -94,7 +94,7 @@ export const defaultComponentConfig: ComponentConfig = {
 };
 
 // Get Component Config with defaults
-export function getComponentConfig(
+export function getComponentConfig (
   config?: Partial<ComponentConfig>
 ): ComponentConfig {
   return {

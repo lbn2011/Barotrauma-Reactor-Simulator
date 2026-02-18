@@ -29,7 +29,7 @@ const chartId = $derived(`chart-${id || uid.replace(/:/g, '')}`);
 
 // Set chart context
 setChartContext({
-  get config() {
+  get config () {
     return config;
   },
 });

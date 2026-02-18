@@ -38,7 +38,7 @@ i18nStore.subscribe((value) => {
 });
 
 // Change language
-function handleLanguageChange(languageCode: string) {
+function handleLanguageChange (languageCode: string) {
   logger.info('Language change requested', {
     from: currentLanguage,
     to: languageCode,
@@ -53,7 +53,7 @@ function handleLanguageChange(languageCode: string) {
 }
 
 // Toggle dropdown
-function toggleDropdown() {
+function toggleDropdown () {
   isOpen = !isOpen;
   logger.debug('Language selector dropdown toggled', {
     isOpen,
@@ -61,7 +61,7 @@ function toggleDropdown() {
 }
 
 // Close dropdown when clicking outside
-function handleClickOutside(event: MouseEvent) {
+function handleClickOutside (event: MouseEvent) {
   const target = event.target as HTMLElement;
   if (!target.closest('.language-selector')) {
     isOpen = false;

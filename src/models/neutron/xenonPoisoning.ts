@@ -41,7 +41,7 @@ interface XenonPoisoningOutput {
  * 4. 氙中毒在反应堆停堆后会先增加后减少，形成"氙峰"
  * 5. 这可能导致反应堆在停堆后短时间内无法重启
  */
-export function calculateXenonPoisoning(
+export function calculateXenonPoisoning (
   input: XenonPoisoningInput
 ): XenonPoisoningOutput {
   // 氙-135动力学方程
@@ -76,7 +76,7 @@ export function calculateXenonPoisoning(
  *
  * @returns 默认参数
  */
-export function getDefaultXenonParameters() {
+export function getDefaultXenonParameters () {
   return {
     λ_Xe: 2.95e-5, // 氙-135衰变常数（s⁻¹），半衰期约9.2小时
     λ_I: 2.87e-5, // 碘-135衰变常数（s⁻¹），半衰期约6.7小时

@@ -24,7 +24,7 @@ let observer: IntersectionObserver | null = null;
 
 const dispatch = createEventDispatcher();
 
-async function loadComponent() {
+async function loadComponent () {
   if (isLoading || loadedComponent) return;
 
   isLoading = true;

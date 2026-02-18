@@ -47,7 +47,7 @@ interface FaultSimulationOutput {
 }
 
 // 泵故障模型
-function simulatePumpFault(
+function simulatePumpFault (
   pumpId: string,
   input: FaultSimulationInput
 ): Fault | null {
@@ -112,7 +112,7 @@ function simulatePumpFault(
 }
 
 // 阀门故障模型
-function simulateValveFault(
+function simulateValveFault (
   valveId: string,
   input: FaultSimulationInput
 ): Fault | null {
@@ -168,7 +168,7 @@ function simulateValveFault(
 }
 
 // 传感器故障模型
-function simulateSensorFault(
+function simulateSensorFault (
   sensorId: string,
   input: FaultSimulationInput
 ): Fault | null {
@@ -228,7 +228,7 @@ function simulateSensorFault(
 }
 
 // 控制器故障模型
-function simulateControllerFault(
+function simulateControllerFault (
   controllerId: string,
   input: FaultSimulationInput
 ): Fault | null {
@@ -284,7 +284,7 @@ function simulateControllerFault(
 }
 
 // 管道故障模型
-function simulatePipeFault(
+function simulatePipeFault (
   pipeId: string,
   input: FaultSimulationInput
 ): Fault | null {
@@ -344,7 +344,7 @@ function simulatePipeFault(
 }
 
 // 电气故障模型
-function simulateElectricalFault(
+function simulateElectricalFault (
   electricalId: string,
   input: FaultSimulationInput
 ): Fault | null {
@@ -400,7 +400,7 @@ function simulateElectricalFault(
 }
 
 // 冷却系统故障模型
-function simulateCoolingFault(
+function simulateCoolingFault (
   coolingId: string,
   input: FaultSimulationInput
 ): Fault | null {
@@ -456,7 +456,7 @@ function simulateCoolingFault(
 }
 
 // 蒸汽系统故障模型
-function simulateSteamFault(
+function simulateSteamFault (
   steamId: string,
   input: FaultSimulationInput
 ): Fault | null {
@@ -512,7 +512,7 @@ function simulateSteamFault(
 }
 
 // 模拟故障
-function simulateFaults(input: FaultSimulationInput): FaultSimulationOutput {
+function simulateFaults (input: FaultSimulationInput): FaultSimulationOutput {
   const activeFaults: Fault[] = [];
   const newFaults: Fault[] = [];
   const resolvedFaults: Fault[] = [];
@@ -694,7 +694,7 @@ function simulateFaults(input: FaultSimulationInput): FaultSimulationOutput {
 }
 
 // 触发特定故障
-function triggerSpecificFault(
+function triggerSpecificFault (
   faultType:
     | 'pump'
     | 'valve'
@@ -710,70 +710,70 @@ function triggerSpecificFault(
   // 根据故障类型和严重程度生成应急程序
   let emergencyProcedure: string;
   switch (faultType) {
-    case 'pump':
-      emergencyProcedure =
+  case 'pump':
+    emergencyProcedure =
         severity === 'minor'
           ? '降低泵负载，监控运行状态'
           : severity === 'major'
             ? '切换到备用泵，准备维修'
             : '立即停机，启动应急冷却系统';
-      break;
-    case 'valve':
-      emergencyProcedure =
+    break;
+  case 'valve':
+    emergencyProcedure =
         severity === 'minor'
           ? '手动调整阀门，监控泄漏情况'
           : severity === 'major'
             ? '隔离相关系统，准备维修'
             : '立即隔离系统，启动备用回路';
-      break;
-    case 'sensor':
-      emergencyProcedure =
+    break;
+  case 'sensor':
+    emergencyProcedure =
         severity === 'minor'
           ? '使用备用传感器数据，监控系统状态'
           : severity === 'major'
             ? '切换到手动控制模式，准备更换传感器'
             : '立即启动安全系统，使用冗余传感器';
-      break;
-    case 'controller':
-      emergencyProcedure =
+    break;
+  case 'controller':
+    emergencyProcedure =
         severity === 'minor'
           ? '重启控制器，监控运行状态'
           : severity === 'major'
             ? '切换到备用控制器，准备维修'
             : '立即启动手动控制，隔离故障控制器';
-      break;
-    case 'pipe':
-      emergencyProcedure =
+    break;
+  case 'pipe':
+    emergencyProcedure =
         severity === 'minor'
           ? '关闭相关阀门，修补泄漏'
           : severity === 'major'
             ? '隔离管道段，准备更换'
             : '立即停机，启动应急冷却系统';
-      break;
-    case 'electrical':
-      emergencyProcedure =
+    break;
+  case 'electrical':
+    emergencyProcedure =
         severity === 'minor'
           ? '重启电气设备，监控电压'
           : severity === 'major'
             ? '切换到备用电源，准备维修'
             : '立即停机，启动备用电源系统';
-      break;
-    case 'cooling':
-      emergencyProcedure =
+    break;
+  case 'cooling':
+    emergencyProcedure =
         severity === 'minor'
           ? '增加冷却流量，监控温度'
           : severity === 'major'
             ? '切换到备用冷却系统，准备维修'
             : '立即停机，启动应急冷却系统';
-      break;
-    case 'steam':
-      emergencyProcedure =
+    break;
+  case 'steam':
+    emergencyProcedure =
         severity === 'minor'
           ? '调整蒸汽流量，监控压力'
           : severity === 'major'
             ? '切换到备用蒸汽系统，准备维修'
             : '立即停机，启动蒸汽旁路系统';
-      break;
+    break;
   }
 
   return {
@@ -792,7 +792,7 @@ function triggerSpecificFault(
 }
 
 // 修复故障
-function repairFault(faultId: string, currentFaults: Fault[]): Fault[] {
+function repairFault (faultId: string, currentFaults: Fault[]): Fault[] {
   return currentFaults.map((fault) => {
     if (fault.id === faultId && fault.status === 'active') {
       return {
@@ -806,7 +806,7 @@ function repairFault(faultId: string, currentFaults: Fault[]): Fault[] {
 }
 
 // 生成应急程序指南
-function generateEmergencyProcedureGuide(fault: Fault): string[] {
+function generateEmergencyProcedureGuide (fault: Fault): string[] {
   const guide: string[] = [];
 
   guide.push(`故障类型: ${fault.type}`);

@@ -44,7 +44,7 @@ export interface FetchError {
  * @param options - Fetch options
  * @returns Promise with the response data
  */
-export async function fetchWithCache<T>(
+export async function fetchWithCache<T> (
   url: string,
   options: FetchOptions = {}
 ): Promise<T> {
@@ -121,7 +121,7 @@ export async function fetchWithCache<T>(
  * @param key - Cache key
  * @returns Cached data if available and not expired, otherwise null
  */
-export function getCachedResponse<T>(key: string): T | null {
+export function getCachedResponse<T> (key: string): T | null {
   try {
     log.trace(`Getting cache: ${key}`);
     const cachedString = localStorage.getItem(`cache_${key}`);
@@ -154,7 +154,7 @@ export function getCachedResponse<T>(key: string): T | null {
  * @param data - Data to cache
  * @param expiration - Expiration time in milliseconds
  */
-export function setCachedResponse(
+export function setCachedResponse (
   key: string,
   data: any,
   expiration?: number
@@ -178,7 +178,7 @@ export function setCachedResponse(
  * Clear cached response from local storage
  * @param key - Cache key
  */
-export function clearCachedResponse(key: string): void {
+export function clearCachedResponse (key: string): void {
   try {
     log.trace(`Clearing cache: ${key}`);
     localStorage.removeItem(`cache_${key}`);
@@ -191,7 +191,7 @@ export function clearCachedResponse(key: string): void {
 /**
  * Clear all cached responses
  */
-export function clearAllCachedResponses(): void {
+export function clearAllCachedResponses (): void {
   try {
     log.info('Clearing all caches');
     let count = 0;
@@ -214,7 +214,7 @@ export function clearAllCachedResponses(): void {
  * @param timeout - Timeout in milliseconds
  * @returns Promise with the response data
  */
-export async function fetchWithTimeout<T>(
+export async function fetchWithTimeout<T> (
   url: string,
   options: FetchOptions = {},
   timeout: number = 30000
@@ -246,7 +246,7 @@ export async function fetchWithTimeout<T>(
  * @param requests - Array of fetch requests
  * @returns Promise with array of responses
  */
-export async function batchFetch<T>(
+export async function batchFetch<T> (
   requests: Array<{ url: string; options?: FetchOptions }>
 ): Promise<T[]> {
   log.info(`Batch request: ${requests.length} URLs`);

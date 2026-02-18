@@ -46,7 +46,7 @@ $effect(() => {
  * Toggle theme mode
  * Save theme setting to local storage and update interface
  */
-function toggleTheme() {
+function toggleTheme () {
   darkMode = !darkMode; // Toggle theme state
   localStorage.setItem('theme', darkMode ? 'dark' : 'light'); // Save theme setting
   logger.info('TopBar', `Theme toggled to: ${darkMode ? 'dark' : 'light'}`);
@@ -57,7 +57,7 @@ function toggleTheme() {
  * Update theme settings
  * Add or remove dark class based on current theme mode
  */
-function updateTheme() {
+function updateTheme () {
   if (typeof document !== 'undefined') {
     if (darkMode) {
       document.documentElement.classList.add('dark'); // Add dark class to enable dark mode

@@ -30,7 +30,7 @@ onMount(() => {
 });
 
 // 切换水泵状态
-function handleTogglePump(pumpNumber: 1 | 2) {
+function handleTogglePump (pumpNumber: 1 | 2) {
   log.info('Toggling condenser circulation pump status', {
     pumpNumber,
     currentStatus: condenserCirculationPumps?.[`pump${pumpNumber}`]?.status,
@@ -40,7 +40,7 @@ function handleTogglePump(pumpNumber: 1 | 2) {
 }
 
 // 调整水泵流量
-function handleFlowRateChange(pumpNumber: 1 | 2, e: Event) {
+function handleFlowRateChange (pumpNumber: 1 | 2, e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing condenser circulation pump flow rate', { pumpNumber, value });

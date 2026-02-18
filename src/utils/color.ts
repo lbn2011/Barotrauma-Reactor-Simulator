@@ -1,6 +1,6 @@
 import log from '../lib/utils/logger';
 
-export function colorAsString(color: any): string {
+export function colorAsString (color: any): string {
   log.trace('Starting color conversion to string');
   log.debug('Input color:', color);
 
@@ -23,7 +23,7 @@ export function colorAsString(color: any): string {
   return '#000000';
 }
 
-export function getLuminanceForRGB(color: any): number {
+export function getLuminanceForRGB (color: any): number {
   log.trace('Starting RGB color luminance calculation');
   log.debug('Input color:', color);
 
@@ -45,7 +45,7 @@ export function getLuminanceForRGB(color: any): number {
   return luminance;
 }
 
-export function getBackgroundGradientCSSVarsFromArtworks(
+export function getBackgroundGradientCSSVarsFromArtworks (
   artworks: any[],
   options: {
     sortFn?: (a: any, b: any) => number;
@@ -106,7 +106,7 @@ export function getBackgroundGradientCSSVarsFromArtworks(
   return cssVars;
 }
 
-export function isNamedColor(color: any): boolean {
+export function isNamedColor (color: any): boolean {
   log.trace('Checking if color is named');
   log.debug('Input color:', color);
 

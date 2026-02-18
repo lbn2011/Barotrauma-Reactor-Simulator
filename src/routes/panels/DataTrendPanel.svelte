@@ -76,7 +76,7 @@ const chartOptions = {
 };
 
 // 懒加载Chart.js库
-async function loadChartJS() {
+async function loadChartJS () {
   if (isChartLoaded) return;
 
   log.info('Loading Chart.js library');
@@ -101,7 +101,7 @@ async function loadChartJS() {
 }
 
 // 更新图表数据
-async function updateChartData() {
+async function updateChartData () {
   log.debug('Updating chart data', { hasCanvas: !!chartCanvas, hasTrends: !!trends });
 
   if (!chartCanvas || !trends) return;

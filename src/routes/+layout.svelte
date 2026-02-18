@@ -32,7 +32,7 @@ onDestroy(() => {
 });
 
 // Toggle sidebar
-function toggleSidebar() {
+function toggleSidebar () {
   log.debug('Starting to toggle sidebar state', { currentState: sidebarOpen });
   sidebarOpen = !sidebarOpen;
   log.success('Sidebar state toggled', { newState: sidebarOpen });

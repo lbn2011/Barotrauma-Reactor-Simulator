@@ -49,108 +49,108 @@ export enum UIIntentType {
 }
 
 // Create Intent Handler
-export function handleIntent(intent: Intent) {
+export function handleIntent (intent: Intent) {
   log.info(`Processing intent: ${intent.type}`);
   log.debug('Intent payload:', intent.payload);
 
   try {
     switch (intent.type) {
-      // Reactor Intents
-      case ReactorIntentType.START_SIMULATION:
-        log.info('Starting reactor simulation');
-        startSimulation();
-        break;
-      case ReactorIntentType.STOP_SIMULATION:
-        log.info('Stopping reactor simulation');
-        stopSimulation();
-        break;
-      case ReactorIntentType.RESET_SIMULATION:
-        log.info('Resetting reactor simulation');
-        resetSimulation();
-        break;
-      case ReactorIntentType.SET_CONTROL_ROD_POSITION:
-        if (intent.payload?.position !== undefined) {
-          log.debug(`Setting control rod position: ${intent.payload.position}`);
-          import('../lib/stores/reactorStore').then(
-            ({ setControlRodPosition }) => {
-              setControlRodPosition(intent.payload.position);
-            }
-          );
-        } else {
-          log.warn(
-            'Failed to set control rod position: missing position parameter'
-          );
-        }
-        break;
-      case ReactorIntentType.EMERGENCY_ROD_INSERTION:
-        log.warn('Performing emergency rod insertion');
+    // Reactor Intents
+    case ReactorIntentType.START_SIMULATION:
+      log.info('Starting reactor simulation');
+      startSimulation();
+      break;
+    case ReactorIntentType.STOP_SIMULATION:
+      log.info('Stopping reactor simulation');
+      stopSimulation();
+      break;
+    case ReactorIntentType.RESET_SIMULATION:
+      log.info('Resetting reactor simulation');
+      resetSimulation();
+      break;
+    case ReactorIntentType.SET_CONTROL_ROD_POSITION:
+      if (intent.payload?.position !== undefined) {
+        log.debug(`Setting control rod position: ${intent.payload.position}`);
         import('../lib/stores/reactorStore').then(
-          ({ emergencyRodInsertion }) => {
-            emergencyRodInsertion();
+          ({ setControlRodPosition }) => {
+            setControlRodPosition(intent.payload.position);
           }
         );
-        break;
-      case ReactorIntentType.SET_POWER_SETPOINT:
-        if (intent.payload?.setpoint !== undefined) {
-          log.debug(`Setting power setpoint: ${intent.payload.setpoint}`);
-          import('../lib/stores/reactorStore').then(({ setPowerSetpoint }) => {
-            setPowerSetpoint(intent.payload.setpoint);
-          });
-        } else {
-          log.warn('Failed to set power setpoint: missing setpoint parameter');
-        }
-        break;
-      case ReactorIntentType.TOGGLE_AUTOMATIC_CONTROL:
-        log.info('Toggling automatic control mode');
-        import('../lib/stores/reactorStore').then(
-          ({ toggleAutomaticControl }) => {
-            toggleAutomaticControl();
-          }
+      } else {
+        log.warn(
+          'Failed to set control rod position: missing position parameter'
         );
-        break;
-      case ReactorIntentType.TRIP_REACTOR:
-        log.error('Tripping reactor');
-        import('../lib/stores/reactorStore').then(({ tripReactor }) => {
-          tripReactor();
+      }
+      break;
+    case ReactorIntentType.EMERGENCY_ROD_INSERTION:
+      log.warn('Performing emergency rod insertion');
+      import('../lib/stores/reactorStore').then(
+        ({ emergencyRodInsertion }) => {
+          emergencyRodInsertion();
+        }
+      );
+      break;
+    case ReactorIntentType.SET_POWER_SETPOINT:
+      if (intent.payload?.setpoint !== undefined) {
+        log.debug(`Setting power setpoint: ${intent.payload.setpoint}`);
+        import('../lib/stores/reactorStore').then(({ setPowerSetpoint }) => {
+          setPowerSetpoint(intent.payload.setpoint);
         });
-        break;
-      case ReactorIntentType.UPDATE_STATE:
-        log.trace('Updating reactor state');
-        updateReactorState();
-        break;
+      } else {
+        log.warn('Failed to set power setpoint: missing setpoint parameter');
+      }
+      break;
+    case ReactorIntentType.TOGGLE_AUTOMATIC_CONTROL:
+      log.info('Toggling automatic control mode');
+      import('../lib/stores/reactorStore').then(
+        ({ toggleAutomaticControl }) => {
+          toggleAutomaticControl();
+        }
+      );
+      break;
+    case ReactorIntentType.TRIP_REACTOR:
+      log.error('Tripping reactor');
+      import('../lib/stores/reactorStore').then(({ tripReactor }) => {
+        tripReactor();
+      });
+      break;
+    case ReactorIntentType.UPDATE_STATE:
+      log.trace('Updating reactor state');
+      updateReactorState();
+      break;
 
       // I18n Intents
-      case I18nIntentType.SET_LANGUAGE:
-        if (intent.payload?.language) {
-          log.info(`Setting language: ${intent.payload.language}`);
-          setLanguage(intent.payload.language);
-        } else {
-          log.warn('Failed to set language: missing language parameter');
-        }
-        break;
+    case I18nIntentType.SET_LANGUAGE:
+      if (intent.payload?.language) {
+        log.info(`Setting language: ${intent.payload.language}`);
+        setLanguage(intent.payload.language);
+      } else {
+        log.warn('Failed to set language: missing language parameter');
+      }
+      break;
 
       // UI Intents
-      case UIIntentType.TOGGLE_SIDEBAR:
-        log.info('Toggling sidebar visibility');
-        sidebarIsHidden.update((hidden) => !hidden);
-        break;
-      case UIIntentType.SET_REDUCED_MOTION:
-        if (intent.payload?.enabled !== undefined) {
-          log.debug(`Setting reduced motion: ${intent.payload.enabled}`);
-          // Note: prefersReducedMotion is a readonly store based on media query
-          // This intent would typically be used to store user preference in localStorage
-          localStorage.setItem(
-            'reducedMotion',
-            intent.payload.enabled.toString()
-          );
-          log.success('Reduced motion preference saved to local storage');
-        } else {
-          log.warn('Failed to set reduced motion: missing enabled parameter');
-        }
-        break;
+    case UIIntentType.TOGGLE_SIDEBAR:
+      log.info('Toggling sidebar visibility');
+      sidebarIsHidden.update((hidden) => !hidden);
+      break;
+    case UIIntentType.SET_REDUCED_MOTION:
+      if (intent.payload?.enabled !== undefined) {
+        log.debug(`Setting reduced motion: ${intent.payload.enabled}`);
+        // Note: prefersReducedMotion is a readonly store based on media query
+        // This intent would typically be used to store user preference in localStorage
+        localStorage.setItem(
+          'reducedMotion',
+          intent.payload.enabled.toString()
+        );
+        log.success('Reduced motion preference saved to local storage');
+      } else {
+        log.warn('Failed to set reduced motion: missing enabled parameter');
+      }
+      break;
 
-      default:
-        log.warn('Unknown intent type:', intent.type);
+    default:
+      log.warn('Unknown intent type:', intent.type);
     }
 
     log.trace('Intent processing completed');

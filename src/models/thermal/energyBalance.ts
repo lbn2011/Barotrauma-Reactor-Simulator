@@ -42,7 +42,7 @@ interface EnergyBalanceOutput {
  * 3. 汽轮机：蒸汽焓 → 机械功（P_mechanical）
  * 4. 发电机：机械功 → 电能（P_electrical）
  */
-export function calculateEnergyBalance(
+export function calculateEnergyBalance (
   input: EnergyBalanceInput
 ): EnergyBalanceOutput {
   // 反应堆系统能量平衡
@@ -85,7 +85,7 @@ export function calculateEnergyBalance(
  * @param loadFactor 负荷因子
  * @returns 汽轮机效率
  */
-export function calculateTurbineEfficiency(
+export function calculateTurbineEfficiency (
   η_base: number,
   P_steam: number,
   P_rated: number,
@@ -112,7 +112,7 @@ export function calculateTurbineEfficiency(
  * @param T_condensate 凝结水温度（℃）
  * @returns 除氧器效率
  */
-export function calculateDeaeratorEfficiency(
+export function calculateDeaeratorEfficiency (
   T_sat: number,
   T_condensate: number
 ): number {
@@ -128,7 +128,7 @@ export function calculateDeaeratorEfficiency(
  * @param η_deaerator 除氧器效率
  * @returns 含氧量
  */
-export function calculateOxygenContent(
+export function calculateOxygenContent (
   O2_max: number,
   η_deaerator: number
 ): number {

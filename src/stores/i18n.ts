@@ -142,7 +142,7 @@ const languageDirections: Record<string, 'ltr' | 'rtl'> = {
 };
 
 // Create i18n store
-function createI18nStore() {
+function createI18nStore () {
   log.info('Starting to create internationalization store');
   const { subscribe, set } = writable<I18nStore>({
     language: 'zh-CN',
@@ -154,7 +154,7 @@ function createI18nStore() {
   });
 
   // Update store
-  function updateStore(language: string) {
+  function updateStore (language: string) {
     log.info(
       `Starting to update internationalization store, language: ${language}`
     );
@@ -247,7 +247,7 @@ const i18nStore = createI18nStore();
 export default i18nStore;
 
 // Export getI18n function for backward compatibility
-export function getI18n() {
+export function getI18n () {
   log.trace('Getting internationalization store instance');
   let storeValue: I18nStore | undefined;
   i18nStore.subscribe((value) => (storeValue = value))();
@@ -256,7 +256,7 @@ export function getI18n() {
 }
 
 // Export setLanguage function
-export function setLanguage(language: string) {
+export function setLanguage (language: string) {
   log.info(`Setting language: ${language}`);
   i18nStore.setLanguage(language);
 }

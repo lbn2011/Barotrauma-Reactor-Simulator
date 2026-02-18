@@ -21,12 +21,12 @@ reactorStore.subscribe((state) => {
 });
 
 // 处理泵状态切换
-function handlePumpToggle(pumpNumber: 1 | 2) {
+function handlePumpToggle (pumpNumber: 1 | 2) {
   toggleRecirculationPump(pumpNumber);
 }
 
 // 处理泵转速变化
-function handleSpeedChange(pumpNumber: 1 | 2, e: Event) {
+function handleSpeedChange (pumpNumber: 1 | 2, e: Event) {
   const target = e.target as HTMLInputElement;
   const speed = parseFloat(target.value);
   setRecirculationPumpSpeed(pumpNumber, speed);

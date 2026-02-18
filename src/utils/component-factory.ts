@@ -13,7 +13,7 @@ interface ComponentFactoryOptions<T> {
 }
 
 // Create a configured component instance
-export function createComponent<T>({
+export function createComponent<T> ({
   component,
   config,
   props = {},
@@ -40,7 +40,7 @@ export function createComponent<T>({
 }
 
 // Create a responsive component with breakpoints
-export function createResponsiveComponent<T>({
+export function createResponsiveComponent<T> ({
   component,
   config,
   props = {},
@@ -78,7 +78,7 @@ export function createResponsiveComponent<T>({
 }
 
 // Create a localized component with i18n support
-export function createLocalizedComponent<T>({
+export function createLocalizedComponent<T> ({
   component,
   config,
   props = {},
@@ -114,14 +114,14 @@ export function createLocalizedComponent<T>({
 class ComponentRegistry {
   private components = new Map<string, any>();
 
-  register(name: string, component: any): void {
+  register (name: string, component: any): void {
     log.info(`Registering component: ${name}`);
     log.debug('Component type:', typeof component);
     this.components.set(name, component);
     log.success(`Component ${name} registered successfully`);
   }
 
-  get(name: string): any | undefined {
+  get (name: string): any | undefined {
     log.trace(`Getting component: ${name}`);
     const component = this.components.get(name);
     if (component) {
@@ -132,13 +132,13 @@ class ComponentRegistry {
     return component;
   }
 
-  has(name: string): boolean {
+  has (name: string): boolean {
     const exists = this.components.has(name);
     log.trace(`Checking if component ${name} exists: ${exists}`);
     return exists;
   }
 
-  getAll(): Map<string, any> {
+  getAll (): Map<string, any> {
     log.debug(
       `Getting all registered components, total: ${this.components.size}`
     );
@@ -149,7 +149,7 @@ class ComponentRegistry {
 export const componentRegistry = new ComponentRegistry();
 
 // Helper function to register components in bulk
-export function registerComponents(components: Record<string, any>): void {
+export function registerComponents (components: Record<string, any>): void {
   const componentCount = Object.keys(components).length;
   log.info(`Starting bulk component registration, total: ${componentCount}`);
 

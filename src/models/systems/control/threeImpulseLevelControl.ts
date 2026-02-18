@@ -42,7 +42,7 @@ interface ThreeImpulseLevelControlOutput {
  *
  * 这种控制方法可以快速响应负荷变化，提高水位控制精度
  */
-export function calculateThreeImpulseLevelControl(
+export function calculateThreeImpulseLevelControl (
   input: ThreeImpulseLevelControlInput
 ): ThreeImpulseLevelControlOutput {
   // 计算水位误差：设定值 - 实际值
@@ -96,7 +96,7 @@ export function calculateThreeImpulseLevelControl(
  * @param waterLevelSetpoint 水位设定值（%）
  * @returns 水位状态和消息
  */
-export function calculateWaterLevelStatus(
+export function calculateWaterLevelStatus (
   waterLevel: number,
   waterLevelSetpoint: number
 ): {

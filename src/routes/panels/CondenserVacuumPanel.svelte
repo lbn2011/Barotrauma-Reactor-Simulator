@@ -28,14 +28,14 @@ onMount(() => {
 });
 
 // 切换真空系统状态
-function handleToggle() {
+function handleToggle () {
   log.info('Toggling condenser vacuum system status', { currentStatus: condenserVacuum?.status });
   toggleCondenserVacuum();
   log.success('Condenser vacuum system status toggled successfully');
 }
 
 // 调整真空度
-function handleVacuumLevelChange(e: Event) {
+function handleVacuumLevelChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing condenser vacuum level', { value });

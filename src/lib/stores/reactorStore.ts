@@ -664,7 +664,7 @@ const initialState: ReactorState = {
 export const reactorStore: Writable<ReactorState> = writable(initialState);
 
 // Simulation update function
-export async function updateReactorState() {
+export async function updateReactorState () {
   log.trace('Starting reactor state update');
 
   reactorStore.update((state) => {
@@ -1307,7 +1307,7 @@ export async function updateReactorState() {
 }
 
 // Simulation control functions
-export function startSimulation() {
+export function startSimulation () {
   log.info('Starting simulation');
   reactorStore.update((state) => ({
     ...state,
@@ -1328,7 +1328,7 @@ export function startSimulation() {
   log.success('Simulation started');
 }
 
-export function stopSimulation() {
+export function stopSimulation () {
   log.info('Stopping simulation');
   reactorStore.update((state) => ({
     ...state,
@@ -1349,14 +1349,14 @@ export function stopSimulation() {
   log.success('Simulation stopped');
 }
 
-export function resetSimulation() {
+export function resetSimulation () {
   log.info('Resetting simulation to initial state');
   reactorStore.set(initialState);
   log.success('Simulation reset');
 }
 
 // Control rod operation functions
-export function setControlRodPosition(position: number) {
+export function setControlRodPosition (position: number) {
   const clampedPosition = Math.max(0, Math.min(100, position));
   log.debug(`Setting control rod position: ${clampedPosition}%`);
   reactorStore.update((state) => ({
@@ -1369,7 +1369,7 @@ export function setControlRodPosition(position: number) {
 }
 
 // Set single control rod position
-export function setSingleControlRodPosition(
+export function setSingleControlRodPosition (
   row: number,
   col: number,
   position: number
@@ -1388,7 +1388,7 @@ export function setSingleControlRodPosition(
 }
 
 // Control rod emergency insertion (AZ-5)
-export function emergencyRodInsertion() {
+export function emergencyRodInsertion () {
   log.fatal('Triggering control rod emergency insertion (AZ-5)');
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
@@ -1414,7 +1414,7 @@ export function emergencyRodInsertion() {
 }
 
 // Toggle control rod auto mode
-export function toggleControlRodAutoMode() {
+export function toggleControlRodAutoMode () {
   log.info('Toggling control rod auto mode');
   reactorStore.update((state) => {
     const newAutoMode = !state.controlRods.autoMode;
@@ -1430,7 +1430,7 @@ export function toggleControlRodAutoMode() {
 }
 
 // Power adjustment function
-export function setTargetPower(power: number) {
+export function setTargetPower (power: number) {
   const clampedPower = Math.max(0, Math.min(100, power));
   log.info(`Setting target power: ${clampedPower}%`);
   reactorStore.update((state) => ({
@@ -1444,7 +1444,7 @@ export function setTargetPower(power: number) {
 }
 
 // Set power setpoint
-export function setPowerSetpoint(setpoint: number) {
+export function setPowerSetpoint (setpoint: number) {
   const clampedSetpoint = Math.max(0, Math.min(100, setpoint));
   log.info(`Setting power setpoint: ${clampedSetpoint}%`);
   reactorStore.update((state) => ({
@@ -1458,7 +1458,7 @@ export function setPowerSetpoint(setpoint: number) {
 }
 
 // Toggle auto control mode
-export function toggleAutomaticControl() {
+export function toggleAutomaticControl () {
   log.info('Toggling auto control mode');
   reactorStore.update((state) => {
     const newMode = !state.powerRegulation.automaticControl;
@@ -1474,7 +1474,7 @@ export function toggleAutomaticControl() {
 }
 
 // Toggle axial offset control
-export function toggleAxialOffsetControl() {
+export function toggleAxialOffsetControl () {
   log.info('Toggling axial offset control');
   reactorStore.update((state) => {
     const newMode = !state.powerRegulation.axialOffsetControl;
@@ -1490,7 +1490,7 @@ export function toggleAxialOffsetControl() {
 }
 
 // Trigger reactor shutdown
-export function tripReactor() {
+export function tripReactor () {
   log.fatal('Triggering reactor shutdown');
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
@@ -1532,7 +1532,7 @@ export function tripReactor() {
 // Feedwater system control functions
 
 // Toggle isolation valve status
-export function toggleIsolationValve(
+export function toggleIsolationValve (
   valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet'
 ) {
   log.info(`Toggling isolation valve: ${valve}`);
@@ -1549,7 +1549,7 @@ export function toggleIsolationValve(
 }
 
 // Set isolation valve position
-export function setIsolationValvePosition(
+export function setIsolationValvePosition (
   valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet',
   position: number
 ) {
@@ -1568,7 +1568,7 @@ export function setIsolationValvePosition(
 }
 
 // Toggle feedwater heater status
-export function toggleFeedwaterHeater(heater: 'heater1' | 'heater2') {
+export function toggleFeedwaterHeater (heater: 'heater1' | 'heater2') {
   log.info(`Toggling feedwater heater: ${heater}`);
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
@@ -1582,7 +1582,7 @@ export function toggleFeedwaterHeater(heater: 'heater1' | 'heater2') {
 }
 
 // Set feedwater heater parameter
-export function setFeedwaterHeaterParameter(
+export function setFeedwaterHeaterParameter (
   heater: 'heater1' | 'heater2',
   parameter: 'steamPressure' | 'flowRate',
   value: number
@@ -1597,7 +1597,7 @@ export function setFeedwaterHeaterParameter(
 }
 
 // Pump control functions
-export function toggleRecirculationPump(pumpNumber: 1 | 2) {
+export function toggleRecirculationPump (pumpNumber: 1 | 2) {
   log.info(`Toggling recirculation pump ${pumpNumber}`);
   reactorStore.update((state) => {
     const newStatus = !state.recirculationPumps[`pump${pumpNumber}`].status;
@@ -1617,7 +1617,7 @@ export function toggleRecirculationPump(pumpNumber: 1 | 2) {
   });
 }
 
-export function setRecirculationPumpSpeed(pumpNumber: 1 | 2, speed: number) {
+export function setRecirculationPumpSpeed (pumpNumber: 1 | 2, speed: number) {
   const clampedSpeed = Math.max(0, Math.min(100, speed));
   log.info(
     `Setting recirculation pump ${pumpNumber} speed to ${clampedSpeed}%`
@@ -1635,7 +1635,7 @@ export function setRecirculationPumpSpeed(pumpNumber: 1 | 2, speed: number) {
 }
 
 // Emergency cooling pump control functions
-export function toggleEmergencyCoolingPump(pumpNumber: 1 | 2) {
+export function toggleEmergencyCoolingPump (pumpNumber: 1 | 2) {
   log.info(`Toggling emergency cooling pump ${pumpNumber}`);
   reactorStore.update((state) => {
     const newStatus = !state.emergencyCoolingPumps[`pump${pumpNumber}`].status;
@@ -1655,7 +1655,7 @@ export function toggleEmergencyCoolingPump(pumpNumber: 1 | 2) {
   });
 }
 
-export function setEmergencyCoolingPumpFlowRate(
+export function setEmergencyCoolingPumpFlowRate (
   pumpNumber: 1 | 2,
   flowRate: number
 ) {
@@ -1676,7 +1676,7 @@ export function setEmergencyCoolingPumpFlowRate(
 }
 
 // Reactor drain control functions
-export function toggleReactorDrain() {
+export function toggleReactorDrain () {
   log.info('Toggling reactor drain');
   reactorStore.update((state) => {
     const newStatus = !state.reactorDrain.status;
@@ -1691,7 +1691,7 @@ export function toggleReactorDrain() {
   });
 }
 
-export function setReactorDrainFlowRate(flowRate: number) {
+export function setReactorDrainFlowRate (flowRate: number) {
   const clampedFlowRate = Math.max(0, Math.min(100, flowRate));
   log.info(`Setting reactor drain flow rate to ${clampedFlowRate}%`);
   reactorStore.update((state) => ({
@@ -1704,7 +1704,7 @@ export function setReactorDrainFlowRate(flowRate: number) {
 }
 
 // Core offline cooling pump control functions
-export function toggleCoreCoolingPump() {
+export function toggleCoreCoolingPump () {
   log.info('Toggling core cooling pump');
   reactorStore.update((state) => {
     const newStatus = !state.coreCoolingPump.status;
@@ -1719,7 +1719,7 @@ export function toggleCoreCoolingPump() {
   });
 }
 
-export function setCoreCoolingPumpFlowRate(flowRate: number) {
+export function setCoreCoolingPumpFlowRate (flowRate: number) {
   const clampedFlowRate = Math.max(0, Math.min(100, flowRate));
   log.info(`Setting core cooling pump flow rate to ${clampedFlowRate}%`);
   reactorStore.update((state) => ({
@@ -1732,7 +1732,7 @@ export function setCoreCoolingPumpFlowRate(flowRate: number) {
 }
 
 // Turbine control functions
-export function toggleTurbine() {
+export function toggleTurbine () {
   log.info('Toggling turbine');
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
@@ -1768,7 +1768,7 @@ export function toggleTurbine() {
   });
 }
 
-export function setTurbineLoad(load: number) {
+export function setTurbineLoad (load: number) {
   const clampedLoad = Math.max(0, Math.min(100, load));
   log.info(`Setting turbine load to ${clampedLoad}%`);
   reactorStore.update((state) => ({
@@ -1782,7 +1782,7 @@ export function setTurbineLoad(load: number) {
 }
 
 // Set speed setpoint
-export function setTurbineSpeedSetpoint(speed: number) {
+export function setTurbineSpeedSetpoint (speed: number) {
   const clampedSpeed = Math.max(2500, Math.min(3500, speed));
   log.info(`Setting turbine speed setpoint to ${clampedSpeed} RPM`);
   reactorStore.update((state) => ({
@@ -1795,7 +1795,7 @@ export function setTurbineSpeedSetpoint(speed: number) {
 }
 
 // Set load setpoint
-export function setTurbineLoadSetpoint(load: number) {
+export function setTurbineLoadSetpoint (load: number) {
   const clampedLoad = Math.max(0, Math.min(100, load));
   log.info(`Setting turbine load setpoint to ${clampedLoad}%`);
   reactorStore.update((state) => ({
@@ -1808,7 +1808,7 @@ export function setTurbineLoadSetpoint(load: number) {
 }
 
 // Toggle automatic control mode
-export function toggleTurbineAutomaticControl() {
+export function toggleTurbineAutomaticControl () {
   log.info('Toggling turbine automatic control');
   reactorStore.update((state) => {
     const newMode = !state.turbine.automaticControl;
@@ -1824,7 +1824,7 @@ export function toggleTurbineAutomaticControl() {
 }
 
 // Manually adjust turbine speed
-export function adjustTurbineSpeed(adjustment: number) {
+export function adjustTurbineSpeed (adjustment: number) {
   log.info(`Adjusting turbine speed by ${adjustment} RPM`);
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
@@ -1839,7 +1839,7 @@ export function adjustTurbineSpeed(adjustment: number) {
 }
 
 // Reset turbine trip
-export function resetTurbineTrip() {
+export function resetTurbineTrip () {
   log.info('Resetting turbine trip');
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
@@ -1858,7 +1858,7 @@ export function resetTurbineTrip() {
 }
 
 // Deaerator control functions
-export function setDeaeratorPressure(pressure: number) {
+export function setDeaeratorPressure (pressure: number) {
   const clampedPressure = Math.max(0, pressure);
   log.info(`Setting deaerator pressure to ${clampedPressure} MPa`);
   reactorStore.update((state) => ({
@@ -1870,7 +1870,7 @@ export function setDeaeratorPressure(pressure: number) {
   }));
 }
 
-export function setDeaeratorLevel(level: number) {
+export function setDeaeratorLevel (level: number) {
   const clampedLevel = Math.max(0, Math.min(100, level));
   log.info(`Setting deaerator level to ${clampedLevel}%`);
   reactorStore.update((state) => ({
@@ -1883,7 +1883,7 @@ export function setDeaeratorLevel(level: number) {
 }
 
 // Condenser vacuum system control functions
-export function toggleCondenserVacuum() {
+export function toggleCondenserVacuum () {
   log.info('Toggling condenser vacuum');
   reactorStore.update((state) => {
     const newStatus = !state.condenserVacuum.status;
@@ -1898,7 +1898,7 @@ export function toggleCondenserVacuum() {
   });
 }
 
-export function setCondenserVacuumLevel(vacuumLevel: number) {
+export function setCondenserVacuumLevel (vacuumLevel: number) {
   const clampedVacuumLevel = Math.max(0, Math.min(1, vacuumLevel));
   log.info(`Setting condenser vacuum level to ${clampedVacuumLevel}`);
   reactorStore.update((state) => ({
@@ -1911,7 +1911,7 @@ export function setCondenserVacuumLevel(vacuumLevel: number) {
 }
 
 // Steam dump control functions
-export function toggleSteamDump() {
+export function toggleSteamDump () {
   log.info('Toggling steam dump');
   reactorStore.update((state) => {
     const newStatus = !state.steamDump.status;
@@ -1926,7 +1926,7 @@ export function toggleSteamDump() {
   });
 }
 
-export function setSteamDumpCapacity(capacity: number) {
+export function setSteamDumpCapacity (capacity: number) {
   const clampedCapacity = Math.max(0, Math.min(100, capacity));
   log.info(`Setting steam dump capacity to ${clampedCapacity}%`);
   reactorStore.update((state) => ({
@@ -1939,7 +1939,7 @@ export function setSteamDumpCapacity(capacity: number) {
 }
 
 // Turbine auxiliary system control functions
-export function setLubricationOilPressure(pressure: number) {
+export function setLubricationOilPressure (pressure: number) {
   const clampedPressure = Math.max(0, pressure);
   log.info(`Setting lubrication oil pressure to ${clampedPressure} MPa`);
   reactorStore.update((state) => ({
@@ -1954,7 +1954,7 @@ export function setLubricationOilPressure(pressure: number) {
   }));
 }
 
-export function setLubricationOilTemperature(temperature: number) {
+export function setLubricationOilTemperature (temperature: number) {
   const clampedTemperature = Math.max(0, temperature);
   log.info(`Setting lubrication oil temperature to ${clampedTemperature}°C`);
   reactorStore.update((state) => ({
@@ -1969,7 +1969,7 @@ export function setLubricationOilTemperature(temperature: number) {
   }));
 }
 
-export function setSealOilPressure(pressure: number) {
+export function setSealOilPressure (pressure: number) {
   const clampedPressure = Math.max(0, pressure);
   log.info(`Setting seal oil pressure to ${clampedPressure} MPa`);
   reactorStore.update((state) => ({
@@ -1985,7 +1985,7 @@ export function setSealOilPressure(pressure: number) {
 }
 
 // Condenser hotwell level control functions
-export function setCondenserHotwellLevel(level: number) {
+export function setCondenserHotwellLevel (level: number) {
   const clampedLevel = Math.max(0, Math.min(100, level));
   log.info(`Setting condenser hotwell level to ${clampedLevel}%`);
   reactorStore.update((state) => ({
@@ -1997,7 +1997,7 @@ export function setCondenserHotwellLevel(level: number) {
 }
 
 // Condenser circulation pump control functions
-export function toggleCondenserCirculationPump(pumpNumber: 1 | 2) {
+export function toggleCondenserCirculationPump (pumpNumber: 1 | 2) {
   log.info(`Toggling condenser circulation pump ${pumpNumber}`);
   reactorStore.update((state) => {
     const newStatus =
@@ -2018,7 +2018,7 @@ export function toggleCondenserCirculationPump(pumpNumber: 1 | 2) {
   });
 }
 
-export function setCondenserCirculationPumpFlowRate(
+export function setCondenserCirculationPumpFlowRate (
   pumpNumber: 1 | 2,
   flowRate: number
 ) {
@@ -2039,7 +2039,7 @@ export function setCondenserCirculationPumpFlowRate(
 }
 
 // Make-up water system control functions
-export function toggleMakeUpWater() {
+export function toggleMakeUpWater () {
   log.info('Toggling make-up water');
   reactorStore.update((state) => {
     const newStatus = !state.makeUpWater.status;
@@ -2054,7 +2054,7 @@ export function toggleMakeUpWater() {
   });
 }
 
-export function setMakeUpWaterFlowRate(flowRate: number) {
+export function setMakeUpWaterFlowRate (flowRate: number) {
   const clampedFlowRate = Math.max(0, Math.min(100, flowRate));
   log.info(`Setting make-up water flow rate to ${clampedFlowRate}%`);
   reactorStore.update((state) => ({
@@ -2067,7 +2067,7 @@ export function setMakeUpWaterFlowRate(flowRate: number) {
 }
 
 // Reactor feed pump control functions
-export function toggleReactorFeedPump(pumpNumber: 1 | 2) {
+export function toggleReactorFeedPump (pumpNumber: 1 | 2) {
   log.info(`Toggling reactor feed pump ${pumpNumber}`);
   reactorStore.update((state) => {
     const newStatus = !state.reactorFeedPumps[`pump${pumpNumber}`].status;
@@ -2087,7 +2087,7 @@ export function toggleReactorFeedPump(pumpNumber: 1 | 2) {
   });
 }
 
-export function setReactorFeedPumpFlowRate(
+export function setReactorFeedPumpFlowRate (
   pumpNumber: 1 | 2,
   flowRate: number
 ) {
@@ -2108,7 +2108,7 @@ export function setReactorFeedPumpFlowRate(
 }
 
 // HEPA filter control functions
-export function toggleHepaFilters() {
+export function toggleHepaFilters () {
   log.info('Toggling HEPA filters');
   reactorStore.update((state) => {
     const newStatus = !state.hepaFilters.status;
@@ -2123,7 +2123,7 @@ export function toggleHepaFilters() {
   });
 }
 
-export function setHepaFilterEfficiency(efficiency: number) {
+export function setHepaFilterEfficiency (efficiency: number) {
   const clampedEfficiency = Math.max(0, Math.min(100, efficiency));
   log.info(`Setting HEPA filter efficiency to ${clampedEfficiency}%`);
   reactorStore.update((state) => ({
@@ -2138,7 +2138,7 @@ export function setHepaFilterEfficiency(efficiency: number) {
 // Fault simulation system functions
 
 // Trigger specific fault
-export function triggerFault(
+export function triggerFault (
   faultType:
     | 'pump'
     | 'valve'
@@ -2194,7 +2194,7 @@ export function triggerFault(
 }
 
 // Fix fault
-export function fixFault(faultId: string) {
+export function fixFault (faultId: string) {
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
     newState.faultSimulation.activeFaults = repairFault(
@@ -2237,7 +2237,7 @@ export function fixFault(faultId: string) {
 }
 
 // Set maintenance level
-export function setMaintenanceLevel(level: number) {
+export function setMaintenanceLevel (level: number) {
   reactorStore.update((state) => ({
     ...state,
     faultSimulation: {
@@ -2248,7 +2248,7 @@ export function setMaintenanceLevel(level: number) {
 }
 
 // Clear all faults
-export function clearAllFaults() {
+export function clearAllFaults () {
   reactorStore.update((state) => {
     const newState = JSON.parse(JSON.stringify(state));
     newState.faultSimulation.activeFaults = [];
@@ -2272,7 +2272,7 @@ export function clearAllFaults() {
 }
 
 // Condensate system control functions
-export function toggleCondensateSystem() {
+export function toggleCondensateSystem () {
   log.info('Toggling condensate system');
   reactorStore.update((state) => {
     const newStatus = !state.condensateSystem.status;
@@ -2287,7 +2287,7 @@ export function toggleCondensateSystem() {
   });
 }
 
-export function setCondensateSystemFlowRate(flowRate: number) {
+export function setCondensateSystemFlowRate (flowRate: number) {
   const clampedFlowRate = Math.max(0, Math.min(100, flowRate));
   log.info(`Setting condensate system flow rate to ${clampedFlowRate}%`);
   reactorStore.update((state) => ({
@@ -2299,7 +2299,7 @@ export function setCondensateSystemFlowRate(flowRate: number) {
   }));
 }
 
-export function setCondensateSystemTemperature(temperature: number) {
+export function setCondensateSystemTemperature (temperature: number) {
   const clampedTemperature = Math.max(0, temperature);
   log.info(`Setting condensate system temperature to ${clampedTemperature}°C`);
   reactorStore.update((state) => ({
@@ -2312,7 +2312,7 @@ export function setCondensateSystemTemperature(temperature: number) {
 }
 
 // Steam bypass system control functions
-export function toggleSteamBypass() {
+export function toggleSteamBypass () {
   log.info('Toggling steam bypass');
   reactorStore.update((state) => {
     const newStatus = !state.steamBypass.status;
@@ -2327,7 +2327,7 @@ export function toggleSteamBypass() {
   });
 }
 
-export function setSteamBypassPressureSetpoint(pressureSetpoint: number) {
+export function setSteamBypassPressureSetpoint (pressureSetpoint: number) {
   const clampedPressureSetpoint = Math.max(
     6.0,
     Math.min(8.0, pressureSetpoint)
@@ -2345,7 +2345,7 @@ export function setSteamBypassPressureSetpoint(pressureSetpoint: number) {
 }
 
 // Core coolant purification system control functions
-export function toggleCorePurification() {
+export function toggleCorePurification () {
   log.info('Toggling core purification');
   reactorStore.update((state) => {
     const newStatus = !state.corePurification.status;
@@ -2360,7 +2360,7 @@ export function toggleCorePurification() {
   });
 }
 
-export function setCorePurificationFlowRate(flowRate: number) {
+export function setCorePurificationFlowRate (flowRate: number) {
   const clampedFlowRate = Math.max(0, Math.min(100000, flowRate));
   log.info(`Setting core purification flow rate to ${clampedFlowRate} kg/h`);
   reactorStore.update((state) => ({
@@ -2373,7 +2373,7 @@ export function setCorePurificationFlowRate(flowRate: number) {
 }
 
 // Three-impulse level control system control functions
-export function setWaterLevelSetpoint(setpoint: number) {
+export function setWaterLevelSetpoint (setpoint: number) {
   const clampedSetpoint = Math.max(45, Math.min(90, setpoint));
   log.info(`Setting water level setpoint to ${clampedSetpoint}%`);
   reactorStore.update((state) => ({
@@ -2386,7 +2386,7 @@ export function setWaterLevelSetpoint(setpoint: number) {
 }
 
 // Save and load functions
-export function saveState(): string {
+export function saveState (): string {
   log.info('Saving reactor state');
   let state;
   reactorStore.subscribe((s) => (state = s))();
@@ -2395,7 +2395,7 @@ export function saveState(): string {
   return saveCode;
 }
 
-export function loadState(saveCode: string) {
+export function loadState (saveCode: string) {
   log.info('Loading reactor state');
   try {
     const state = JSON.parse(atob(saveCode));

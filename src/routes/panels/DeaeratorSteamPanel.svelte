@@ -28,7 +28,7 @@ onMount(() => {
 });
 
 // 调整除氧器压力
-function handlePressureChange(e: Event) {
+function handlePressureChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing deaerator pressure', { value });
@@ -37,7 +37,7 @@ function handlePressureChange(e: Event) {
 }
 
 // 调整除氧器液位
-function handleLevelChange(e: Event) {
+function handleLevelChange (e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing deaerator level', { value });
