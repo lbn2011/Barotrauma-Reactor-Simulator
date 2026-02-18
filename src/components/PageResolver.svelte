@@ -1,10 +1,10 @@
 <script lang="ts">
-import type { Page } from '~/types';
+import type { Page } from '../types';
 import { logger } from '../lib/utils/logger';
 
-import PageComponent from '~/components/Page.svelte';
-import ErrorComponent from '~/components/Error.svelte';
-import { defaultComponentConfig } from '~/config/components';
+import PageComponent from './Page.svelte';
+import ErrorComponent from './Error.svelte';
+import { defaultComponentConfig } from '../config/components';
 
 export let page: Promise<Page> | Page;
 export let isFirstPage: boolean;
@@ -14,7 +14,7 @@ export let config = defaultComponentConfig;
 logger.info('Page loading started', { isFirstPage });
 
 // Function to log page load success
-function handlePageLoadSuccess (loadedPage: Page) {
+function handlePageLoadSuccess(loadedPage: Page) {
   logger.info('Page loaded successfully', {
     pageType: loadedPage.type,
     isFirstPage,
@@ -22,7 +22,7 @@ function handlePageLoadSuccess (loadedPage: Page) {
 }
 
 // Function to log page load error
-function handlePageLoadError (error: any) {
+function handlePageLoadError(error: any) {
   logger.error('Page failed to load', {
     error: error instanceof Error ? error.message : error,
     isFirstPage,

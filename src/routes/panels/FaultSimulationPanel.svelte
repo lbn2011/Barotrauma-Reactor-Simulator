@@ -75,7 +75,7 @@ let selectedSeverity: 'minor' | 'major' | 'critical' = 'minor'; // 当前选择�
  * 处理故障类型变化
  * @param e 事件对象
  */
-function handleFaultTypeChange (e: Event) {
+function handleFaultTypeChange(e: Event) {
   const target = e.target as HTMLSelectElement;
   selectedFaultType = target.value as
     | 'pump'
@@ -94,7 +94,7 @@ function handleFaultTypeChange (e: Event) {
  * 处理组件ID变化
  * @param e 事件对象
  */
-function handleComponentIdChange (e: Event) {
+function handleComponentIdChange(e: Event) {
   const target = e.target as HTMLSelectElement;
   selectedComponentId = target.value;
   log.debug('Component ID changed', { selectedComponentId });
@@ -104,7 +104,7 @@ function handleComponentIdChange (e: Event) {
  * 处理严重程度变化
  * @param e 事件对象
  */
-function handleSeverityChange (e: Event) {
+function handleSeverityChange(e: Event) {
   const target = e.target as HTMLSelectElement;
   selectedSeverity = target.value as 'minor' | 'major' | 'critical';
   log.debug('Severity level changed', { selectedSeverity });
@@ -114,7 +114,7 @@ function handleSeverityChange (e: Event) {
  * 触发故障
  * 生成指定类型、组件和严重程度的故障
  */
-function handleTriggerFault () {
+function handleTriggerFault() {
   log.info('Triggering fault', {
     faultType: selectedFaultType,
     componentId: selectedComponentId,
@@ -132,7 +132,7 @@ function handleTriggerFault () {
  * 处理维护水平变化
  * @param e 事件对象
  */
-function handleMaintenanceLevelChange (e: Event) {
+function handleMaintenanceLevelChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const level = parseFloat(target.value);
   log.debug('Changing maintenance level', { level });
@@ -144,7 +144,7 @@ function handleMaintenanceLevelChange (e: Event) {
  * 清除所有故障
  * 重置故障模拟系统到初始状态
  */
-function handleClearAllFaults () {
+function handleClearAllFaults() {
   log.info('Clearing all faults', {
     activeFaultsCount: faultSimulation?.activeFaults?.length || 0,
   });

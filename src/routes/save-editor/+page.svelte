@@ -29,11 +29,11 @@ let errorMessage: string = '';
 let successMessage: string = '';
 
 // Parse save code
-function parseSaveCode () {
+function parseSaveCode() {
   log.info('Starting to parse save code');
 
   if (!saveCodeInput.trim()) {
-    log.warning('Save code input is empty');
+    log.warn('Save code input is empty');
     errorMessage = 'Please enter save code';
     parsedState = null;
     return;
@@ -93,11 +93,11 @@ function parseSaveCode () {
 }
 
 // Re-encode save code
-function encodeSaveCode () {
+function encodeSaveCode() {
   log.info('Starting to encode save code');
 
   if (!parsedState) {
-    log.warning('No data to encode');
+    log.warn('No data to encode');
     errorMessage = 'No data to encode';
     return;
   }
@@ -137,7 +137,7 @@ function encodeSaveCode () {
 }
 
 // Calculate checksum
-function calculateChecksum (data: any): string {
+function calculateChecksum(data: any): string {
   log.debug('Starting to calculate data checksum');
   const jsonString = JSON.stringify(data);
   log.trace('Data serialization completed, starting checksum calculation');
@@ -151,7 +151,7 @@ function calculateChecksum (data: any): string {
 }
 
 // Copy save code to clipboard
-async function copyToClipboard () {
+async function copyToClipboard() {
   log.info('Starting to copy save code to clipboard');
 
   if (saveCodeInput) {
@@ -171,12 +171,12 @@ async function copyToClipboard () {
       errorMessage = 'Cannot copy to clipboard';
     }
   } else {
-    log.warning('No save code to copy');
+    log.warn('No save code to copy');
   }
 }
 
 // Reset form
-function resetForm () {
+function resetForm() {
   log.info('Starting to reset form');
   saveCodeInput = '';
   parsedState = null;
@@ -186,11 +186,11 @@ function resetForm () {
 }
 
 // Safe function to update numeric parameters
-function updateValue (path: string, value: any) {
+function updateValue(path: string, value: any) {
   log.debug('Starting to update parameter value', { path, value });
 
   if (!parsedState) {
-    log.warning('Cannot update value: parsedState is null');
+    log.warn('Cannot update value: parsedState is null');
     return;
   }
 
@@ -240,7 +240,7 @@ function updateValue (path: string, value: any) {
 }
 
 // Safe function to get nested values
-function getValue (path: string, defaultValue: any = '') {
+function getValue(path: string, defaultValue: any = '') {
   log.debug('Starting to get parameter value', { path, defaultValue });
 
   if (!parsedState) {
@@ -265,7 +265,7 @@ function getValue (path: string, defaultValue: any = '') {
 }
 
 // Generate example save code
-function generateExampleSaveCode () {
+function generateExampleSaveCode() {
   log.info('Starting to generate example save code');
 
   log.debug('Creating example reactor state data');
@@ -319,6 +319,39 @@ function generateExampleSaveCode () {
   }, 3000);
 }
 
+// Web navigation data
+const webNavigation = {
+  tabs: [],
+  platforms: [
+    {
+      action: {
+        title: 'Overview',
+        destination: {
+          url: '/',
+        },
+      },
+      isActive: false,
+    },
+    {
+      action: {
+        title: 'Save Editor',
+        destination: {
+          url: '/save-editor',
+        },
+      },
+      isActive: true,
+    },
+  ],
+  searchAction: {
+    type: 'webSearch',
+  },
+};
+
+// Artwork data for AmbientBackgroundArtwork
+const artwork = {
+  url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=reactor%20control%20room%20with%20blue%20lighting%2C%20modern%20design%2C%20high%20detail%2C%20futuristic&image_size=landscape_16_9',
+};
+
 // Mock data for TodayCard
 const mockCard = {
   heading: '存档编辑器',
@@ -328,7 +361,7 @@ const mockCard = {
     kind: 'image' as const,
     url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=save%20code%20editor%20interface%20with%20code%20snippets%20and%20buttons%2C%20modern%20design%2C%20blue%20lighting%2C%20high%20detail&image_size=landscape_16_9',
   },
-  style: 'dark',
+  style: 'dark' as const,
   clickAction: {
     title: '打开编辑器',
     destination: {
@@ -529,8 +562,8 @@ const mockCard = {
 }
 </style>
 
-<Navigation />
-<AmbientBackgroundArtwork />
+<Navigation {webNavigation} />
+<AmbientBackgroundArtwork {artwork} active={true} />
 <GradientOverlay />
 
 <div class="container">

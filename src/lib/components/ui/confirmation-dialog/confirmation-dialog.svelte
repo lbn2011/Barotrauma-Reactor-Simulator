@@ -21,7 +21,7 @@ let resolve: ((value: boolean) => void) | null = null; // Promise resolve functi
  * Confirm operation
  * Resolve Promise to true and close the dialog
  */
-function confirm () {
+function confirm() {
   if (resolve) {
     resolve(true);
     resolve = null;
@@ -34,7 +34,7 @@ function confirm () {
  * Cancel operation
  * Resolve Promise to false and close the dialog
  */
-function cancel () {
+function cancel() {
   if (resolve) {
     resolve(false);
     resolve = null;
@@ -47,7 +47,7 @@ function cancel () {
  * Open the dialog
  * @returns Promise<boolean> Whether the operation was confirmed
  */
-export async function open (): Promise<boolean> {
+export async function open(): Promise<boolean> {
   isOpen = true;
   logger.debug('ConfirmationDialog', `Dialog opened: ${title}`);
   return new Promise((_resolve) => {

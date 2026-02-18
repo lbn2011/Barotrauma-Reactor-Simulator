@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { WebNavigationLink } from '~/types';
+import type { WebNavigationLink } from '../../../types';
 import FlowAction from '../action/FlowAction.svelte';
-import { logger } from '~/lib/utils/logger';
+import { logger } from '../../../lib/utils/logger';
 
 export let platformSelectors: WebNavigationLink[];
 

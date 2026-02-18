@@ -32,8 +32,6 @@ export interface I18nStore {
 
 // Default translations
 const defaultTranslations: Translations = {
-  'ASE.Web.AppStore.Navigation.AX.AppStoreLogo': 'App Store Logo',
-  'ASE.Web.AppStore.Navigation.PlatformHeading': 'Platforms',
   Loading: 'Loading...',
   Error: 'Error',
   Overview: 'Overview',
@@ -48,8 +46,6 @@ const defaultTranslations: Translations = {
 // Chinese translations
 const zhCNTranslations: Translations = {
   ...defaultTranslations,
-  'ASE.Web.AppStore.Navigation.AX.AppStoreLogo': 'App Store 标志',
-  'ASE.Web.AppStore.Navigation.PlatformHeading': '平台',
   Loading: '加载中...',
   Error: '错误',
   Overview: '概述',
@@ -75,8 +71,6 @@ const enUSTranslations: Translations = {
 // Spanish translations
 const esESTranslations: Translations = {
   ...defaultTranslations,
-  'ASE.Web.AppStore.Navigation.AX.AppStoreLogo': 'Logotipo de App Store',
-  'ASE.Web.AppStore.Navigation.PlatformHeading': 'Plataformas',
   Loading: 'Cargando...',
   Error: 'Error',
   Overview: 'Descripción general',
@@ -92,8 +86,6 @@ const esESTranslations: Translations = {
 // French translations
 const frFRTranslations: Translations = {
   ...defaultTranslations,
-  'ASE.Web.AppStore.Navigation.AX.AppStoreLogo': 'Logo de l’App Store',
-  'ASE.Web.AppStore.Navigation.PlatformHeading': 'Plateformes',
   Loading: 'Chargement...',
   Error: 'Erreur',
   Overview: 'Aperçu',
@@ -109,8 +101,6 @@ const frFRTranslations: Translations = {
 // Arabic translations
 const arSATranslations: Translations = {
   ...defaultTranslations,
-  'ASE.Web.AppStore.Navigation.AX.AppStoreLogo': 'شعار متجر التطبيقات',
-  'ASE.Web.AppStore.Navigation.PlatformHeading': 'المنصات',
   Loading: 'جار التحميل...',
   Error: 'خطأ',
   Overview: 'نظرة عامة',
@@ -142,7 +132,7 @@ const languageDirections: Record<string, 'ltr' | 'rtl'> = {
 };
 
 // Create i18n store
-function createI18nStore () {
+function createI18nStore() {
   log.info('Starting to create internationalization store');
   const { subscribe, set } = writable<I18nStore>({
     language: 'zh-CN',
@@ -154,7 +144,7 @@ function createI18nStore () {
   });
 
   // Update store
-  function updateStore (language: string) {
+  function updateStore(language: string) {
     log.info(
       `Starting to update internationalization store, language: ${language}`
     );
@@ -247,7 +237,7 @@ const i18nStore = createI18nStore();
 export default i18nStore;
 
 // Export getI18n function for backward compatibility
-export function getI18n () {
+export function getI18n() {
   log.trace('Getting internationalization store instance');
   let storeValue: I18nStore | undefined;
   i18nStore.subscribe((value) => (storeValue = value))();
@@ -256,7 +246,7 @@ export function getI18n () {
 }
 
 // Export setLanguage function
-export function setLanguage (language: string) {
+export function setLanguage(language: string) {
   log.info(`Setting language: ${language}`);
   i18nStore.setLanguage(language);
 }

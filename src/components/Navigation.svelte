@@ -2,7 +2,6 @@
 import type { WebNavigation, WebSearchFlowAction } from '@/types';
 import { logger } from '../lib/utils/logger';
 
-import AppStoreLogo from '@/components/icons/AppStoreLogo.svelte';
 import PlatformSelectorDropdown from '@/components/jet/web-navigation/PlatformSelectorDropdown.svelte';
 import FlowAction from '@/components/jet/action/FlowAction.svelte';
 import SystemImage from '@/components/SystemImage.svelte';
@@ -31,7 +30,7 @@ logger.info('Navigation component initialized', {
   hasSearchAction: !!webNavigation.searchAction,
 });
 
-function isSystemImageArtwork (artwork: any): boolean {
+function isSystemImageArtwork(artwork: any): boolean {
   return artwork.type === 'system';
 }
 
@@ -42,7 +41,7 @@ $: inlinePlatformItems =
 $: supportedLanguages = config.global?.supportedLanguages || ['zh-CN', 'en-US'];
 $: currentLanguage = i18n?.language || config.global?.defaultLanguage || 'zh-CN';
 
-function handleLanguageChange (language: string) {
+function handleLanguageChange(language: string) {
   logger.info('Language changed', { from: currentLanguage, to: language });
   setLanguage(language);
   languageDropdownOpen = false;
@@ -52,7 +51,7 @@ const BASE_DELAY = 80;
 const BASE_DURATION = 150;
 const DURATION_SPREAD = 300;
 
-function getEasedDuration ({
+function getEasedDuration({
   i,
   totalNumberOfItems,
   easing = circOut,
@@ -91,21 +90,6 @@ function getEasedDuration ({
     transform: scale(calc(1 + var(--scale-factor)));
     transform-origin: center left;
   }
-}
-
-.app-store-icon-container {
-  display: flex;
-  align-items: center;
-  gap: var(--header-gap);
-  font: var(--title-1);
-  font-weight: 600;
-}
-
-.app-store-icon-container :global(svg) {
-  height: 18px;
-  position: relative;
-  top: 0.33px;
-  width: auto;
 }
 
 .search-input-container {
@@ -248,15 +232,6 @@ h3 {
 <div class="navigation-wrapper">
   <div class="navigation">
     <div class="platform-selector-container">
-      <span
-        id="app-store-icon-contianer"
-        class="app-store-icon-container"
-        role="img"
-        aria-label={i18n?.t?.('ASE.Web.AppStore.Navigation.AX.AppStoreLogo') || 'App Store Logo'}
-      >
-        <AppStoreLogo focusable={false} />
-      </span>
-
       {#if !$sidebarIsHidden && !isXSmallViewport}
         <PlatformSelectorDropdown platformSelectors={webNavigation.platforms} />
       {/if}
@@ -304,9 +279,7 @@ h3 {
 
     <div class="platform-selector-inline">
       {#if isXSmallViewport}
-        <h3 in:fade out:fade={{ delay: 250, duration: BASE_DURATION }}>
-          {i18n?.t?.('ASE.Web.AppStore.Navigation.PlatformHeading') || 'Platforms'}
-        </h3>
+        <h3 in:fade out:fade={{ delay: 250, duration: BASE_DURATION }}>Platforms</h3>
       {/if}
 
       <ul>

@@ -78,7 +78,7 @@ logger.debug('HistoryViewer', `Initial history data: ${historyData.length} recor
  * Initialize chart
  * Create or update Chart.js instance
  */
-function initChart () {
+function initChart() {
   if (!chartCanvas) return;
 
   logger.debug('HistoryViewer', 'Initializing chart');
@@ -191,7 +191,7 @@ function initChart () {
  * Update time range
  * @param range New time range
  */
-function updateTimeRange (range: '1h' | '6h' | '24h' | '7d') {
+function updateTimeRange(range: '1h' | '6h' | '24h' | '7d') {
   logger.info('HistoryViewer', `Updating time range to ${range}`);
   timeRange = range;
   initChart(); // Reinitialize chart
@@ -201,7 +201,7 @@ function updateTimeRange (range: '1h' | '6h' | '24h' | '7d') {
  * Toggle parameter visibility
  * @param configId Parameter configuration ID
  */
-function toggleParameterVisibility (configId: string) {
+function toggleParameterVisibility(configId: string) {
   const config = chartConfigs.find((c) => c.id === configId);
   if (config) {
     config.visible = !config.visible;
@@ -216,7 +216,7 @@ function toggleParameterVisibility (configId: string) {
 /**
  * Export data to CSV format
  */
-function exportData () {
+function exportData() {
   logger.info('HistoryViewer', 'Exporting data to CSV');
   try {
     // Prepare CSV headers
@@ -254,7 +254,7 @@ function exportData () {
 /**
  * Refresh data
  */
-function refreshData () {
+function refreshData() {
   logger.info('HistoryViewer', 'Refreshing data');
   isLoading = true;
   setTimeout(() => {
@@ -269,7 +269,7 @@ function refreshData () {
  * @param parameterId Parameter ID
  * @returns Change percentage
  */
-function calculateChange (parameterId: string) {
+function calculateChange(parameterId: string) {
   if (historyData.length < 2) return 'No change';
   const firstValue = historyData[0].parameters[parameterId] || 0;
   const lastValue = historyData[historyData.length - 1].parameters[parameterId] || 0;

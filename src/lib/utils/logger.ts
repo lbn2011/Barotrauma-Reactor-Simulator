@@ -16,57 +16,103 @@ const log = {
   /**
    * General log information
    */
-  info: (...args: any[]) => consolaLogger.info(...args),
+  info: (...args: any[]) => {
+    if (args.length > 0) {
+      consolaLogger.info(args[0], ...args.slice(1));
+    }
+  },
 
   /**
    * Success information
    */
-  success: (...args: any[]) => consolaLogger.success(...args),
+  success: (...args: any[]) => {
+    if (args.length > 0) {
+      consolaLogger.success(args[0], ...args.slice(1));
+    }
+  },
 
   /**
    * Warning information
    */
-  warn: (...args: any[]) => consolaLogger.warn(...args),
+  warn: (...args: any[]) => {
+    if (args.length > 0) {
+      consolaLogger.warn(args[0], ...args.slice(1));
+    }
+  },
 
   /**
    * Error information
    */
-  error: (...args: any[]) => consolaLogger.error(...args),
+  error: (...args: any[]) => {
+    if (args.length > 0) {
+      consolaLogger.error(args[0], ...args.slice(1));
+    }
+  },
 
   /**
    * Debug information
    */
-  debug: (...args: any[]) => consolaLogger.debug(...args),
+  debug: (...args: any[]) => {
+    if (args.length > 0) {
+      consolaLogger.debug(args[0], ...args.slice(1));
+    }
+  },
 
   /**
    * Trace information
    */
-  trace: (...args: any[]) => consolaLogger.trace(...args),
+  trace: (...args: any[]) => {
+    if (args.length > 0) {
+      consolaLogger.trace(args[0], ...args.slice(1));
+    }
+  },
 
   /**
    * Fatal information
    */
-  fatal: (...args: any[]) => consolaLogger.fatal(...args),
+  fatal: (...args: any[]) => {
+    if (args.length > 0) {
+      consolaLogger.fatal(args[0], ...args.slice(1));
+    }
+  },
 
   /**
    * Clear console
    */
-  clear: () => consolaLogger.clear(),
+  clear: () => {
+    // eslint-disable-next-line no-console
+    if (typeof console !== 'undefined' && console.clear) {
+      // eslint-disable-next-line no-console
+      console.clear();
+    }
+  },
 
   /**
    * Statistics information
    */
-  stats: (obj: Record<string, any>) => consolaLogger.stats(obj),
+  stats: (obj: Record<string, any>) => consolaLogger.info(obj),
 
   /**
    * Time information
    */
-  time: (label: string) => consolaLogger.time(label),
+  time: (label: string) => {
+    // eslint-disable-next-line no-console
+    if (typeof console !== 'undefined' && console.time) {
+      // eslint-disable-next-line no-console
+      console.time(label);
+    }
+  },
 
   /**
    * Time end information
    */
-  timeEnd: (label: string) => consolaLogger.timeEnd(label),
+  timeEnd: (label: string) => {
+    // eslint-disable-next-line no-console
+    if (typeof console !== 'undefined' && console.timeEnd) {
+      // eslint-disable-next-line no-console
+      console.timeEnd(label);
+    }
+  },
 };
 
 export default log;

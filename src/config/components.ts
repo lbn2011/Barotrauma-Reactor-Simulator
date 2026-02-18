@@ -3,49 +3,49 @@
 
 export interface ComponentConfig {
   // Navigation Component Config
-  navigation?: {
+  navigation: {
     showLanguageSelector: boolean;
     showSearch: boolean;
     collapsedByDefault: boolean;
   };
 
   // TodayCard Component Config
-  todayCard?: {
+  todayCard: {
     defaultStyle: 'light' | 'dark' | 'white';
     enableTextProtection: boolean;
     enableGradientEffects: boolean;
   };
 
   // Hero Component Config
-  hero?: {
+  hero: {
     enableVideoAutoplay: boolean;
     defaultProfile: string;
     enableCollectionIcons: boolean;
   };
 
   // Carousel Component Config
-  carousel?: {
+  carousel: {
     enableBackgroundArtwork: boolean;
     enableSwipeNavigation: boolean;
     defaultActiveIndex: number;
   };
 
   // Artwork Component Config
-  artwork?: {
+  artwork: {
     defaultQuality: number;
     enableLazyLoading: boolean;
     defaultProfile: string;
   };
 
   // AmbientBackgroundArtwork Config
-  ambientBackgroundArtwork?: {
+  ambientBackgroundArtwork: {
     enableAnimation: boolean;
     enableIntersectionObserver: boolean;
     defaultAspectRatio: string;
   };
 
   // Global Config
-  global?: {
+  global: {
     enableResponsiveDesign: boolean;
     enableReducedMotion: boolean;
     defaultLanguage: string;
@@ -94,7 +94,7 @@ export const defaultComponentConfig: ComponentConfig = {
 };
 
 // Get Component Config with defaults
-export function getComponentConfig (
+export function getComponentConfig(
   config?: Partial<ComponentConfig>
 ): ComponentConfig {
   return {

@@ -10,7 +10,7 @@ import log from '../lib/utils/logger';
  * @param configPath - Path to configuration JSON file
  * @returns Component configuration object
  */
-export async function loadComponentConfig (
+export async function loadComponentConfig(
   configPath?: string
 ): Promise<ComponentConfig> {
   log.info('Starting component configuration loading');
@@ -43,7 +43,7 @@ export async function loadComponentConfig (
  * @param userConfig - User-provided component configuration
  * @returns Merged component configuration
  */
-export function mergeComponentConfig (
+export function mergeComponentConfig(
   defaultConfig: ComponentConfig,
   userConfig: Partial<ComponentConfig>
 ): ComponentConfig {
@@ -52,30 +52,116 @@ export function mergeComponentConfig (
     navigation: {
       ...defaultConfig.navigation,
       ...userConfig.navigation,
+      showLanguageSelector:
+        userConfig.navigation?.showLanguageSelector ??
+        defaultConfig.navigation?.showLanguageSelector ??
+        true,
+      showSearch:
+        userConfig.navigation?.showSearch ??
+        defaultConfig.navigation?.showSearch ??
+        true,
+      collapsedByDefault:
+        userConfig.navigation?.collapsedByDefault ??
+        defaultConfig.navigation?.collapsedByDefault ??
+        false,
     },
     todayCard: {
       ...defaultConfig.todayCard,
       ...userConfig.todayCard,
+      defaultStyle:
+        userConfig.todayCard?.defaultStyle ??
+        defaultConfig.todayCard?.defaultStyle ??
+        'light',
+      enableTextProtection:
+        userConfig.todayCard?.enableTextProtection ??
+        defaultConfig.todayCard?.enableTextProtection ??
+        true,
+      enableGradientEffects:
+        userConfig.todayCard?.enableGradientEffects ??
+        defaultConfig.todayCard?.enableGradientEffects ??
+        true,
     },
     hero: {
       ...defaultConfig.hero,
       ...userConfig.hero,
+      enableVideoAutoplay:
+        userConfig.hero?.enableVideoAutoplay ??
+        defaultConfig.hero?.enableVideoAutoplay ??
+        true,
+      defaultProfile:
+        userConfig.hero?.defaultProfile ??
+        defaultConfig.hero?.defaultProfile ??
+        'large-hero',
+      enableCollectionIcons:
+        userConfig.hero?.enableCollectionIcons ??
+        defaultConfig.hero?.enableCollectionIcons ??
+        true,
     },
     carousel: {
       ...defaultConfig.carousel,
       ...userConfig.carousel,
+      enableBackgroundArtwork:
+        userConfig.carousel?.enableBackgroundArtwork ??
+        defaultConfig.carousel?.enableBackgroundArtwork ??
+        true,
+      enableSwipeNavigation:
+        userConfig.carousel?.enableSwipeNavigation ??
+        defaultConfig.carousel?.enableSwipeNavigation ??
+        true,
+      defaultActiveIndex:
+        userConfig.carousel?.defaultActiveIndex ??
+        defaultConfig.carousel?.defaultActiveIndex ??
+        0,
     },
     artwork: {
       ...defaultConfig.artwork,
       ...userConfig.artwork,
+      defaultQuality:
+        userConfig.artwork?.defaultQuality ??
+        defaultConfig.artwork?.defaultQuality ??
+        85,
+      enableLazyLoading:
+        userConfig.artwork?.enableLazyLoading ??
+        defaultConfig.artwork?.enableLazyLoading ??
+        true,
+      defaultProfile:
+        userConfig.artwork?.defaultProfile ??
+        defaultConfig.artwork?.defaultProfile ??
+        'large',
     },
     ambientBackgroundArtwork: {
       ...defaultConfig.ambientBackgroundArtwork,
       ...userConfig.ambientBackgroundArtwork,
+      enableAnimation:
+        userConfig.ambientBackgroundArtwork?.enableAnimation ??
+        defaultConfig.ambientBackgroundArtwork?.enableAnimation ??
+        true,
+      enableIntersectionObserver:
+        userConfig.ambientBackgroundArtwork?.enableIntersectionObserver ??
+        defaultConfig.ambientBackgroundArtwork?.enableIntersectionObserver ??
+        true,
+      defaultAspectRatio:
+        userConfig.ambientBackgroundArtwork?.defaultAspectRatio ??
+        defaultConfig.ambientBackgroundArtwork?.defaultAspectRatio ??
+        '16/9',
     },
     global: {
       ...defaultConfig.global,
       ...userConfig.global,
+      enableResponsiveDesign:
+        userConfig.global?.enableResponsiveDesign ??
+        defaultConfig.global?.enableResponsiveDesign ??
+        true,
+      enableReducedMotion:
+        userConfig.global?.enableReducedMotion ??
+        defaultConfig.global?.enableReducedMotion ??
+        true,
+      defaultLanguage:
+        userConfig.global?.defaultLanguage ??
+        defaultConfig.global?.defaultLanguage ??
+        'zh-CN',
+      supportedLanguages: userConfig.global?.supportedLanguages ??
+        defaultConfig.global?.supportedLanguages ?? ['zh-CN', 'en-US'],
     },
   };
   log.trace('Config merging completed');
@@ -87,7 +173,7 @@ export function mergeComponentConfig (
  * @param baseConfig - Base component configuration
  * @returns Configuration factory function
  */
-export function createConfigFactory (baseConfig: ComponentConfig) {
+export function createConfigFactory(baseConfig: ComponentConfig) {
   log.info('Creating config factory');
   return {
     /**
@@ -131,7 +217,7 @@ export function createConfigFactory (baseConfig: ComponentConfig) {
  * @param config - Optional configuration object
  * @returns Component configuration
  */
-export function loadConfigSync (
+export function loadConfigSync(
   config?: Partial<ComponentConfig>
 ): ComponentConfig {
   log.info('Loading config synchronously (SSR)');

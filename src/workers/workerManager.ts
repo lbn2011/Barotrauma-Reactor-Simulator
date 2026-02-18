@@ -41,7 +41,7 @@ class WorkerManager {
    * Initialize Workers
    * Creates physics calculation and data processing workers
    */
-  initialize () {
+  initialize() {
     if (this.isInitialized) {
       log.debug('Worker manager already initialized');
       return;
@@ -108,7 +108,7 @@ class WorkerManager {
    * @param workerType Worker type
    * @param response Response data
    */
-  private handleWorkerMessage (
+  private handleWorkerMessage(
     workerType: WorkerType,
     response: WorkerResponse
   ) {
@@ -141,7 +141,7 @@ class WorkerManager {
    * @param data Message data
    * @returns Promise<any> Processing result
    */
-  sendMessage (workerType: WorkerType, type: string, data: any): Promise<any> {
+  sendMessage(workerType: WorkerType, type: string, data: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const workerInstance = this.workers.get(workerType);
       if (!workerInstance) {
@@ -189,7 +189,7 @@ class WorkerManager {
    * @param data Input data
    * @returns Promise<any> Calculation result
    */
-  async calculateMassBalance (data: any): Promise<any> {
+  async calculateMassBalance(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateMassBalance',
@@ -202,7 +202,7 @@ class WorkerManager {
    * @param data Input data
    * @returns Promise<any> Calculation result
    */
-  async calculateEnergyBalance (data: any): Promise<any> {
+  async calculateEnergyBalance(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateEnergyBalance',
@@ -215,7 +215,7 @@ class WorkerManager {
    * @param data Input data
    * @returns Promise<any> Calculation result
    */
-  async calculateVoidCoefficient (data: any): Promise<any> {
+  async calculateVoidCoefficient(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateVoidCoefficient',
@@ -228,7 +228,7 @@ class WorkerManager {
    * @param data Input data
    * @returns Promise<any> Calculation result
    */
-  async calculateXenonPoisoning (data: any): Promise<any> {
+  async calculateXenonPoisoning(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateXenonPoisoning',
@@ -241,7 +241,7 @@ class WorkerManager {
    * @param data Input data
    * @returns Promise<any> Calculation result
    */
-  async calculateControlRodPhysics (data: any): Promise<any> {
+  async calculateControlRodPhysics(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateControlRodPhysics',
@@ -254,7 +254,7 @@ class WorkerManager {
    * @param data Input data
    * @returns Promise<any> Calculation result
    */
-  async calculateReactorCore (data: any): Promise<any> {
+  async calculateReactorCore(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateReactorCore',
@@ -267,7 +267,7 @@ class WorkerManager {
    * @param data Input data
    * @returns Promise<any> Processing result
    */
-  async processAlarmData (data: any): Promise<any> {
+  async processAlarmData(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.DATA_PROCESSING,
       'processAlarmData',
@@ -280,7 +280,7 @@ class WorkerManager {
    * @param data Input data
    * @returns Promise<any> Processing result
    */
-  async processTrendData (data: any): Promise<any> {
+  async processTrendData(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.DATA_PROCESSING,
       'processTrendData',
@@ -293,7 +293,7 @@ class WorkerManager {
    * @param data Input data
    * @returns Promise<any> Processing result
    */
-  async generateReport (data: any): Promise<any> {
+  async generateReport(data: any): Promise<any> {
     return this.sendMessage(WorkerType.DATA_PROCESSING, 'generateReport', data);
   }
 
@@ -301,7 +301,7 @@ class WorkerManager {
    * Terminate Workers
    * Clean up all worker instances
    */
-  terminate () {
+  terminate() {
     log.info('Starting worker manager termination');
     this.workers.forEach((workerInstance, workerType) => {
       log.debug(`Terminating ${workerType} worker`);

@@ -1,7 +1,7 @@
 // Data Processing Web Worker
 
 // Log function
-function log (
+function log(
   message: string,
   level: 'info' | 'debug' | 'error' | 'warn' = 'info'
 ) {
@@ -130,7 +130,7 @@ interface ReportOutput {
 }
 
 // Calculate trend
-function calculateTrend (history: number[]): 'rising' | 'falling' | 'stable' {
+function calculateTrend(history: number[]): 'rising' | 'falling' | 'stable' {
   if (history.length < 2) {
     log(
       'Insufficient data points for trend calculation, returning stable',
@@ -162,7 +162,7 @@ function calculateTrend (history: number[]): 'rising' | 'falling' | 'stable' {
 }
 
 // Process alarm data
-function processAlarmData (data: AlarmDataInput): AlarmDataOutput {
+function processAlarmData(data: AlarmDataInput): AlarmDataOutput {
   log(
     `Processing alarm data: ${data.alarms.length} total alarms, ${data.acknowledgedAlarms.length} acknowledged alarms`,
     'debug'
@@ -205,7 +205,7 @@ function processAlarmData (data: AlarmDataInput): AlarmDataOutput {
 }
 
 // Process trend data
-function processTrendData (data: TrendDataInput): TrendDataOutput {
+function processTrendData(data: TrendDataInput): TrendDataOutput {
   log(
     `Processing trend data: ${data.history.length} total entries, time window: ${data.timeWindow}ms`,
     'debug'
@@ -270,7 +270,7 @@ function processTrendData (data: TrendDataInput): TrendDataOutput {
 }
 
 // Generate report
-function generateReport (data: ReportInput): ReportOutput {
+function generateReport(data: ReportInput): ReportOutput {
   log(
     `Generating report: ${data.events.length} events from ${new Date(data.startTime).toISOString()} to ${new Date(data.endTime).toISOString()}`,
     'debug'
@@ -329,39 +329,39 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
 
   try {
     switch (type) {
-    case 'processAlarmData':
-      log('Starting to process alarm data', 'debug');
-      log(
-        `Processing ${(data as AlarmDataInput).alarms.length} alarms`,
-        'debug'
-      );
-      result = processAlarmData(data as AlarmDataInput);
-      log('Alarm data processing completed', 'debug');
-      break;
+      case 'processAlarmData':
+        log('Starting to process alarm data', 'debug');
+        log(
+          `Processing ${(data as AlarmDataInput).alarms.length} alarms`,
+          'debug'
+        );
+        result = processAlarmData(data as AlarmDataInput);
+        log('Alarm data processing completed', 'debug');
+        break;
 
-    case 'processTrendData':
-      log('Starting to process trend data', 'debug');
-      log(
-        `Processing ${(data as TrendDataInput).history.length} historical data entries`,
-        'debug'
-      );
-      result = processTrendData(data as TrendDataInput);
-      log('Trend data processing completed', 'debug');
-      break;
+      case 'processTrendData':
+        log('Starting to process trend data', 'debug');
+        log(
+          `Processing ${(data as TrendDataInput).history.length} historical data entries`,
+          'debug'
+        );
+        result = processTrendData(data as TrendDataInput);
+        log('Trend data processing completed', 'debug');
+        break;
 
-    case 'generateReport':
-      log('Starting to generate report', 'debug');
-      log(
-        `Processing ${(data as ReportInput).events.length} events`,
-        'debug'
-      );
-      result = generateReport(data as ReportInput);
-      log('Report generation completed', 'debug');
-      break;
+      case 'generateReport':
+        log('Starting to generate report', 'debug');
+        log(
+          `Processing ${(data as ReportInput).events.length} events`,
+          'debug'
+        );
+        result = generateReport(data as ReportInput);
+        log('Report generation completed', 'debug');
+        break;
 
-    default:
-      log(`Unknown message type: ${type}`, 'error');
-      return;
+      default:
+        log(`Unknown message type: ${type}`, 'error');
+        return;
     }
 
     // Send response

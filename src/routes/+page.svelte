@@ -62,7 +62,7 @@ onMount(() => {
   <Hero color="#0066ff" profile="large-hero" config={defaultComponentConfig}>
     <div class="hero-content">
       <h1>{$i18nStore.t('Overview')}</h1>
-      <p>{$i18nStore.t('ASE.Web.AppStore.Navigation.AX.AppStoreLogo')}</p>
+      <p>Reactor Simulator Overview</p>
     </div>
   </Hero>
 

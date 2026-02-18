@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { TodayCardMedia as TodayCardMediaType } from '~/types';
-import { logger } from '~/lib/utils/logger';
+import type { TodayCardMedia as TodayCardMediaType } from '../../../../types';
+import { logger } from '../../../../lib/utils/logger';
 
 export let media: TodayCardMediaType;
 
@@ -11,7 +11,7 @@ $: {
   });
 }
 
-export function isTodayCardMediaList (media: TodayCardMediaType): media is TodayCardMediaType {
+export function isTodayCardMediaList(media: TodayCardMediaType): media is TodayCardMediaType {
   const result = media.kind === 'list';
   logger.debug('Checking if media is list', {
     mediaKind: media.kind,

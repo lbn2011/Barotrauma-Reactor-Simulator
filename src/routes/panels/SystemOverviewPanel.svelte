@@ -63,39 +63,39 @@ reactorStore.subscribe((state) => {
 });
 
 // Handle simulation control
-function handleStartSimulation () {
+function handleStartSimulation() {
   log.info('Starting simulation');
   startSimulation();
   log.success('Simulation start command executed');
 }
 
-function handleStopSimulation () {
+function handleStopSimulation() {
   log.info('Stopping simulation');
   stopSimulation();
   log.success('Simulation stop command executed');
 }
 
-function handleResetSimulation () {
+function handleResetSimulation() {
   log.info('Resetting simulation');
   resetSimulation();
   log.success('Simulation reset command executed');
 }
 
 // Handle emergency operations
-function handleEmergencyRodInsertion () {
+function handleEmergencyRodInsertion() {
   log.info('Starting emergency shutdown operation (AZ-5)');
   emergencyRodInsertion();
   log.success('Emergency shutdown command executed');
 }
 
-function handleTripReactor () {
+function handleTripReactor() {
   log.info('Starting reactor trip operation');
   tripReactor();
   log.success('Reactor trip command executed');
 }
 
 // Format time
-function formatTime (seconds: number): string {
+function formatTime(seconds: number): string {
   log.trace('Starting to format time', { seconds });
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);

@@ -43,7 +43,7 @@ reactorStore.subscribe((state) => {
  * Handle control rod position change
  * @param e Event object
  */
-function handlePositionChange (e: Event) {
+function handlePositionChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const position = parseFloat(target.value);
   log.info(`Control rod position changing to: ${position}%`);
@@ -55,7 +55,7 @@ function handlePositionChange (e: Event) {
  * Handle control rod insertion speed change
  * @param e Event object
  */
-function handleInsertionSpeedChange (e: Event) {
+function handleInsertionSpeedChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const speed = parseFloat(target.value);
   log.info(`Control rod insertion speed changing to: ${speed}%/s`);
@@ -67,7 +67,7 @@ function handleInsertionSpeedChange (e: Event) {
  * Quickly set control rod position
  * @param position Target position (%)
  */
-function setPositionQuickly (position: number) {
+function setPositionQuickly(position: number) {
   log.info(`Quickly setting control rod position to: ${position}%`);
   setControlRodPosition(position);
   log.success(`Control rod position quickly set to: ${position}%`);
@@ -79,7 +79,7 @@ function setPositionQuickly (position: number) {
  * @param col Column index
  * @param e Event object
  */
-function handleSingleRodChange (row: number, col: number, e: Event) {
+function handleSingleRodChange(row: number, col: number, e: Event) {
   const target = e.target as HTMLInputElement;
   const position = parseFloat(target.value);
   log.info(`Changing single control rod position at (${row}, ${col}) to: ${position}%`);
@@ -91,7 +91,7 @@ function handleSingleRodChange (row: number, col: number, e: Event) {
  * Trigger emergency insertion (AZ-5)
  * Simulates emergency shutdown operation from Chernobyl accident
  */
-function handleEmergencyInsertion () {
+function handleEmergencyInsertion() {
   log.warn('EMERGENCY: Initiating emergency rod insertion (AZ-5)');
   emergencyRodInsertion();
   log.success('Emergency rod insertion (AZ-5) completed');
@@ -100,7 +100,7 @@ function handleEmergencyInsertion () {
 /**
  * Toggle control rod auto mode
  */
-function handleAutoModeToggle () {
+function handleAutoModeToggle() {
   const currentMode = controlRods.autoMode;
   const newMode = !currentMode;
   log.info(
@@ -115,18 +115,18 @@ function handleAutoModeToggle () {
  * @param status Control rod status
  * @returns Color corresponding to status
  */
-function getRodStatusColor (status: string) {
+function getRodStatusColor(status: string) {
   log.trace(`Getting status color for rod status: ${status}`);
   switch (status) {
-  case 'normal':
-    return '#4caf50'; // Normal - Green
-  case 'fault':
-    return '#f44336'; // Fault - Red
-  case 'maintenance':
-    return '#ff9800'; // Maintenance - Orange
-  default:
-    log.warn(`Unknown rod status: ${status}, using default color`);
-    return '#4caf50';
+    case 'normal':
+      return '#4caf50'; // Normal - Green
+    case 'fault':
+      return '#f44336'; // Fault - Red
+    case 'maintenance':
+      return '#ff9800'; // Maintenance - Orange
+    default:
+      log.warn(`Unknown rod status: ${status}, using default color`);
+      return '#4caf50';
   }
 }
 
@@ -135,18 +135,18 @@ function getRodStatusColor (status: string) {
  * @param type Control rod type
  * @returns Label corresponding to type
  */
-function getRodTypeLabel (type: string) {
+function getRodTypeLabel(type: string) {
   log.trace(`Getting type label for rod type: ${type}`);
   switch (type) {
-  case 'control':
-    return 'Control'; // Control rod
-  case 'shutdown':
-    return 'Shutdown'; // Shutdown rod
-  case 'automatic':
-    return 'Auto'; // Automatic rod
-  default:
-    log.warn(`Unknown rod type: ${type}, using default label`);
-    return 'Control';
+    case 'control':
+      return 'Control'; // Control rod
+    case 'shutdown':
+      return 'Shutdown'; // Shutdown rod
+    case 'automatic':
+      return 'Auto'; // Automatic rod
+    default:
+      log.warn(`Unknown rod type: ${type}, using default label`);
+      return 'Control';
   }
 }
 
@@ -155,18 +155,18 @@ function getRodTypeLabel (type: string) {
  * @param type Control rod type
  * @returns Color corresponding to type
  */
-function getRodTypeColor (type: string) {
+function getRodTypeColor(type: string) {
   log.trace(`Getting type color for rod type: ${type}`);
   switch (type) {
-  case 'control':
-    return '#2196f3'; // Control rod - Blue
-  case 'shutdown':
-    return '#f44336'; // Shutdown rod - Red
-  case 'automatic':
-    return '#4caf50'; // Automatic rod - Green
-  default:
-    log.warn(`Unknown rod type: ${type}, using default color`);
-    return '#2196f3';
+    case 'control':
+      return '#2196f3'; // Control rod - Blue
+    case 'shutdown':
+      return '#f44336'; // Shutdown rod - Red
+    case 'automatic':
+      return '#4caf50'; // Automatic rod - Green
+    default:
+      log.warn(`Unknown rod type: ${type}, using default color`);
+      return '#2196f3';
   }
 }
 
@@ -175,7 +175,7 @@ function getRodTypeColor (type: string) {
  * @param row Row index
  * @param col Column index
  */
-function handleFuelReload (row: number, col: number) {
+function handleFuelReload(row: number, col: number) {
   log.info(`Fuel reload initiated for rod at position (${row}, ${col})`);
   // Fuel reload logic could be implemented here
   log.debug(`Fuel reload process started for rod at ${row}, ${col}`);

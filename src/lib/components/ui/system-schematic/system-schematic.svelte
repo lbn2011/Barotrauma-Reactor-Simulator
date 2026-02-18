@@ -76,18 +76,18 @@ export let showParameters: boolean = true; // Whether to show parameters
  * @param status Node status
  * @returns Corresponding color code
  */
-function getNodeStatusColor (status: string) {
+function getNodeStatusColor(status: string) {
   switch (status) {
-  case 'normal':
-    return '#00ff00'; // Normal status - green
-  case 'warning':
-    return '#ffa500'; // Warning status - orange
-  case 'alarm':
-    return '#ff0000'; // Alarm status - red
-  case 'offline':
-    return '#808080'; // Offline status - gray
-  default:
-    return '#00ff00';
+    case 'normal':
+      return '#00ff00'; // Normal status - green
+    case 'warning':
+      return '#ffa500'; // Warning status - orange
+    case 'alarm':
+      return '#ff0000'; // Alarm status - red
+    case 'offline':
+      return '#808080'; // Offline status - gray
+    default:
+      return '#00ff00';
   }
 }
 
@@ -96,18 +96,18 @@ function getNodeStatusColor (status: string) {
  * @param status Connection status
  * @returns Corresponding color code
  */
-function getConnectionStatusColor (status: string) {
+function getConnectionStatusColor(status: string) {
   switch (status) {
-  case 'normal':
-    return '#00ff00'; // Normal status - green
-  case 'warning':
-    return '#ffa500'; // Warning status - orange
-  case 'alarm':
-    return '#ff0000'; // Alarm status - red
-  case 'offline':
-    return '#808080'; // Offline status - gray
-  default:
-    return '#00ff00';
+    case 'normal':
+      return '#00ff00'; // Normal status - green
+    case 'warning':
+      return '#ffa500'; // Warning status - orange
+    case 'alarm':
+      return '#ff0000'; // Alarm status - red
+    case 'offline':
+      return '#808080'; // Offline status - gray
+    default:
+      return '#00ff00';
   }
 }
 
@@ -116,26 +116,26 @@ function getConnectionStatusColor (status: string) {
  * @param type Node type
  * @returns Corresponding icon
  */
-function getNodeIcon (type: string) {
+function getNodeIcon(type: string) {
   switch (type) {
-  case 'reactor':
-    return '⚛️'; // Reactor icon
-  case 'turbine':
-    return '🌀'; // Turbine icon
-  case 'condenser':
-    return '🔄'; // Condenser icon
-  case 'deaerator':
-    return '💧'; // Deaerator icon
-  case 'pump':
-    return '🔋'; // Pump icon
-  case 'valve':
-    return '🚪'; // Valve icon
-  case 'tank':
-    return '📦'; // Tank icon
-  case 'heat_exchanger':
-    return '🔥'; // Heat exchanger icon
-  default:
-    return '📌'; // Default icon
+    case 'reactor':
+      return '⚛️'; // Reactor icon
+    case 'turbine':
+      return '🌀'; // Turbine icon
+    case 'condenser':
+      return '🔄'; // Condenser icon
+    case 'deaerator':
+      return '💧'; // Deaerator icon
+    case 'pump':
+      return '🔋'; // Pump icon
+    case 'valve':
+      return '🚪'; // Valve icon
+    case 'tank':
+      return '📦'; // Tank icon
+    case 'heat_exchanger':
+      return '🔥'; // Heat exchanger icon
+    default:
+      return '📌'; // Default icon
   }
 }
 
@@ -146,7 +146,7 @@ function getNodeIcon (type: string) {
  * @param nodeRadius Node radius
  * @returns Arrow start and end positions
  */
-function calculateArrowPosition (
+function calculateArrowPosition(
   source: { x: number; y: number },
   target: { x: number; y: number },
   nodeRadius: number = 30
@@ -168,7 +168,7 @@ function calculateArrowPosition (
  * Handle node click event
  * @param nodeId Node ID
  */
-function handleNodeClick (nodeId: string) {
+function handleNodeClick(nodeId: string) {
   logger.info(`System Schematic: Node clicked - ${nodeId}`);
 }
 

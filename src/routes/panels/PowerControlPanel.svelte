@@ -54,7 +54,7 @@ reactorStore.subscribe((state) => {
  * 处理目标功率变化
  * @param e 事件对象
  */
-function handleTargetPowerChange (e: Event) {
+function handleTargetPowerChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const power = parseFloat(target.value);
   log.debug('Changing target power', { power });
@@ -66,7 +66,7 @@ function handleTargetPowerChange (e: Event) {
  * 处理功率设定点变化
  * @param e 事件对象
  */
-function handlePowerSetpointChange (e: Event) {
+function handlePowerSetpointChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const setpoint = parseFloat(target.value);
   log.debug('Changing power setpoint', { setpoint });
@@ -78,7 +78,7 @@ function handlePowerSetpointChange (e: Event) {
  * 快速设置功率水平
  * @param power 目标功率（%）
  */
-function setPowerQuickly (power: number) {
+function setPowerQuickly(power: number) {
   log.info('Quick setting power level', { power });
   setTargetPower(power);
   log.success('Power level set quickly', { power });
@@ -87,7 +87,7 @@ function setPowerQuickly (power: number) {
 /**
  * 切换自动控制模式
  */
-function handleAutomaticControlToggle () {
+function handleAutomaticControlToggle() {
   log.info('Toggling automatic control mode', { currentMode: powerRegulation.automaticControl });
   toggleAutomaticControl();
   const newMode = !powerRegulation.automaticControl;
@@ -98,7 +98,7 @@ function handleAutomaticControlToggle () {
  * 切换轴向偏移控制
  * 轴向偏移控制可以优化堆芯功率分布
  */
-function handleAxialOffsetControlToggle () {
+function handleAxialOffsetControlToggle() {
   log.info('Toggling axial offset control', { currentMode: powerRegulation.axialOffsetControl });
   toggleAxialOffsetControl();
   const newMode = !powerRegulation.axialOffsetControl;

@@ -40,7 +40,7 @@ onDestroy(() => {
 });
 
 // Adjust lubrication oil pressure
-function handleLubricationOilPressureChange (e: Event) {
+function handleLubricationOilPressureChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const pressure = parseFloat(target.value);
   log.info('Starting to adjust lubrication oil pressure', { pressure });
@@ -49,7 +49,7 @@ function handleLubricationOilPressureChange (e: Event) {
 }
 
 // Adjust lubrication oil temperature
-function handleLubricationOilTemperatureChange (e: Event) {
+function handleLubricationOilTemperatureChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const temperature = parseFloat(target.value);
   log.info('Starting to adjust lubrication oil temperature', { temperature });
@@ -58,7 +58,7 @@ function handleLubricationOilTemperatureChange (e: Event) {
 }
 
 // Adjust seal oil pressure
-function handleSealOilPressureChange (e: Event) {
+function handleSealOilPressureChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const pressure = parseFloat(target.value);
   log.info('Starting to adjust seal oil pressure', { pressure });

@@ -28,14 +28,14 @@ onMount(() => {
 });
 
 // 切换冷却泵状态
-function handleToggle () {
+function handleToggle() {
   log.info('Toggling core cooling pump status', { currentStatus: coreCoolingPump?.status });
   toggleCoreCoolingPump();
   log.success('Core cooling pump status toggled successfully');
 }
 
 // 调整冷却流量
-function handleFlowRateChange (e: Event) {
+function handleFlowRateChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing core cooling pump flow rate', { value });

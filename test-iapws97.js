@@ -1,5 +1,7 @@
 // 测试 IAPWS-97 实现
-import {
+import { thermal } from './src/models/index.ts';
+
+const {
   getRegion,
   calculateSaturationPressure,
   calculateSaturationTemperature,
@@ -9,7 +11,7 @@ import {
   calculateSpecificVolume,
   calculateSpecificHeatCapacityP,
   calculateSpecificHeatCapacityV,
-} from './src/models/thermal/iapws97.ts';
+} = thermal;
 
 // 测试数据
 const testCases = [

@@ -1,12 +1,11 @@
 <script lang="ts">
-import type { Action } from '~/types';
+import type { Action } from '../types';
 import { goto } from '$app/navigation';
-import { resolve } from '$app/paths';
 import { logger } from '../lib/utils/logger';
 
 export let action: Action | undefined | null;
 
-function handleClick (event: MouseEvent) {
+function handleClick(event: MouseEvent) {
   if (action?.destination?.url) {
     event.preventDefault();
     // Check if it's an external link
@@ -17,10 +16,17 @@ function handleClick (event: MouseEvent) {
       logger.info('External link opened', { url: action.destination.url });
       window.open(action.destination.url, '_blank');
     } else {
-      const resolvedUrl = resolve(action.destination.url);
-      logger.info('Internal navigation', { url: resolvedUrl });
-      goto(resolvedUrl);
+      const url = action.destination.url;
+      logger.info('Internal navigation', { url });
+      goto(url);
     }
+  }
+}
+
+function handleKeyDown(event: KeyboardEvent) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    handleClick(event as any);
   }
 }
 </script>
@@ -37,7 +43,16 @@ a {
 </style>
 
 {#if action}
-  <a on:click={handleClick} class="link-wrapper" rel="noopener noreferrer" target="_blank">
+  <a
+    on:click={handleClick}
+    on:keydown={handleKeyDown}
+    href={action.destination?.url || '#'}
+    class="link-wrapper"
+    rel="noopener noreferrer"
+    target="_blank"
+    role="button"
+    tabindex="0"
+  >
     <slot />
   </a>
 {:else}

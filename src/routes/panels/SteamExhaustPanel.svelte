@@ -34,14 +34,14 @@ onDestroy(() => {
 });
 
 // Toggle steam exhaust state
-function handleToggle () {
+function handleToggle() {
   log.info('Starting to toggle steam exhaust system state', { currentStatus: steamDump?.status });
   toggleSteamDump();
   log.success('Steam exhaust system state toggle command executed');
 }
 
 // Adjust exhaust capacity
-function handleCapacityChange (e: Event) {
+function handleCapacityChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const capacity = parseFloat(target.value);
   log.info('Starting to adjust steam exhaust capacity', { capacity });

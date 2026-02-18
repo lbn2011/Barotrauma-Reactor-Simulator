@@ -45,7 +45,7 @@ interface MassBalanceOutput {
  *
  * 质量守恒定律：系统质量变化率 = 输入质量流量 - 输出质量流量
  */
-export function calculateMassBalance (
+export function calculateMassBalance(
   input: MassBalanceInput
 ): MassBalanceOutput {
   // 反应堆系统质量平衡
@@ -82,7 +82,7 @@ export function calculateMassBalance (
  * @param ρ_water 水密度（千克/立方米）
  * @returns 水位变化率（米/秒）
  */
-export function calculateWaterLevelChange (
+export function calculateWaterLevelChange(
   dM_reactor: number,
   A_core: number,
   ρ_water: number
@@ -100,7 +100,7 @@ export function calculateWaterLevelChange (
  * @param m_steam 蒸汽流量（千克/秒）
  * @returns 水位响应时间常数（秒）
  */
-export function calculateWaterLevelResponseTime (
+export function calculateWaterLevelResponseTime(
   V_core: number,
   m_feedwater: number,
   m_steam: number

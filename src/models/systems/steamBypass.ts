@@ -19,7 +19,7 @@ interface SteamBypassOutput {
 }
 
 // 计算汽轮机旁路系统
-function calculateSteamBypass (input: SteamBypassInput): SteamBypassOutput {
+function calculateSteamBypass(input: SteamBypassInput): SteamBypassOutput {
   let bypassPosition = input.currentBypassPosition;
   let isActive = false;
 
@@ -55,7 +55,7 @@ function calculateSteamBypass (input: SteamBypassInput): SteamBypassOutput {
 }
 
 // 检查旁路系统状态
-function checkBypassSystemStatus (input: SteamBypassInput): {
+function checkBypassSystemStatus(input: SteamBypassInput): {
   status: 'normal' | 'warning' | 'alarm';
   message: string;
 } {

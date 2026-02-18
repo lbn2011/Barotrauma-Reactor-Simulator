@@ -76,7 +76,7 @@ const chartOptions = {
 };
 
 // 懒加载Chart.js库
-async function loadChartJS () {
+async function loadChartJS() {
   if (isChartLoaded) return;
 
   log.info('Loading Chart.js library');
@@ -101,7 +101,7 @@ async function loadChartJS () {
 }
 
 // 更新图表数据
-async function updateChartData () {
+async function updateChartData() {
   log.debug('Updating chart data', { hasCanvas: !!chartCanvas, hasTrends: !!trends });
 
   if (!chartCanvas || !trends) return;
@@ -111,7 +111,7 @@ async function updateChartData () {
   }
 
   if (!ChartJS) {
-    log.warning('ChartJS not available, cannot update chart');
+    log.warn('ChartJS not available, cannot update chart');
     return;
   }
 
@@ -160,7 +160,7 @@ async function updateChartData () {
         log.error('Failed to create chart:', error);
       }
     } else {
-      log.warning('Canvas context not available, cannot create chart');
+      log.warn('Canvas context not available, cannot create chart');
     }
   }
 }

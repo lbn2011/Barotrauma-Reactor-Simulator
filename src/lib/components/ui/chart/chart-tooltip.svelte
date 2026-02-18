@@ -17,7 +17,7 @@ import { logger } from '@/lib/utils/logger';
  * @returns Formatted label
  */
 
-function defaultFormatter (value: any, _payload: TooltipPayload[]) {
+function defaultFormatter(value: any, _payload: TooltipPayload[]) {
   return `${value}`;
 }
 

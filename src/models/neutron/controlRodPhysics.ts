@@ -34,7 +34,7 @@ interface ControlRodPhysicsOutput {
  * 3. 当控制棒完全插入（超过20%深度）后，吸收剂开始发挥作用，产生负反应性
  * 4. 这种设计在紧急停堆时可能导致初始功率上升，这是切尔诺贝利事故的原因之一
  */
-export function calculateControlRodPhysics (
+export function calculateControlRodPhysics(
   input: ControlRodPhysicsInput
 ): ControlRodPhysicsOutput {
   let ρ_tip = 0; // 石墨尖端效应反应性
@@ -69,7 +69,7 @@ export function calculateControlRodPhysics (
  * @param speed_cm_s 速度（厘米/秒）
  * @returns 速度（米/秒）
  */
-export function calculateControlRodSpeed (speed_cm_s: number): number {
+export function calculateControlRodSpeed(speed_cm_s: number): number {
   return speed_cm_s / 100; // 转换为米/秒
 }
 
@@ -80,7 +80,7 @@ export function calculateControlRodSpeed (speed_cm_s: number): number {
  * @param speed 插入速度（米/秒）
  * @returns 完全插入时间（秒）
  */
-export function calculateControlRodInsertionTime (
+export function calculateControlRodInsertionTime(
   L: number,
   speed: number
 ): number {
@@ -102,7 +102,7 @@ export function calculateControlRodInsertionTime (
  * 2. 当控制棒插入超过20%深度后，吸收效应开始主导，功率快速下降
  * 3. 完全插入时功率降至接近零
  */
-export function calculateScramPower (
+export function calculateScramPower(
   P_initial: number,
   z: number,
   L: number

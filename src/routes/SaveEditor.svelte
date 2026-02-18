@@ -17,7 +17,7 @@ let errorMessage: string = '';
 let successMessage: string = '';
 
 // Parse save code
-function parseSaveCode () {
+function parseSaveCode() {
   log.info('Starting to parse save code');
 
   if (!saveCodeInput.trim()) {
@@ -59,7 +59,7 @@ function parseSaveCode () {
 }
 
 // Re-encode save code
-function encodeSaveCode () {
+function encodeSaveCode() {
   log.info('Starting to encode save code');
 
   if (!parsedState) {
@@ -90,7 +90,7 @@ function encodeSaveCode () {
 }
 
 // Copy save code to clipboard
-async function copyToClipboard () {
+async function copyToClipboard() {
   log.info('Starting to copy save code to clipboard');
 
   if (saveCodeInput) {
@@ -115,7 +115,7 @@ async function copyToClipboard () {
 }
 
 // Reset form
-function resetForm () {
+function resetForm() {
   log.info('Starting to reset form');
   saveCodeInput = '';
   parsedState = null;
@@ -125,7 +125,7 @@ function resetForm () {
 }
 
 // Safe function to update numeric parameters
-function updateValue (path: string, value: any) {
+function updateValue(path: string, value: any) {
   log.debug('Starting to update parameter value', { path, value });
 
   if (!parsedState) {
@@ -179,7 +179,7 @@ function updateValue (path: string, value: any) {
 }
 
 // Safe function to get nested values
-function getValue (path: string, defaultValue: any = '') {
+function getValue(path: string, defaultValue: any = '') {
   log.debug('Starting to get parameter value', { path, defaultValue });
 
   if (!parsedState) {

@@ -29,12 +29,15 @@ const chartId = $derived(`chart-${id || uid.replace(/:/g, '')}`);
 
 // Set chart context
 setChartContext({
-  get config () {
+  get config() {
     return config;
   },
 });
 
-logger.debug('ChartContainer', `Initialized with chart ID: ${chartId}`);
+// Log initialization in a reactive context
+$effect(() => {
+  logger.debug('ChartContainer', `Initialized with chart ID: ${chartId}`);
+});
 </script>
 
 <!--

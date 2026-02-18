@@ -14,17 +14,17 @@ export const breakpoints = {
 } as const;
 
 // Media Query Functions
-export function mediaQuery (minWidth: keyof typeof breakpoints): string {
+export function mediaQuery(minWidth: keyof typeof breakpoints): string {
   log.trace(`Generating media query: min-width ${breakpoints[minWidth]}`);
   return `@media (min-width: ${breakpoints[minWidth]})`;
 }
 
-export function mediaQueryMax (maxWidth: keyof typeof breakpoints): string {
+export function mediaQueryMax(maxWidth: keyof typeof breakpoints): string {
   log.trace(`Generating media query: max-width ${breakpoints[maxWidth]}`);
   return `@media (max-width: ${breakpoints[maxWidth]})`;
 }
 
-export function mediaQueryRange (
+export function mediaQueryRange(
   minWidth: keyof typeof breakpoints,
   maxWidth: keyof typeof breakpoints
 ): string {
@@ -35,32 +35,32 @@ export function mediaQueryRange (
 }
 
 // Device Detection
-export function isMobile (): boolean {
+export function isMobile(): boolean {
   const result = window.innerWidth < 768;
   log.trace(`Device detection: mobile = ${result}`);
   return result;
 }
 
-export function isTablet (): boolean {
+export function isTablet(): boolean {
   const result = window.innerWidth >= 768 && window.innerWidth < 1024;
   log.trace(`Device detection: tablet = ${result}`);
   return result;
 }
 
-export function isDesktop (): boolean {
+export function isDesktop(): boolean {
   const result = window.innerWidth >= 1024;
   log.trace(`Device detection: desktop = ${result}`);
   return result;
 }
 
-export function isLargeDesktop (): boolean {
+export function isLargeDesktop(): boolean {
   const result = window.innerWidth >= 1440;
   log.trace(`Device detection: large desktop = ${result}`);
   return result;
 }
 
 // Responsive Helpers
-export function getResponsiveValue<T> (
+export function getResponsiveValue<T>(
   values: Partial<Record<keyof typeof breakpoints, T>>,
   defaultValue: T
 ): T {
@@ -96,7 +96,7 @@ export function getResponsiveValue<T> (
 }
 
 // Responsive Class Generator
-export function responsiveClass (
+export function responsiveClass(
   baseClass: string,
   responsiveModifiers: Partial<Record<keyof typeof breakpoints, string>>
 ): string {

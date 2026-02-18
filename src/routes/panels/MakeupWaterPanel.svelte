@@ -28,14 +28,14 @@ onMount(() => {
 });
 
 // 切换补水系统状态
-function handleToggle () {
+function handleToggle() {
   log.info('Toggling makeup water system status', { currentStatus: makeUpWater?.status });
   toggleMakeUpWater();
   log.success('Makeup water system status toggled successfully');
 }
 
 // 调整补水流量
-function handleFlowRateChange (e: Event) {
+function handleFlowRateChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing makeup water flow rate', { value });

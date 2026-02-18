@@ -28,14 +28,14 @@ onMount(() => {
 });
 
 // 切换过滤器状态
-function handleToggle () {
+function handleToggle() {
   log.info('Toggling HEPA filter system status', { currentStatus: hepaFilters?.status });
   toggleHepaFilters();
   log.success('HEPA filter system status toggled successfully');
 }
 
 // 调整过滤器效率
-function handleEfficiencyChange (e: Event) {
+function handleEfficiencyChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing HEPA filter efficiency', { value });
