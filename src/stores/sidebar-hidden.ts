@@ -17,7 +17,9 @@ export const sidebarIsHidden = {
     update((current) => {
       const newValue = updater(current);
       if (newValue !== current) {
-        log.debug(`Sidebar hidden state changed from ${current} to ${newValue}`);
+        log.debug(
+          `Sidebar hidden state changed from ${current} to ${newValue}`
+        );
       }
       return newValue;
     });
@@ -34,7 +36,7 @@ export const sidebarIsHidden = {
   toggle: () => {
     log.info('Toggling sidebar visibility');
     update((current) => !current);
-  }
+  },
 };
 
 log.success('Sidebar hidden state store creation completed');

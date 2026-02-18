@@ -7,7 +7,7 @@ import {
   setCondensateSystemTemperature,
 } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 // Component initialization logs
 log.info('CondensateSystemPanel component initialized');
@@ -18,7 +18,7 @@ let condensateSystem: any;
 // 组件挂载时订阅状态
 onMount(() => {
   log.debug('CondensateSystemPanel mounting, subscribing to reactor store');
-  
+
   const unsubscribe = reactorStore.subscribe((state) => {
     log.trace('CondensateSystemPanel state updated', { condensateSystem: state.condensateSystem });
     condensateSystem = state.condensateSystem;
@@ -29,14 +29,14 @@ onMount(() => {
 });
 
 // 切换凝结水系统状态
-function handleToggle () {
+function handleToggle() {
   log.info('Toggling condensate system status', { currentStatus: condensateSystem?.status });
   toggleCondensateSystem();
   log.success('Condensate system status toggled successfully');
 }
 
 // 调整凝结水流量
-function handleFlowRateChange (e: Event) {
+function handleFlowRateChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing condensate system flow rate', { value });
@@ -45,7 +45,7 @@ function handleFlowRateChange (e: Event) {
 }
 
 // 调整凝结水温度
-function handleTemperatureChange (e: Event) {
+function handleTemperatureChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing condensate system temperature', { value });

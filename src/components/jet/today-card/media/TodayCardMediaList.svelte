@@ -7,15 +7,15 @@ export let media: TodayCardMediaType;
 $: {
   logger.debug('TodayCardMediaList initialized', {
     mediaKind: media?.kind,
-    isList: media?.kind === 'list'
+    isList: media?.kind === 'list',
   });
 }
 
-export function isTodayCardMediaList (media: TodayCardMediaType): media is TodayCardMediaType {
+export function isTodayCardMediaList(media: TodayCardMediaType): media is TodayCardMediaType {
   const result = media.kind === 'list';
   logger.debug('Checking if media is list', {
     mediaKind: media.kind,
-    result
+    result,
   });
   return result;
 }

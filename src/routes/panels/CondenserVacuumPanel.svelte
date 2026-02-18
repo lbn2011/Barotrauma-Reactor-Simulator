@@ -6,7 +6,7 @@ import {
   setCondenserVacuumLevel,
 } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 // Component initialization logs
 log.info('CondenserVacuumPanel component initialized');
@@ -17,7 +17,7 @@ let condenserVacuum: any;
 // 组件挂载时订阅状态
 onMount(() => {
   log.debug('CondenserVacuumPanel mounting, subscribing to reactor store');
-  
+
   const unsubscribe = reactorStore.subscribe((state) => {
     log.trace('CondenserVacuumPanel state updated', { condenserVacuum: state.condenserVacuum });
     condenserVacuum = state.condenserVacuum;
@@ -28,14 +28,14 @@ onMount(() => {
 });
 
 // 切换真空系统状态
-function handleToggle () {
+function handleToggle() {
   log.info('Toggling condenser vacuum system status', { currentStatus: condenserVacuum?.status });
   toggleCondenserVacuum();
   log.success('Condenser vacuum system status toggled successfully');
 }
 
 // 调整真空度
-function handleVacuumLevelChange (e: Event) {
+function handleVacuumLevelChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing condenser vacuum level', { value });

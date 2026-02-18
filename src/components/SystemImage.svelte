@@ -4,15 +4,15 @@ import { logger } from '../lib/utils/logger';
 
 export let artwork: Artwork;
 
-export function isSystemImageArtwork (artwork: Artwork): boolean {
+export function isSystemImageArtwork(artwork: Artwork): boolean {
   return artwork.type === 'system';
 }
 
-function handleImageLoad () {
+function handleImageLoad() {
   logger.info('System image loaded successfully', { url: artwork.url, type: artwork.type });
 }
 
-function handleImageError () {
+function handleImageError() {
   logger.error('System image failed to load', { url: artwork.url, error: 'Image loading error' });
 }
 </script>
@@ -33,10 +33,10 @@ function handleImageError () {
 
 <div class="system-image">
   {#if artwork.url}
-    <img 
-      src={artwork.url} 
-      alt="" 
-      class="system-image-img" 
+    <img
+      src={artwork.url}
+      alt=""
+      class="system-image-img"
       on:load={handleImageLoad}
       on:error={handleImageError}
     />

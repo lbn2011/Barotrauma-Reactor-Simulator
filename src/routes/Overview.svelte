@@ -3,12 +3,11 @@ import { TodayCard, Carousel, ResponsiveContainer } from '@/components/shared';
 import { defaultComponentConfig } from '@/config/components';
 import i18nStore from '@/stores/i18n';
 import type { TodayCard as TodayCardType, Item } from '@/types';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 // Component initialization logs
 log.info('Overview component initialized');
 log.debug('Starting to load component dependencies and data');
-
 
 interface CarouselItem extends Item {
   id: number;
@@ -70,7 +69,6 @@ const mockCarouselItems: CarouselItem[] = [
 ];
 log.success('Carousel mock data loaded successfully', { itemCount: mockCarouselItems.length });
 log.info('Overview component initialization completed');
-
 </script>
 
 <style>

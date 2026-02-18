@@ -18,11 +18,13 @@ const prefersReducedMotion = {
     update((current) => {
       const newValue = updater(current);
       if (newValue !== current) {
-        log.debug(`Reduced motion preference changed from ${current} to ${newValue}`);
+        log.debug(
+          `Reduced motion preference changed from ${current} to ${newValue}`
+        );
       }
       return newValue;
     });
-  }
+  },
 };
 
 // Initialize the store with the user's preference
@@ -44,7 +46,9 @@ if (typeof window !== 'undefined') {
     prefersReducedMotion.set(e.matches);
   });
 } else {
-  log.warn('Non-browser environment, using default reduced motion preference: false');
+  log.warn(
+    'Non-browser environment, using default reduced motion preference: false'
+  );
 }
 
 log.success('Reduced motion preference store initialization completed');

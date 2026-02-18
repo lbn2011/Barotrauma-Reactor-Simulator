@@ -12,7 +12,7 @@ logger.info('VirtualList initialized', {
   itemCount: items.length,
   itemHeight,
   containerHeight,
-  overscan
+  overscan,
 });
 
 let container: HTMLElement | null = null;
@@ -20,7 +20,7 @@ let startIndex = 0;
 let endIndex = 0;
 let scrollTop = 0;
 
-function calculateVisibleRange () {
+function calculateVisibleRange() {
   if (!container) return;
 
   scrollTop = container.scrollTop;
@@ -29,32 +29,32 @@ function calculateVisibleRange () {
     items.length,
     Math.ceil((scrollTop + containerHeight) / itemHeight) + overscan
   );
-  
+
   logger.debug('VirtualList visible range calculated', {
     startIndex,
     endIndex,
     visibleItemCount: endIndex - startIndex,
     scrollTop,
-    totalItems: items.length
+    totalItems: items.length,
   });
 }
 
-function handleScroll () {
+function handleScroll() {
   logger.debug('VirtualList scroll event triggered');
   calculateVisibleRange();
 }
 
-function getVisibleItems () {
+function getVisibleItems() {
   const visibleItems = items.slice(startIndex, endIndex);
   logger.debug('VirtualList getting visible items', {
     visibleItemCount: visibleItems.length,
     startIndex,
-    endIndex
+    endIndex,
   });
   return visibleItems;
 }
 
-function getItemStyle (index: number) {
+function getItemStyle(index: number) {
   return {
     position: 'absolute' as const,
     top: `${index * itemHeight}px`,

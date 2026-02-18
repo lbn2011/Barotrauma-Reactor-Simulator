@@ -4,7 +4,7 @@ import TopBar from '../lib/components/TopBar.svelte';
 import { updateReactorState } from '../lib/stores/reactorStore';
 import { page } from '$app/stores';
 import { resolve } from '$app/paths';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 let sidebarOpen: boolean = true;
 
@@ -32,7 +32,7 @@ onDestroy(() => {
 });
 
 // Toggle sidebar
-function toggleSidebar () {
+function toggleSidebar() {
   log.debug('Starting to toggle sidebar state', { currentState: sidebarOpen });
   sidebarOpen = !sidebarOpen;
   log.success('Sidebar state toggled', { newState: sidebarOpen });

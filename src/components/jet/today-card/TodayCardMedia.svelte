@@ -10,7 +10,7 @@ export let artworkProfile: Profile | undefined = undefined;
 $: {
   logger.debug('TodayCardMedia initialized', {
     mediaKind: media.kind,
-    hasArtworkProfile: !!artworkProfile
+    hasArtworkProfile: !!artworkProfile,
   });
 }
 </script>

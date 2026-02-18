@@ -6,7 +6,7 @@ export type Profile = [number[], number, string];
 /**
  * Creates a Profile on-the-fly based on the properties of the artwork
  */
-export function getNaturalProfile (
+export function getNaturalProfile(
   artwork: Artwork,
   imageSizes: number[] = [artwork.width || 300]
 ): Profile {
@@ -45,7 +45,7 @@ logger.info('Artwork component rendered', {
   hasArtwork: !!artwork,
   hasUrl: !!artwork.url,
   hasTemplate: !!artwork.template,
-  profile
+  profile,
 });
 
 let computedProfileAttributes: Profile | undefined;
@@ -54,7 +54,7 @@ let loadError: boolean = false;
 let imageUrl: string = '';
 
 // Build image URL with dynamic parameters
-function buildSrc (artwork: ArtworkType, profile: Profile): string {
+function buildSrc(artwork: ArtworkType, profile: Profile): string {
   if (!artwork.template && !artwork.url) {
     logger.debug('No artwork template or URL provided');
     return '';
@@ -96,13 +96,13 @@ $: {
   imageUrl = buildSrc(artwork, computedProfileAttributes || profile);
 }
 
-function handleImageLoad () {
+function handleImageLoad() {
   isLoading = false;
   loadError = false;
   logger.info('Artwork image loaded successfully', { url: imageUrl });
 }
 
-function handleImageError () {
+function handleImageError() {
   isLoading = false;
   loadError = true;
   logger.error('Artwork image failed to load', { url: imageUrl, error: 'Image loading error' });

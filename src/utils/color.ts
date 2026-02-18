@@ -1,6 +1,6 @@
 import log from '../lib/utils/logger';
 
-export function colorAsString (color: any): string {
+export function colorAsString(color: any): string {
   log.trace('Starting color conversion to string');
   log.debug('Input color:', color);
 
@@ -23,7 +23,7 @@ export function colorAsString (color: any): string {
   return '#000000';
 }
 
-export function getLuminanceForRGB (color: any): number {
+export function getLuminanceForRGB(color: any): number {
   log.trace('Starting RGB color luminance calculation');
   log.debug('Input color:', color);
 
@@ -45,14 +45,16 @@ export function getLuminanceForRGB (color: any): number {
   return luminance;
 }
 
-export function getBackgroundGradientCSSVarsFromArtworks (
+export function getBackgroundGradientCSSVarsFromArtworks(
   artworks: any[],
   options: {
     sortFn?: (a: any, b: any) => number;
     shouldRemoveGreys?: boolean;
   } = {}
 ): string {
-  log.info('Starting background gradient CSS variables generation from artworks');
+  log.info(
+    'Starting background gradient CSS variables generation from artworks'
+  );
   log.debug('Input artwork count:', artworks.length);
   log.debug('Options:', options);
 
@@ -65,7 +67,9 @@ export function getBackgroundGradientCSSVarsFromArtworks (
   processedArtworks = processedArtworks.filter(
     (artwork) => artwork && artwork.backgroundColor
   );
-  log.trace(`Filtered artwork count: ${processedArtworks.length} (removed ${artworks.length - processedArtworks.length} artworks without background color)`);
+  log.trace(
+    `Filtered artwork count: ${processedArtworks.length} (removed ${artworks.length - processedArtworks.length} artworks without background color)`
+  );
 
   // Remove greys if requested
   if (shouldRemoveGreys) {
@@ -74,7 +78,9 @@ export function getBackgroundGradientCSSVarsFromArtworks (
       const { r, g, b } = artwork.backgroundColor;
       return !(r === g && g === b);
     });
-    log.trace(`Artwork count after removing greys: ${processedArtworks.length} (removed ${originalCount - processedArtworks.length} grey artworks)`);
+    log.trace(
+      `Artwork count after removing greys: ${processedArtworks.length} (removed ${originalCount - processedArtworks.length} grey artworks)`
+    );
   }
 
   // Sort artworks if sort function is provided
@@ -100,7 +106,7 @@ export function getBackgroundGradientCSSVarsFromArtworks (
   return cssVars;
 }
 
-export function isNamedColor (color: any): boolean {
+export function isNamedColor(color: any): boolean {
   log.trace('Checking if color is named');
   log.debug('Input color:', color);
 

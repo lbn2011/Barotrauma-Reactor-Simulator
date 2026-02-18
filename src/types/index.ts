@@ -99,7 +99,7 @@ export interface Item {
 /**
  * Validate TodayCard type
  */
-export function validateTodayCard (card: any): card is TodayCard {
+export function validateTodayCard(card: any): card is TodayCard {
   log.trace('Validating TodayCard type');
   log.debug('Input object:', card);
 
@@ -109,7 +109,9 @@ export function validateTodayCard (card: any): card is TodayCard {
   }
 
   if (card.overlay && (!card.overlay.title || !card.overlay.action)) {
-    log.warn('TodayCard validation failed: overlay missing required properties');
+    log.warn(
+      'TodayCard validation failed: overlay missing required properties'
+    );
     return false;
   }
 
@@ -120,7 +122,7 @@ export function validateTodayCard (card: any): card is TodayCard {
 /**
  * Validate Artwork type
  */
-export function validateArtwork (artwork: any): artwork is Artwork {
+export function validateArtwork(artwork: any): artwork is Artwork {
   log.trace('Validating Artwork type');
   log.debug('Input object:', artwork);
 
@@ -136,7 +138,7 @@ export function validateArtwork (artwork: any): artwork is Artwork {
 /**
  * Validate Color type
  */
-export function validateColor (color: any): color is Color {
+export function validateColor(color: any): color is Color {
   log.trace('Validating Color type');
   log.debug('Input object:', color);
 
@@ -155,4 +157,6 @@ export function validateColor (color: any): color is Color {
 }
 
 // Type module loading completion log
-log.success('Type definition module loaded successfully, containing 15 interfaces and 3 validation functions');
+log.success(
+  'Type definition module loaded successfully, containing 15 interfaces and 3 validation functions'
+);

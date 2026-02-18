@@ -8,7 +8,7 @@ export let platformSelectors: WebNavigationLink[];
 $: {
   logger.debug('PlatformSelectorDropdown initialized', {
     selectorCount: platformSelectors.length,
-    selectors: platformSelectors.map(s => s.action.title)
+    selectors: platformSelectors.map((s) => s.action.title),
   });
 }
 </script>

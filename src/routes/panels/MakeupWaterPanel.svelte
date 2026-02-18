@@ -6,7 +6,7 @@ import {
   setMakeUpWaterFlowRate,
 } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 // Component initialization logs
 log.info('MakeupWaterPanel component initialized');
@@ -17,7 +17,7 @@ let makeUpWater: any;
 // 组件挂载时订阅状态
 onMount(() => {
   log.debug('MakeupWaterPanel mounting, subscribing to reactor store');
-  
+
   const unsubscribe = reactorStore.subscribe((state) => {
     log.trace('MakeupWaterPanel state updated', { makeUpWater: state.makeUpWater });
     makeUpWater = state.makeUpWater;
@@ -28,14 +28,14 @@ onMount(() => {
 });
 
 // 切换补水系统状态
-function handleToggle () {
+function handleToggle() {
   log.info('Toggling makeup water system status', { currentStatus: makeUpWater?.status });
   toggleMakeUpWater();
   log.success('Makeup water system status toggled successfully');
 }
 
 // 调整补水流量
-function handleFlowRateChange (e: Event) {
+function handleFlowRateChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing makeup water flow rate', { value });

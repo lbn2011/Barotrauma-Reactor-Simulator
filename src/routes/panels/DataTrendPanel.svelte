@@ -6,7 +6,7 @@ import { reactorStore } from '../../lib/stores/reactorStore';
 // 导入UI组件
 import { Button } from '../../lib/components/ui/button';
 import { Card, CardContent } from '../../lib/components/ui/card';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 // Component initialization logs
 log.info('DataTrendPanel component initialized');
@@ -76,7 +76,7 @@ const chartOptions = {
 };
 
 // 懒加载Chart.js库
-async function loadChartJS () {
+async function loadChartJS() {
   if (isChartLoaded) return;
 
   log.info('Loading Chart.js library');
@@ -101,9 +101,9 @@ async function loadChartJS () {
 }
 
 // 更新图表数据
-async function updateChartData () {
+async function updateChartData() {
   log.debug('Updating chart data', { hasCanvas: !!chartCanvas, hasTrends: !!trends });
-  
+
   if (!chartCanvas || !trends) return;
 
   if (!isChartLoaded) {

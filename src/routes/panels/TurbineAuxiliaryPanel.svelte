@@ -13,7 +13,6 @@ import log from '../../lib/utils/logger';
 log.info('Turbine Auxiliary System Panel component initialized');
 log.debug('Starting to load component dependencies and state');
 
-
 // 汽轮机辅助系统数据
 let turbineAuxiliary: any;
 
@@ -24,10 +23,10 @@ onMount(() => {
   const unsubscribe = reactorStore.subscribe((state) => {
     log.trace('Reactor state updated, synchronizing turbine auxiliary system parameters');
     turbineAuxiliary = state.turbineAuxiliary;
-    log.trace('Turbine auxiliary system parameters synchronized successfully', { 
+    log.trace('Turbine auxiliary system parameters synchronized successfully', {
       lubricationOilPressure: turbineAuxiliary?.lubricationOil?.pressure,
       lubricationOilTemperature: turbineAuxiliary?.lubricationOil?.temperature,
-      sealOilPressure: turbineAuxiliary?.sealOil?.pressure
+      sealOilPressure: turbineAuxiliary?.sealOil?.pressure,
     });
   });
   log.success('Turbine Auxiliary System Panel component mounted successfully');
@@ -41,7 +40,7 @@ onDestroy(() => {
 });
 
 // Adjust lubrication oil pressure
-function handleLubricationOilPressureChange (e: Event) {
+function handleLubricationOilPressureChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const pressure = parseFloat(target.value);
   log.info('Starting to adjust lubrication oil pressure', { pressure });
@@ -50,7 +49,7 @@ function handleLubricationOilPressureChange (e: Event) {
 }
 
 // Adjust lubrication oil temperature
-function handleLubricationOilTemperatureChange (e: Event) {
+function handleLubricationOilTemperatureChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const temperature = parseFloat(target.value);
   log.info('Starting to adjust lubrication oil temperature', { temperature });
@@ -59,7 +58,7 @@ function handleLubricationOilTemperatureChange (e: Event) {
 }
 
 // Adjust seal oil pressure
-function handleSealOilPressureChange (e: Event) {
+function handleSealOilPressureChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const pressure = parseFloat(target.value);
   log.info('Starting to adjust seal oil pressure', { pressure });

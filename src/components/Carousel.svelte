@@ -13,16 +13,16 @@ export let config = defaultComponentConfig;
 logger.info('Carousel component rendered', {
   itemCount: items.length,
   initialActiveIndex: activeIndex,
-  enableBackgroundArtwork: config.carousel?.enableBackgroundArtwork || false
+  enableBackgroundArtwork: config.carousel?.enableBackgroundArtwork || false,
 });
 
-function deriveBackgroundArtworkFromItem (item: Item) {
+function deriveBackgroundArtworkFromItem(item: Item) {
   // Implement background artwork derivation logic here
   const artwork = item.artwork;
   if (artwork) {
     logger.debug('Background artwork derived from item', {
       itemIndex: items.indexOf(item),
-      hasArtwork: !!artwork
+      hasArtwork: !!artwork,
     });
   }
   return artwork;

@@ -8,16 +8,16 @@ export let destination: Action;
 // Log FlowAction initialization
 logger.debug('FlowAction initialized', {
   actionType: destination.type,
-  hasTitle: !!destination.title
+  hasTitle: !!destination.title,
 });
 
 const perform = getJetPerform();
 
-function handleClick () {
+function handleClick() {
   logger.info('FlowAction clicked', {
     actionType: destination.type,
     title: destination.title,
-    hasDestination: !!destination.destination
+    hasDestination: !!destination.destination,
   });
   perform(destination);
 }

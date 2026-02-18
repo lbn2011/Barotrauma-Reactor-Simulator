@@ -12,11 +12,11 @@ import { bestBackgroundColor } from './background-color-utils';
 import { defaultComponentConfig } from '@/config/components';
 import { logger } from '@/lib/utils/logger';
 
-function isTodayCardMediaList (media: any): boolean {
+function isTodayCardMediaList(media: any): boolean {
   return media.kind === 'list';
 }
 
-function sanitizeHtml (html: string): string {
+function sanitizeHtml(html: string): string {
   // Basic HTML sanitization for security
   if (!html) return '';
 
@@ -55,15 +55,37 @@ let useGradientProtectionLayer: boolean;
 let useListStyle: boolean;
 let accentColor: string;
 
+// Card properties
+let heading: string | undefined;
+let title: string | undefined;
+let inlineDescription: string | undefined;
+let titleArtwork: any | undefined;
+let overlay: any | undefined;
+let media: any | undefined;
+let editorialDisplayOptions: any | undefined;
+let style: string;
+let clickAction: any | undefined;
+let action: any | undefined;
+
 $: {
-  ({  heading,  title,  inlineDescription,  titleArtwork,  overlay,  media,  editorialDisplayOptions,  style = 'light',  clickAction,} = card);
+  ({
+    heading,
+    title,
+    inlineDescription,
+    titleArtwork,
+    overlay,
+    media,
+    editorialDisplayOptions,
+    style = 'light',
+    clickAction,
+  } = card);
   logger.debug('TodayCard initialized', {
     title: title || 'No title',
     hasMedia: !!media,
     mediaKind: media?.kind,
     style,
     hasAction: !!clickAction,
-    hasOverlay: !!overlay
+    hasOverlay: !!overlay,
   });
 }
 $: action = suppressClickAction ? undefined : clickAction;

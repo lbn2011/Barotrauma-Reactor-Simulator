@@ -5,7 +5,7 @@ import {
   toggleEmergencyCoolingPump,
   setEmergencyCoolingPumpFlowRate,
 } from '../../lib/stores/reactorStore';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 // Component initialization logs
 log.info('EmergencyCoolingPumpPanel component initialized');
@@ -27,9 +27,13 @@ let faultSimulation: any;
 reactorStore.subscribe((state) => {
   log.trace('EmergencyCoolingPumpPanel state updated', {
     emergencyCoolingPumps: state.emergencyCoolingPumps,
-    core: { temperature: state.core.temperature, pressure: state.core.pressure, waterLevel: state.core.waterLevel },
+    core: {
+      temperature: state.core.temperature,
+      pressure: state.core.pressure,
+      waterLevel: state.core.waterLevel,
+    },
     alarms: state.alarms,
-    faultSimulation: state.faultSimulation
+    faultSimulation: state.faultSimulation,
   });
   emergencyCoolingPumps = state.emergencyCoolingPumps;
   coreTemperature = state.core.temperature;
@@ -40,26 +44,26 @@ reactorStore.subscribe((state) => {
 });
 
 // 处理泵状态切换
-function handlePumpToggle (pumpNumber: 1 | 2) {
+function handlePumpToggle(pumpNumber: 1 | 2) {
   log.info('Toggling emergency cooling pump status', {
     pumpNumber,
-    currentStatus: emergencyCoolingPumps?.[`pump${pumpNumber}`]?.status
+    currentStatus: emergencyCoolingPumps?.[`pump${pumpNumber}`]?.status,
   });
   toggleEmergencyCoolingPump(pumpNumber);
   log.success(`Emergency cooling pump ${pumpNumber} status toggled successfully`);
 }
 
 // 处理泵流量变化
-function handleFlowRateChange (pumpNumber: 1 | 2, e: Event) {
+function handleFlowRateChange(pumpNumber: 1 | 2, e: Event) {
   const target = e.target as HTMLInputElement;
   const flowRate = parseFloat(target.value);
   log.debug('Changing emergency cooling pump flow rate', {
     pumpNumber,
-    flowRate
+    flowRate,
   });
   setEmergencyCoolingPumpFlowRate(pumpNumber, flowRate);
   log.success(`Emergency cooling pump ${pumpNumber} flow rate updated successfully`, {
-    flowRate
+    flowRate,
   });
 }
 </script>

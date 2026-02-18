@@ -68,43 +68,46 @@ let confirmationDialog: any; // Confirmation dialog instance
  * Execute action
  * @param action Action to execute
  */
-async function executeAction (action: QuickAction) {
+async function executeAction(action: QuickAction) {
   logger.info(`Quick Actions: Executing action - ${action.name} (${action.id})`, {
     category: action.category,
     riskLevel: action.riskLevel,
-    shortcut: action.shortcut
+    shortcut: action.shortcut,
   });
 
   // For high-risk actions, show confirmation dialog
   if (action.riskLevel === 'high' || action.riskLevel === 'critical') {
-    logger.warn(`Quick Actions: High-risk action detected - ${action.name}, requiring confirmation`, {
-      riskLevel: action.riskLevel
-    });
-    
+    logger.warn(
+      `Quick Actions: High-risk action detected - ${action.name}, requiring confirmation`,
+      {
+        riskLevel: action.riskLevel,
+      }
+    );
+
     const confirmed = await confirmationDialog.open();
     if (!confirmed) {
       logger.info(`Quick Actions: Action cancelled by user - ${action.name}`);
       return;
     }
-    
+
     logger.info(`Quick Actions: Action confirmed by user - ${action.name}`);
   }
 
   try {
     // Execute action
     action.action();
-    
+
     // Update usage frequency and last used time
     action.usageFrequency++;
     action.lastUsedTime = Date.now();
-    
+
     logger.info(`Quick Actions: Action executed successfully - ${action.name}`, {
       newUsageFrequency: action.usageFrequency,
-      lastUsedTime: action.lastUsedTime
+      lastUsedTime: action.lastUsedTime,
     });
   } catch (error) {
     logger.error(`Quick Actions: Error executing action - ${action.name}`, {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 }
@@ -114,18 +117,18 @@ async function executeAction (action: QuickAction) {
  * @param riskLevel Risk level
  * @returns Corresponding color class name
  */
-function getRiskColor (riskLevel: string) {
+function getRiskColor(riskLevel: string) {
   switch (riskLevel) {
-  case 'critical':
-    return 'bg-red-600'; // Critical risk - red
-  case 'high':
-    return 'bg-orange-500'; // High risk - orange
-  case 'medium':
-    return 'bg-yellow-500'; // Medium risk - yellow
-  case 'low':
-    return 'bg-green-500'; // Low risk - green
-  default:
-    return 'bg-gray-500'; // Default - gray
+    case 'critical':
+      return 'bg-red-600'; // Critical risk - red
+    case 'high':
+      return 'bg-orange-500'; // High risk - orange
+    case 'medium':
+      return 'bg-yellow-500'; // Medium risk - yellow
+    case 'low':
+      return 'bg-green-500'; // Low risk - green
+    default:
+      return 'bg-gray-500'; // Default - gray
   }
 }
 
@@ -133,7 +136,7 @@ function getRiskColor (riskLevel: string) {
 logger.info('Quick Actions component initialized', {
   actionsCount: actions.length,
   layout,
-  showLabels
+  showLabels,
 });
 </script>
 

@@ -142,7 +142,7 @@ const languageDirections: Record<string, 'ltr' | 'rtl'> = {
 };
 
 // Create i18n store
-function createI18nStore () {
+function createI18nStore() {
   log.info('Starting to create internationalization store');
   const { subscribe, set } = writable<I18nStore>({
     language: 'zh-CN',
@@ -154,11 +154,17 @@ function createI18nStore () {
   });
 
   // Update store
-  function updateStore (language: string) {
-    log.info(`Starting to update internationalization store, language: ${language}`);
+  function updateStore(language: string) {
+    log.info(
+      `Starting to update internationalization store, language: ${language}`
+    );
     const direction = languageDirections[language] || 'ltr';
     const langTranslations = translations[language] || defaultTranslations;
-    log.debug('Language direction and translations loaded', { language, direction, hasTranslations: !!translations[language] });
+    log.debug('Language direction and translations loaded', {
+      language,
+      direction,
+      hasTranslations: !!translations[language],
+    });
 
     set({
       language,
@@ -170,7 +176,7 @@ function createI18nStore () {
           const result = Object.entries(options).reduce(
             (result, [placeholder, value]) => {
               return result.replace(
-                new RegExp(`\{${placeholder}\}', 'g'),
+                new RegExp(`{${placeholder}}`, 'g'),
                 String(value)
               );
             },
@@ -204,7 +210,11 @@ function createI18nStore () {
         currency: string = 'USD',
         options?: Intl.NumberFormatOptions
       ) => {
-        log.trace('Executing currency formatting', { value, currency, options });
+        log.trace('Executing currency formatting', {
+          value,
+          currency,
+          options,
+        });
         const result = new Intl.NumberFormat(language, {
           style: 'currency',
           currency,
@@ -214,7 +224,10 @@ function createI18nStore () {
         return result;
       },
     });
-    log.success('Internationalization store updated successfully', { language, direction });
+    log.success('Internationalization store updated successfully', {
+      language,
+      direction,
+    });
   }
 
   // Initial update
@@ -234,7 +247,7 @@ const i18nStore = createI18nStore();
 export default i18nStore;
 
 // Export getI18n function for backward compatibility
-export function getI18n () {
+export function getI18n() {
   log.trace('Getting internationalization store instance');
   let storeValue: I18nStore | undefined;
   i18nStore.subscribe((value) => (storeValue = value))();
@@ -243,10 +256,12 @@ export function getI18n () {
 }
 
 // Export setLanguage function
-export function setLanguage (language: string) {
+export function setLanguage(language: string) {
   log.info(`Setting language: ${language}`);
   i18nStore.setLanguage(language);
 }
 
 // Internationalization module loaded log
-log.success('Internationalization store module loaded successfully, supporting 5 languages');
+log.success(
+  'Internationalization store module loaded successfully, supporting 5 languages'
+);

@@ -12,13 +12,13 @@ let videoElement: HTMLVideoElement;
 let isLoaded: boolean = false;
 let loadError: boolean = false;
 
-function handleVideoLoad () {
+function handleVideoLoad() {
   isLoaded = true;
   loadError = false;
   logger.info('Video loaded successfully', { url: video.url, profile });
 }
 
-function handleVideoError () {
+function handleVideoError() {
   isLoaded = false;
   loadError = true;
   logger.error('Video failed to load', { url: video.url, error: 'Video loading error' });

@@ -10,7 +10,7 @@ import {
   setFeedwaterHeaterParameter,
 } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 // 给水泵状态数据
 let reactorFeedPumps: any;
@@ -35,7 +35,7 @@ onMount(() => {
 });
 
 // 切换水泵状态
-function handleTogglePump (pumpNumber: 1 | 2) {
+function handleTogglePump(pumpNumber: 1 | 2) {
   log.info(`Toggling feedwater pump ${pumpNumber} status`);
   toggleReactorFeedPump(pumpNumber);
   const newStatus = !reactorFeedPumps?.[`pump${pumpNumber}`]?.status;
@@ -43,7 +43,7 @@ function handleTogglePump (pumpNumber: 1 | 2) {
 }
 
 // 调整水泵流量
-function handleFlowRateChange (pumpNumber: 1 | 2, e: Event) {
+function handleFlowRateChange(pumpNumber: 1 | 2, e: Event) {
   const target = e.target as HTMLInputElement;
   const flowRate = parseFloat(target.value);
   log.debug(`Adjusting feedwater pump ${pumpNumber} flow rate: ${flowRate}%`);
@@ -51,7 +51,7 @@ function handleFlowRateChange (pumpNumber: 1 | 2, e: Event) {
 }
 
 // 切换隔离阀状态
-function handleToggleValve (valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet') {
+function handleToggleValve(valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet') {
   log.info(`Toggling isolation valve ${valve} status`);
   toggleIsolationValve(valve);
   const newStatus = !feedwaterSystem?.isolationValves?.[valve]?.status;
@@ -59,7 +59,7 @@ function handleToggleValve (valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' |
 }
 
 // 调整隔离阀位置
-function handleValvePositionChange (
+function handleValvePositionChange(
   valve: 'pump1Inlet' | 'pump1Outlet' | 'pump2Inlet' | 'pump2Outlet',
   e: Event
 ) {
@@ -70,7 +70,7 @@ function handleValvePositionChange (
 }
 
 // 切换加热器状态
-function handleToggleHeater (heater: 'heater1' | 'heater2') {
+function handleToggleHeater(heater: 'heater1' | 'heater2') {
   log.info(`Toggling feedwater heater ${heater} status`);
   toggleFeedwaterHeater(heater);
   const newStatus = !feedwaterSystem?.heaters?.[heater]?.status;
@@ -78,7 +78,7 @@ function handleToggleHeater (heater: 'heater1' | 'heater2') {
 }
 
 // 调整加热器参数
-function handleHeaterParameterChange (
+function handleHeaterParameterChange(
   heater: 'heater1' | 'heater2',
   parameter: 'steamPressure' | 'flowRate',
   value: number

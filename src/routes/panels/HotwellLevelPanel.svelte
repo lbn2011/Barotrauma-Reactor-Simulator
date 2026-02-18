@@ -2,7 +2,7 @@
 // 导入反应堆状态管理
 import { reactorStore, setCondenserHotwellLevel } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 // Component initialization logs
 log.info('HotwellLevelPanel component initialized');
@@ -13,7 +13,7 @@ let condenserHotwell: any;
 // 组件挂载时订阅状态
 onMount(() => {
   log.debug('HotwellLevelPanel mounting, subscribing to reactor store');
-  
+
   const unsubscribe = reactorStore.subscribe((state) => {
     log.trace('HotwellLevelPanel state updated', { condenserHotwell: state.condenserHotwell });
     condenserHotwell = state.condenserHotwell;
@@ -24,7 +24,7 @@ onMount(() => {
 });
 
 // 调整热井液位
-function handleLevelChange (e: Event) {
+function handleLevelChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing condenser hotwell level', { value });

@@ -24,7 +24,7 @@ const supportedLanguages = [
 
 // Log LanguageSelector initialization
 logger.info('LanguageSelector initialized', {
-  supportedLanguageCount: supportedLanguages.length
+  supportedLanguageCount: supportedLanguages.length,
 });
 
 // Subscribe to language changes
@@ -33,35 +33,35 @@ i18nStore.subscribe((value) => {
   currentDirection = value.direction;
   logger.debug('Language changed', {
     language: value.language,
-    direction: value.direction
+    direction: value.direction,
   });
 });
 
 // Change language
-function handleLanguageChange (languageCode: string) {
+function handleLanguageChange(languageCode: string) {
   logger.info('Language change requested', {
     from: currentLanguage,
-    to: languageCode
+    to: languageCode,
   });
   setLanguage(languageCode);
   // Save language preference to local storage
   localStorage.setItem('preferredLanguage', languageCode);
   logger.debug('Language preference saved to local storage', {
-    language: languageCode
+    language: languageCode,
   });
   isOpen = false;
 }
 
 // Toggle dropdown
-function toggleDropdown () {
+function toggleDropdown() {
   isOpen = !isOpen;
   logger.debug('Language selector dropdown toggled', {
-    isOpen
+    isOpen,
   });
 }
 
 // Close dropdown when clicking outside
-function handleClickOutside (event: MouseEvent) {
+function handleClickOutside(event: MouseEvent) {
   const target = event.target as HTMLElement;
   if (!target.closest('.language-selector')) {
     isOpen = false;
@@ -75,7 +75,7 @@ onMount(() => {
   const savedLanguage = localStorage.getItem('preferredLanguage');
   if (savedLanguage && supportedLanguages.some((lang) => lang.code === savedLanguage)) {
     logger.info('Loading saved language preference', {
-      language: savedLanguage
+      language: savedLanguage,
     });
     setLanguage(savedLanguage);
   } else {

@@ -30,7 +30,7 @@ logger.info('Hero component rendered', {
   hasArtwork: !!artwork,
   hasVideo: !!video,
   hasCollectionIcons: !!collectionIcons,
-  profile
+  profile,
 });
 
 let collectionIconsBackgroundGradientCssVars: string | undefined = undefined;
@@ -39,7 +39,7 @@ if (collectionIcons && collectionIcons.length > 1) {
   // If there are multiple app icons, we build a string of CSS variables from the icons
   // background colors to fill as many of the lockups quadrants as possible.
   logger.debug('Generating collection icons background gradient', {
-    iconCount: collectionIcons.length
+    iconCount: collectionIcons.length,
   });
   collectionIconsBackgroundGradientCssVars = getBackgroundGradientCSSVarsFromArtworks(
     collectionIcons,

@@ -17,7 +17,7 @@ import { logger } from './utils/logger';
  * @example
  * cn('class1', { 'class2': true }, ['class3'])
  */
-export function cn (...inputs: ClassValue[]) {
+export function cn(...inputs: ClassValue[]) {
   const mergedClasses = twMerge(clsx(inputs));
   logger.debug('Utils', `Merged classes: ${mergedClasses}`);
   return mergedClasses;

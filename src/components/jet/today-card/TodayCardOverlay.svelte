@@ -8,12 +8,16 @@ import { logger } from '@/lib/utils/logger';
 export let overlay: TodayCardOverlayType;
 export let buttonVariant: ButtonVariant = 'default';
 
+// Overlay properties
+let title: string | undefined;
+let action: any | undefined;
+
 $: {
   ({ title, action } = overlay);
   logger.debug('TodayCardOverlay initialized', {
     title,
     hasAction: !!action,
-    buttonVariant
+    buttonVariant,
   });
 }
 </script>

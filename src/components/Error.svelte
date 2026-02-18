@@ -5,7 +5,7 @@ import { logger } from '../lib/utils/logger';
 // Log error information for debugging and monitoring
 logger.error('Error component rendered', {
   message: error.message || 'An unknown error occurred',
-  stack: error.stack || 'No stack trace available'
+  stack: error.stack || 'No stack trace available',
 });
 </script>
 

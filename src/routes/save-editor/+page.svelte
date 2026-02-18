@@ -10,7 +10,7 @@ import {
 import type { ReactorState } from '@/lib/stores/reactorStore';
 import { defaultComponentConfig } from '@/config/components';
 import i18nStore from '@/stores/i18n';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 import { onMount } from 'svelte';
 
 // Component initialization logs
@@ -22,7 +22,6 @@ onMount(() => {
   log.info('Page loaded successfully, ready to receive user operations');
 });
 
-
 // 输入和输出
 let saveCodeInput: string = '';
 let parsedState: Partial<ReactorState> | null = null;
@@ -30,16 +29,16 @@ let errorMessage: string = '';
 let successMessage: string = '';
 
 // Parse save code
-function parseSaveCode () {
+function parseSaveCode() {
   log.info('Starting to parse save code');
-  
+
   if (!saveCodeInput.trim()) {
     log.warning('Save code input is empty');
     errorMessage = 'Please enter save code';
     parsedState = null;
     return;
   }
-  
+
   try {
     // Try to decode Base64 and parse JSON
     log.debug('Starting to decode Base64 save code');
@@ -55,14 +54,17 @@ function parseSaveCode () {
         // Validate checksum
         const calculatedChecksum = calculateChecksum(saveData.data);
         log.trace('Checksum calculation completed', { calculatedChecksum });
-        
+
         if (saveData.checksum === calculatedChecksum) {
           log.success('Save code verification successful, parsing completed');
           parsedState = saveData.data;
           errorMessage = '';
           successMessage = `Save code parsed successfully! Version: ${saveData.version}`;
         } else {
-          log.error('Save code verification failed, data may be corrupted', { expectedChecksum: saveData.checksum, calculatedChecksum });
+          log.error('Save code verification failed, data may be corrupted', {
+            expectedChecksum: saveData.checksum,
+            calculatedChecksum,
+          });
           throw new Error('Save code verification failed, data may be corrupted');
         }
       } else {
@@ -91,9 +93,9 @@ function parseSaveCode () {
 }
 
 // Re-encode save code
-function encodeSaveCode () {
+function encodeSaveCode() {
   log.info('Starting to encode save code');
-  
+
   if (!parsedState) {
     log.warning('No data to encode');
     errorMessage = 'No data to encode';
@@ -135,7 +137,7 @@ function encodeSaveCode () {
 }
 
 // Calculate checksum
-function calculateChecksum (data: any): string {
+function calculateChecksum(data: any): string {
   log.debug('Starting to calculate data checksum');
   const jsonString = JSON.stringify(data);
   log.trace('Data serialization completed, starting checksum calculation');
@@ -149,9 +151,9 @@ function calculateChecksum (data: any): string {
 }
 
 // Copy save code to clipboard
-async function copyToClipboard () {
+async function copyToClipboard() {
   log.info('Starting to copy save code to clipboard');
-  
+
   if (saveCodeInput) {
     try {
       log.debug('Executing clipboard write operation');
@@ -174,7 +176,7 @@ async function copyToClipboard () {
 }
 
 // Reset form
-function resetForm () {
+function resetForm() {
   log.info('Starting to reset form');
   saveCodeInput = '';
   parsedState = null;
@@ -184,9 +186,9 @@ function resetForm () {
 }
 
 // Safe function to update numeric parameters
-function updateValue (path: string, value: any) {
+function updateValue(path: string, value: any) {
   log.debug('Starting to update parameter value', { path, value });
-  
+
   if (!parsedState) {
     log.warning('Cannot update value: parsedState is null');
     return;
@@ -205,33 +207,42 @@ function updateValue (path: string, value: any) {
 
   const lastPart = parts[parts.length - 1];
   let convertedValue: any = value;
-  
+
   if (typeof value === 'string') {
     // If string, try to convert to appropriate type
     if (value === 'true') {
       convertedValue = true;
-      log.trace('Converting string value to boolean', { original: value, converted: convertedValue });
+      log.trace('Converting string value to boolean', {
+        original: value,
+        converted: convertedValue,
+      });
     } else if (value === 'false') {
       convertedValue = false;
-      log.trace('Converting string value to boolean', { original: value, converted: convertedValue });
+      log.trace('Converting string value to boolean', {
+        original: value,
+        converted: convertedValue,
+      });
     } else if (!isNaN(Number(value))) {
       // If numeric string, convert to number
       convertedValue = parseFloat(value);
-      log.trace('Converting string value to number', { original: value, converted: convertedValue });
+      log.trace('Converting string value to number', {
+        original: value,
+        converted: convertedValue,
+      });
     } else {
       // Otherwise keep as string
       log.trace('Keeping string value unchanged', { value });
     }
   }
-  
+
   current[lastPart] = convertedValue;
   log.success('Parameter value updated successfully', { path, value: convertedValue });
 }
 
 // Safe function to get nested values
-function getValue (path: string, defaultValue: any = '') {
+function getValue(path: string, defaultValue: any = '') {
   log.debug('Starting to get parameter value', { path, defaultValue });
-  
+
   if (!parsedState) {
     log.trace('parsedState is null, returning default value', { defaultValue });
     return defaultValue;
@@ -254,9 +265,9 @@ function getValue (path: string, defaultValue: any = '') {
 }
 
 // Generate example save code
-function generateExampleSaveCode () {
+function generateExampleSaveCode() {
   log.info('Starting to generate example save code');
-  
+
   log.debug('Creating example reactor state data');
   const exampleState = {
     powerRegulation: {

@@ -42,7 +42,7 @@ logger.debug('ResponsiveContainer initialized', {
   hasCustomClass: !!props.class,
   maxWidth: props.maxWidth,
   padding: props.padding,
-  margin: props.margin
+  margin: props.margin,
 });
 
 // Generate inline styles

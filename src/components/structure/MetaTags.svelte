@@ -6,7 +6,7 @@ export let page: Page;
 
 // Log MetaTags component initialization
 logger.info('MetaTags component rendered', {
-  pageType: page.type
+  pageType: page.type,
 });
 </script>
 

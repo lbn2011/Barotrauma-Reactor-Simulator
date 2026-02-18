@@ -6,7 +6,7 @@ import { logger } from '../lib/utils/logger';
 
 export let action: Action | undefined | null;
 
-function handleClick (event: MouseEvent) {
+function handleClick(event: MouseEvent) {
   if (action?.destination?.url) {
     event.preventDefault();
     // Check if it's an external link

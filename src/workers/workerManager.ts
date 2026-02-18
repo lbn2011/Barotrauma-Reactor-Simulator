@@ -38,10 +38,10 @@ class WorkerManager {
   private isInitialized: boolean = false; // Initialization status
 
   /**
- * Initialize Workers
- * Creates physics calculation and data processing workers
- */
-  initialize () {
+   * Initialize Workers
+   * Creates physics calculation and data processing workers
+   */
+  initialize() {
     if (this.isInitialized) {
       log.debug('Worker manager already initialized');
       return;
@@ -104,11 +104,11 @@ class WorkerManager {
   }
 
   /**
- * Handle Worker Messages
- * @param workerType Worker type
- * @param response Response data
- */
-  private handleWorkerMessage (
+   * Handle Worker Messages
+   * @param workerType Worker type
+   * @param response Response data
+   */
+  private handleWorkerMessage(
     workerType: WorkerType,
     response: WorkerResponse
   ) {
@@ -128,18 +128,20 @@ class WorkerManager {
       workerInstance.callbacks.delete(response.type);
       log.debug(`Callback executed and removed for ${response.type}`);
     } else {
-      log.warn(`No callback found for response type: ${response.type} from ${workerType}`);
+      log.warn(
+        `No callback found for response type: ${response.type} from ${workerType}`
+      );
     }
   }
 
   /**
- * Send Message to Worker
- * @param workerType Worker type
- * @param type Message type
- * @param data Message data
- * @returns Promise<any> Processing result
- */
-  sendMessage (workerType: WorkerType, type: string, data: any): Promise<any> {
+   * Send Message to Worker
+   * @param workerType Worker type
+   * @param type Message type
+   * @param data Message data
+   * @returns Promise<any> Processing result
+   */
+  sendMessage(workerType: WorkerType, type: string, data: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const workerInstance = this.workers.get(workerType);
       if (!workerInstance) {
@@ -183,11 +185,11 @@ class WorkerManager {
   }
 
   /**
- * Calculate Mass Balance
- * @param data Input data
- * @returns Promise<any> Calculation result
- */
-  async calculateMassBalance (data: any): Promise<any> {
+   * Calculate Mass Balance
+   * @param data Input data
+   * @returns Promise<any> Calculation result
+   */
+  async calculateMassBalance(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateMassBalance',
@@ -196,11 +198,11 @@ class WorkerManager {
   }
 
   /**
- * Calculate Energy Balance
- * @param data Input data
- * @returns Promise<any> Calculation result
- */
-  async calculateEnergyBalance (data: any): Promise<any> {
+   * Calculate Energy Balance
+   * @param data Input data
+   * @returns Promise<any> Calculation result
+   */
+  async calculateEnergyBalance(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateEnergyBalance',
@@ -209,11 +211,11 @@ class WorkerManager {
   }
 
   /**
- * Calculate Void Coefficient
- * @param data Input data
- * @returns Promise<any> Calculation result
- */
-  async calculateVoidCoefficient (data: any): Promise<any> {
+   * Calculate Void Coefficient
+   * @param data Input data
+   * @returns Promise<any> Calculation result
+   */
+  async calculateVoidCoefficient(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateVoidCoefficient',
@@ -222,11 +224,11 @@ class WorkerManager {
   }
 
   /**
- * Calculate Xenon Poisoning
- * @param data Input data
- * @returns Promise<any> Calculation result
- */
-  async calculateXenonPoisoning (data: any): Promise<any> {
+   * Calculate Xenon Poisoning
+   * @param data Input data
+   * @returns Promise<any> Calculation result
+   */
+  async calculateXenonPoisoning(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateXenonPoisoning',
@@ -235,11 +237,11 @@ class WorkerManager {
   }
 
   /**
- * Calculate Control Rod Physics
- * @param data Input data
- * @returns Promise<any> Calculation result
- */
-  async calculateControlRodPhysics (data: any): Promise<any> {
+   * Calculate Control Rod Physics
+   * @param data Input data
+   * @returns Promise<any> Calculation result
+   */
+  async calculateControlRodPhysics(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateControlRodPhysics',
@@ -248,11 +250,11 @@ class WorkerManager {
   }
 
   /**
- * Calculate Reactor Core
- * @param data Input data
- * @returns Promise<any> Calculation result
- */
-  async calculateReactorCore (data: any): Promise<any> {
+   * Calculate Reactor Core
+   * @param data Input data
+   * @returns Promise<any> Calculation result
+   */
+  async calculateReactorCore(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.PHYSICS_CALCULATION,
       'calculateReactorCore',
@@ -261,11 +263,11 @@ class WorkerManager {
   }
 
   /**
- * Process Alarm Data
- * @param data Input data
- * @returns Promise<any> Processing result
- */
-  async processAlarmData (data: any): Promise<any> {
+   * Process Alarm Data
+   * @param data Input data
+   * @returns Promise<any> Processing result
+   */
+  async processAlarmData(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.DATA_PROCESSING,
       'processAlarmData',
@@ -274,11 +276,11 @@ class WorkerManager {
   }
 
   /**
- * Process Trend Data
- * @param data Input data
- * @returns Promise<any> Processing result
- */
-  async processTrendData (data: any): Promise<any> {
+   * Process Trend Data
+   * @param data Input data
+   * @returns Promise<any> Processing result
+   */
+  async processTrendData(data: any): Promise<any> {
     return this.sendMessage(
       WorkerType.DATA_PROCESSING,
       'processTrendData',
@@ -287,19 +289,19 @@ class WorkerManager {
   }
 
   /**
- * Generate Report
- * @param data Input data
- * @returns Promise<any> Processing result
- */
-  async generateReport (data: any): Promise<any> {
+   * Generate Report
+   * @param data Input data
+   * @returns Promise<any> Processing result
+   */
+  async generateReport(data: any): Promise<any> {
     return this.sendMessage(WorkerType.DATA_PROCESSING, 'generateReport', data);
   }
 
   /**
- * Terminate Workers
- * Clean up all worker instances
- */
-  terminate () {
+   * Terminate Workers
+   * Clean up all worker instances
+   */
+  terminate() {
     log.info('Starting worker manager termination');
     this.workers.forEach((workerInstance, workerType) => {
       log.debug(`Terminating ${workerType} worker`);

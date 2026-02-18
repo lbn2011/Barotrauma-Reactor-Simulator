@@ -3,7 +3,7 @@ import { Hero } from '@/components/shared';
 import Overview from './Overview.svelte';
 import { defaultComponentConfig } from '@/config/components';
 import i18nStore from '@/stores/i18n';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 import { onMount } from 'svelte';
 
 // Component initialization logs

@@ -8,7 +8,6 @@ import log from '../../lib/utils/logger';
 log.info('Steam Exhaust Control Panel component initialized');
 log.debug('Starting to load component dependencies and state');
 
-
 // 蒸汽排汽系统数据
 let steamDump: any;
 
@@ -19,9 +18,9 @@ onMount(() => {
   const unsubscribe = reactorStore.subscribe((state) => {
     log.trace('Reactor state updated, synchronizing steam exhaust system parameters');
     steamDump = state.steamDump;
-    log.trace('Steam exhaust system parameters synchronized successfully', { 
-      status: steamDump?.status, 
-      capacity: steamDump?.capacity 
+    log.trace('Steam exhaust system parameters synchronized successfully', {
+      status: steamDump?.status,
+      capacity: steamDump?.capacity,
     });
   });
   log.success('Steam Exhaust Control Panel component mounted successfully');
@@ -35,14 +34,14 @@ onDestroy(() => {
 });
 
 // Toggle steam exhaust state
-function handleToggle () {
+function handleToggle() {
   log.info('Starting to toggle steam exhaust system state', { currentStatus: steamDump?.status });
   toggleSteamDump();
   log.success('Steam exhaust system state toggle command executed');
 }
 
 // Adjust exhaust capacity
-function handleCapacityChange (e: Event) {
+function handleCapacityChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const capacity = parseFloat(target.value);
   log.info('Starting to adjust steam exhaust capacity', { capacity });

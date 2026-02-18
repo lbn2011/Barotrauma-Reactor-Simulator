@@ -15,7 +15,9 @@ export function debounce<T extends (...args: any[]) => any>(
   wait: number,
   immediate: boolean = false
 ): (...args: Parameters<T>) => void {
-  log.debug(`Creating debounce function, wait time: ${wait}ms, immediate: ${immediate}`);
+  log.debug(
+    `Creating debounce function, wait time: ${wait}ms, immediate: ${immediate}`
+  );
   let timeout: NodeJS.Timeout | null = null;
 
   return function (...args: Parameters<T>) {
@@ -61,7 +63,7 @@ export function throttle<T extends (...args: any[]) => any>(
  * @param label - Label for the measurement
  * @returns Result of the function
  */
-export function measureExecutionTime<T> (func: () => T, label: string): T {
+export function measureExecutionTime<T>(func: () => T, label: string): T {
   log.time(label);
   const start = performance.now();
   const result = func();
@@ -76,7 +78,7 @@ export function measureExecutionTime<T> (func: () => T, label: string): T {
  * @param images - Array of image elements to lazy load
  * @param options - Intersection Observer options
  */
-export function lazyLoadImages (
+export function lazyLoadImages(
   images: HTMLImageElement[],
   options: IntersectionObserverInit = {}
 ): void {
@@ -121,7 +123,7 @@ export function lazyLoadImages (
  * Preload critical resources
  * @param resources - Array of resources to preload
  */
-export function preloadCriticalResources (
+export function preloadCriticalResources(
   resources: Array<{
     href: string;
     as: string;
@@ -149,7 +151,7 @@ export function preloadCriticalResources (
  * Optimize animations for performance
  * @param element - Element to optimize
  */
-export function optimizeForAnimation (element: HTMLElement): void {
+export function optimizeForAnimation(element: HTMLElement): void {
   log.trace('Optimizing element animation performance');
   element.style.transform = 'translateZ(0)';
   element.style.willChange = 'transform';
@@ -161,7 +163,7 @@ export function optimizeForAnimation (element: HTMLElement): void {
  * Check if the browser supports requestAnimationFrame
  * @returns Whether requestAnimationFrame is supported
  */
-export function supportsRequestAnimationFrame (): boolean {
+export function supportsRequestAnimationFrame(): boolean {
   const result = 'requestAnimationFrame' in window;
   log.trace(`Browser supports requestAnimationFrame: ${result}`);
   return result;
@@ -172,12 +174,14 @@ export function supportsRequestAnimationFrame (): boolean {
  * @param func - Function to schedule
  * @returns Request ID
  */
-export function scheduleAnimationFrame (func: () => void): number {
+export function scheduleAnimationFrame(func: () => void): number {
   log.trace('Scheduling animation frame function execution');
   if (supportsRequestAnimationFrame()) {
     return window.requestAnimationFrame(func);
   } else {
-    log.warn('Browser does not support requestAnimationFrame, falling back to setTimeout');
+    log.warn(
+      'Browser does not support requestAnimationFrame, falling back to setTimeout'
+    );
     return window.setTimeout(func, 16); // Fallback to ~60fps
   }
 }
@@ -186,7 +190,7 @@ export function scheduleAnimationFrame (func: () => void): number {
  * Cancel a scheduled animation frame
  * @param id - Request ID
  */
-export function cancelAnimationFrame (id: number): void {
+export function cancelAnimationFrame(id: number): void {
   log.trace('Cancelling animation frame function execution');
   if (supportsRequestAnimationFrame()) {
     window.cancelAnimationFrame(id);
@@ -199,7 +203,7 @@ export function cancelAnimationFrame (id: number): void {
  * Detect if the device is low-end
  * @returns Whether the device is low-end
  */
-export function isLowEndDevice (): boolean {
+export function isLowEndDevice(): boolean {
   log.trace('Detecting device performance level');
   // Check for memory
   const memory = (navigator as any).deviceMemory || 4;
@@ -218,12 +222,11 @@ export function isLowEndDevice (): boolean {
   log.trace(`Touch support: ${isTouch}`);
 
   // Combine checks
-  const result = (
+  const result =
     memory < 4 ||
     cores < 4 ||
     resolution < 1024 * 768 ||
-    (isTouch && memory < 2)
-  );
+    (isTouch && memory < 2);
 
   log.info(`Device performance level: ${result ? 'Low' : 'High'}`);
   return result;
@@ -232,11 +235,13 @@ export function isLowEndDevice (): boolean {
 /**
  * Optimize based on device capabilities
  */
-export function optimizeBasedOnDevice (): void {
+export function optimizeBasedOnDevice(): void {
   log.info('Optimizing application based on device performance');
   if (isLowEndDevice()) {
     // Disable heavy animations
-    log.warn('Low-performance device detected, applying performance optimizations');
+    log.warn(
+      'Low-performance device detected, applying performance optimizations'
+    );
     document.documentElement.classList.add('low-end-device');
 
     // Reduce image quality

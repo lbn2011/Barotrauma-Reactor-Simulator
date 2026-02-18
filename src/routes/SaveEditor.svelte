@@ -4,12 +4,11 @@ import type { ReactorState } from '@/lib/stores/reactorStore';
 import type { TodayCard as TodayCardType } from '@/types';
 import { defaultComponentConfig } from '@/config/components';
 import i18nStore from '@/stores/i18n';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 // Component initialization logs
 log.info('SaveEditor component initialized');
 log.debug('Initializing default state variables');
-
 
 // Input and output
 let saveCodeInput: string = '';
@@ -18,9 +17,9 @@ let errorMessage: string = '';
 let successMessage: string = '';
 
 // Parse save code
-function parseSaveCode () {
+function parseSaveCode() {
   log.info('Starting to parse save code');
-  
+
   if (!saveCodeInput.trim()) {
     log.warning('Save code input is empty');
     errorMessage = 'Please enter save code';
@@ -60,9 +59,9 @@ function parseSaveCode () {
 }
 
 // Re-encode save code
-function encodeSaveCode () {
+function encodeSaveCode() {
   log.info('Starting to encode save code');
-  
+
   if (!parsedState) {
     log.warning('No data to encode');
     errorMessage = 'No data to encode';
@@ -91,9 +90,9 @@ function encodeSaveCode () {
 }
 
 // Copy save code to clipboard
-async function copyToClipboard () {
+async function copyToClipboard() {
   log.info('Starting to copy save code to clipboard');
-  
+
   if (saveCodeInput) {
     try {
       log.debug('Executing clipboard write operation');
@@ -116,7 +115,7 @@ async function copyToClipboard () {
 }
 
 // Reset form
-function resetForm () {
+function resetForm() {
   log.info('Starting to reset form');
   saveCodeInput = '';
   parsedState = null;
@@ -126,9 +125,9 @@ function resetForm () {
 }
 
 // Safe function to update numeric parameters
-function updateValue (path: string, value: any) {
+function updateValue(path: string, value: any) {
   log.debug('Starting to update parameter value', { path, value });
-  
+
   if (!parsedState) {
     log.warning('Cannot update value: parsedState is null');
     return;
@@ -147,33 +146,42 @@ function updateValue (path: string, value: any) {
 
   const lastPart = parts[parts.length - 1];
   let convertedValue: any = value;
-  
+
   if (typeof value === 'string') {
     // If string, try to convert to appropriate type
     if (value === 'true') {
       convertedValue = true;
-      log.trace('Converting string value to boolean', { original: value, converted: convertedValue });
+      log.trace('Converting string value to boolean', {
+        original: value,
+        converted: convertedValue,
+      });
     } else if (value === 'false') {
       convertedValue = false;
-      log.trace('Converting string value to boolean', { original: value, converted: convertedValue });
+      log.trace('Converting string value to boolean', {
+        original: value,
+        converted: convertedValue,
+      });
     } else if (!isNaN(Number(value))) {
       // If numeric string, convert to number
       convertedValue = parseFloat(value);
-      log.trace('Converting string value to number', { original: value, converted: convertedValue });
+      log.trace('Converting string value to number', {
+        original: value,
+        converted: convertedValue,
+      });
     } else {
       // Otherwise keep as string
       log.trace('Keeping string value unchanged', { value });
     }
   }
-  
+
   current[lastPart] = convertedValue;
   log.success('Parameter value updated successfully', { path, value: convertedValue });
 }
 
 // Safe function to get nested values
-function getValue (path: string, defaultValue: any = '') {
+function getValue(path: string, defaultValue: any = '') {
   log.debug('Starting to get parameter value', { path, defaultValue });
-  
+
   if (!parsedState) {
     log.trace('parsedState is null, returning default value', { defaultValue });
     return defaultValue;

@@ -543,19 +543,19 @@ updateReactor();
 
 #### 5.4.1 日志方法
 
-| 方法名        | 参数                | 返回值 | 功能描述       |
-| ------------- | ------------------- | ------ | -------------- |
-| `log.info()`  | ...args: any[]      | void   | 普通信息日志   |
-| `log.success()` | ...args: any[]     | void   | 成功信息日志   |
-| `log.warn()`  | ...args: any[]      | void   | 警告信息日志   |
-| `log.error()` | ...args: any[]      | void   | 错误信息日志   |
-| `log.debug()` | ...args: any[]      | void   | 调试信息日志   |
-| `log.trace()` | ...args: any[]      | void   | 追踪信息日志   |
-| `log.fatal()` | ...args: any[]      | void   | 致命错误日志   |
-| `log.clear()` | 无                  | void   | 清除控制台     |
-| `log.stats()` | obj: Record<string, any> | void   | 统计信息日志   |
-| `log.time()`  | label: string       | void   | 开始时间记录   |
-| `log.timeEnd()` | label: string      | void   | 结束时间记录   |
+| 方法名          | 参数                     | 返回值 | 功能描述     |
+| --------------- | ------------------------ | ------ | ------------ |
+| `log.info()`    | ...args: any[]           | void   | 普通信息日志 |
+| `log.success()` | ...args: any[]           | void   | 成功信息日志 |
+| `log.warn()`    | ...args: any[]           | void   | 警告信息日志 |
+| `log.error()`   | ...args: any[]           | void   | 错误信息日志 |
+| `log.debug()`   | ...args: any[]           | void   | 调试信息日志 |
+| `log.trace()`   | ...args: any[]           | void   | 追踪信息日志 |
+| `log.fatal()`   | ...args: any[]           | void   | 致命错误日志 |
+| `log.clear()`   | 无                       | void   | 清除控制台   |
+| `log.stats()`   | obj: Record<string, any> | void   | 统计信息日志 |
+| `log.time()`    | label: string            | void   | 开始时间记录 |
+| `log.timeEnd()` | label: string            | void   | 结束时间记录 |
 
 #### 5.4.2 使用示例
 

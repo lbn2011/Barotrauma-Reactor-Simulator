@@ -13,7 +13,7 @@ export let immediate: boolean = false;
 logger.debug('LazyComponent initialized', {
   immediate,
   threshold,
-  rootMargin
+  rootMargin,
 });
 
 let loadedComponent: any = null;
@@ -24,7 +24,7 @@ let observer: IntersectionObserver | null = null;
 
 const dispatch = createEventDispatcher();
 
-async function loadComponent () {
+async function loadComponent() {
   if (isLoading || loadedComponent) return;
 
   isLoading = true;
@@ -42,7 +42,7 @@ async function loadComponent () {
     isLoading = false;
     dispatch('error', e);
     logger.error('LazyComponent failed to load', {
-      error: error?.message || 'Unknown error'
+      error: error?.message || 'Unknown error',
     });
   } finally {
     // Clean up observer once component is loaded

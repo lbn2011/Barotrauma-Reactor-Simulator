@@ -1,7 +1,10 @@
 // Data Processing Web Worker
 
 // Log function
-function log (message: string, level: 'info' | 'debug' | 'error' | 'warn' = 'info') {
+function log(
+  message: string,
+  level: 'info' | 'debug' | 'error' | 'warn' = 'info'
+) {
   console[level](`[Data Worker] ${message}`);
 }
 
@@ -127,9 +130,12 @@ interface ReportOutput {
 }
 
 // Calculate trend
-function calculateTrend (history: number[]): 'rising' | 'falling' | 'stable' {
+function calculateTrend(history: number[]): 'rising' | 'falling' | 'stable' {
   if (history.length < 2) {
-    log('Insufficient data points for trend calculation, returning stable', 'debug');
+    log(
+      'Insufficient data points for trend calculation, returning stable',
+      'debug'
+    );
     return 'stable';
   }
 
@@ -140,7 +146,10 @@ function calculateTrend (history: number[]): 'rising' | 'falling' | 'stable' {
   const change = last - first;
   const threshold = Math.abs(first) * 0.01 || 0.1;
 
-  log(`Trend calculation: first=${first}, last=${last}, change=${change}, threshold=${threshold}`, 'debug');
+  log(
+    `Trend calculation: first=${first}, last=${last}, change=${change}, threshold=${threshold}`,
+    'debug'
+  );
 
   if (Math.abs(change) < threshold) {
     log('Change within threshold, trend is stable', 'debug');
@@ -153,8 +162,11 @@ function calculateTrend (history: number[]): 'rising' | 'falling' | 'stable' {
 }
 
 // Process alarm data
-function processAlarmData (data: AlarmDataInput): AlarmDataOutput {
-  log(`Processing alarm data: ${data.alarms.length} total alarms, ${data.acknowledgedAlarms.length} acknowledged alarms`, 'debug');
+function processAlarmData(data: AlarmDataInput): AlarmDataOutput {
+  log(
+    `Processing alarm data: ${data.alarms.length} total alarms, ${data.acknowledgedAlarms.length} acknowledged alarms`,
+    'debug'
+  );
 
   const unacknowledgedAlarms = data.alarms.filter(
     (alarm) => !data.acknowledgedAlarms.includes(alarm.id)
@@ -180,7 +192,10 @@ function processAlarmData (data: AlarmDataInput): AlarmDataOutput {
     },
   };
 
-  log(`Alarm processing summary: ${alarmSummary.total} total, ${alarmSummary.unacknowledged} unacknowledged, ${alarmSummary.critical} critical`, 'debug');
+  log(
+    `Alarm processing summary: ${alarmSummary.total} total, ${alarmSummary.unacknowledged} unacknowledged, ${alarmSummary.critical} critical`,
+    'debug'
+  );
 
   return {
     unacknowledgedAlarms,
@@ -190,8 +205,11 @@ function processAlarmData (data: AlarmDataInput): AlarmDataOutput {
 }
 
 // Process trend data
-function processTrendData (data: TrendDataInput): TrendDataOutput {
-  log(`Processing trend data: ${data.history.length} total entries, time window: ${data.timeWindow}ms`, 'debug');
+function processTrendData(data: TrendDataInput): TrendDataOutput {
+  log(
+    `Processing trend data: ${data.history.length} total entries, time window: ${data.timeWindow}ms`,
+    'debug'
+  );
 
   const recentHistory = data.history.filter(
     (entry) => entry.timestamp >= Date.now() - data.timeWindow
@@ -218,12 +236,18 @@ function processTrendData (data: TrendDataInput): TrendDataOutput {
     });
   });
 
-  log(`Grouped data into ${Object.keys(parameterGroups).length} parameters`, 'debug');
+  log(
+    `Grouped data into ${Object.keys(parameterGroups).length} parameters`,
+    'debug'
+  );
 
   // Calculate trend for each parameter
   const trends = Object.entries(parameterGroups).map(
     ([parameterId, entries]) => {
-      log(`Calculating trend for parameter ${parameterId} with ${entries.length} data points`, 'debug');
+      log(
+        `Calculating trend for parameter ${parameterId} with ${entries.length} data points`,
+        'debug'
+      );
       const values = entries.map((e) => e.value);
       const trend = calculateTrend(values);
       const latestEntry = entries[entries.length - 1];
@@ -246,8 +270,11 @@ function processTrendData (data: TrendDataInput): TrendDataOutput {
 }
 
 // Generate report
-function generateReport (data: ReportInput): ReportOutput {
-  log(`Generating report: ${data.events.length} events from ${new Date(data.startTime).toISOString()} to ${new Date(data.endTime).toISOString()}`, 'debug');
+function generateReport(data: ReportInput): ReportOutput {
+  log(
+    `Generating report: ${data.events.length} events from ${new Date(data.startTime).toISOString()} to ${new Date(data.endTime).toISOString()}`,
+    'debug'
+  );
 
   const duration = data.endTime - data.startTime;
   log(`Report duration: ${duration}ms`, 'debug');
@@ -302,30 +329,39 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
 
   try {
     switch (type) {
-    case 'processAlarmData':
-      log('Starting to process alarm data', 'debug');
-      log(`Processing ${(data as AlarmDataInput).alarms.length} alarms`, 'debug');
-      result = processAlarmData(data as AlarmDataInput);
-      log('Alarm data processing completed', 'debug');
-      break;
+      case 'processAlarmData':
+        log('Starting to process alarm data', 'debug');
+        log(
+          `Processing ${(data as AlarmDataInput).alarms.length} alarms`,
+          'debug'
+        );
+        result = processAlarmData(data as AlarmDataInput);
+        log('Alarm data processing completed', 'debug');
+        break;
 
-    case 'processTrendData':
-      log('Starting to process trend data', 'debug');
-      log(`Processing ${(data as TrendDataInput).history.length} historical data entries`, 'debug');
-      result = processTrendData(data as TrendDataInput);
-      log('Trend data processing completed', 'debug');
-      break;
+      case 'processTrendData':
+        log('Starting to process trend data', 'debug');
+        log(
+          `Processing ${(data as TrendDataInput).history.length} historical data entries`,
+          'debug'
+        );
+        result = processTrendData(data as TrendDataInput);
+        log('Trend data processing completed', 'debug');
+        break;
 
-    case 'generateReport':
-      log('Starting to generate report', 'debug');
-      log(`Processing ${(data as ReportInput).events.length} events`, 'debug');
-      result = generateReport(data as ReportInput);
-      log('Report generation completed', 'debug');
-      break;
+      case 'generateReport':
+        log('Starting to generate report', 'debug');
+        log(
+          `Processing ${(data as ReportInput).events.length} events`,
+          'debug'
+        );
+        result = generateReport(data as ReportInput);
+        log('Report generation completed', 'debug');
+        break;
 
-    default:
-      log(`Unknown message type: ${type}`, 'error');
-      return;
+      default:
+        log(`Unknown message type: ${type}`, 'error');
+        return;
     }
 
     // Send response
@@ -336,12 +372,14 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
 
     log(`Sending response: ${response.type}`, 'debug');
     self.postMessage(response);
-
   } catch (error) {
-    log(`Error during data processing: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+    log(
+      `Error during data processing: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      'error'
+    );
     const errorResponse: WorkerResponse = {
       type: `${type}Error`,
-      data: { error: error instanceof Error ? error.message : 'Unknown error' }
+      data: { error: error instanceof Error ? error.message : 'Unknown error' },
     };
     self.postMessage(errorResponse);
   }

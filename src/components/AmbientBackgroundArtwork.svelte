@@ -12,13 +12,13 @@ export let config = defaultComponentConfig;
 logger.info('AmbientBackgroundArtwork component rendered', {
   hasArtwork: !!artwork,
   hasTemplate: !!artwork?.template,
-  isActive: active
+  isActive: active,
 });
 
 let isBackgroundImageLoaded = false;
 let backgroundImage = buildSrc(artwork) || '';
 
-function loadBackgroundImage () {
+function loadBackgroundImage() {
   if (backgroundImage) {
     // Preload strategy: create image object to load in background
     const img = new Image();
@@ -30,7 +30,10 @@ function loadBackgroundImage () {
     img.onerror = () => {
       // Error fallback: handle image load failure
       isBackgroundImageLoaded = false;
-      logger.error('Ambient background image failed to load', { url: backgroundImage, error: 'Image loading error' });
+      logger.error('Ambient background image failed to load', {
+        url: backgroundImage,
+        error: 'Image loading error',
+      });
     };
     img.src = backgroundImage;
   } else {
@@ -50,14 +53,14 @@ const handleIntersectionOberserverUpdate = (isIntersectingViewport: boolean) => 
   isOutOfView = !isIntersectingViewport;
   logger.debug('AmbientBackgroundArtwork visibility changed', {
     isIntersecting: isIntersectingViewport,
-    isOutOfView
+    isOutOfView,
   });
 };
 
 /**
  * Builds a source URL for an artwork based on its template and parameters
  */
-function buildSrc (
+function buildSrc(
   artwork: JetArtworkType,
   options: {
     crop?: string;
@@ -85,11 +88,17 @@ function buildSrc (
     .replace('{c}', crop)
     .replace('{f}', fileType);
 
-  logger.debug('Built ambient background image URL', { url: imageUrl, width, height, crop, fileType });
+  logger.debug('Built ambient background image URL', {
+    url: imageUrl,
+    width,
+    height,
+    crop,
+    fileType,
+  });
   return imageUrl;
 }
 
-function intersectionObserver (node: HTMLElement, options: any) {
+function intersectionObserver(node: HTMLElement, options: any) {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -104,7 +113,7 @@ function intersectionObserver (node: HTMLElement, options: any) {
   observer.observe(node);
 
   return {
-    destroy () {
+    destroy() {
       observer.disconnect();
     },
   };

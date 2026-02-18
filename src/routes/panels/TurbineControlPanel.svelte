@@ -30,7 +30,6 @@ onDestroy(() => {
   log.debug('Cleaning up component resources');
 });
 
-
 // 订阅状态
 let turbine: any; // 汽轮机系统状态
 let turbineAuxiliary: any; // 汽轮机辅助系统状态
@@ -47,10 +46,10 @@ reactorStore.subscribe((state) => {
   turbineAuxiliary = state.turbineAuxiliary;
   steamBypass = state.steamBypass;
   condenserVacuum = state.condenserVacuum;
-  log.trace('Turbine parameters synchronized successfully', { 
-    turbineStatus: turbine?.status, 
-    turbineLoad: turbine?.load, 
-    turbineSpeed: turbine?.speed 
+  log.trace('Turbine parameters synchronized successfully', {
+    turbineStatus: turbine?.status,
+    turbineLoad: turbine?.load,
+    turbineSpeed: turbine?.speed,
   });
 });
 
@@ -58,7 +57,7 @@ reactorStore.subscribe((state) => {
  * Handle turbine state toggle
  * Start or stop the turbine
  */
-function handleTurbineToggle () {
+function handleTurbineToggle() {
   log.info('Starting to toggle turbine state', { currentStatus: turbine?.status });
   toggleTurbine();
   log.success('Turbine state toggle command executed');
@@ -68,7 +67,7 @@ function handleTurbineToggle () {
  * Handle load change
  * @param e Event object
  */
-function handleLoadChange (e: Event) {
+function handleLoadChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const load = parseFloat(target.value);
   log.info('Starting to adjust turbine load', { load });
@@ -80,7 +79,7 @@ function handleLoadChange (e: Event) {
  * Handle speed setpoint change
  * @param e Event object
  */
-function handleSpeedSetpointChange (e: Event) {
+function handleSpeedSetpointChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const speed = parseFloat(target.value);
   log.info('Starting to adjust turbine speed setpoint', { speed });
@@ -92,7 +91,7 @@ function handleSpeedSetpointChange (e: Event) {
  * Handle load setpoint change
  * @param e Event object
  */
-function handleLoadSetpointChange (e: Event) {
+function handleLoadSetpointChange(e: Event) {
   const target = e.target as HTMLInputElement;
   const load = parseFloat(target.value);
   log.info('Starting to adjust turbine load setpoint', { load });
@@ -104,8 +103,10 @@ function handleLoadSetpointChange (e: Event) {
  * Toggle automatic control mode
  * Switch between automatic and manual control modes
  */
-function handleAutomaticControlToggle () {
-  log.info('Starting to toggle turbine control mode', { currentMode: turbine?.automaticControl ? 'automatic' : 'manual' });
+function handleAutomaticControlToggle() {
+  log.info('Starting to toggle turbine control mode', {
+    currentMode: turbine?.automaticControl ? 'automatic' : 'manual',
+  });
   toggleTurbineAutomaticControl();
   log.success('Turbine control mode toggle command executed');
 }
@@ -114,7 +115,7 @@ function handleAutomaticControlToggle () {
  * Manually adjust speed
  * @param adjustment Adjustment value
  */
-function handleSpeedAdjustment (adjustment: number) {
+function handleSpeedAdjustment(adjustment: number) {
   log.info('Starting to manually adjust turbine speed', { adjustment });
   adjustTurbineSpeed(adjustment);
   log.success('Turbine speed manual adjustment command executed', { adjustment });
@@ -124,7 +125,7 @@ function handleSpeedAdjustment (adjustment: number) {
  * Reset turbine trip
  * Clear turbine trip status, allowing restart
  */
-function handleResetTrip () {
+function handleResetTrip() {
   log.info('Starting to reset turbine trip status', { tripReason: turbine?.tripReason });
   resetTurbineTrip();
   log.success('Turbine trip reset command executed');

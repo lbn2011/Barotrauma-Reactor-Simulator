@@ -6,7 +6,7 @@ import {
   setCondenserCirculationPumpFlowRate,
 } from '../../lib/stores/reactorStore';
 import { onMount } from 'svelte';
-import log from '@/utils/logger';
+import log from '@/lib/utils/logger';
 
 // Component initialization logs
 log.info('CondenserCirculationPumpPanel component initialized');
@@ -17,9 +17,11 @@ let condenserCirculationPumps: any;
 // 组件挂载时订阅状态
 onMount(() => {
   log.debug('CondenserCirculationPumpPanel mounting, subscribing to reactor store');
-  
+
   const unsubscribe = reactorStore.subscribe((state) => {
-    log.trace('CondenserCirculationPumpPanel state updated', { condenserCirculationPumps: state.condenserCirculationPumps });
+    log.trace('CondenserCirculationPumpPanel state updated', {
+      condenserCirculationPumps: state.condenserCirculationPumps,
+    });
     condenserCirculationPumps = state.condenserCirculationPumps;
   });
 
@@ -28,14 +30,17 @@ onMount(() => {
 });
 
 // 切换水泵状态
-function handleTogglePump (pumpNumber: 1 | 2) {
-  log.info('Toggling condenser circulation pump status', { pumpNumber, currentStatus: condenserCirculationPumps?.[`pump${pumpNumber}`]?.status });
+function handleTogglePump(pumpNumber: 1 | 2) {
+  log.info('Toggling condenser circulation pump status', {
+    pumpNumber,
+    currentStatus: condenserCirculationPumps?.[`pump${pumpNumber}`]?.status,
+  });
   toggleCondenserCirculationPump(pumpNumber);
   log.success(`Condenser circulation pump ${pumpNumber} status toggled successfully`);
 }
 
 // 调整水泵流量
-function handleFlowRateChange (pumpNumber: 1 | 2, e: Event) {
+function handleFlowRateChange(pumpNumber: 1 | 2, e: Event) {
   const target = e.target as HTMLInputElement;
   const value = parseFloat(target.value);
   log.debug('Changing condenser circulation pump flow rate', { pumpNumber, value });
