@@ -20,7 +20,7 @@ let startIndex = 0;
 let endIndex = 0;
 let scrollTop = 0;
 
-function calculateVisibleRange() {
+function calculateVisibleRange () {
   if (!container) return;
 
   scrollTop = container.scrollTop;
@@ -39,12 +39,12 @@ function calculateVisibleRange() {
   });
 }
 
-function handleScroll() {
+function handleScroll () {
   logger.debug('VirtualList scroll event triggered');
   calculateVisibleRange();
 }
 
-function getVisibleItems() {
+function getVisibleItems () {
   const visibleItems = items.slice(startIndex, endIndex);
   logger.debug('VirtualList getting visible items', {
     visibleItemCount: visibleItems.length,
@@ -54,7 +54,7 @@ function getVisibleItems() {
   return visibleItems;
 }
 
-function getItemStyle(index: number) {
+function getItemStyle (index: number) {
   return `position: absolute; top: ${index * itemHeight}px; height: ${itemHeight}px; width: 100%;`;
 }
 

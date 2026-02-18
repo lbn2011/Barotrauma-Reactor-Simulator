@@ -100,7 +100,7 @@ export interface Item {
 /**
  * Validate TodayCard type
  */
-export function validateTodayCard(card: any): card is TodayCard {
+export function validateTodayCard (card: any): card is TodayCard {
   log.trace('Validating TodayCard type');
   log.debug('Input object:', card);
 
@@ -123,7 +123,7 @@ export function validateTodayCard(card: any): card is TodayCard {
 /**
  * Validate Artwork type
  */
-export function validateArtwork(artwork: any): artwork is Artwork {
+export function validateArtwork (artwork: any): artwork is Artwork {
   log.trace('Validating Artwork type');
   log.debug('Input object:', artwork);
 
@@ -139,7 +139,7 @@ export function validateArtwork(artwork: any): artwork is Artwork {
 /**
  * Validate Color type
  */
-export function validateColor(color: any): color is Color {
+export function validateColor (color: any): color is Color {
   log.trace('Validating Color type');
   log.debug('Input object:', color);
 

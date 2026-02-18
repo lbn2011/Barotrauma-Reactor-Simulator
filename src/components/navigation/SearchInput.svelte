@@ -13,7 +13,7 @@ logger.info('SearchInput initialized', {
 let searchQuery: string = '';
 const perform = getJetPerform();
 
-function handleSubmit(event: Event) {
+function handleSubmit (event: Event) {
   event.preventDefault();
   if (searchQuery.trim() && searchAction) {
     logger.info('Search submitted', {

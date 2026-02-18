@@ -6,6 +6,7 @@ import { reactorStore } from '../../lib/stores/reactorStore';
 // 导入UI组件
 import { Button } from '../../lib/components/ui/button';
 import { Card, CardContent } from '../../lib/components/ui/card';
+import { EChartContainer } from '../../lib/components/ui/chart';
 import log from '@/lib/utils/logger';
 
 // Component initialization logs
@@ -23,168 +24,134 @@ let trends: {
 reactorStore.subscribe((state) => {
   log.trace('DataTrendPanel state updated', { trends: state.trends });
   trends = state.trends;
-  updateChartData();
 });
 
-// 图表相关变量
-let chart: any = null;
-let chartCanvas: HTMLCanvasElement | null = null;
-let ChartJS: any = null;
-let isChartLoaded: boolean = false;
-let isLoading: boolean = false;
-
-// 图表配置选项
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-      labels: {
-        color: '#e0e0e0',
-      },
-    },
-    title: {
-      display: true,
-      text: '反应堆参数趋势',
+// ECharts选项
+const chartOption = $derived({
+  title: {
+    text: '反应堆参数趋势',
+    textStyle: {
       color: '#00bcd4',
     },
+    left: 'center',
   },
-  scales: {
-    x: {
-      ticks: {
-        color: '#aaa',
-      },
-      grid: {
-        color: 'rgba(255, 255, 255, 0.1)',
-      },
-    },
-    y: {
-      beginAtZero: false,
-      ticks: {
-        color: '#aaa',
-      },
-      grid: {
-        color: 'rgba(255, 255, 255, 0.1)',
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#6a7985',
       },
     },
   },
-  interaction: {
-    mode: 'index' as const,
-    intersect: false,
+  legend: {
+    data: ['功率水平 (%)', '堆芯温度 (°C)', '堆芯压力 (MPa)'],
+    textStyle: {
+      color: '#e0e0e0',
+    },
+    top: 30,
   },
-};
-
-// 懒加载Chart.js库
-async function loadChartJS() {
-  if (isChartLoaded) return;
-
-  log.info('Loading Chart.js library');
-  isLoading = true;
-  try {
-    const chartModule = await import('chart.js');
-    const { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } =
-      chartModule;
-
-    // 注册Chart.js必要组件
-    Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-
-    ChartJS = Chart;
-    isChartLoaded = true;
-    log.success('Chart.js library loaded successfully');
-  } catch (error) {
-    log.error('Failed to load Chart.js:', error);
-  } finally {
-    isLoading = false;
-    log.debug('Chart.js loading process completed');
-  }
-}
-
-// 更新图表数据
-async function updateChartData() {
-  log.debug('Updating chart data', { hasCanvas: !!chartCanvas, hasTrends: !!trends });
-
-  if (!chartCanvas || !trends) return;
-
-  if (!isChartLoaded) {
-    await loadChartJS();
-  }
-
-  if (!ChartJS) {
-    log.warn('ChartJS not available, cannot update chart');
-    return;
-  }
-
-  const chartData = {
-    labels: trends.timePoints.map((t) => `t=${t}`),
-    datasets: [
-      {
-        label: '功率水平 (%)',
-        data: trends.powerData,
-        borderColor: '#00bcd4',
-        backgroundColor: 'rgba(0, 188, 212, 0.5)',
-        tension: 0.1,
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true,
+  },
+  xAxis: [
+    {
+      type: 'category',
+      boundaryGap: false,
+      data: trends?.timePoints.map((t) => `t=${t}`) || [],
+      axisLabel: {
+        color: '#aaa',
       },
-      {
-        label: '堆芯温度 (°C)',
-        data: trends.temperatureData,
-        borderColor: '#f44336',
-        backgroundColor: 'rgba(244, 67, 54, 0.5)',
-        tension: 0.1,
+      axisLine: {
+        lineStyle: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
       },
-      {
-        label: '堆芯压力 (MPa)',
-        data: trends.pressureData,
-        borderColor: '#4caf50',
-        backgroundColor: 'rgba(76, 175, 80, 0.5)',
-        tension: 0.1,
+      splitLine: {
+        lineStyle: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
       },
-    ],
-  };
+    },
+  ],
+  yAxis: [
+    {
+      type: 'value',
+      axisLabel: {
+        color: '#aaa',
+      },
+      axisLine: {
+        lineStyle: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
+      },
+    },
+  ],
+  series: [
+    {
+      name: '功率水平 (%)',
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {
+        color: 'rgba(0, 188, 212, 0.5)',
+      },
+      emphasis: {
+        focus: 'series',
+      },
+      lineStyle: {
+        color: '#00bcd4',
+      },
+      data: trends?.powerData || [],
+    },
+    {
+      name: '堆芯温度 (°C)',
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {
+        color: 'rgba(244, 67, 54, 0.5)',
+      },
+      emphasis: {
+        focus: 'series',
+      },
+      lineStyle: {
+        color: '#f44336',
+      },
+      data: trends?.temperatureData || [],
+    },
+    {
+      name: '堆芯压力 (MPa)',
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {
+        color: 'rgba(76, 175, 80, 0.5)',
+      },
+      emphasis: {
+        focus: 'series',
+      },
+      lineStyle: {
+        color: '#4caf50',
+      },
+      data: trends?.pressureData || [],
+    },
+  ],
+});
 
-  if (chart) {
-    chart.data = chartData;
-    chart.update('none');
-    log.debug('Chart updated successfully');
-  } else {
-    const ctx = chartCanvas.getContext('2d');
-    if (ctx) {
-      try {
-        chart = new ChartJS(ctx, {
-          type: 'line',
-          data: chartData,
-          options: chartOptions,
-        });
-        log.success('Chart created successfully');
-      } catch (error) {
-        log.error('Failed to create chart:', error);
-      }
-    } else {
-      log.warn('Canvas context not available, cannot create chart');
-    }
-  }
-}
-
-// 组件挂载时加载图表
-onMount(async () => {
-  log.debug('DataTrendPanel mounting');
-  await loadChartJS();
-  updateChartData();
+// 组件挂载时初始化
+onMount(() => {
   log.debug('DataTrendPanel mounted successfully');
 });
 
-// 组件销毁时清理图表
+// 组件销毁时清理
 onDestroy(() => {
-  log.debug('DataTrendPanel destroying, cleaning up chart');
-  if (chart) {
-    try {
-      chart.destroy();
-      chart = null;
-      log.success('Chart destroyed successfully');
-    } catch (error) {
-      log.error('Failed to destroy chart:', error);
-    }
-  }
+  log.debug('DataTrendPanel destroyed');
 });
 </script>
 
@@ -218,7 +185,6 @@ onDestroy(() => {
   <div class="flex gap-4 mb-8 flex-wrap">
     <Button
       variant="secondary"
-      onclick={() => updateChartData()}
       class="bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-all duration-300"
     >
       刷新数据
@@ -226,19 +192,12 @@ onDestroy(() => {
   </div>
 
   <div
-    class="h-[500px] mb-8 relative bg-card border border-border rounded-lg p-4 hover:border-primary/50 transition-all duration-300"
+    class="h-[500px] mb-8 bg-card border border-border rounded-lg p-4 hover:border-primary/50 transition-all duration-300"
   >
-    {#if isLoading}
-      <div
-        class="absolute inset-0 bg-background/80 flex flex-col items-center justify-center rounded-lg z-10"
-      >
-        <div
-          class="w-10 h-10 border-3 border-muted border-t-primary rounded-full animate-spin mb-4"
-        ></div>
-        <p class="text-primary">加载图表库中...</p>
-      </div>
-    {/if}
-    <canvas bind:this={chartCanvas} class="w-full h-full"></canvas>
+    <EChartContainer
+      option={chartOption}
+      style="width: 100%; height: 100%;"
+    />
   </div>
 
   <Card class="bg-card border-border mt-8 hover:border-primary/50 transition-all duration-300">

@@ -34,7 +34,7 @@ logger.debug('ResponsiveContainer initialized', {
 });
 
 // Generate inline styles
-function getContainerStyle() {
+function getContainerStyle () {
   const maxWidthValue = getResponsiveValue(maxWidth, '100%');
   const paddingValue = getResponsiveValue(padding, '0');
   const marginValue = centered ? '0 auto' : getResponsiveValue(margin, '0');

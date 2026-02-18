@@ -3,7 +3,7 @@
  * Chart Style Component
  * Used to generate CSS styles for charts
  */
-import { THEMES, type ChartConfig } from './chart-utils.js';
+import { THEMES, type ChartConfig } from './utils.js';
 import { logger } from '@/lib/utils/logger';
 
 // Component properties

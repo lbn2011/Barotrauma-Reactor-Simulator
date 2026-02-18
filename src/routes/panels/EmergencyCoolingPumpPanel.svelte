@@ -44,7 +44,7 @@ reactorStore.subscribe((state) => {
 });
 
 // 处理泵状态切换
-function handlePumpToggle(pumpNumber: 1 | 2) {
+function handlePumpToggle (pumpNumber: 1 | 2) {
   log.info('Toggling emergency cooling pump status', {
     pumpNumber,
     currentStatus: emergencyCoolingPumps?.[`pump${pumpNumber}`]?.status,
@@ -54,7 +54,7 @@ function handlePumpToggle(pumpNumber: 1 | 2) {
 }
 
 // 处理泵流量变化
-function handleFlowRateChange(pumpNumber: 1 | 2, e: Event) {
+function handleFlowRateChange (pumpNumber: 1 | 2, e: Event) {
   const target = e.target as HTMLInputElement;
   const flowRate = parseFloat(target.value);
   log.debug('Changing emergency cooling pump flow rate', {
@@ -503,7 +503,7 @@ input[type='range']::-moz-range-thumb:hover {
             <div class="status-label">注水阀 {valveNumber}</div>
             <button
               class={`toggle-btn ${Math.random() > 0.5 ? 'start' : 'stop'}`}
-              on:click={() => console.log(`Safety injection valve ${valveNumber} toggled`)}
+              on:click={() => log.debug(`Safety injection valve ${valveNumber} toggled`)}
             >
               {Math.random() > 0.5 ? '关闭' : '打开'}
             </button>

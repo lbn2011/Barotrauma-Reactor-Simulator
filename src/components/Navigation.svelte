@@ -30,7 +30,7 @@ logger.info('Navigation component initialized', {
   hasSearchAction: !!webNavigation.searchAction,
 });
 
-function isSystemImageArtwork(artwork: any): boolean {
+function isSystemImageArtwork (artwork: any): boolean {
   return artwork.type === 'system';
 }
 
@@ -41,7 +41,7 @@ $: inlinePlatformItems =
 $: supportedLanguages = config.global?.supportedLanguages || ['zh-CN', 'en-US'];
 $: currentLanguage = i18n?.language || config.global?.defaultLanguage || 'zh-CN';
 
-function handleLanguageChange(language: string) {
+function handleLanguageChange (language: string) {
   logger.info('Language changed', { from: currentLanguage, to: language });
   setLanguage(language);
   languageDropdownOpen = false;
@@ -51,7 +51,7 @@ const BASE_DELAY = 80;
 const BASE_DURATION = 150;
 const DURATION_SPREAD = 300;
 
-function getEasedDuration({
+function getEasedDuration ({
   i,
   totalNumberOfItems,
   easing = circOut,

@@ -13,7 +13,7 @@ logger.debug('FlowAction initialized', {
 
 const perform = getJetPerform();
 
-function handleClick() {
+function handleClick () {
   logger.info('FlowAction clicked', {
     actionType: destination.destination?.type,
     title: destination.title,

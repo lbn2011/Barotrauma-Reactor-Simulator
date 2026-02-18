@@ -14,7 +14,7 @@ export let config = defaultComponentConfig;
 logger.info('Page loading started', { isFirstPage });
 
 // Function to log page load success
-function handlePageLoadSuccess(loadedPage: Page) {
+function handlePageLoadSuccess (loadedPage: Page) {
   logger.info('Page loaded successfully', {
     pageType: loadedPage.type,
     isFirstPage,
@@ -22,7 +22,7 @@ function handlePageLoadSuccess(loadedPage: Page) {
 }
 
 // Function to log page load error
-function handlePageLoadError(error: any) {
+function handlePageLoadError (error: any) {
   logger.error('Page failed to load', {
     error: error instanceof Error ? error.message : error,
     isFirstPage,

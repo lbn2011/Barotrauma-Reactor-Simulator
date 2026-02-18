@@ -1,29 +1,22 @@
 <script lang="ts">
+/* eslint-disable svelte/no-navigation-without-resolve */
 import type { Action } from '../types';
 import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
 import { logger } from '../lib/utils/logger';
 
 export let action: Action | undefined | null;
 
-function handleClick(event: MouseEvent) {
+function handleClick (event: MouseEvent) {
   if (action?.destination?.url) {
     event.preventDefault();
-    // Check if it's an external link
-    if (
-      action.destination.url.startsWith('http://') ||
-      action.destination.url.startsWith('https://')
-    ) {
-      logger.info('External link opened', { url: action.destination.url });
-      window.open(action.destination.url, '_blank');
-    } else {
-      const url = action.destination.url;
-      logger.info('Internal navigation', { url });
-      goto(url);
-    }
+    const resolved = resolve(action.destination.url as any);
+    logger.info('Internal navigation', { url: action.destination.url });
+    goto(resolved);
   }
 }
 
-function handleKeyDown(event: KeyboardEvent) {
+function handleKeyDown (event: KeyboardEvent) {
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault();
     handleClick(event as any);
@@ -46,7 +39,7 @@ a {
   <a
     on:click={handleClick}
     on:keydown={handleKeyDown}
-    href={action.destination?.url || '#'}
+    href={action.destination?.url ? resolve(action.destination.url as any) : '#'}
     class="link-wrapper"
     rel="noopener noreferrer"
     target="_blank"

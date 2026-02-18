@@ -10,7 +10,7 @@ import log from '../lib/utils/logger';
  * @param configPath - Path to configuration JSON file
  * @returns Component configuration object
  */
-export async function loadComponentConfig(
+export async function loadComponentConfig (
   configPath?: string
 ): Promise<ComponentConfig> {
   log.info('Starting component configuration loading');
@@ -43,7 +43,7 @@ export async function loadComponentConfig(
  * @param userConfig - User-provided component configuration
  * @returns Merged component configuration
  */
-export function mergeComponentConfig(
+export function mergeComponentConfig (
   defaultConfig: ComponentConfig,
   userConfig: Partial<ComponentConfig>
 ): ComponentConfig {
@@ -173,7 +173,7 @@ export function mergeComponentConfig(
  * @param baseConfig - Base component configuration
  * @returns Configuration factory function
  */
-export function createConfigFactory(baseConfig: ComponentConfig) {
+export function createConfigFactory (baseConfig: ComponentConfig) {
   log.info('Creating config factory');
   return {
     /**
@@ -217,7 +217,7 @@ export function createConfigFactory(baseConfig: ComponentConfig) {
  * @param config - Optional configuration object
  * @returns Component configuration
  */
-export function loadConfigSync(
+export function loadConfigSync (
   config?: Partial<ComponentConfig>
 ): ComponentConfig {
   log.info('Loading config synchronously (SSR)');

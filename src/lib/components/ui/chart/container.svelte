@@ -5,8 +5,8 @@
  */
 import { cn, type WithElementRef } from '@/lib/utils';
 import type { HTMLAttributes } from 'svelte/elements';
-import ChartStyle from './chart-style.svelte';
-import { setChartContext, type ChartConfig } from './chart-utils.js';
+import ChartStyle from './style.svelte';
+import { setChartContext, type ChartConfig } from './utils.js';
 import { logger } from '@/lib/utils/logger';
 
 // Unique identifier
@@ -29,7 +29,7 @@ const chartId = $derived(`chart-${id || uid.replace(/:/g, '')}`);
 
 // Set chart context
 setChartContext({
-  get config() {
+  get config () {
     return config;
   },
 });

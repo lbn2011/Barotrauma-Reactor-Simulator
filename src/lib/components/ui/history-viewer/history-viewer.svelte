@@ -24,13 +24,11 @@ export interface HistoryViewerProps {
  * History data viewer component
  * Used to display and analyze reactor historical operation data
  */
-import { Chart, registerables } from 'chart.js';
 import { Card, CardContent, CardHeader, CardTitle } from '../card';
 import { Button } from '../button';
+import { EChartContainer } from '../chart';
 import { logger } from '../../../utils/logger';
-
-// Register Chart.js components
-Chart.register(...registerables);
+import { $derived } from 'svelte';
 
 /**
  * History data interface
@@ -65,8 +63,6 @@ export let timeRange: '1h' | '6h' | '24h' | '7d' = '6h'; // Time range
 export const refreshInterval: number = 5000; // Refresh interval
 
 // Component state
-let chart: any = null; // Chart.js instance
-let chartCanvas: HTMLCanvasElement | null = null; // Chart canvas element
 let isLoading = false; // Loading state
 
 logger.debug('HistoryViewer', 'Component initialized');
@@ -74,134 +70,106 @@ logger.debug('HistoryViewer', `Initial time range: ${timeRange}`);
 logger.debug('HistoryViewer', `Initial chart configs: ${chartConfigs.length}`);
 logger.debug('HistoryViewer', `Initial history data: ${historyData.length} records`);
 
-/**
- * Initialize chart
- * Create or update Chart.js instance
- */
-function initChart() {
-  if (!chartCanvas) return;
-
-  logger.debug('HistoryViewer', 'Initializing chart');
-
-  // Destroy existing chart instance
-  if (chart) {
-    try {
-      chart.destroy();
-      chart = null;
-      logger.debug('HistoryViewer', 'Chart instance destroyed');
-    } catch (error) {
-      logger.error('HistoryViewer', 'Failed to destroy chart:', error);
-    }
-  }
-
-  // Prepare chart labels
-  const labels = historyData.map((data) => {
-    const date = new Date(data.timestamp);
-    return date.toLocaleTimeString();
-  });
-
-  // Prepare datasets
-  const datasets = chartConfigs
+// ECharts option
+const chartOption = $derived({
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#6a7985',
+      },
+    },
+  },
+  legend: {
+    data: chartConfigs
+      .filter((config) => config.visible)
+      .map((config) => `${config.name} (${config.unit})`),
+    textStyle: {
+      color: '#ffffff',
+    },
+    top: 30,
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true,
+  },
+  xAxis: [
+    {
+      type: 'category',
+      boundaryGap: false,
+      data: historyData.map((data) => {
+        const date = new Date(data.timestamp);
+        return date.toLocaleTimeString();
+      }),
+      axisLabel: {
+        color: '#cccccc',
+      },
+      axisLine: {
+        lineStyle: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
+      },
+    },
+  ],
+  yAxis: [
+    {
+      type: 'value',
+      axisLabel: {
+        color: '#cccccc',
+      },
+      axisLine: {
+        lineStyle: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
+      },
+    },
+  ],
+  series: chartConfigs
     .filter((config) => config.visible)
-    .map((config) => {
-      return {
-        label: `${config.name} (${config.unit})`,
-        data: historyData.map((data) => data.parameters[config.id] || 0),
-        borderColor: config.color,
-        backgroundColor: `${config.color}20`,
-        borderWidth: 2,
-        tension: 0.1,
-        fill: false,
-        pointRadius: 0,
-        pointHoverRadius: 5,
-      };
-    });
-
-  logger.debug('HistoryViewer', `Chart prepared with ${datasets.length} datasets`);
-
-  // Create chart instance
-  try {
-    chart = new Chart(chartCanvas, {
+    .map((config) => ({
+      name: `${config.name} (${config.unit})`,
       type: 'line',
-      data: {
-        labels,
-        datasets,
+      data: historyData.map((data) => data.parameters[config.id] || 0),
+      lineStyle: {
+        color: config.color,
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false,
-        },
-        plugins: {
-          legend: {
-            position: 'top' as const,
-            labels: {
-              color: '#ffffff',
-            },
-          },
-          tooltip: {
-            mode: 'index',
-            intersect: false,
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            titleColor: '#ffffff',
-            bodyColor: '#ffffff',
-            borderColor: '#333333',
-            borderWidth: 1,
-          },
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Time',
-              color: '#ffffff',
-            },
-            ticks: {
-              color: '#cccccc',
-            },
-            grid: {
-              color: 'rgba(255, 255, 255, 0.1)',
-            },
-          },
-          y: {
-            title: {
-              display: true,
-              text: 'Value',
-              color: '#ffffff',
-            },
-            ticks: {
-              color: '#cccccc',
-            },
-            grid: {
-              color: 'rgba(255, 255, 255, 0.1)',
-            },
-          },
-        },
+      itemStyle: {
+        color: config.color,
       },
-    });
-    logger.debug('HistoryViewer', 'Chart instance created successfully');
-  } catch (error) {
-    logger.error('HistoryViewer', 'Failed to create chart:', error);
-  }
-}
+      emphasis: {
+        focus: 'series',
+      },
+    })),
+});
 
 /**
  * Update time range
  * @param range New time range
  */
-function updateTimeRange(range: '1h' | '6h' | '24h' | '7d') {
+function updateTimeRange (range: '1h' | '6h' | '24h' | '7d') {
   logger.info('HistoryViewer', `Updating time range to ${range}`);
   timeRange = range;
-  initChart(); // Reinitialize chart
+  // Chart will automatically update due to reactive option
 }
 
 /**
  * Toggle parameter visibility
  * @param configId Parameter configuration ID
  */
-function toggleParameterVisibility(configId: string) {
+function toggleParameterVisibility (configId: string) {
   const config = chartConfigs.find((c) => c.id === configId);
   if (config) {
     config.visible = !config.visible;
@@ -209,14 +177,14 @@ function toggleParameterVisibility(configId: string) {
       'HistoryViewer',
       `Toggled parameter visibility: ${config.name} ${config.visible ? 'visible' : 'hidden'}`
     );
-    initChart(); // Reinitialize chart
+    // Chart will automatically update due to reactive option
   }
 }
 
 /**
  * Export data to CSV format
  */
-function exportData() {
+function exportData () {
   logger.info('HistoryViewer', 'Exporting data to CSV');
   try {
     // Prepare CSV headers
@@ -254,11 +222,10 @@ function exportData() {
 /**
  * Refresh data
  */
-function refreshData() {
+function refreshData () {
   logger.info('HistoryViewer', 'Refreshing data');
   isLoading = true;
   setTimeout(() => {
-    initChart();
     isLoading = false;
     logger.debug('HistoryViewer', 'Data refreshed');
   }, 1000);
@@ -269,7 +236,7 @@ function refreshData() {
  * @param parameterId Parameter ID
  * @returns Change percentage
  */
-function calculateChange(parameterId: string) {
+function calculateChange (parameterId: string) {
   if (historyData.length < 2) return 'No change';
   const firstValue = historyData[0].parameters[parameterId] || 0;
   const lastValue = historyData[historyData.length - 1].parameters[parameterId] || 0;
@@ -377,7 +344,10 @@ function calculateChange(parameterId: string) {
 
       <!-- Chart Container -->
       <div class="h-96 w-full">
-        <canvas bind:this={chartCanvas}></canvas>
+        <EChartContainer
+          option={chartOption}
+          style="width: 100%; height: 100%;"
+        />
       </div>
 
       <!-- Data Statistics -->

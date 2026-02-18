@@ -17,55 +17,55 @@ export const config = defaultComponentConfig;
 logger.info('Page component rendered', { pageType: page.type });
 
 // Page type guards
-function isAppEventDetailPage(page: Page): boolean {
+function isAppEventDetailPage (page: Page): boolean {
   return page.type === 'appEventDetail';
 }
 
-function isArticlePage(page: Page): boolean {
+function isArticlePage (page: Page): boolean {
   return page.type === 'article';
 }
 
-function isChartsHubPage(page: Page): boolean {
+function isChartsHubPage (page: Page): boolean {
   return page.type === 'chartsHub';
 }
 
-function isGenericPage(page: Page): boolean {
+function isGenericPage (page: Page): boolean {
   return page.type === 'generic';
 }
 
-function isSearchLandingPage(page: Page): boolean {
+function isSearchLandingPage (page: Page): boolean {
   return page.type === 'searchLanding';
 }
 
-function isShelfBasedProductPage(page: Page): boolean {
+function isShelfBasedProductPage (page: Page): boolean {
   return page.type === 'shelfBasedProduct';
 }
 
-function isTopChartsPage(page: Page): boolean {
+function isTopChartsPage (page: Page): boolean {
   return page.type === 'topCharts';
 }
 
-function isTodayPage(page: Page): boolean {
+function isTodayPage (page: Page): boolean {
   return page.type === 'today';
 }
 
-function isSearchResultsPage(page: Page): boolean {
+function isSearchResultsPage (page: Page): boolean {
   return page.type === 'searchResults';
 }
 
-function isStaticMessagePage(page: Page): boolean {
+function isStaticMessagePage (page: Page): boolean {
   return page.type === 'staticMessage';
 }
 
-function isSeeAllPage(page: Page): boolean {
+function isSeeAllPage (page: Page): boolean {
   return page.type === 'seeAll';
 }
 
-function isErrorPage(page: Page): boolean {
+function isErrorPage (page: Page): boolean {
   return page.type === 'error';
 }
 
-function hasVisionProUrl(page: Page): boolean {
+function hasVisionProUrl (page: Page): boolean {
   return page.visionProUrl !== undefined;
 }
 </script>

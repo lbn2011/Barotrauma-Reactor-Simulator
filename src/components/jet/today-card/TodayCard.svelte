@@ -12,11 +12,11 @@ import { bestBackgroundColor } from './background-color-utils';
 import { defaultComponentConfig } from '@/config/components';
 import { logger } from '@/lib/utils/logger';
 
-function isTodayCardMediaList(media: any): boolean {
+function isTodayCardMediaList (media: any): boolean {
   return media.kind === 'list';
 }
 
-function sanitizeHtml(html: string): string {
+function sanitizeHtml (html: string): string {
   // Basic HTML sanitization for security
   if (!html) return '';
 

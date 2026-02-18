@@ -16,7 +16,7 @@ logger.info('Carousel component rendered', {
   enableBackgroundArtwork: config.carousel?.enableBackgroundArtwork || false,
 });
 
-function deriveBackgroundArtworkFromItem(item: Item) {
+function deriveBackgroundArtworkFromItem (item: Item) {
   // Implement background artwork derivation logic here
   const artwork = item.artwork;
   if (artwork) {

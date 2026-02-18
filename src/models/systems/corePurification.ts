@@ -21,7 +21,7 @@ interface CorePurificationOutput {
 }
 
 // 计算堆芯冷却剂净化系统
-function calculateCorePurification(
+function calculateCorePurification (
   input: CorePurificationInput
 ): CorePurificationOutput {
   if (!input.systemStatus) {
@@ -75,7 +75,7 @@ function calculateCorePurification(
 }
 
 // 检查净化系统状态
-function checkPurificationSystemStatus(input: CorePurificationInput): {
+function checkPurificationSystemStatus (input: CorePurificationInput): {
   status: 'normal' | 'warning' | 'alarm';
   message: string;
 } {

@@ -5,7 +5,7 @@
  */
 import { cn, type WithElementRef, type WithoutChildren } from '@/lib/utils';
 import type { HTMLAttributes } from 'svelte/elements';
-import { getPayloadConfigFromPayload, useChart, type TooltipPayload } from './chart-utils.js';
+import { getPayloadConfigFromPayload, useChart, type TooltipPayload } from './utils.js';
 import { getTooltipContext, Tooltip as TooltipPrimitive } from 'layerchart';
 import type { Snippet } from 'svelte';
 import { logger } from '@/lib/utils/logger';
@@ -17,7 +17,7 @@ import { logger } from '@/lib/utils/logger';
  * @returns Formatted label
  */
 
-function defaultFormatter(value: any, _payload: TooltipPayload[]) {
+function defaultFormatter (value: any, _payload: TooltipPayload[]) {
   return `${value}`;
 }
 
@@ -84,7 +84,10 @@ const formattedLabel = $derived.by(() => {
 // Whether to nest label
 const nestLabel = $derived(tooltipCtx.payload.length === 1 && indicator !== 'dot');
 
-logger.debug('ChartTooltip', 'Initialized with indicator type:', indicator);
+// Log initialization and changes
+$effect(() => {
+  logger.debug('ChartTooltip', 'Indicator type:', indicator);
+});
 </script>
 
 <!--

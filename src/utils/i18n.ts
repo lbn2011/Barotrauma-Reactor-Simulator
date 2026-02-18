@@ -5,7 +5,7 @@ import { getI18n } from '../stores/i18n';
 import log from '../lib/utils/logger';
 
 // Get current language
-export function getCurrentLanguage(): string {
+export function getCurrentLanguage (): string {
   const i18n = getI18n();
   const language = i18n.language;
   log.trace(`Getting current language: ${language}`);
@@ -13,7 +13,7 @@ export function getCurrentLanguage(): string {
 }
 
 // Get current text direction
-export function getTextDirection(): 'ltr' | 'rtl' {
+export function getTextDirection (): 'ltr' | 'rtl' {
   const i18n = getI18n();
   const direction = i18n.direction;
   log.trace(`Getting text direction: ${direction}`);
@@ -21,14 +21,14 @@ export function getTextDirection(): 'ltr' | 'rtl' {
 }
 
 // Check if current language is RTL
-export function isRTL(): boolean {
+export function isRTL (): boolean {
   const result = getTextDirection() === 'rtl';
   log.trace(`Is RTL language: ${result}`);
   return result;
 }
 
 // Translate text
-export function t(key: string, options?: any): string {
+export function t (key: string, options?: any): string {
   const i18n = getI18n();
   const translation = i18n.t(key, options);
   log.trace(`Translating text: ${key} -> ${translation}`);
@@ -36,7 +36,7 @@ export function t(key: string, options?: any): string {
 }
 
 // Format number
-export function formatNumber(
+export function formatNumber (
   value: number,
   options?: Intl.NumberFormatOptions
 ): string {
@@ -47,7 +47,7 @@ export function formatNumber(
 }
 
 // Format date
-export function formatDate(
+export function formatDate (
   value: Date | string,
   options?: Intl.DateTimeFormatOptions
 ): string {
@@ -58,7 +58,7 @@ export function formatDate(
 }
 
 // Format currency
-export function formatCurrency(
+export function formatCurrency (
   value: number,
   currency?: string,
   options?: Intl.NumberFormatOptions
@@ -70,7 +70,7 @@ export function formatCurrency(
 }
 
 // Get language name in current language
-export function getLanguageName(languageCode: string): string {
+export function getLanguageName (languageCode: string): string {
   log.trace(`Getting language name: ${languageCode}`);
   const languageNames: Record<string, string> = {
     'zh-CN': t('Chinese'),

@@ -73,7 +73,7 @@ interface PumpPerformanceOutput {
  * - ρ: 流体密度
  * - v: 流速
  */
-export function calculateFlowResistance(
+export function calculateFlowResistance (
   input: FlowResistanceInput
 ): FlowResistanceOutput {
   // 计算管道流动阻力
@@ -99,7 +99,7 @@ export function calculateFlowResistance(
  * - 2000 ≤ Re < 4000: 过渡流
  * - Re ≥ 4000: 湍流
  */
-export function calculateReynoldsNumber(
+export function calculateReynoldsNumber (
   input: ReynoldsNumberInput
 ): ReynoldsNumberOutput {
   // 计算雷诺数
@@ -139,7 +139,7 @@ export function calculateReynoldsNumber(
  * - g: 重力加速度
  * - η_pump: 泵效率
  */
-export function calculatePumpPerformance(
+export function calculatePumpPerformance (
   input: PumpPerformanceInput
 ): PumpPerformanceOutput {
   // 计算扬程
@@ -168,7 +168,7 @@ export function calculatePumpPerformance(
  * - 层流状态：f = 64 / Re
  * - 湍流状态：使用简化的Colebrook公式
  */
-export function calculateFrictionCoefficient(
+export function calculateFrictionCoefficient (
   Re: number,
   roughness: number,
   D: number

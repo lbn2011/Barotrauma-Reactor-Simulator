@@ -18,7 +18,7 @@ logger.info('AmbientBackgroundArtwork component rendered', {
 let isBackgroundImageLoaded = false;
 let backgroundImage = buildSrc(artwork) || '';
 
-function loadBackgroundImage() {
+function loadBackgroundImage () {
   if (backgroundImage) {
     // Preload strategy: create image object to load in background
     const img = new Image();
@@ -60,7 +60,7 @@ const handleIntersectionOberserverUpdate = (isIntersectingViewport: boolean) => 
 /**
  * Builds a source URL for an artwork based on its template and parameters
  */
-function buildSrc(
+function buildSrc (
   artwork: JetArtworkType,
   options: {
     crop?: string;
@@ -98,7 +98,7 @@ function buildSrc(
   return imageUrl;
 }
 
-function intersectionObserver(node: HTMLElement, options: any) {
+function intersectionObserver (node: HTMLElement, options: any) {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -113,7 +113,7 @@ function intersectionObserver(node: HTMLElement, options: any) {
   observer.observe(node);
 
   return {
-    destroy() {
+    destroy () {
       observer.disconnect();
     },
   };
