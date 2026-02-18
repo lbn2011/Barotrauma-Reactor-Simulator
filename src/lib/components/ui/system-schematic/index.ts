@@ -1,1 +1,5 @@
-export { default as SystemSchematic } from './system-schematic.svelte';
+import SystemSchematic from './system-schematic.svelte';
+
+export {
+  SystemSchematic
+};

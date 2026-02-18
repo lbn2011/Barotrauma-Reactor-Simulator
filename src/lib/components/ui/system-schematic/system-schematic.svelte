@@ -1,18 +1,20 @@
 <script lang="ts">
+import { logger } from '../../../../utils/logger';
+
 /**
- * 系统示意图组件
- * 用于可视化反应堆系统的各个节点和连接
+ * System Schematic Component
+ * Visualizes reactor system nodes and connections
  */
 
-// 系统节点类型
+// System node type
 /**
- * 系统节点接口
- * @property id 节点唯一标识符
- * @property name 节点名称
- * @property type 节点类型
- * @property position 节点位置坐标
- * @property status 节点状态
- * @property parameters 节点参数
+ * System node interface
+ * @property id Node unique identifier
+ * @property name Node name
+ * @property type Node type
+ * @property position Node position coordinates
+ * @property status Node status
+ * @property parameters Node parameters
  */
 interface SystemNode {
   id: string;
@@ -37,17 +39,17 @@ interface SystemNode {
   };
 }
 
-// 系统连接类型
+// System connection type
 /**
- * 系统连接接口
- * @property id 连接唯一标识符
- * @property sourceId 源节点ID
- * @property targetId 目标节点ID
- * @property type 连接类型
- * @property direction 连接方向
- * @property status 连接状态
- * @property flowRate 流量
- * @property capacity 容量
+ * System connection interface
+ * @property id Connection unique identifier
+ * @property sourceId Source node ID
+ * @property targetId Target node ID
+ * @property type Connection type
+ * @property direction Connection direction
+ * @property status Connection status
+ * @property flowRate Flow rate
+ * @property capacity Capacity
  */
 interface SystemConnection {
   id: string;
@@ -60,101 +62,89 @@ interface SystemConnection {
   capacity?: number;
 }
 
-// 系统状态类型
-/**
- * 系统示意图属性接口
- * @property nodes 节点数组
- * @property connections 连接数组
- * @property width 示意图宽度
- * @property height 示意图高度
- * @property interactive 是否可交互
- * @property showLabels 是否显示标签
- * @property showParameters 是否显示参数
- */
-
-// 组件属性
-export let nodes: SystemNode[] = []; // 系统节点数组
-export let connections: SystemConnection[] = []; // 系统连接数组
-export let width: number = 800; // 示意图宽度
-export let height: number = 600; // 示意图高度
-export let interactive: boolean = true; // 是否可交互
-export let showLabels: boolean = true; // 是否显示标签
-export let showParameters: boolean = true; // 是否显示参数
+// Component properties
+export let nodes: SystemNode[] = []; // System nodes array
+export let connections: SystemConnection[] = []; // System connections array
+export let width: number = 800; // Schematic width
+export let height: number = 600; // Schematic height
+export let interactive: boolean = true; // Whether interactive
+export let showLabels: boolean = true; // Whether to show labels
+export let showParameters: boolean = true; // Whether to show parameters
 
 /**
- * 获取节点状态对应的颜色
- * @param status 节点状态
- * @returns 对应的颜色代码
+ * Get color corresponding to node status
+ * @param status Node status
+ * @returns Corresponding color code
  */
 function getNodeStatusColor (status: string) {
   switch (status) {
   case 'normal':
-    return '#00ff00'; // 正常状态 - 绿色
+    return '#00ff00'; // Normal status - green
   case 'warning':
-    return '#ffa500'; // 警告状态 - 橙色
+    return '#ffa500'; // Warning status - orange
   case 'alarm':
-    return '#ff0000'; // 警报状态 - 红色
+    return '#ff0000'; // Alarm status - red
   case 'offline':
-    return '#808080'; // 离线状态 - 灰色
+    return '#808080'; // Offline status - gray
   default:
     return '#00ff00';
   }
 }
 
 /**
- * 获取连接状态对应的颜色
- * @param status 连接状态
- * @returns 对应的颜色代码
+ * Get color corresponding to connection status
+ * @param status Connection status
+ * @returns Corresponding color code
  */
 function getConnectionStatusColor (status: string) {
   switch (status) {
   case 'normal':
-    return '#00ff00'; // 正常状态 - 绿色
+    return '#00ff00'; // Normal status - green
   case 'warning':
-    return '#ffa500'; // 警告状态 - 橙色
+    return '#ffa500'; // Warning status - orange
   case 'alarm':
-    return '#ff0000'; // 警报状态 - 红色
+    return '#ff0000'; // Alarm status - red
   case 'offline':
-    return '#808080'; // 离线状态 - 灰色
+    return '#808080'; // Offline status - gray
   default:
     return '#00ff00';
   }
 }
 
 /**
- * 获取节点类型对应的图标
- * @param type 节点类型
- * @returns 对应的图标
+ * Get icon corresponding to node type
+ * @param type Node type
+ * @returns Corresponding icon
  */
 function getNodeIcon (type: string) {
   switch (type) {
   case 'reactor':
-    return '⚛️'; // 反应堆图标
+    return '⚛️'; // Reactor icon
   case 'turbine':
-    return '🌀'; // 汽轮机图标
+    return '🌀'; // Turbine icon
   case 'condenser':
-    return '🔄'; // 凝汽器图标
+    return '🔄'; // Condenser icon
   case 'deaerator':
-    return '💧'; // 除氧器图标
+    return '💧'; // Deaerator icon
   case 'pump':
-    return '🔋'; // 泵图标
+    return '🔋'; // Pump icon
   case 'valve':
-    return '🚪'; // 阀门图标
+    return '🚪'; // Valve icon
   case 'tank':
-    return '📦'; // 储罐图标
+    return '📦'; // Tank icon
   case 'heat_exchanger':
-    return '🔥'; // 热交换器图标
+    return '🔥'; // Heat exchanger icon
   default:
-    return '📌'; // 默认图标
+    return '📌'; // Default icon
   }
 }
 
 /**
- * 计算箭头位置
- * @param source 源节点位置
- * @param target 目标节点位置
- * @param nodeRadius 节点半径
- * @returns 箭头的起始和结束位置
+ * Calculate arrow position
+ * @param source Source node position
+ * @param target Target node position
+ * @param nodeRadius Node radius
+ * @returns Arrow start and end positions
  */
 function calculateArrowPosition (
   source: { x: number; y: number },
@@ -163,51 +153,70 @@ function calculateArrowPosition (
 ) {
   const angle = Math.atan2(target.y - source.y, target.x - source.x);
 
-  // 计算箭头起始点（源节点边缘）
+  // Calculate arrow start point (source node edge)
   const sourceX = source.x + Math.cos(angle) * nodeRadius;
   const sourceY = source.y + Math.sin(angle) * nodeRadius;
 
-  // 计算箭头结束点（目标节点边缘）
+  // Calculate arrow end point (target node edge)
   const targetX = target.x - Math.cos(angle) * nodeRadius;
   const targetY = target.y - Math.sin(angle) * nodeRadius;
 
   return { sourceX, sourceY, targetX, targetY };
 }
+
+/**
+ * Handle node click event
+ * @param nodeId Node ID
+ */
+function handleNodeClick(nodeId: string) {
+  logger.info(`System Schematic: Node clicked - ${nodeId}`);
+}
+
+// Log component initialization
+logger.info('System Schematic component initialized', {
+  nodesCount: nodes.length,
+  connectionsCount: connections.length,
+  width,
+  height,
+  interactive,
+  showLabels,
+  showParameters
+});
 </script>
 
 <!--
-  系统示意图组件
+  System Schematic Component
 
-  功能：
-  - 可视化反应堆系统的各个节点和连接
-  - 显示节点状态和参数
-  - 支持交互式操作
-  - 动态更新连接状态
-  - 响应式设计
+  Features:
+  - Visualize reactor system nodes and connections
+  - Display node status and parameters
+  - Support interactive operations
+  - Dynamic connection status updates
+  - Responsive design
 
-  界面元素：
-  - 系统节点（带图标和状态颜色）
-  - 节点连接线（带箭头和流量信息）
-  - 节点标签
-  - 节点参数显示
-  - 连接标签
+  UI Elements:
+  - System nodes (with icons and status colors)
+  - Node connections (with arrows and flow information)
+  - Node labels
+  - Node parameter display
+  - Connection labels
 
-  技术实现：
-  - 使用SVG绘制连接线和箭头
-  - 响应式状态管理
-  - 动态样式计算
-  - 交互式事件处理
-  - 条件渲染
+  Technical Implementation:
+  - SVG for drawing connections and arrows
+  - Reactive state management
+  - Dynamic style calculation
+  - Interactive event handling
+  - Conditional rendering
 -->
 
 <div class="system-schematic">
-  <h3 class="text-lg font-semibold text-white mb-4">系统流程图</h3>
+  <h3 class="text-lg font-semibold text-white mb-4">System Flow Diagram</h3>
 
   <div
     class="schematic-container bg-gray-900 border border-gray-700 rounded-lg overflow-hidden"
     style={`width: ${width}px; height: ${height}px; position: relative`}
   >
-    <!-- 绘制连接线 -->
+    <!-- Draw connections -->
     {#each connections as connection (connection.id)}
       {#if nodes.find((n) => n.id === connection.sourceId) && nodes.find((n) => n.id === connection.targetId)}
         {@const sourceNode = nodes.find((n) => n.id === connection.sourceId)!}
@@ -226,14 +235,14 @@ function calculateArrowPosition (
             stroke-width="2"
             stroke-dasharray={connection.status === 'offline' ? '5,5' : 'none'}
           />
-          <!-- 箭头 -->
+          <!-- Arrow -->
           <polygon
             points={`${arrowPos.targetX},${arrowPos.targetY} ${arrowPos.targetX - 10 * Math.cos(Math.atan2(targetNode.position.y - sourceNode.position.y, targetNode.position.x - sourceNode.position.x) - Math.PI / 6)},${arrowPos.targetY - 10 * Math.sin(Math.atan2(targetNode.position.y - sourceNode.position.y, targetNode.position.x - sourceNode.position.x) - Math.PI / 6)} ${arrowPos.targetX - 10 * Math.cos(Math.atan2(targetNode.position.y - sourceNode.position.y, targetNode.position.x - sourceNode.position.x) + Math.PI / 6)},${arrowPos.targetY - 10 * Math.sin(Math.atan2(targetNode.position.y - sourceNode.position.y, targetNode.position.x - sourceNode.position.x) + Math.PI / 6)}`}
             fill={getConnectionStatusColor(connection.status)}
           />
         </svg>
 
-        <!-- 连接标签 -->
+        <!-- Connection label -->
         {#if showLabels}
           <div
             style={`position: absolute; left: ${(arrowPos.sourceX + arrowPos.targetX) / 2}px; top: ${(arrowPos.sourceY + arrowPos.targetY) / 2}px; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.7); padding: 2px 6px; border-radius: 4px; font-size: 10px; color: white; z-index: 2`}
@@ -248,16 +257,16 @@ function calculateArrowPosition (
       {/if}
     {/each}
 
-    <!-- 绘制节点 -->
+    <!-- Draw nodes -->
     {#each nodes as node (node.id)}
       <div
         class={`system-node cursor-pointer transition-all duration-300 ${interactive ? 'hover:scale-105' : ''}`}
         style={`position: absolute; left: ${node.position.x}px; top: ${node.position.y}px; transform: translate(-50%, -50%); z-index: 3`}
-        on:click={() => console.log('Node clicked:', node.id)}
+        on:click={() => handleNodeClick(node.id)}
         on:keydown={(e) => {
           if ((e.key === 'Enter' || e.key === ' ') && interactive) {
             e.preventDefault();
-            console.log('Node clicked:', node.id);
+            handleNodeClick(node.id);
           }
         }}
         role="button"
@@ -271,7 +280,7 @@ function calculateArrowPosition (
           <span style="font-size: 24px">{getNodeIcon(node.type)}</span>
         </div>
 
-        <!-- 节点标签 -->
+        <!-- Node label -->
         {#if showLabels}
           <div
             style="position: absolute; top: 70px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 12px; color: white; white-space: nowrap"
@@ -280,7 +289,7 @@ function calculateArrowPosition (
           </div>
         {/if}
 
-        <!-- 节点参数 -->
+        <!-- Node parameters -->
         {#if showParameters && node.parameters}
           <div
             style="position: absolute; top: -40px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.7); padding: 4px 8px; border-radius: 4px; font-size: 10px; color: white; white-space: nowrap"

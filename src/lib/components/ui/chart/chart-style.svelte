@@ -1,19 +1,20 @@
 <script lang="ts">
 /**
- * 图表样式组件
- * 用于生成图表的CSS样式
+ * Chart Style Component
+ * Used to generate CSS styles for charts
  */
 import { THEMES, type ChartConfig } from './chart-utils.js';
+import { logger } from '@/lib/utils/logger';
 
-// 组件属性
+// Component properties
 let { id, config }: { id: string; config: ChartConfig } = $props();
 
-// 派生的颜色配置
+// Derived color configuration
 const colorConfig = $derived(
   config ? Object.entries(config).filter(([, config]) => config.theme || config.color) : null
 );
 
-// 派生的主题内容
+// Derived theme content
 const themeContents = $derived.by(() => {
   if (!colorConfig || !colorConfig.length) return;
 
@@ -33,23 +34,25 @@ const themeContents = $derived.by(() => {
 
   return themeContents.join('\n');
 });
+
+logger.debug('ChartStyle', `Initialized for chart ID: ${id}`);
 </script>
 
 <!--
-  图表样式组件
+  Chart Style Component
 
-  功能：
-  - 根据图表配置生成CSS样式
-  - 支持不同主题的颜色配置
-  - 为图表元素设置CSS变量
-  - 动态生成样式标签
+  Features:
+  - Generates CSS styles based on chart configuration
+  - Supports color configuration for different themes
+  - Sets CSS variables for chart elements
+  - Dynamically generates style tags
 
-  技术实现：
-  - 使用 Svelte 5 的新语法 ($props, $derived)
-  - 使用 Object.entries 处理配置对象
-  - 生成 CSS 变量
-  - 条件渲染样式标签
-  - 使用 {#key} 指令确保样式更新
+  Technical Implementation:
+  - Uses Svelte 5 new syntax ($props, $derived)
+  - Uses Object.entries to process configuration objects
+  - Generates CSS variables
+  - Conditionally renders style tags
+  - Uses {#key} directive to ensure style updates
 -->
 
 {#if themeContents}

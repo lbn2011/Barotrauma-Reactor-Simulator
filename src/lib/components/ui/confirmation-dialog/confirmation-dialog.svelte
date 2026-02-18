@@ -1,51 +1,55 @@
 <script lang="ts">
 /**
- * 确认对话框组件
- * 用于显示操作确认信息，特别是高风险操作
+ * Confirmation Dialog Component
+ * Used to display operation confirmation messages, especially for high-risk operations
  */
 import { Button } from '../button';
+import { logger } from '@/lib/utils/logger';
 
-// 组件属性
-export let isOpen = false; // 是否打开对话框
-export let title = '确认操作'; // 对话框标题
-export let message = '您确定要执行此操作吗？'; // 对话框消息
-export let confirmText = '确认'; // 确认按钮文本
-export let cancelText = '取消'; // 取消按钮文本
-export let danger = false; // 是否为危险操作
+// Component properties
+export let isOpen = false; // Whether the dialog is open
+export let title = 'Confirm Operation'; // Dialog title
+export let message = 'Are you sure you want to perform this operation?'; // Dialog message
+export let confirmText = 'Confirm'; // Confirm button text
+export let cancelText = 'Cancel'; // Cancel button text
+export let danger = false; // Whether it's a dangerous operation
 
-// 内部状态
-let resolve: ((value: boolean) => void) | null = null; // Promise解析函数
+// Internal state
+let resolve: ((value: boolean) => void) | null = null; // Promise resolve function
 
 /**
- * 确认操作
- * 解析Promise为true并关闭对话框
+ * Confirm operation
+ * Resolve Promise to true and close the dialog
  */
 function confirm () {
   if (resolve) {
     resolve(true);
     resolve = null;
+    logger.info('ConfirmationDialog', `Operation confirmed: ${title}`);
   }
   isOpen = false;
 }
 
 /**
- * 取消操作
- * 解析Promise为false并关闭对话框
+ * Cancel operation
+ * Resolve Promise to false and close the dialog
  */
 function cancel () {
   if (resolve) {
     resolve(false);
     resolve = null;
+    logger.info('ConfirmationDialog', `Operation cancelled: ${title}`);
   }
   isOpen = false;
 }
 
 /**
- * 打开对话框
- * @returns Promise<boolean> 操作是否被确认
+ * Open the dialog
+ * @returns Promise<boolean> Whether the operation was confirmed
  */
 export async function open (): Promise<boolean> {
   isOpen = true;
+  logger.debug('ConfirmationDialog', `Dialog opened: ${title}`);
   return new Promise((_resolve) => {
     resolve = _resolve;
   });
@@ -53,27 +57,27 @@ export async function open (): Promise<boolean> {
 </script>
 
 <!--
-  确认对话框组件
+  Confirmation Dialog Component
 
-  功能：
-  - 显示操作确认信息
-  - 支持自定义标题、消息和按钮文本
-  - 支持危险操作样式
-  - 返回操作确认状态
-  - 模态对话框效果
+  Features:
+  - Displays operation confirmation messages
+  - Supports custom title, message, and button text
+  - Supports danger operation styling
+  - Returns operation confirmation status
+  - Modal dialog effect
 
-  界面元素：
-  - 对话框标题
-  - 确认消息
-  - 取消按钮
-  - 确认按钮（支持危险样式）
+  UI Elements:
+  - Dialog title
+  - Confirmation message
+  - Cancel button
+  - Confirm button (supports danger styling)
 
-  技术实现：
-  - Promise异步处理
-  - 模态对话框
-  - 响应式设计
-  - 条件渲染
-  - 事件处理
+  Technical Implementation:
+  - Promise asynchronous processing
+  - Modal dialog
+  - Responsive design
+  - Conditional rendering
+  - Event handling
 -->
 
 {#if isOpen}

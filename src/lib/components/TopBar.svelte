@@ -1,85 +1,94 @@
 <script lang="ts">
 /**
- * 顶部导航栏组件
- * 显示应用标题、核心控制按钮和主题切换功能
+ * Top Bar Component
+ * Displays application title, core control buttons, and theme switching functionality
  */
-import { Button } from '../components/ui/button';
+import { Button } from './ui/button';
 import { startSimulation, stopSimulation, resetSimulation } from '../stores/reactorStore';
 import { reactorStore } from '../stores/reactorStore';
+import { logger } from '../utils/logger';
 
-// 订阅状态
+// Subscribe to state
 let isRunning = $state(false);
 reactorStore.subscribe((state) => {
   isRunning = state.isRunning;
+  logger.debug('TopBar', `Simulation state updated: ${isRunning ? 'running' : 'stopped'}`);
 });
 
-// 主题状态管理
-let darkMode = $state(false); // 当前主题模式
+// Theme state management
+let darkMode = $state(false); // Current theme mode
 
 /**
- * 检查用户首选项或本地存储中的主题设置
- * 在组件初始化时执行
+ * Check user preferences or saved theme settings in local storage
+ * Executed during component initialization
  */
 $effect(() => {
   if (typeof window !== 'undefined') {
-    const savedTheme = localStorage.getItem('theme'); // 从本地存储获取保存的主题
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; // 检查系统偏好的主题
+    const savedTheme = localStorage.getItem('theme'); // Get saved theme from local storage
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; // Check system preferred theme
 
-    // 优先使用本地存储的主题设置，否则使用系统偏好
+    logger.debug('TopBar', 'Initializing theme settings');
+    
+    // Use saved theme setting if available, otherwise use system preference
     if (savedTheme) {
       darkMode = savedTheme === 'dark';
+      logger.debug('TopBar', `Loaded saved theme: ${savedTheme}`);
     } else {
       darkMode = prefersDark;
+      logger.debug('TopBar', `Using system preferred theme: ${prefersDark ? 'dark' : 'light'}`);
     }
 
-    updateTheme(); // 应用主题设置
+    updateTheme(); // Apply theme settings
   }
 });
 
 /**
- * 切换主题模式
- * 保存主题设置到本地存储并更新界面
+ * Toggle theme mode
+ * Save theme setting to local storage and update interface
  */
 function toggleTheme () {
-  darkMode = !darkMode; // 切换主题状态
-  localStorage.setItem('theme', darkMode ? 'dark' : 'light'); // 保存主题设置
-  updateTheme(); // 应用主题设置
+  darkMode = !darkMode; // Toggle theme state
+  localStorage.setItem('theme', darkMode ? 'dark' : 'light'); // Save theme setting
+  logger.info('TopBar', `Theme toggled to: ${darkMode ? 'dark' : 'light'}`);
+  updateTheme(); // Apply theme settings
 }
 
 /**
- * 更新主题设置
- * 根据当前主题模式添加或移除dark类
+ * Update theme settings
+ * Add or remove dark class based on current theme mode
  */
 function updateTheme () {
   if (typeof document !== 'undefined') {
     if (darkMode) {
-      document.documentElement.classList.add('dark'); // 添加dark类启用深色模式
+      document.documentElement.classList.add('dark'); // Add dark class to enable dark mode
+      logger.debug('TopBar', 'Applied dark theme');
     } else {
-      document.documentElement.classList.remove('dark'); // 移除dark类启用浅色模式
+      document.documentElement.classList.remove('dark'); // Remove dark class to enable light mode
+      logger.debug('TopBar', 'Applied light theme');
     }
   }
 }
 </script>
 
 <!--
-  顶部导航栏组件
+  Top Bar Component
 
-  功能：
-  - 显示应用标题 "RBMK-1000模拟器"
-  - 提供主题切换功能
-  - 响应式设计
-  - 保存用户主题偏好
+  Features:
+  - Displays application title "RBMK-1000 Simulator"
+  - Provides theme switching functionality
+  - Responsive design
+  - Saves user theme preferences
 
-  界面元素：
-  - 左侧：应用标题
-  - 右侧：主题切换按钮
+  UI Elements:
+  - Left: Application title
+  - Right: Theme toggle button
 
-  技术实现：
-  - 使用响应式状态管理 ($state)
-  - 使用副作用 ($effect) 初始化主题
-  - 本地存储保存主题偏好
-  - 系统偏好检测
-  - 条件渲染主题图标
+  Technical Implementation:
+  - Uses reactive state management ($state)
+  - Uses side effects ($effect) for theme initialization
+  - Local storage for theme preference persistence
+  - System preference detection
+  - Conditional rendering of theme icons
 -->
 
 <div
@@ -87,7 +96,7 @@ function updateTheme () {
 >
   <div class="top-bar-left flex items-center">
     <h1 class="text-lg font-bold text-light-foreground dark:text-dark-foreground">
-      RBMK-1000模拟器
+      RBMK-1000 Simulator
     </h1>
   </div>
 
@@ -95,23 +104,32 @@ function updateTheme () {
     {#if !isRunning}
       <Button
         class="bg-light-primary dark:bg-dark-primary hover:bg-light-primary/90 dark:hover:bg-dark-primary/90 text-light-primary-foreground dark:text-dark-primary-foreground"
-        on:click={startSimulation}
+        on:click={() => {
+          logger.info('TopBar', 'Starting simulation');
+          startSimulation();
+        }}
       >
-        启动模拟
+        Start Simulation
       </Button>
     {:else}
       <Button
         class="bg-light-secondary dark:bg-dark-secondary hover:bg-light-secondary/90 dark:hover:bg-dark-secondary/90 text-light-secondary-foreground dark:text-dark-secondary-foreground"
-        on:click={stopSimulation}
+        on:click={() => {
+          logger.info('TopBar', 'Stopping simulation');
+          stopSimulation();
+        }}
       >
-        停止模拟
+        Stop Simulation
       </Button>
     {/if}
     <Button
       class="bg-light-destructive dark:bg-dark-destructive hover:bg-light-destructive/90 dark:hover:bg-dark-destructive/90 text-light-destructive-foreground dark:text-dark-destructive-foreground"
-      on:click={resetSimulation}
+      on:click={() => {
+        logger.info('TopBar', 'Resetting simulation');
+        resetSimulation();
+      }}
     >
-      重置模拟
+      Reset Simulation
     </Button>
   </div>
 
@@ -124,9 +142,9 @@ function updateTheme () {
       aria-label="Toggle theme"
     >
       {#if darkMode}
-        <span class="text-lg">☀️</span> <!-- 浅色模式图标 -->
+        <span class="text-lg">☀️</span> <!-- Light mode icon -->
       {:else}
-        <span class="text-lg">🌙</span> <!-- 深色模式图标 -->
+        <span class="text-lg">🌙</span> <!-- Dark mode icon -->
       {/if}
     </Button>
   </div>

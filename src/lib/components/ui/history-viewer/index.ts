@@ -1,1 +1,5 @@
-export { default as HistoryViewer } from './history-viewer.svelte';
+import HistoryViewer from './history-viewer.svelte';
+
+export {
+  HistoryViewer
+};

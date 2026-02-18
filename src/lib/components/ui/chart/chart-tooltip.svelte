@@ -1,40 +1,41 @@
 <script lang="ts">
 /**
- * 图表提示框组件
- * 用于显示图表数据的详细信息
+ * Chart Tooltip Component
+ * Used to display detailed information about chart data
  */
 import { cn, type WithElementRef, type WithoutChildren } from '@/lib/utils';
 import type { HTMLAttributes } from 'svelte/elements';
 import { getPayloadConfigFromPayload, useChart, type TooltipPayload } from './chart-utils.js';
 import { getTooltipContext, Tooltip as TooltipPrimitive } from 'layerchart';
 import type { Snippet } from 'svelte';
+import { logger } from '@/lib/utils/logger';
 
 /**
- * 默认标签格式化函数
- * @param value 标签值
- * @param _payload 提示框数据
- * @returns 格式化后的标签
+ * Default label formatter function
+ * @param value Label value
+ * @param _payload Tooltip data
+ * @returns Formatted label
  */
 
 function defaultFormatter (value: any, _payload: TooltipPayload[]) {
   return `${value}`;
 }
 
-// 组件属性
+// Component properties
 let {
-  ref = $bindable(null), // 元素引用
-  class: className, // 自定义类名
-  hideLabel = false, // 是否隐藏标签
-  indicator = 'dot', // 指示器类型
-  hideIndicator = false, // 是否隐藏指示器
-  labelKey, // 标签键
-  label, // 标签文本
-  labelFormatter = defaultFormatter, // 标签格式化函数
-  labelClassName, // 标签类名
-  formatter, // 自定义格式化片段
-  nameKey, // 名称键
-  color, // 颜色
-  ...restProps // 其他HTML属性
+  ref = $bindable(null), // Element reference
+  class: className, // Custom class name
+  hideLabel = false, // Whether to hide label
+  indicator = 'dot', // Indicator type
+  hideIndicator = false, // Whether to hide indicator
+  labelKey, // Label key
+  label, // Label text
+  labelFormatter = defaultFormatter, // Label formatter function
+  labelClassName, // Label class name
+  formatter, // Custom formatter snippet
+  nameKey, // Name key
+  color, // Color
+  ...restProps // Other HTML attributes
 }: WithoutChildren<WithElementRef<HTMLAttributes<HTMLDivElement>>> & {
   hideLabel?: boolean;
   label?: string;
@@ -57,11 +58,11 @@ let {
   >;
 } = $props();
 
-// 获取图表上下文
+// Get chart context
 const chart = useChart();
 const tooltipCtx = getTooltipContext();
 
-// 格式化标签
+// Format label
 const formattedLabel = $derived.by(() => {
   if (hideLabel || !tooltipCtx.payload?.length) return null;
 
@@ -80,35 +81,37 @@ const formattedLabel = $derived.by(() => {
   return labelFormatter(value, tooltipCtx.payload);
 });
 
-// 是否嵌套标签
+// Whether to nest label
 const nestLabel = $derived(tooltipCtx.payload.length === 1 && indicator !== 'dot');
+
+logger.debug('ChartTooltip', 'Initialized with indicator type:', indicator);
 </script>
 
 <!--
-  图表提示框组件
+  Chart Tooltip Component
 
-  功能：
-  - 显示图表数据的详细信息
-  - 支持自定义标签和格式化
-  - 支持不同类型的指示器（点、线、虚线）
-  - 支持自定义颜色
-  - 响应式布局
-  - 支持嵌套标签
+  Features:
+  - Displays detailed information about chart data
+  - Supports custom labels and formatting
+  - Supports different types of indicators (dot, line, dashed)
+  - Supports custom colors
+  - Responsive layout
+  - Supports nested labels
 
-  界面元素：
-  - 提示框容器
-  - 标签显示
-  - 数据项列表
-  - 指示器
-  - 数据值
+  UI Elements:
+  - Tooltip container
+  - Label display
+  - Data item list
+  - Indicator
+  - Data values
 
-  技术实现：
-  - 使用 LayerChart 的 TooltipPrimitive
-  - 使用 Svelte 5 的新语法 ($props, $bindable, $derived)
-  - 条件渲染
-  - 自定义格式化函数
-  - 动态样式
-  - 片段渲染
+  Technical Implementation:
+  - Uses LayerChart's TooltipPrimitive
+  - Uses Svelte 5 new syntax ($props, $bindable, $derived)
+  - Conditional rendering
+  - Custom formatter functions
+  - Dynamic styling
+  - Snippet rendering
 -->
 
 {#snippet TooltipLabel()}

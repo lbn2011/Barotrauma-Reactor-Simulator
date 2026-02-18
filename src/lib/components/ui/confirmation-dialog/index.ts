@@ -1,1 +1,5 @@
-export { default as ConfirmationDialog } from './confirmation-dialog.svelte';
+import ConfirmationDialog from './confirmation-dialog.svelte';
+
+export {
+  ConfirmationDialog
+};

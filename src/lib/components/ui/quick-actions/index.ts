@@ -1,1 +1,5 @@
-export { default as QuickActions } from './quick-actions.svelte';
+import QuickActions from './quick-actions.svelte';
+
+export {
+  QuickActions
+};

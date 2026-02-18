@@ -1,43 +1,43 @@
-// 日志工具使用示例
-import log from './logger';
+// Logger usage example
+import { logger as log } from './logger';
 
-// 普通信息日志
-log.info('应用启动');
-log.info('当前用户:', { name: '张三', role: 'admin' });
+// Info logs
+log.info('Application started');
+log.info('Current user:', { name: 'John Doe', role: 'admin' });
 
-// 成功信息日志
-log.success('数据加载成功');
-log.success('操作完成', { result: 'success' });
+// Success logs
+log.success('Data loaded successfully');
+log.success('Operation completed', { result: 'success' });
 
-// 警告信息日志
-log.warn('内存使用过高');
-log.warn('API 响应缓慢', { responseTime: 1500 });
+// Warning logs
+log.warn('Memory usage is high');
+log.warn('API response is slow', { responseTime: 1500 });
 
-// 错误信息日志
-log.error('网络请求失败');
-log.error('数据解析错误', { error: 'Invalid JSON' });
+// Error logs
+log.error('Network request failed');
+log.error('Data parsing error', { error: 'Invalid JSON' });
 
-// 调试信息日志
-log.debug('组件挂载');
-log.debug('状态更新', { state: { count: 10 } });
+// Debug logs
+log.debug('Component mounted');
+log.debug('State updated', { state: { count: 10 } });
 
-// 追踪信息日志
-log.trace('函数执行开始');
-log.trace('循环执行', { iteration: 5 });
+// Trace logs
+log.trace('Function execution started');
+log.trace('Loop execution', { iteration: 5 });
 
-// 致命错误信息日志
-log.fatal('数据库连接失败');
-log.fatal('系统崩溃', { error: 'Out of memory' });
+// Fatal logs
+log.fatal('Database connection failed');
+log.fatal('System crash', { error: 'Out of memory' });
 
-// 清除控制台
+// Clear console
 log.clear();
 
-// 统计信息日志
+// Stats logs
 log.stats({ memory: '512MB', cpu: '25%', uptime: '10m' });
 
-// 时间记录
-log.time('API 请求');
-// 模拟 API 请求
+// Time logging
+log.time('API request');
+// Simulate API request
 setTimeout(() => {
-  log.timeEnd('API 请求');
+  log.timeEnd('API request');
 }, 1000);

@@ -20,26 +20,28 @@ export interface QuickActionsProps {
 </script>
 
 <script lang="ts">
+import { logger } from '../../../../utils/logger';
+
 /**
- * 快捷操作组件
- * 用于显示和执行系统的快捷操作
+ * Quick Actions Component
+ * Displays and executes system quick actions
  */
 import { Button } from '../button';
 import { ConfirmationDialog } from '../confirmation-dialog';
 
-// 快捷操作类型
+// Quick action type
 /**
- * 快捷操作接口
- * @property id 操作唯一标识符
- * @property name 操作名称
- * @property icon 操作图标
- * @property category 操作分类
- * @property shortcut 快捷键
- * @property riskLevel 风险级别
- * @property usageFrequency 使用频率
- * @property lastUsedTime 最后使用时间
- * @property enabled 是否启用
- * @property action 操作函数
+ * Quick action interface
+ * @property id Action unique identifier
+ * @property name Action name
+ * @property icon Action icon
+ * @property category Action category
+ * @property shortcut Shortcut key
+ * @property riskLevel Risk level
+ * @property usageFrequency Usage frequency
+ * @property lastUsedTime Last used time
+ * @property enabled Whether enabled
+ * @property action Action function
  */
 interface QuickAction {
   id: string;
@@ -54,81 +56,114 @@ interface QuickAction {
   action: () => void;
 }
 
-// 快捷操作配置
-export let actions: QuickAction[] = []; // 快捷操作数组
-export let layout: 'grid' | 'list' = 'grid'; // 布局类型
-export let showLabels: boolean = true; // 是否显示标签
+// Quick action configuration
+export let actions: QuickAction[] = []; // Quick actions array
+export let layout: 'grid' | 'list' = 'grid'; // Layout type
+export let showLabels: boolean = true; // Whether to show labels
 
-// 确认对话框
-let confirmationDialog: any; // 确认对话框实例
+// Confirmation dialog
+let confirmationDialog: any; // Confirmation dialog instance
 
 /**
- * 执行操作
- * @param action 要执行的操作
+ * Execute action
+ * @param action Action to execute
  */
 async function executeAction (action: QuickAction) {
-  // 对于高风险操作，显示确认对话框
+  logger.info(`Quick Actions: Executing action - ${action.name} (${action.id})`, {
+    category: action.category,
+    riskLevel: action.riskLevel,
+    shortcut: action.shortcut
+  });
+
+  // For high-risk actions, show confirmation dialog
   if (action.riskLevel === 'high' || action.riskLevel === 'critical') {
+    logger.warn(`Quick Actions: High-risk action detected - ${action.name}, requiring confirmation`, {
+      riskLevel: action.riskLevel
+    });
+    
     const confirmed = await confirmationDialog.open();
-    if (!confirmed) return;
+    if (!confirmed) {
+      logger.info(`Quick Actions: Action cancelled by user - ${action.name}`);
+      return;
+    }
+    
+    logger.info(`Quick Actions: Action confirmed by user - ${action.name}`);
   }
 
-  // 执行操作
-  action.action();
-
-  // 更新使用频率和最后使用时间
-  action.usageFrequency++;
-  action.lastUsedTime = Date.now();
+  try {
+    // Execute action
+    action.action();
+    
+    // Update usage frequency and last used time
+    action.usageFrequency++;
+    action.lastUsedTime = Date.now();
+    
+    logger.info(`Quick Actions: Action executed successfully - ${action.name}`, {
+      newUsageFrequency: action.usageFrequency,
+      lastUsedTime: action.lastUsedTime
+    });
+  } catch (error) {
+    logger.error(`Quick Actions: Error executing action - ${action.name}`, {
+      error: error instanceof Error ? error.message : String(error)
+    });
+  }
 }
 
 /**
- * 获取风险级别对应的颜色
- * @param riskLevel 风险级别
- * @returns 对应的颜色类名
+ * Get color corresponding to risk level
+ * @param riskLevel Risk level
+ * @returns Corresponding color class name
  */
 function getRiskColor (riskLevel: string) {
   switch (riskLevel) {
   case 'critical':
-    return 'bg-red-600'; // 危急风险 - 红色
+    return 'bg-red-600'; // Critical risk - red
   case 'high':
-    return 'bg-orange-500'; // 高风险 - 橙色
+    return 'bg-orange-500'; // High risk - orange
   case 'medium':
-    return 'bg-yellow-500'; // 中等风险 - 黄色
+    return 'bg-yellow-500'; // Medium risk - yellow
   case 'low':
-    return 'bg-green-500'; // 低风险 - 绿色
+    return 'bg-green-500'; // Low risk - green
   default:
-    return 'bg-gray-500'; // 默认 - 灰色
+    return 'bg-gray-500'; // Default - gray
   }
 }
+
+// Log component initialization
+logger.info('Quick Actions component initialized', {
+  actionsCount: actions.length,
+  layout,
+  showLabels
+});
 </script>
 
 <!--
-  快捷操作组件
+  Quick Actions Component
 
-  功能：
-  - 显示系统的快捷操作
-  - 支持网格和列表两种布局
-  - 按风险级别显示不同颜色
-  - 对高风险操作进行确认
-  - 跟踪操作使用频率和最后使用时间
-  - 支持启用/禁用操作
+  Features:
+  - Displays system quick actions
+  - Supports grid and list layouts
+  - Shows different colors by risk level
+  - Confirms high-risk actions
+  - Tracks action usage frequency and last used time
+  - Supports enabling/disabling actions
 
-  界面元素：
-  - 操作按钮（带图标和标签）
-  - 风险级别指示器
-  - 快捷键显示
-  - 确认对话框（用于高风险操作）
+  UI Elements:
+  - Action buttons (with icons and labels)
+  - Risk level indicators
+  - Shortcut key display
+  - Confirmation dialog (for high-risk actions)
 
-  技术实现：
-  - 响应式布局
-  - 条件渲染
-  - 异步操作执行
-  - 风险级别管理
-  - 操作统计跟踪
+  Technical Implementation:
+  - Responsive layout
+  - Conditional rendering
+  - Asynchronous action execution
+  - Risk level management
+  - Action statistics tracking
 -->
 
 <div class="quick-actions">
-  <h3 class="text-lg font-semibold text-white mb-4">快捷操作</h3>
+  <h3 class="text-lg font-semibold text-white mb-4">Quick Actions</h3>
 
   <div
     class={`${layout === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3' : 'flex flex-col gap-2'}`}

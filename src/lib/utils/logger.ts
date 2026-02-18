@@ -1,68 +1,68 @@
 import consola from 'consola';
 
-// 创建一个自定义的日志实例
+// Create a custom logger instance
 const logger = consola.create({
   defaults: {
     tag: 'Barotrauma Reactor Simulator',
   },
 });
 
-// 导出日志方法
+// Export logger methods
 const log = {
   /**
-   * 普通日志信息
+   * General log information
    */
   info: (...args: any[]) => logger.info(...args),
 
   /**
-   * 成功信息
+   * Success information
    */
   success: (...args: any[]) => logger.success(...args),
 
   /**
-   * 警告信息
+   * Warning information
    */
   warn: (...args: any[]) => logger.warn(...args),
 
   /**
-   * 错误信息
+   * Error information
    */
   error: (...args: any[]) => logger.error(...args),
 
   /**
-   * 调试信息
+   * Debug information
    */
   debug: (...args: any[]) => logger.debug(...args),
 
   /**
-   * 追踪信息
+   * Trace information
    */
   trace: (...args: any[]) => logger.trace(...args),
 
   /**
-   *  fatal 信息
+   * Fatal information
    */
   fatal: (...args: any[]) => logger.fatal(...args),
 
   /**
-   * 清除控制台
+   * Clear console
    */
   clear: () => logger.clear(),
 
   /**
-   * 统计信息
+   * Statistics information
    */
   stats: (obj: Record<string, any>) => logger.stats(obj),
 
   /**
-   * 时间信息
+   * Time information
    */
   time: (label: string) => logger.time(label),
 
   /**
-   * 时间结束信息
+   * Time end information
    */
   timeEnd: (label: string) => logger.timeEnd(label),
 };
 
-export default log;
+export const logger = log;

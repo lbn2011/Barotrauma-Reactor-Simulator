@@ -21,20 +21,21 @@ export interface HistoryViewerProps {
 
 <script lang="ts">
 /**
- * 历史数据查看器组件
- * 用于显示和分析反应堆历史运行数据
+ * History data viewer component
+ * Used to display and analyze reactor historical operation data
  */
 import { Chart, registerables } from 'chart.js';
 import { Card, CardContent, CardHeader, CardTitle } from '../card';
 import { Button } from '../button';
+import { logger } from '../../../utils/logger';
 
-// 注册Chart.js组件
+// Register Chart.js components
 Chart.register(...registerables);
 
 /**
- * 历史数据接口
- * @property timestamp 时间戳
- * @property parameters 参数记录
+ * History data interface
+ * @property timestamp Timestamp
+ * @property parameters Parameter records
  */
 interface HistoryData {
   timestamp: number;
@@ -42,12 +43,12 @@ interface HistoryData {
 }
 
 /**
- * 图表配置接口
- * @property id 参数ID
- * @property name 参数名称
- * @property color 图表颜色
- * @property unit 单位
- * @property visible 是否可见
+ * Chart configuration interface
+ * @property id Parameter ID
+ * @property name Parameter name
+ * @property color Chart color
+ * @property unit Unit
+ * @property visible Whether visible
  */
 interface ChartConfig {
   id: string;
@@ -57,41 +58,49 @@ interface ChartConfig {
   visible: boolean;
 }
 
-// 组件属性
-export let historyData: HistoryData[] = []; // 历史数据数组
-export let chartConfigs: ChartConfig[] = []; // 图表配置数组
-export let timeRange: '1h' | '6h' | '24h' | '7d' = '6h'; // 时间范围
-export const refreshInterval: number = 5000; // 刷新间隔
+// Component properties
+export let historyData: HistoryData[] = []; // History data array
+export let chartConfigs: ChartConfig[] = []; // Chart configuration array
+export let timeRange: '1h' | '6h' | '24h' | '7d' = '6h'; // Time range
+export const refreshInterval: number = 5000; // Refresh interval
 
-// 组件状态
-let chart: any = null; // Chart.js实例
-let chartCanvas: HTMLCanvasElement | null = null; // 图表画布元素
-let isLoading = false; // 加载状态
+// Component state
+let chart: any = null; // Chart.js instance
+let chartCanvas: HTMLCanvasElement | null = null; // Chart canvas element
+let isLoading = false; // Loading state
+
+logger.debug('HistoryViewer', 'Component initialized');
+logger.debug('HistoryViewer', `Initial time range: ${timeRange}`);
+logger.debug('HistoryViewer', `Initial chart configs: ${chartConfigs.length}`);
+logger.debug('HistoryViewer', `Initial history data: ${historyData.length} records`);
 
 /**
- * 初始化图表
- * 创建或更新Chart.js实例
+ * Initialize chart
+ * Create or update Chart.js instance
  */
 function initChart () {
   if (!chartCanvas) return;
 
-  // 销毁现有图表实例
+  logger.debug('HistoryViewer', 'Initializing chart');
+
+  // Destroy existing chart instance
   if (chart) {
     try {
       chart.destroy();
       chart = null;
+      logger.debug('HistoryViewer', 'Chart instance destroyed');
     } catch (error) {
-      console.error('Failed to destroy chart:', error);
+      logger.error('HistoryViewer', 'Failed to destroy chart:', error);
     }
   }
 
-  // 准备图表标签
+  // Prepare chart labels
   const labels = historyData.map((data) => {
     const date = new Date(data.timestamp);
     return date.toLocaleTimeString();
   });
 
-  // 准备数据集
+  // Prepare datasets
   const datasets = chartConfigs
     .filter((config) => config.visible)
     .map((config) => {
@@ -108,7 +117,9 @@ function initChart () {
       };
     });
 
-  // 创建图表实例
+  logger.debug('HistoryViewer', `Chart prepared with ${datasets.length} datasets`);
+
+  // Create chart instance
   try {
     chart = new Chart(chartCanvas, {
       type: 'line',
@@ -144,7 +155,7 @@ function initChart () {
           x: {
             title: {
               display: true,
-              text: '时间',
+              text: 'Time',
               color: '#ffffff',
             },
             ticks: {
@@ -157,7 +168,7 @@ function initChart () {
           y: {
             title: {
               display: true,
-              text: '数值',
+              text: 'Value',
               color: '#ffffff',
             },
             ticks: {
@@ -170,81 +181,93 @@ function initChart () {
         },
       },
     });
+    logger.debug('HistoryViewer', 'Chart instance created successfully');
   } catch (error) {
-    console.error('Failed to create chart:', error);
+    logger.error('HistoryViewer', 'Failed to create chart:', error);
   }
 }
 
 /**
- * 更新时间范围
- * @param range 新的时间范围
+ * Update time range
+ * @param range New time range
  */
 function updateTimeRange (range: '1h' | '6h' | '24h' | '7d') {
+  logger.info('HistoryViewer', `Updating time range to ${range}`);
   timeRange = range;
-  initChart(); // 重新初始化图表
+  initChart(); // Reinitialize chart
 }
 
 /**
- * 切换参数可见性
- * @param configId 参数配置ID
+ * Toggle parameter visibility
+ * @param configId Parameter configuration ID
  */
 function toggleParameterVisibility (configId: string) {
   const config = chartConfigs.find((c) => c.id === configId);
   if (config) {
     config.visible = !config.visible;
-    initChart(); // 重新初始化图表
+    logger.info('HistoryViewer', `Toggled parameter visibility: ${config.name} ${config.visible ? 'visible' : 'hidden'}`);
+    initChart(); // Reinitialize chart
   }
 }
 
 /**
- * 导出数据为CSV格式
+ * Export data to CSV format
  */
 function exportData () {
-  // 准备CSV表头
-  const headers = ['Timestamp', ...chartConfigs.map((c) => `${c.name} (${c.unit})`)];
+  logger.info('HistoryViewer', 'Exporting data to CSV');
+  try {
+    // Prepare CSV headers
+    const headers = ['Timestamp', ...chartConfigs.map((c) => `${c.name} (${c.unit})`)];
 
-  // 准备CSV行数据
-  const rows = historyData.map((data) => {
-    const row = [new Date(data.timestamp).toISOString()];
-    chartConfigs.forEach((config) => {
-      row.push((data.parameters[config.id] || 0).toString());
+    // Prepare CSV row data
+    const rows = historyData.map((data) => {
+      const row = [new Date(data.timestamp).toISOString()];
+      chartConfigs.forEach((config) => {
+        row.push((data.parameters[config.id] || 0).toString());
+      });
+      return row.join(',');
     });
-    return row.join(',');
-  });
 
-  // 生成CSV内容
-  const csvContent = [headers.join(','), ...rows].join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
+    // Generate CSV content
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
 
-  // 创建下载链接
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', `reactor-history-${Date.now()}.csv`);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    // Create download link
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `reactor-history-${Date.now()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    logger.success('HistoryViewer', 'Data exported successfully as CSV');
+  } catch (error) {
+    logger.error('HistoryViewer', 'Failed to export data:', error);
+  }
 }
 
 /**
- * 刷新数据
+ * Refresh data
  */
 function refreshData () {
+  logger.info('HistoryViewer', 'Refreshing data');
   isLoading = true;
   setTimeout(() => {
     initChart();
     isLoading = false;
+    logger.debug('HistoryViewer', 'Data refreshed');
   }, 1000);
 }
 
 /**
- * 计算参数变化
- * @param parameterId 参数ID
- * @returns 变化百分比
+ * Calculate parameter change
+ * @param parameterId Parameter ID
+ * @returns Change percentage
  */
 function calculateChange (parameterId: string) {
-  if (historyData.length < 2) return '无变化';
+  if (historyData.length < 2) return 'No change';
   const firstValue = historyData[0].parameters[parameterId] || 0;
   const lastValue = historyData[historyData.length - 1].parameters[parameterId] || 0;
   const change = lastValue - firstValue;
@@ -255,77 +278,77 @@ function calculateChange (parameterId: string) {
 </script>
 
 <!--
-  历史数据查看器组件
+  History Data Viewer Component
 
-  功能：
-  - 显示反应堆历史运行数据
-  - 支持多种时间范围选择
-  - 可切换显示不同参数
-  - 提供数据导出功能
-  - 实时数据刷新
-  - 数据变化趋势分析
+  Features:
+  - Displays reactor historical operation data
+  - Supports multiple time range selections
+  - Can switch between different parameters
+  - Provides data export functionality
+  - Real-time data refresh
+  - Data change trend analysis
 
-  界面元素：
-  - 时间范围选择按钮
-  - 参数选择按钮
-  - 刷新和导出按钮
-  - 数据趋势图表
-  - 数据统计卡片
+  UI Elements:
+  - Time range selection buttons
+  - Parameter selection buttons
+  - Refresh and export buttons
+  - Data trend chart
+  - Data statistics cards
 
-  技术实现：
-  - 使用Chart.js进行数据可视化
-  - 响应式设计
-  - CSV数据导出
-  - 实时数据更新
-  - 动态图表配置
+  Technical Implementation:
+  - Uses Chart.js for data visualization
+  - Responsive design
+  - CSV data export
+  - Real-time data updates
+  - Dynamic chart configuration
 -->
 
 <div class="history-viewer">
   <Card>
     <CardHeader>
-      <CardTitle class="text-xl font-semibold text-white">历史数据查看</CardTitle>
+      <CardTitle class="text-xl font-semibold text-white">History Data Viewer</CardTitle>
     </CardHeader>
     <CardContent>
-      <!-- 控制面板 -->
+      <!-- Control Panel -->
       <div class="flex flex-wrap items-center gap-4 mb-6">
-        <!-- 时间范围选择 -->
+        <!-- Time Range Selection -->
         <div class="flex items-center gap-2">
-          <span class="text-sm text-gray-300">时间范围:</span>
+          <span class="text-sm text-gray-300">Time Range:</span>
           <div class="flex gap-1">
             <Button
               variant={timeRange === '1h' ? 'default' : 'secondary'}
               size="sm"
               on:click={() => updateTimeRange('1h')}
             >
-              1小时
+              1h
             </Button>
             <Button
               variant={timeRange === '6h' ? 'default' : 'secondary'}
               size="sm"
               on:click={() => updateTimeRange('6h')}
             >
-              6小时
+              6h
             </Button>
             <Button
               variant={timeRange === '24h' ? 'default' : 'secondary'}
               size="sm"
               on:click={() => updateTimeRange('24h')}
             >
-              24小时
+              24h
             </Button>
             <Button
               variant={timeRange === '7d' ? 'default' : 'secondary'}
               size="sm"
               on:click={() => updateTimeRange('7d')}
             >
-              7天
+              7d
             </Button>
           </div>
         </div>
 
-        <!-- 参数选择 -->
+        <!-- Parameter Selection -->
         <div class="flex items-center gap-2">
-          <span class="text-sm text-gray-300">参数:</span>
+          <span class="text-sm text-gray-300">Parameters:</span>
           <div class="flex flex-wrap gap-2">
             {#each chartConfigs as config (config.id)}
               <Button
@@ -340,21 +363,21 @@ function calculateChange (parameterId: string) {
           </div>
         </div>
 
-        <!-- 操作按钮 -->
+        <!-- Action Buttons -->
         <div class="flex gap-2 ml-auto">
           <Button variant="secondary" size="sm" on:click={refreshData} disabled={isLoading}>
-            {isLoading ? '刷新中...' : '刷新'}
+            {isLoading ? 'Refreshing...' : 'Refresh'}
           </Button>
-          <Button variant="default" size="sm" on:click={exportData}>导出CSV</Button>
+          <Button variant="default" size="sm" on:click={exportData}>Export CSV</Button>
         </div>
       </div>
 
-      <!-- 图表容器 -->
+      <!-- Chart Container -->
       <div class="h-96 w-full">
         <canvas bind:this={chartCanvas}></canvas>
       </div>
 
-      <!-- 数据统计 -->
+      <!-- Data Statistics -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
         {#each chartConfigs.filter((c) => c.visible) as config (config.id)}
           <div class="bg-gray-800 rounded-lg p-3">
@@ -366,7 +389,7 @@ function calculateChange (parameterId: string) {
               <span class="text-sm font-normal text-gray-400"> {config.unit}</span>
             </div>
             <div class="text-xs text-gray-400 mt-1">
-              {historyData.length > 0 ? calculateChange(config.id) : '无数据'}
+              {historyData.length > 0 ? calculateChange(config.id) : 'No data'}
             </div>
           </div>
         {/each}
