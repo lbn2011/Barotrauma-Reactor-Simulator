@@ -3,7 +3,7 @@
  * Chart Tooltip Component
  * Used to display detailed information about chart data
  */
-import { cn, type WithElementRef, type WithoutChildren } from '@/lib/utils';
+import { cn, type WithElementRef } from '@/lib/utils';
 import type { HTMLAttributes } from 'svelte/elements';
 import { getPayloadConfigFromPayload, useChart, type TooltipPayload } from './utils.js';
 import { getTooltipContext, Tooltip as TooltipPrimitive } from 'layerchart';
@@ -35,7 +35,6 @@ let {
   formatter, // Custom formatter snippet
   nameKey, // Name key
   color, // Color
-  children,
   ...restProps // Other HTML attributes
 }: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
   hideLabel?: boolean;

@@ -77,7 +77,7 @@ $effect(() => {
 });
 
 // Handle element reference
-function handleElementRef(el: HTMLElement | null) {
+function handleElementRef (el: HTMLElement | null) {
   ref = el;
   chartElement = el;
 }
