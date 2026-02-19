@@ -5,9 +5,8 @@ import ControlButtons from './ControlButtons.svelte';
 import PrecisionControl from './PrecisionControl.svelte';
 import { simulationController } from '../../lib/controllers/SimulationController';
 import { reactorController } from '../../lib/controllers/ReactorController';
-import log from '@/lib/utils/logger';
+import logger, { ModuleType } from '@/lib/utils/logger';
 
-// 19个功能面板的配置
 const panels = [
   {
     id: 'reactor-power',
@@ -106,44 +105,48 @@ const panels = [
   },
 ];
 
-// 状态管理
 let activePanel: string | null = null;
 let isRunning: boolean = false;
 
-// 组件挂载时初始化
 onMount(() => {
-  // 初始化模拟状态
+  logger.trace(ModuleType.UI, 'MainDashboard component mounted');
+
   isRunning = simulationController.isRunning;
 
-  // 启动系统状态检查
   const statusCheckInterval = setInterval(() => {
+    logger.trace(ModuleType.UI, 'Checking system status');
     reactorController.checkSystemStatus();
   }, 5000);
 
-  // 保存间隔ID以便在组件销毁时清除
-  return () => clearInterval(statusCheckInterval);
+  return () => {
+    clearInterval(statusCheckInterval);
+    logger.trace(ModuleType.UI, 'MainDashboard component unmounted');
+  };
 });
 
-// 处理面板点击事件
 function handlePanelClick (panelId: string) {
   activePanel = panelId;
-  log.info(`Opening panel: ${panelId}`);
+  logger.info(ModuleType.UI, `Opening panel: ${panelId}`, { panelId });
 }
 
-// 处理开始/停止按钮点击事件
 function handleStart () {
+  logger.info(ModuleType.UI, `Simulation ${isRunning ? 'stopping' : 'starting'}`, { isRunning });
+
   if (isRunning) {
     simulationController.stopSimulation();
   } else {
     simulationController.startSimulation();
   }
   isRunning = !isRunning;
+
+  logger.info(ModuleType.UI, `Simulation ${isRunning ? 'started' : 'stopped'}`);
 }
 
-// 处理重置按钮点击事件
 function handleReset () {
+  logger.info(ModuleType.UI, 'Resetting simulation');
   simulationController.resetSimulation();
   isRunning = false;
+  logger.info(ModuleType.UI, 'Simulation reset completed');
 }
 </script>
 
@@ -158,7 +161,6 @@ function handleReset () {
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
   {#each panels as panel (panel.id)}
     <Panel
-      id={panel.id}
       title={panel.title}
       description={panel.description}
       onClick={() => handlePanelClick(panel.id)}

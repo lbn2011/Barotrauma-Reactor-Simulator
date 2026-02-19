@@ -1,4 +1,4 @@
-import log from '@/lib/utils/logger';
+import logger, { ModuleType } from '@/lib/utils/logger';
 
 // 热工水力参数接口
 interface ThermalHydraulicParams {
@@ -99,9 +99,8 @@ export class ThermalHydraulics {
   static calculateThermalHydraulics (
     params: ThermalHydraulicParams
   ): ThermalHydraulicResult {
-    log.trace('Calculating thermal hydraulics...');
+    logger.trace(ModuleType.MODEL, 'Calculating thermal hydraulics');
 
-    // 计算雷诺数
     const reynoldsNumber = this.calculateReynoldsNumber(
       params.coolant.density,
       params.coolant.flowRate,
@@ -109,14 +108,12 @@ export class ThermalHydraulics {
       params.coolant.viscosity
     );
 
-    // 计算普朗特数
     const prandtlNumber = this.calculatePrandtlNumber(
       params.coolant.heatCapacity,
       params.coolant.viscosity,
       params.coolant.thermalConductivity
     );
 
-    // 计算努塞尔数
     const nusseltNumber = this.calculateNusseltNumber(
       reynoldsNumber,
       prandtlNumber
@@ -165,7 +162,7 @@ export class ThermalHydraulics {
     // 确定流态
     const flowRegime = this.determineFlowRegime(reynoldsNumber, voidFraction);
 
-    log.trace('Thermal hydraulics calculation completed');
+    logger.trace(ModuleType.MODEL, 'Thermal hydraulics calculation completed');
 
     return {
       temperatures,

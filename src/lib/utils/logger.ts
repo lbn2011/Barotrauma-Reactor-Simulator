@@ -1,119 +1,355 @@
 import consola from 'consola';
+import type {
+  LogConfig,
+  LogEntry,
+} from './loggerConfig';
+import {
+  LogLevel,
+  ModuleType,
+  DEFAULT_LOG_CONFIG,
+} from './loggerConfig';
+import { logStorage } from './logStorage';
 
-// Create a custom logger instance
-const consolaLogger = consola.create({
-  defaults: {
-    tag: 'Barotrauma Reactor Simulator',
-  },
-});
+class Logger {
+  private config: LogConfig = { ...DEFAULT_LOG_CONFIG };
+  private timers: Map<string, number> = new Map();
+  private performanceMetrics: Map<string, number[]> = new Map();
 
-// Set default log level to info (3) and above to reduce noise in production
-// Levels: 0=fatal, 1=error, 2=warn, 3=info, 4=debug, 5=trace
-consolaLogger.level = 3;
+  constructor () {
+    this.loadConfig();
+    this.setupWorkerListener();
+  }
 
-// Export logger methods
-const log = {
-  /**
-   * General log information
-   */
-  info: (...args: any[]) => {
-    if (args.length > 0) {
-      consolaLogger.info(args[0], ...args.slice(1));
+  private loadConfig (): void {
+    try {
+      const savedConfig = localStorage.getItem('logConfig');
+      if (savedConfig) {
+        this.config = { ...DEFAULT_LOG_CONFIG, ...JSON.parse(savedConfig) };
+      }
+    } catch (error) {
+      console.error('Failed to load log config:', error); // eslint-disable-line no-console
     }
-  },
+  }
 
-  /**
-   * Success information
-   */
-  success: (...args: any[]) => {
-    if (args.length > 0) {
-      consolaLogger.success(args[0], ...args.slice(1));
+  private saveConfig (): void {
+    try {
+      localStorage.setItem('logConfig', JSON.stringify(this.config));
+    } catch (error) {
+      console.error('Failed to save log config:', error); // eslint-disable-line no-console
     }
-  },
+  }
 
-  /**
-   * Warning information
-   */
-  warn: (...args: any[]) => {
-    if (args.length > 0) {
-      consolaLogger.warn(args[0], ...args.slice(1));
+  updateConfig (partialConfig: Partial<LogConfig>): void {
+    this.config = { ...this.config, ...partialConfig };
+    this.saveConfig();
+    consola.level = this.config.globalLevel;
+    logStorage.setMaxSize(this.config.maxStorageSize);
+  }
+
+  getConfig (): LogConfig {
+    return { ...this.config };
+  }
+
+  setModuleLevel (module: ModuleType, level: LogLevel): void {
+    this.config.moduleLevels[module] = level;
+    this.saveConfig();
+  }
+
+  private shouldLog (level: LogLevel, module: ModuleType): boolean {
+    const moduleLevel = this.config.moduleLevels[module];
+    const effectiveLevel =
+      moduleLevel !== undefined ? moduleLevel : this.config.globalLevel;
+    return level <= effectiveLevel;
+  }
+
+  private createLogEntry (
+    level: LogLevel,
+    module: ModuleType,
+    message: string,
+    data?: any,
+    context?: string
+  ): LogEntry {
+    const entry: LogEntry = {
+      timestamp: Date.now(),
+      level,
+      module,
+      message,
+      data,
+      context,
+    };
+
+    if (this.config.enablePerformanceTracking) {
+      entry.performance = {
+        memory: this.getMemoryUsage(),
+      };
     }
-  },
 
-  /**
-   * Error information
-   */
-  error: (...args: any[]) => {
-    if (args.length > 0) {
-      consolaLogger.error(args[0], ...args.slice(1));
+    return entry;
+  }
+
+  private getMemoryUsage (): number {
+    if (typeof performance !== 'undefined' && (performance as any).memory) {
+      return (performance as any).memory.usedJSHeapSize / 1024 / 1024;
     }
-  },
+    return 0;
+  }
 
-  /**
-   * Debug information
-   */
-  debug: (...args: any[]) => {
-    if (args.length > 0) {
-      consolaLogger.debug(args[0], ...args.slice(1));
+  private log (
+    level: LogLevel,
+    module: ModuleType,
+    message: string,
+    data?: any,
+    context?: string
+  ): void {
+    if (!this.shouldLog(level, module)) {
+      return;
     }
-  },
 
-  /**
-   * Trace information
-   */
-  trace: (...args: any[]) => {
-    if (args.length > 0) {
-      consolaLogger.trace(args[0], ...args.slice(1));
+    const entry = this.createLogEntry(level, module, message, data, context);
+
+    if (this.config.enableConsole) {
+      this.logToConsole(level, module, message, data);
     }
-  },
 
-  /**
-   * Fatal information
-   */
-  fatal: (...args: any[]) => {
-    if (args.length > 0) {
-      consolaLogger.fatal(args[0], ...args.slice(1));
+    if (this.config.enableStorage) {
+      logStorage.add(entry);
     }
-  },
 
-  /**
-   * Clear console
-   */
-  clear: () => {
-    // eslint-disable-next-line no-console
-    if (typeof console !== 'undefined' && console.clear) {
-      // eslint-disable-next-line no-console
-      console.clear();
+    if (this.config.enableWorkerLogging) {
+      this.sendToWorker(entry);
     }
-  },
+  }
 
-  /**
-   * Statistics information
-   */
-  stats: (obj: Record<string, any>) => consolaLogger.info(obj),
+  private logToConsole (
+    level: LogLevel,
+    module: ModuleType,
+    message: string,
+    data?: any
+  ): void {
+    const prefix = `[${module.toUpperCase()}]`;
 
-  /**
-   * Time information
-   */
-  time: (label: string) => {
-    // eslint-disable-next-line no-console
-    if (typeof console !== 'undefined' && console.time) {
-      // eslint-disable-next-line no-console
-      console.time(label);
+    switch (level) {
+    case LogLevel.FATAL:
+      if (data) {
+        consola.fatal(prefix, message, data);
+      } else {
+        consola.fatal(prefix, message);
+      }
+      break;
+    case LogLevel.ERROR:
+      if (data) {
+        consola.error(prefix, message, data);
+      } else {
+        consola.error(prefix, message);
+      }
+      break;
+    case LogLevel.WARN:
+      if (data) {
+        consola.warn(prefix, message, data);
+      } else {
+        consola.warn(prefix, message);
+      }
+      break;
+    case LogLevel.INFO:
+      if (data) {
+        consola.info(prefix, message, data);
+      } else {
+        consola.info(prefix, message);
+      }
+      break;
+    case LogLevel.DEBUG:
+      if (data) {
+        consola.debug(prefix, message, data);
+      } else {
+        consola.debug(prefix, message);
+      }
+      break;
+    case LogLevel.TRACE:
+      if (data) {
+        consola.trace(prefix, message, data);
+      } else {
+        consola.trace(prefix, message);
+      }
+      break;
     }
-  },
+  }
 
-  /**
-   * Time end information
-   */
-  timeEnd: (label: string) => {
-    // eslint-disable-next-line no-console
-    if (typeof console !== 'undefined' && console.timeEnd) {
-      // eslint-disable-next-line no-console
-      console.timeEnd(label);
+  private sendToWorker (entry: LogEntry): void {
+    if (typeof window !== 'undefined' && (window as any).workerLogger) {
+      (window as any).workerLogger.postMessage({
+        type: 'log',
+        entry,
+      });
     }
-  },
-};
+  }
 
-export default log;
-export const logger = log;
+  private setupWorkerListener (): void {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'worker-log') {
+          const entry = event.data.entry as LogEntry;
+          if (this.config.enableStorage) {
+            logStorage.add(entry);
+          }
+        }
+      });
+    }
+  }
+
+  fatal (
+    module: ModuleType,
+    message: string,
+    data?: any,
+    context?: string
+  ): void {
+    this.log(LogLevel.FATAL, module, message, data, context);
+  }
+
+  error (
+    module: ModuleType,
+    message: string,
+    data?: any,
+    context?: string
+  ): void {
+    this.log(LogLevel.ERROR, module, message, data, context);
+  }
+
+  warn (
+    module: ModuleType,
+    message: string,
+    data?: any,
+    context?: string
+  ): void {
+    this.log(LogLevel.WARN, module, message, data, context);
+  }
+
+  info (
+    module: ModuleType,
+    message: string,
+    data?: any,
+    context?: string
+  ): void {
+    this.log(LogLevel.INFO, module, message, data, context);
+  }
+
+  debug (
+    module: ModuleType,
+    message: string,
+    data?: any,
+    context?: string
+  ): void {
+    this.log(LogLevel.DEBUG, module, message, data, context);
+  }
+
+  trace (
+    module: ModuleType,
+    message: string,
+    data?: any,
+    context?: string
+  ): void {
+    this.log(LogLevel.TRACE, module, message, data, context);
+  }
+
+  time (label: string, module?: ModuleType): void {
+    this.timers.set(label, performance.now());
+    this.trace(module || ModuleType.UI, `Timer started: ${label}`);
+  }
+
+  timeEnd (label: string, module?: ModuleType): number {
+    const startTime = this.timers.get(label);
+    if (startTime === undefined) {
+      this.warn(module || ModuleType.UI, `Timer not found: ${label}`);
+      return 0;
+    }
+
+    const duration = performance.now() - startTime;
+    this.timers.delete(label);
+
+    this.info(module || ModuleType.UI, `Timer ended: ${label}`, {
+      duration: `${duration.toFixed(2)}ms`,
+    });
+
+    if (this.config.enablePerformanceTracking) {
+      const metrics = this.performanceMetrics.get(label) || [];
+      metrics.push(duration);
+      if (metrics.length > 100) {
+        metrics.shift();
+      }
+      this.performanceMetrics.set(label, metrics);
+    }
+
+    return duration;
+  }
+
+  trackPerformance (
+    label: string,
+    duration: number,
+    module: ModuleType = ModuleType.UI
+  ): void {
+    const metrics = this.performanceMetrics.get(label) || [];
+    metrics.push(duration);
+    if (metrics.length > 100) {
+      metrics.shift();
+    }
+    this.performanceMetrics.set(label, metrics);
+
+    const avg = metrics.reduce((a, b) => a + b, 0) / metrics.length;
+    const max = Math.max(...metrics);
+    const min = Math.min(...metrics);
+
+    this.debug(module, `Performance metrics: ${label}`, {
+      avg,
+      max,
+      min,
+      samples: metrics.length,
+    });
+  }
+
+  getPerformanceMetrics (
+    label?: string
+  ): Record<string, { avg: number; max: number; min: number; count: number }> {
+    const result: Record<string, any> = {};
+
+    if (label) {
+      const metrics = this.performanceMetrics.get(label);
+      if (metrics && metrics.length > 0) {
+        result[label] = {
+          avg: metrics.reduce((a, b) => a + b, 0) / metrics.length,
+          max: Math.max(...metrics),
+          min: Math.min(...metrics),
+          count: metrics.length,
+        };
+      }
+    } else {
+      this.performanceMetrics.forEach((metrics, key) => {
+        result[key] = {
+          avg: metrics.reduce((a, b) => a + b, 0) / metrics.length,
+          max: Math.max(...metrics),
+          min: Math.min(...metrics),
+          count: metrics.length,
+        };
+      });
+    }
+
+    return result;
+  }
+
+  clearPerformanceMetrics (): void {
+    this.performanceMetrics.clear();
+  }
+
+  clear (): void {
+    logStorage.clear();
+    this.timers.clear();
+    this.performanceMetrics.clear();
+  }
+}
+
+const logger = new Logger();
+
+export default logger;
+export { logger };
+export { LogLevel, ModuleType } from './loggerConfig';
+export type { LogConfig } from './loggerConfig';
+export type { LogEntry } from './loggerConfig';
+export { logStorage } from './logStorage';

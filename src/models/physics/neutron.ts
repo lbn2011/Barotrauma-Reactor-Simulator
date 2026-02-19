@@ -1,4 +1,4 @@
-import log from '@/lib/utils/logger';
+import logger, { ModuleType } from '@/lib/utils/logger';
 
 // 中子输运参数接口
 interface NeutronTransportParams {
@@ -62,20 +62,16 @@ interface ReactorKineticsResult {
 
 // 中子输运计算模块
 export class NeutronTransport {
-  // 计算中子通量
   static calculateFlux (params: NeutronTransportParams): NeutronTransportResult {
-    log.trace('Calculating neutron flux...');
+    logger.trace(ModuleType.MODEL, 'Calculating neutron flux');
 
-    // 计算反应率
     const reactionRate = params.flux * params.macroscopicCrossSection.fission;
 
-    // 计算能量沉积
     const energyDeposition = reactionRate * params.energy;
 
-    // 计算中子密度
     const density = params.flux / params.velocity;
 
-    log.trace('Neutron flux calculation completed');
+    logger.trace(ModuleType.MODEL, 'Neutron flux calculation completed');
 
     return {
       flux: params.flux,
@@ -154,9 +150,8 @@ export class ReactorKinetics {
   static calculateKinetics (
     params: ReactorKineticsParams
   ): ReactorKineticsResult {
-    log.trace('Calculating reactor kinetics...');
+    logger.trace(ModuleType.MODEL, 'Calculating reactor kinetics');
 
-    // 提取参数
     const {
       reactivity,
       generationTime,
@@ -226,11 +221,11 @@ export class ReactorKinetics {
     }
 
     // 计算功率（考虑能量转换效率）
-    const fissionEnergy = 200 * 1.602176634e-13; // 每次裂变释放200MeV能量
-    const thermalEfficiency = 0.33; // 热效率
+    const fissionEnergy = 200 * 1.602176634e-13;
+    const thermalEfficiency = 0.33;
     const power = flux * fissionEnergy * thermalEfficiency;
 
-    log.trace('Reactor kinetics calculation completed');
+    logger.trace(ModuleType.MODEL, 'Reactor kinetics calculation completed');
 
     return {
       flux,

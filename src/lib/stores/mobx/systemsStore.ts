@@ -1,5 +1,5 @@
 import { makeAutoObservable, computed } from 'mobx';
-import log from '@/lib/utils/logger';
+import logger, { ModuleType } from '@/lib/utils/logger';
 
 // 三冲量水位控制状态
 interface LevelControlState {
@@ -193,7 +193,7 @@ export class SystemsStore {
    * @param deltaTime 时间步长
    */
   calculateThreeImpulseLevelControl (deltaTime: number) {
-    log.trace('Calculating three-impulse level control');
+    logger.trace(ModuleType.STORE, 'Calculating three-impulse level control');
 
     const { levelControl } = this.state;
     const { waterLevel, waterLevelSetpoint, steamFlow, feedwaterFlow, pid } =
@@ -261,7 +261,7 @@ export class SystemsStore {
       },
     };
 
-    log.debug('Three-impulse level control calculated:', {
+    logger.debug(ModuleType.STORE, 'Three-impulse level control calculated', {
       levelError,
       flowError,
       adjustedFeedwaterFlow,
@@ -270,24 +270,19 @@ export class SystemsStore {
     });
   }
 
-  /**
-   * 计算堆芯净化系统
-   * @param deltaTime 时间步长
-   */
   calculateCorePurification (_deltaTime: number) {
-    log.trace('Calculating core purification');
+    logger.trace(ModuleType.STORE, 'Calculating core purification');
 
     const { purification } = this.state;
 
     if (!purification.status) {
-      // 系统关闭时
       this.state.purification = {
         ...purification,
         efficiency: 0,
         warningLevel: 'alarm',
         isEffective: false,
       };
-      log.debug('Core purification system is off');
+      logger.debug(ModuleType.STORE, 'Core purification system is off');
       return;
     }
 
@@ -330,7 +325,7 @@ export class SystemsStore {
       isEffective: purificationEfficiency > 50,
     };
 
-    log.debug('Core purification calculated:', {
+    logger.debug(ModuleType.STORE, 'Core purification calculated', {
       efficiency: purificationEfficiency,
       impurityConcentration: filteredImpurityConcentration,
       warningLevel,
@@ -338,12 +333,8 @@ export class SystemsStore {
     });
   }
 
-  /**
-   * 计算蒸汽旁路系统
-   * @param deltaTime 时间步长
-   */
   calculateSteamBypass (_deltaTime: number) {
-    log.trace('Calculating steam bypass');
+    logger.trace(ModuleType.STORE, 'Calculating steam bypass');
 
     const { steamBypass } = this.state;
     const {
@@ -389,7 +380,7 @@ export class SystemsStore {
       status,
     };
 
-    log.debug('Steam bypass calculated:', {
+    logger.debug(ModuleType.STORE, 'Steam bypass calculated', {
       bypassPosition,
       bypassFlow,
       bypassCapacity,
@@ -397,18 +388,14 @@ export class SystemsStore {
     });
   }
 
-  /**
-   * 计算汽轮机系统
-   * @param deltaTime 时间步长
-   */
   calculateTurbine (_deltaTime: number) {
-    log.trace('Calculating turbine system');
+    logger.trace(ModuleType.STORE, 'Calculating turbine system');
 
     const { turbine } = this.state;
     const { status, load, speed, steamPressure, steamTemperature } = turbine;
 
     if (!status) {
-      log.debug('Turbine system is off');
+      logger.debug(ModuleType.STORE, 'Turbine system is off');
       return;
     }
 
@@ -428,28 +415,31 @@ export class SystemsStore {
     let newStatus: boolean = status;
 
     if (!tripStatus) {
-      // 超速保护
       if (newSpeed > 3300) {
         tripStatus = true;
         newStatus = false;
         tripReason = 'OVERSPEED';
-        log.warn('Turbine trip: Overspeed');
+        logger.warn(ModuleType.STORE, 'Turbine trip: Overspeed', {
+          speed: newSpeed,
+        });
       }
 
-      // 蒸汽压力保护
       if (steamPressure > 8.5) {
         tripStatus = true;
         newStatus = false;
         tripReason = 'HIGH STEAM PRESSURE';
-        log.warn('Turbine trip: High steam pressure');
+        logger.warn(ModuleType.STORE, 'Turbine trip: High steam pressure', {
+          steamPressure,
+        });
       }
 
-      // 蒸汽温度保护
       if (steamTemperature > 320) {
         tripStatus = true;
         newStatus = false;
         tripReason = 'HIGH STEAM TEMPERATURE';
-        log.warn('Turbine trip: High steam temperature');
+        logger.warn(ModuleType.STORE, 'Turbine trip: High steam temperature', {
+          steamTemperature,
+        });
       }
     }
 
@@ -464,7 +454,7 @@ export class SystemsStore {
       status: newStatus,
     };
 
-    log.debug('Turbine system calculated:', {
+    logger.debug(ModuleType.STORE, 'Turbine system calculated', {
       speed: newSpeed,
       powerOutput,
       exhaustTemperature,
@@ -473,68 +463,44 @@ export class SystemsStore {
     });
   }
 
-  /**
-   * 更新水位设定值
-   * @param setpoint 水位设定值（%）
-   */
   setWaterLevelSetpoint (setpoint: number) {
     this.state.levelControl.waterLevelSetpoint = Math.max(
       0,
       Math.min(100, setpoint)
     );
-    log.debug(`Water level setpoint set to ${setpoint}%`);
+    logger.debug(ModuleType.STORE, 'Water level setpoint updated', {
+      setpoint,
+    });
   }
 
-  /**
-   * 更新蒸汽流量
-   * @param flow 蒸汽流量（kg/s）
-   */
   setSteamFlow (flow: number) {
     this.state.levelControl.steamFlow = flow;
-    log.debug(`Steam flow set to ${flow} kg/s`);
+    logger.debug(ModuleType.STORE, 'Steam flow updated', { flow });
   }
 
-  /**
-   * 更新给水流量
-   * @param flow 给水流量（kg/s）
-   */
   setFeedwaterFlow (flow: number) {
     this.state.levelControl.feedwaterFlow = flow;
-    log.debug(`Feedwater flow set to ${flow} kg/s`);
+    logger.debug(ModuleType.STORE, 'Feedwater flow updated', { flow });
   }
 
-  /**
-   * 更新堆芯净化流量
-   * @param flowRate 净化流量（kg/h）
-   */
   setPurificationFlowRate (flowRate: number) {
     this.state.purification.flowRate = flowRate;
-    log.debug(`Purification flow rate set to ${flowRate} kg/h`);
+    logger.debug(ModuleType.STORE, 'Purification flow rate updated', {
+      flowRate,
+    });
   }
 
-  /**
-   * 更新蒸汽压力
-   * @param pressure 蒸汽压力（MPa）
-   */
   setSteamPressure (pressure: number) {
     this.state.steamBypass.steamPressure = pressure;
     this.state.turbine.steamPressure = pressure;
-    log.debug(`Steam pressure set to ${pressure} MPa`);
+    logger.debug(ModuleType.STORE, 'Steam pressure updated', { pressure });
   }
 
-  /**
-   * 更新汽轮机负荷
-   * @param load 负荷（%）
-   */
   setTurbineLoad (load: number) {
     this.state.turbine.load = Math.max(0, Math.min(100, load));
-    log.debug(`Turbine load set to ${load}%`);
+    logger.debug(ModuleType.STORE, 'Turbine load updated', { load });
   }
 
-  /**
-   * 切换汽轮机状态
-   * @param status 状态
-   */
   setTurbineStatus (status: boolean) {
     this.state.turbine.status = status;
     if (status) {
@@ -546,37 +512,23 @@ export class SystemsStore {
       this.state.turbine.load = 0;
       this.state.turbine.powerOutput = 0;
     }
-    log.debug(`Turbine status set to ${status}`);
+    logger.debug(ModuleType.STORE, 'Turbine status updated', { status });
   }
 
-  /**
-   * 更新系统模型计算
-   * @param deltaTime 时间步长
-   */
   update (deltaTime: number) {
-    log.time('Systems update');
+    logger.time('Systems update', ModuleType.STORE);
 
-    // 计算三冲量水位控制
     this.calculateThreeImpulseLevelControl(deltaTime);
-
-    // 计算堆芯净化系统
     this.calculateCorePurification(deltaTime);
-
-    // 计算蒸汽旁路系统
     this.calculateSteamBypass(deltaTime);
-
-    // 计算汽轮机系统
     this.calculateTurbine(deltaTime);
 
-    log.timeEnd('Systems update');
+    logger.timeEnd('Systems update', ModuleType.STORE);
   }
 
-  /**
-   * 重置状态
-   */
   reset () {
     this.state = { ...initialState };
-    log.info('Systems store reset');
+    logger.info(ModuleType.STORE, 'Systems store reset');
   }
 }
 
