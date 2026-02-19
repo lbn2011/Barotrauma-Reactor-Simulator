@@ -13,12 +13,12 @@ import log from '@/lib/utils/logger';
 log.info('DataTrendPanel component initialized');
 
 // 趋势数据
-let trends: {
-  timePoints: number[];
-  powerData: number[];
-  temperatureData: number[];
-  pressureData: number[];
-};
+let trends = $state({
+  timePoints: [] as number[],
+  powerData: [] as number[],
+  temperatureData: [] as number[],
+  pressureData: [] as number[],
+});
 
 // 订阅状态变化
 reactorStore.subscribe((state) => {
@@ -36,9 +36,9 @@ const chartOption = $derived({
     left: 'center',
   },
   tooltip: {
-    trigger: 'axis',
+    trigger: 'axis' as const,
     axisPointer: {
-      type: 'cross',
+      type: 'cross' as const,
       label: {
         backgroundColor: '#6a7985',
       },
@@ -59,9 +59,9 @@ const chartOption = $derived({
   },
   xAxis: [
     {
-      type: 'category',
+      type: 'category' as const,
       boundaryGap: false,
-      data: trends?.timePoints.map((t) => `t=${t}`) || [],
+      data: trends.timePoints.map((t) => `t=${t}`),
       axisLabel: {
         color: '#aaa',
       },
@@ -79,7 +79,7 @@ const chartOption = $derived({
   ],
   yAxis: [
     {
-      type: 'value',
+      type: 'value' as const,
       axisLabel: {
         color: '#aaa',
       },
@@ -98,48 +98,48 @@ const chartOption = $derived({
   series: [
     {
       name: '功率水平 (%)',
-      type: 'line',
+      type: 'line' as const,
       stack: 'Total',
       areaStyle: {
         color: 'rgba(0, 188, 212, 0.5)',
       },
       emphasis: {
-        focus: 'series',
+        focus: 'series' as const,
       },
       lineStyle: {
         color: '#00bcd4',
       },
-      data: trends?.powerData || [],
+      data: trends.powerData,
     },
     {
       name: '堆芯温度 (°C)',
-      type: 'line',
+      type: 'line' as const,
       stack: 'Total',
       areaStyle: {
         color: 'rgba(244, 67, 54, 0.5)',
       },
       emphasis: {
-        focus: 'series',
+        focus: 'series' as const,
       },
       lineStyle: {
         color: '#f44336',
       },
-      data: trends?.temperatureData || [],
+      data: trends.temperatureData,
     },
     {
       name: '堆芯压力 (MPa)',
-      type: 'line',
+      type: 'line' as const,
       stack: 'Total',
       areaStyle: {
         color: 'rgba(76, 175, 80, 0.5)',
       },
       emphasis: {
-        focus: 'series',
+        focus: 'series' as const,
       },
       lineStyle: {
         color: '#4caf50',
       },
-      data: trends?.pressureData || [],
+      data: trends.pressureData,
     },
   ],
 });
