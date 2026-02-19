@@ -92,11 +92,11 @@ function updateTheme () {
 -->
 
 <div
-  class="top-bar bg-light-background dark:bg-dark-background border-b border-light-border dark:border-dark-border h-16 flex items-center justify-between px-6 z-50"
+  class="top-bar bg-light-background dark:bg-dark-background border-b border-light-border dark:border-dark-border py-3 px-6 z-50"
 >
   <div class="top-bar-left flex items-center">
     <h1 class="text-lg font-bold text-light-foreground dark:text-dark-foreground">
-      RBMK-1000 Simulator
+      RBMK - 反应堆模拟器
     </h1>
   </div>
 
@@ -134,6 +134,36 @@ function updateTheme () {
   </div>
 
   <div class="top-bar-right flex items-center gap-4">
+    <Button
+      variant="ghost"
+      class="text-light-foreground dark:text-dark-foreground hover:bg-light-accent dark:hover:bg-dark-accent"
+      on:click={() => {
+        logger.info('TopBar', 'Opening user guide');
+        // 这里可以添加打开使用说明的逻辑
+      }}
+    >
+      使用说明
+    </Button>
+    <Button
+      variant="ghost"
+      class="text-light-foreground dark:text-dark-foreground hover:bg-light-accent dark:hover:bg-dark-accent"
+      on:click={() => {
+        logger.info('TopBar', 'Opening feedback form');
+        // 这里可以添加打开问题反馈的逻辑
+      }}
+    >
+      问题反馈
+    </Button>
+    <Button
+      variant="ghost"
+      class="text-light-foreground dark:text-dark-foreground hover:bg-light-accent dark:hover:bg-dark-accent"
+      on:click={() => {
+        logger.info('TopBar', 'Opening project info');
+        // 这里可以添加打开项目信息的逻辑
+      }}
+    >
+      项目信息
+    </Button>
     <Button
       variant="ghost"
       size="sm"

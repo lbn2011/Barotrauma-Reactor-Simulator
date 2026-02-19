@@ -7,7 +7,7 @@ import { cn, type WithElementRef } from '@/lib/utils';
 import type { HTMLAttributes } from 'svelte/elements';
 import * as echarts from 'echarts';
 import { logger } from '@/lib/utils/logger';
-import { onMount, $effect } from 'svelte';
+import { onMount } from 'svelte';
 
 // Unique identifier
 const uid = $props.id();
@@ -76,6 +76,12 @@ $effect(() => {
   }
 });
 
+// Handle element reference
+function handleElementRef(el: HTMLElement | null) {
+  ref = el;
+  chartElement = el;
+}
+
 // Update chart size when element size changes
 $effect(() => {
   chartInstance?.resize();
@@ -103,10 +109,7 @@ $effect(() => {
 -->
 
 <div
-  bind:this={(el) => {
-    ref = el;
-    chartElement = el;
-  }}
+  bind:this={handleElementRef}
   data-chart={chartId}
   data-slot="chart"
   class={cn(
