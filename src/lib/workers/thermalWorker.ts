@@ -87,56 +87,54 @@ interface PumpPerformanceParams {
 }
 
 // 燃料热传导计算
-function calculateFuelHeatConduction(params: FuelHeatConductionParams): any {
-  const { fuel, thermal, deltaTime } = params;
-  const q''' = thermal.linearHeatGeneration / (Math.PI * Math.pow(0.005, 2)); // 体积热源
+function calculateFuelHeatConduction (params: FuelHeatConductionParams): any {
+  const { fuel, thermal } = params;
+  const q_volume =
+    thermal.linearHeatGeneration / (Math.PI * Math.pow(0.005, 2)); // 体积热源
 
   // 简化的燃料热传导计算
   const r0 = 0.005; // 燃料棒半径
   const T_surface = fuel.temperature.surface;
 
   // 燃料中心温度计算（稳态）
-  const newT_center = T_surface + (q''' * r0 * r0) / (4 * fuel.thermalConductivity);
+  const newT_center =
+    T_surface + (q_volume * r0 * r0) / (4 * fuel.thermalConductivity);
   const newT_average = (2 * T_surface + newT_center) / 3;
 
   return {
     centerTemperature: newT_center,
     averageTemperature: newT_average,
-    surfaceTemperature: T_surface
+    surfaceTemperature: T_surface,
   };
 }
 
 // 冷却剂传热计算
-function calculateCoolantHeatTransfer(params: CoolantHeatTransferParams): any {
-  const { fuel, coolant, cladding, thermal, boiling, deltaTime } = params;
+function calculateCoolantHeatTransfer (params: CoolantHeatTransferParams): any {
+  const { coolant, thermal, boiling, deltaTime } = params;
   const h = boiling.heatTransferCoefficient;
-
-  // 计算包壳温度
-  const T_fuel_surface = fuel.temperature.surface;
-  const q'' = thermal.heatFlux;
-  const R_clad = cladding.thickness / cladding.thermalConductivity;
-  const T_clad_outer = T_fuel_surface - q'' * R_clad;
 
   // 计算冷却剂温度
   const T_coolant = coolant.temperature;
-  const deltaT = q'' / h;
+  const deltaT = thermal.heatFlux / h;
   const newT_clad_outer = T_coolant + deltaT;
 
   // 更新冷却剂温度（简化）
   const m_dot = coolant.flowRate;
   const c_p = 4186; // 水的比热容
-  const deltaT_coolant = (q'' * Math.PI * 0.01 * 1) / (m_dot * c_p);
-  const newCoolantTemperature = coolant.temperature + deltaT_coolant * deltaTime;
+  const deltaT_coolant =
+    (thermal.heatFlux * Math.PI * 0.01 * 1) / (m_dot * c_p);
+  const newCoolantTemperature =
+    coolant.temperature + deltaT_coolant * deltaTime;
 
   return {
     claddingTemperature: newT_clad_outer,
     coolantTemperature: newCoolantTemperature,
-    temperatureDifference: deltaT
+    temperatureDifference: deltaT,
   };
 }
 
 // 流动参数计算
-function calculateFlowParameters(params: FlowParametersParams): any {
+function calculateFlowParameters (params: FlowParametersParams): any {
   const { coolant, pipeDiameter, pipeLength } = params;
   const flowRate = coolant.flowRate;
   const density = 998; // 水的密度
@@ -169,22 +167,25 @@ function calculateFlowParameters(params: FlowParametersParams): any {
   }
 
   // 计算压降
-  const pressureDrop = frictionCoefficient * (pipeLength / pipeDiameter) * (density * velocity * velocity) / 2;
+  const pressureDrop =
+    (frictionCoefficient *
+      (pipeLength / pipeDiameter) *
+      (density * velocity * velocity)) /
+    2;
 
   return {
     reynoldsNumber,
     flowRegime,
     frictionCoefficient,
     pressureDrop,
-    velocity
+    velocity,
   };
 }
 
 // 泵性能计算
-function calculatePumpPerformance(params: PumpPerformanceParams): any {
+function calculatePumpPerformance (params: PumpPerformanceParams): any {
   const { pump, H_max, k } = params;
   const flowRate = pump.flowRate;
-  const speed = pump.speed;
 
   // 简化的泵性能计算
   const head = H_max - k * Math.pow(flowRate / 1000, 2);
@@ -198,12 +199,12 @@ function calculatePumpPerformance(params: PumpPerformanceParams): any {
     head,
     power,
     efficiency: pump.efficiency,
-    flowRate
+    flowRate,
   };
 }
 
 // 沸腾参数计算
-function calculateBoilingParameters(params: any): any {
+function calculateBoilingParameters (params: any): any {
   const { coolant, thermal } = params;
   const pressure = coolant.pressure * 1e6; // 转换为帕斯卡
   const heatFlux = thermal.heatFlux;
@@ -233,7 +234,7 @@ function calculateBoilingParameters(params: any): any {
     saturationTemperature,
     criticalHeatFlux,
     heatTransferCoefficient,
-    boilingRegime
+    boilingRegime,
   };
 }
 
@@ -246,64 +247,69 @@ self.onmessage = (event: MessageEvent<WorkerMessage>) => {
     log.trace(`ThermalWorker received message: ${type}`);
 
     switch (type) {
-      case 'calculateFuelHeatConduction':
-        const fuelResult = calculateFuelHeatConduction(payload);
-        response = {
-          type: 'fuelHeatConductionResult',
-          success: true,
-          data: fuelResult
-        };
-        break;
+    case 'calculateFuelHeatConduction': {
+      const fuelResult = calculateFuelHeatConduction(payload);
+      response = {
+        type: 'fuelHeatConductionResult',
+        success: true,
+        data: fuelResult,
+      };
+      break;
+    }
 
-      case 'calculateCoolantHeatTransfer':
-        const coolantResult = calculateCoolantHeatTransfer(payload);
-        response = {
-          type: 'coolantHeatTransferResult',
-          success: true,
-          data: coolantResult
-        };
-        break;
+    case 'calculateCoolantHeatTransfer': {
+      const coolantResult = calculateCoolantHeatTransfer(payload);
+      response = {
+        type: 'coolantHeatTransferResult',
+        success: true,
+        data: coolantResult,
+      };
+      break;
+    }
 
-      case 'calculateFlowParameters':
-        const flowResult = calculateFlowParameters(payload);
-        response = {
-          type: 'flowParametersResult',
-          success: true,
-          data: flowResult
-        };
-        break;
+    case 'calculateFlowParameters': {
+      const flowResult = calculateFlowParameters(payload);
+      response = {
+        type: 'flowParametersResult',
+        success: true,
+        data: flowResult,
+      };
+      break;
+    }
 
-      case 'calculatePumpPerformance':
-        const pumpResult = calculatePumpPerformance(payload);
-        response = {
-          type: 'pumpPerformanceResult',
-          success: true,
-          data: pumpResult
-        };
-        break;
+    case 'calculatePumpPerformance': {
+      const pumpResult = calculatePumpPerformance(payload);
+      response = {
+        type: 'pumpPerformanceResult',
+        success: true,
+        data: pumpResult,
+      };
+      break;
+    }
 
-      case 'calculateBoilingParameters':
-        const boilingResult = calculateBoilingParameters(payload);
-        response = {
-          type: 'boilingParametersResult',
-          success: true,
-          data: boilingResult
-        };
-        break;
+    case 'calculateBoilingParameters': {
+      const boilingResult = calculateBoilingParameters(payload);
+      response = {
+        type: 'boilingParametersResult',
+        success: true,
+        data: boilingResult,
+      };
+      break;
+    }
 
-      default:
-        response = {
-          type: 'error',
-          success: false,
-          error: `Unknown message type: ${type}`
-        };
+    default:
+      response = {
+        type: 'error',
+        success: false,
+        error: `Unknown message type: ${type}`,
+      };
     }
   } catch (error) {
     log.error(`ThermalWorker error: ${error}`);
     response = {
       type: 'error',
       success: false,
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 

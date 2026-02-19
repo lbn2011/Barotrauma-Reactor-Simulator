@@ -112,10 +112,7 @@ $effect(() => {
   bind:this={handleElementRef}
   data-chart={chartId}
   data-slot="chart"
-  class={cn(
-    'flex aspect-video justify-center overflow-visible text-xs w-full h-full',
-    className
-  )}
+  class={cn('flex aspect-video justify-center overflow-visible text-xs w-full h-full', className)}
   style={style || 'width: 100%; height: 100%;'}
   {...restProps}
 ></div>

@@ -7,14 +7,10 @@ import { ReactorCore } from './reactorCore';
 import { FaultSimulation, type Fault } from './faultSimulation';
 
 // 导出系统模型
-export {
-	ReactorCore,
-	FaultSimulation,
-	type Fault
-};
+export { ReactorCore, FaultSimulation, type Fault };
 
 // 系统模型命名空间
 export namespace systems {
-	export const reactorCore = ReactorCore;
-	export const faultSimulation = FaultSimulation;
+  export const reactorCore = ReactorCore;
+  export const faultSimulation = FaultSimulation;
 }

@@ -363,7 +363,11 @@
 }
 
 /* 交互元素过渡效果 */
-button, a, input, select, textarea {
+button,
+a,
+input,
+select,
+textarea {
   transition: var(--transition-interactive);
 }
 

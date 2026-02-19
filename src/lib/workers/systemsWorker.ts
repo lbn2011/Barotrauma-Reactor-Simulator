@@ -25,7 +25,12 @@ interface ThreeImpulseLevelControlParams {
     adjustedFeedwaterFlow: number;
     levelError: number;
     flowError: number;
-    waterLevelStatus: 'normal' | 'low' | 'high' | 'critical_low' | 'critical_high';
+    waterLevelStatus:
+      | 'normal'
+      | 'low'
+      | 'high'
+      | 'critical_low'
+      | 'critical_high';
     alarm: boolean;
     pid: {
       kp: number;
@@ -52,7 +57,6 @@ interface CorePurificationParams {
     purificationSystemStatus: boolean;
     isEffective: boolean;
   };
-  deltaTime: number;
 }
 
 // 蒸汽旁路系统参数接口
@@ -67,7 +71,6 @@ interface SteamBypassParams {
     maxPressure: number;
     steamFlowMax: number;
   };
-  deltaTime: number;
 }
 
 // 汽轮机系统参数接口
@@ -86,13 +89,15 @@ interface TurbineParams {
     tripStatus: boolean;
     tripReason: string;
   };
-  deltaTime: number;
 }
 
 // 三冲量水位控制计算
-function calculateThreeImpulseLevelControl(params: ThreeImpulseLevelControlParams): any {
+function calculateThreeImpulseLevelControl (
+  params: ThreeImpulseLevelControlParams
+): any {
   const { levelControl, deltaTime } = params;
-  const { waterLevel, waterLevelSetpoint, steamFlow, feedwaterFlow, pid } = levelControl;
+  const { waterLevel, waterLevelSetpoint, steamFlow, feedwaterFlow, pid } =
+    levelControl;
 
   // 计算水位误差
   const levelError = waterLevelSetpoint - waterLevel;
@@ -103,7 +108,7 @@ function calculateThreeImpulseLevelControl(params: ThreeImpulseLevelControlParam
   // PID 控制计算
   const proportional = pid.kp * levelError;
   const integral = pid.ki * (pid.integral + levelError * deltaTime);
-  const derivative = pid.kd * (levelError - pid.previousError) / deltaTime;
+  const derivative = (pid.kd * (levelError - pid.previousError)) / deltaTime;
 
   // 计算调整量
   const adjustment = proportional + integral + derivative;
@@ -115,7 +120,12 @@ function calculateThreeImpulseLevelControl(params: ThreeImpulseLevelControlParam
   adjustedFeedwaterFlow = Math.max(0, Math.min(1000, adjustedFeedwaterFlow));
 
   // 确定水位状态
-  let waterLevelStatus: 'normal' | 'low' | 'high' | 'critical_low' | 'critical_high';
+  let waterLevelStatus:
+    | 'normal'
+    | 'low'
+    | 'high'
+    | 'critical_low'
+    | 'critical_high';
   let alarm = false;
 
   if (waterLevel < waterLevelSetpoint * 0.7) {
@@ -151,8 +161,8 @@ function calculateThreeImpulseLevelControl(params: ThreeImpulseLevelControlParam
 }
 
 // 堆芯净化系统计算
-function calculateCorePurification(params: CorePurificationParams): any {
-  const { purification, deltaTime } = params;
+function calculateCorePurification (params: CorePurificationParams): any {
+  const { purification } = params;
 
   if (!purification.status) {
     // 系统关闭时
@@ -166,17 +176,28 @@ function calculateCorePurification(params: CorePurificationParams): any {
 
   // 计算净化效率
   const flowFactor = purification.flowRate / 100000; // 最大流量100000 kg/h
-  const impurityFactor = 1 - purification.impurityConcentration / purification.maxImpurityConcentration;
-  const purificationEfficiency = purification.filterEfficiency * flowFactor * impurityFactor * 100;
+  const impurityFactor =
+    1 -
+    purification.impurityConcentration / purification.maxImpurityConcentration;
+  const purificationEfficiency =
+    purification.filterEfficiency * flowFactor * impurityFactor * 100;
 
   // 计算过滤后的杂质浓度
-  const filteredImpurityConcentration = purification.impurityConcentration * (1 - purification.filterEfficiency * flowFactor);
+  const filteredImpurityConcentration =
+    purification.impurityConcentration *
+    (1 - purification.filterEfficiency * flowFactor);
 
   // 计算警告级别
   let warningLevel: 'normal' | 'warning' | 'alarm';
-  if (filteredImpurityConcentration > 0.8 * purification.maxImpurityConcentration) {
+  if (
+    filteredImpurityConcentration >
+    0.8 * purification.maxImpurityConcentration
+  ) {
     warningLevel = 'alarm';
-  } else if (filteredImpurityConcentration > 0.5 * purification.maxImpurityConcentration) {
+  } else if (
+    filteredImpurityConcentration >
+    0.5 * purification.maxImpurityConcentration
+  ) {
     warningLevel = 'warning';
   } else {
     warningLevel = 'normal';
@@ -192,9 +213,15 @@ function calculateCorePurification(params: CorePurificationParams): any {
 }
 
 // 蒸汽旁路系统计算
-function calculateSteamBypass(params: SteamBypassParams): any {
-  const { steamBypass, deltaTime } = params;
-  const { pressureSetpoint, steamPressure, maxPressure, steamFlowMax, bypassPosition } = steamBypass;
+function calculateSteamBypass (params: SteamBypassParams): any {
+  const { steamBypass } = params;
+  const {
+    pressureSetpoint,
+    steamPressure,
+    maxPressure,
+    steamFlowMax,
+    bypassPosition,
+  } = steamBypass;
 
   // 计算压力误差
   const pressureError = steamPressure - pressureSetpoint;
@@ -213,7 +240,8 @@ function calculateSteamBypass(params: SteamBypassParams): any {
   newBypassPosition = Math.max(0, Math.min(100, newBypassPosition));
 
   // 计算旁路流量
-  const bypassFlow = (newBypassPosition / 100) * steamFlowMax * (steamPressure / maxPressure);
+  const bypassFlow =
+    (newBypassPosition / 100) * steamFlowMax * (steamPressure / maxPressure);
 
   // 计算旁路容量
   const bypassCapacity = newBypassPosition;
@@ -231,8 +259,8 @@ function calculateSteamBypass(params: SteamBypassParams): any {
 }
 
 // 汽轮机系统计算
-function calculateTurbine(params: TurbineParams): any {
-  const { turbine, deltaTime } = params;
+function calculateTurbine (params: TurbineParams): any {
+  const { turbine } = params;
   const { status, load, speed, steamPressure, steamTemperature } = turbine;
 
   if (!status) {
@@ -302,55 +330,59 @@ self.onmessage = (event: MessageEvent<WorkerMessage>) => {
     log.trace(`SystemsWorker received message: ${type}`);
 
     switch (type) {
-      case 'calculateThreeImpulseLevelControl':
-        const levelControlResult = calculateThreeImpulseLevelControl(payload);
-        response = {
-          type: 'threeImpulseLevelControlResult',
-          success: true,
-          data: levelControlResult
-        };
-        break;
+    case 'calculateThreeImpulseLevelControl': {
+      const levelControlResult = calculateThreeImpulseLevelControl(payload);
+      response = {
+        type: 'threeImpulseLevelControlResult',
+        success: true,
+        data: levelControlResult,
+      };
+      break;
+    }
 
-      case 'calculateCorePurification':
-        const purificationResult = calculateCorePurification(payload);
-        response = {
-          type: 'corePurificationResult',
-          success: true,
-          data: purificationResult
-        };
-        break;
+    case 'calculateCorePurification': {
+      const purificationResult = calculateCorePurification(payload);
+      response = {
+        type: 'corePurificationResult',
+        success: true,
+        data: purificationResult,
+      };
+      break;
+    }
 
-      case 'calculateSteamBypass':
-        const bypassResult = calculateSteamBypass(payload);
-        response = {
-          type: 'steamBypassResult',
-          success: true,
-          data: bypassResult
-        };
-        break;
+    case 'calculateSteamBypass': {
+      const bypassResult = calculateSteamBypass(payload);
+      response = {
+        type: 'steamBypassResult',
+        success: true,
+        data: bypassResult,
+      };
+      break;
+    }
 
-      case 'calculateTurbine':
-        const turbineResult = calculateTurbine(payload);
-        response = {
-          type: 'turbineResult',
-          success: true,
-          data: turbineResult
-        };
-        break;
+    case 'calculateTurbine': {
+      const turbineResult = calculateTurbine(payload);
+      response = {
+        type: 'turbineResult',
+        success: true,
+        data: turbineResult,
+      };
+      break;
+    }
 
-      default:
-        response = {
-          type: 'error',
-          success: false,
-          error: `Unknown message type: ${type}`
-        };
+    default:
+      response = {
+        type: 'error',
+        success: false,
+        error: `Unknown message type: ${type}`,
+      };
     }
   } catch (error) {
     log.error(`SystemsWorker error: ${error}`);
     response = {
       type: 'error',
       success: false,
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 

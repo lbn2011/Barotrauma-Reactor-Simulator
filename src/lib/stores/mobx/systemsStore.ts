@@ -10,7 +10,12 @@ interface LevelControlState {
   adjustedFeedwaterFlow: number; // 调整后的给水流量（kg/s）
   levelError: number; // 水位误差（%）
   flowError: number; // 流量误差（kg/s）
-  waterLevelStatus: 'normal' | 'low' | 'high' | 'critical_low' | 'critical_high'; // 水位状态
+  waterLevelStatus:
+    | 'normal'
+    | 'low'
+    | 'high'
+    | 'critical_low'
+    | 'critical_high'; // 水位状态
   alarm: boolean; // 警报状态
   // PID 参数
   pid: {
@@ -38,14 +43,15 @@ interface PurificationState {
 
 // 蒸汽旁路系统状态
 interface SteamBypassState {
-  status: boolean; // 系统状态
-  bypassPosition: number; // 旁路阀位置（%）
-  bypassFlow: number; // 旁路流量（kg/s）
-  bypassCapacity: number; // 旁路容量（%）
-  pressureSetpoint: number; // 压力设定值（MPa）
-  steamPressure: number; // 蒸汽压力（MPa）
-  maxPressure: number; // 最大压力（MPa）
-  steamFlowMax: number; // 最大蒸汽流量（kg/s）
+  status: boolean;
+  bypassPosition: number;
+  bypassFlow: number;
+  bypassCapacity: number;
+  pressureSetpoint: number;
+  steamPressure: number;
+  maxPressure: number;
+  steamFlowMax: number;
+  currentBypassPosition: number;
 }
 
 // 汽轮机状态
@@ -125,6 +131,7 @@ const initialState: SystemsState = {
     steamPressure: 7.0,
     maxPressure: 8.5,
     steamFlowMax: 3000,
+    currentBypassPosition: 0,
   },
 
   // 汽轮机系统
@@ -153,7 +160,7 @@ export class SystemsStore {
   state: SystemsState;
 
   // 构造函数
-  constructor() {
+  constructor () {
     this.state = { ...initialState };
     makeAutoObservable(this, {
       // 计算属性
@@ -164,30 +171,33 @@ export class SystemsStore {
   }
 
   // 总给水流量
-  get totalFeedwaterFlow() {
+  get totalFeedwaterFlow () {
     return this.state.levelControl.adjustedFeedwaterFlow;
   }
 
   // 旁路流量
-  get bypassFlowRate() {
+  get bypassFlowRate () {
     return this.state.steamBypass.bypassFlow;
   }
 
   // 汽轮机效率
-  get turbineEfficiency() {
+  get turbineEfficiency () {
     if (this.state.turbine.load === 0) return 0;
-    return (this.state.turbine.powerOutput / (this.state.turbine.load * 10)) * 100;
+    return (
+      (this.state.turbine.powerOutput / (this.state.turbine.load * 10)) * 100
+    );
   }
 
   /**
    * 计算三冲量水位控制
    * @param deltaTime 时间步长
    */
-  calculateThreeImpulseLevelControl(deltaTime: number) {
+  calculateThreeImpulseLevelControl (deltaTime: number) {
     log.trace('Calculating three-impulse level control');
-    
+
     const { levelControl } = this.state;
-    const { waterLevel, waterLevelSetpoint, steamFlow, feedwaterFlow, pid } = levelControl;
+    const { waterLevel, waterLevelSetpoint, steamFlow, feedwaterFlow, pid } =
+      levelControl;
 
     // 计算水位误差
     const levelError = waterLevelSetpoint - waterLevel;
@@ -198,7 +208,7 @@ export class SystemsStore {
     // PID 控制计算
     const proportional = pid.kp * levelError;
     const integral = pid.ki * (pid.integral + levelError * deltaTime);
-    const derivative = pid.kd * (levelError - pid.previousError) / deltaTime;
+    const derivative = (pid.kd * (levelError - pid.previousError)) / deltaTime;
 
     // 计算调整量
     const adjustment = proportional + integral + derivative;
@@ -210,7 +220,12 @@ export class SystemsStore {
     adjustedFeedwaterFlow = Math.max(0, Math.min(1000, adjustedFeedwaterFlow));
 
     // 确定水位状态
-    let waterLevelStatus: 'normal' | 'low' | 'high' | 'critical_low' | 'critical_high';
+    let waterLevelStatus:
+      | 'normal'
+      | 'low'
+      | 'high'
+      | 'critical_low'
+      | 'critical_high';
     let alarm = false;
 
     if (waterLevel < waterLevelSetpoint * 0.7) {
@@ -259,9 +274,9 @@ export class SystemsStore {
    * 计算堆芯净化系统
    * @param deltaTime 时间步长
    */
-  calculateCorePurification(deltaTime: number) {
+  calculateCorePurification (_deltaTime: number) {
     log.trace('Calculating core purification');
-    
+
     const { purification } = this.state;
 
     if (!purification.status) {
@@ -278,17 +293,29 @@ export class SystemsStore {
 
     // 计算净化效率
     const flowFactor = purification.flowRate / 100000; // 最大流量100000 kg/h
-    const impurityFactor = 1 - purification.impurityConcentration / purification.maxImpurityConcentration;
-    const purificationEfficiency = purification.filterEfficiency * flowFactor * impurityFactor * 100;
+    const impurityFactor =
+      1 -
+      purification.impurityConcentration /
+        purification.maxImpurityConcentration;
+    const purificationEfficiency =
+      purification.filterEfficiency * flowFactor * impurityFactor * 100;
 
     // 计算过滤后的杂质浓度
-    const filteredImpurityConcentration = purification.impurityConcentration * (1 - purification.filterEfficiency * flowFactor);
+    const filteredImpurityConcentration =
+      purification.impurityConcentration *
+      (1 - purification.filterEfficiency * flowFactor);
 
     // 计算警告级别
     let warningLevel: 'normal' | 'warning' | 'alarm';
-    if (filteredImpurityConcentration > 0.8 * purification.maxImpurityConcentration) {
+    if (
+      filteredImpurityConcentration >
+      0.8 * purification.maxImpurityConcentration
+    ) {
       warningLevel = 'alarm';
-    } else if (filteredImpurityConcentration > 0.5 * purification.maxImpurityConcentration) {
+    } else if (
+      filteredImpurityConcentration >
+      0.5 * purification.maxImpurityConcentration
+    ) {
       warningLevel = 'warning';
     } else {
       warningLevel = 'normal';
@@ -315,11 +342,17 @@ export class SystemsStore {
    * 计算蒸汽旁路系统
    * @param deltaTime 时间步长
    */
-  calculateSteamBypass(deltaTime: number) {
+  calculateSteamBypass (_deltaTime: number) {
     log.trace('Calculating steam bypass');
-    
+
     const { steamBypass } = this.state;
-    const { pressureSetpoint, steamPressure, maxPressure, steamFlowMax, currentBypassPosition = 0 } = steamBypass;
+    const {
+      pressureSetpoint,
+      steamPressure,
+      maxPressure,
+      steamFlowMax,
+      currentBypassPosition = 0,
+    } = steamBypass;
 
     // 计算压力误差
     const pressureError = steamPressure - pressureSetpoint;
@@ -338,7 +371,8 @@ export class SystemsStore {
     bypassPosition = Math.max(0, Math.min(100, bypassPosition));
 
     // 计算旁路流量
-    const bypassFlow = (bypassPosition / 100) * steamFlowMax * (steamPressure / maxPressure);
+    const bypassFlow =
+      (bypassPosition / 100) * steamFlowMax * (steamPressure / maxPressure);
 
     // 计算旁路容量
     const bypassCapacity = bypassPosition;
@@ -367,19 +401,17 @@ export class SystemsStore {
    * 计算汽轮机系统
    * @param deltaTime 时间步长
    */
-  calculateTurbine(deltaTime: number) {
+  calculateTurbine (_deltaTime: number) {
     log.trace('Calculating turbine system');
-    
+
     const { turbine } = this.state;
     const { status, load, speed, steamPressure, steamTemperature } = turbine;
 
     if (!status) {
-      // 系统关闭时
       log.debug('Turbine system is off');
       return;
     }
 
-    // 计算转速（简化）
     let newSpeed = speed;
     if (load > 0) {
       newSpeed = 3000 + (load - 50) * 10;
@@ -387,16 +419,13 @@ export class SystemsStore {
       newSpeed = 1000;
     }
 
-    // 计算功率输出
-    const powerOutput = (load / 100) * 1000; // 假设最大功率1000 MW
+    const powerOutput = (load / 100) * 1000;
 
-    // 计算排汽温度
     const exhaustTemperature = 30 + (load / 100) * 50;
 
-    // 检查跳闸条件
     let tripStatus = turbine.tripStatus;
     let tripReason = turbine.tripReason;
-    let newStatus = status;
+    let newStatus: boolean = status;
 
     if (!tripStatus) {
       // 超速保护
@@ -448,8 +477,11 @@ export class SystemsStore {
    * 更新水位设定值
    * @param setpoint 水位设定值（%）
    */
-  setWaterLevelSetpoint(setpoint: number) {
-    this.state.levelControl.waterLevelSetpoint = Math.max(0, Math.min(100, setpoint));
+  setWaterLevelSetpoint (setpoint: number) {
+    this.state.levelControl.waterLevelSetpoint = Math.max(
+      0,
+      Math.min(100, setpoint)
+    );
     log.debug(`Water level setpoint set to ${setpoint}%`);
   }
 
@@ -457,7 +489,7 @@ export class SystemsStore {
    * 更新蒸汽流量
    * @param flow 蒸汽流量（kg/s）
    */
-  setSteamFlow(flow: number) {
+  setSteamFlow (flow: number) {
     this.state.levelControl.steamFlow = flow;
     log.debug(`Steam flow set to ${flow} kg/s`);
   }
@@ -466,7 +498,7 @@ export class SystemsStore {
    * 更新给水流量
    * @param flow 给水流量（kg/s）
    */
-  setFeedwaterFlow(flow: number) {
+  setFeedwaterFlow (flow: number) {
     this.state.levelControl.feedwaterFlow = flow;
     log.debug(`Feedwater flow set to ${flow} kg/s`);
   }
@@ -475,7 +507,7 @@ export class SystemsStore {
    * 更新堆芯净化流量
    * @param flowRate 净化流量（kg/h）
    */
-  setPurificationFlowRate(flowRate: number) {
+  setPurificationFlowRate (flowRate: number) {
     this.state.purification.flowRate = flowRate;
     log.debug(`Purification flow rate set to ${flowRate} kg/h`);
   }
@@ -484,7 +516,7 @@ export class SystemsStore {
    * 更新蒸汽压力
    * @param pressure 蒸汽压力（MPa）
    */
-  setSteamPressure(pressure: number) {
+  setSteamPressure (pressure: number) {
     this.state.steamBypass.steamPressure = pressure;
     this.state.turbine.steamPressure = pressure;
     log.debug(`Steam pressure set to ${pressure} MPa`);
@@ -494,7 +526,7 @@ export class SystemsStore {
    * 更新汽轮机负荷
    * @param load 负荷（%）
    */
-  setTurbineLoad(load: number) {
+  setTurbineLoad (load: number) {
     this.state.turbine.load = Math.max(0, Math.min(100, load));
     log.debug(`Turbine load set to ${load}%`);
   }
@@ -503,7 +535,7 @@ export class SystemsStore {
    * 切换汽轮机状态
    * @param status 状态
    */
-  setTurbineStatus(status: boolean) {
+  setTurbineStatus (status: boolean) {
     this.state.turbine.status = status;
     if (status) {
       this.state.turbine.tripStatus = false;
@@ -521,28 +553,28 @@ export class SystemsStore {
    * 更新系统模型计算
    * @param deltaTime 时间步长
    */
-  update(deltaTime: number) {
+  update (deltaTime: number) {
     log.time('Systems update');
-    
+
     // 计算三冲量水位控制
     this.calculateThreeImpulseLevelControl(deltaTime);
-    
+
     // 计算堆芯净化系统
     this.calculateCorePurification(deltaTime);
-    
+
     // 计算蒸汽旁路系统
     this.calculateSteamBypass(deltaTime);
-    
+
     // 计算汽轮机系统
     this.calculateTurbine(deltaTime);
-    
+
     log.timeEnd('Systems update');
   }
 
   /**
    * 重置状态
    */
-  reset() {
+  reset () {
     this.state = { ...initialState };
     log.info('Systems store reset');
   }

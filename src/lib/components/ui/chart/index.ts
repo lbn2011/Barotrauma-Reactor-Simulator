@@ -2,10 +2,7 @@ import ChartContainer from './container.svelte';
 import ChartTooltip from './tooltip.svelte';
 import EChartContainer from './echart-container.svelte';
 
-export {
-  getPayloadConfigFromPayload,
-  type ChartConfig,
-} from './utils.js';
+export { getPayloadConfigFromPayload, type ChartConfig } from './utils.js';
 
 export {
   ChartContainer,

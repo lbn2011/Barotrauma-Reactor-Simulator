@@ -344,10 +344,7 @@ function calculateChange (parameterId: string) {
 
       <!-- Chart Container -->
       <div class="h-96 w-full">
-        <EChartContainer
-          option={chartOption}
-          style="width: 100%; height: 100%;"
-        />
+        <EChartContainer option={chartOption} style="width: 100%; height: 100%;" />
       </div>
 
       <!-- Data Statistics -->

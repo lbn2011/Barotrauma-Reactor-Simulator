@@ -146,7 +146,7 @@ export class ThermalStore {
   state: ThermalState;
 
   // 构造函数
-  constructor() {
+  constructor () {
     this.state = { ...initialState };
     makeAutoObservable(this, {
       // 计算属性
@@ -157,10 +157,10 @@ export class ThermalStore {
   }
 
   // 努塞尔数
-  get nusseltNumber() {
+  get nusseltNumber () {
     const { reynoldsNumber } = this.state.flow;
     const pr = this.prandtlNumber;
-    
+
     // 湍流流动的Dittus-Boelter方程
     if (this.state.flow.flowRegime === 'turbulent') {
       return 0.023 * Math.pow(reynoldsNumber, 0.8) * Math.pow(pr, 0.4);
@@ -170,14 +170,14 @@ export class ThermalStore {
   }
 
   // 普朗特数
-  get prandtlNumber() {
+  get prandtlNumber () {
     // 水的普朗特数（简化计算）
     const T = this.state.coolant.temperature;
     return 7.0 - 0.03 * (T - 20);
   }
 
   // 佩克莱数
-  get pecletNumber() {
+  get pecletNumber () {
     return this.state.flow.reynoldsNumber * this.prandtlNumber;
   }
 
@@ -185,11 +185,12 @@ export class ThermalStore {
    * 计算燃料热传导
    * @param deltaTime 时间步长
    */
-  calculateFuelHeatConduction(deltaTime: number) {
+  calculateFuelHeatConduction (_deltaTime: number) {
     log.trace('Calculating fuel heat conduction');
-    
+
     const { fuel, thermal } = this.state;
-    const q''' = thermal.linearHeatGeneration / (Math.PI * Math.pow(0.005, 2)); // 体积热源
+    const q_volumetric =
+      thermal.linearHeatGeneration / (Math.PI * Math.pow(0.005, 2)); // 体积热源
 
     // 简化的燃料热传导计算
     const r0 = 0.005; // 燃料棒半径
@@ -197,7 +198,8 @@ export class ThermalStore {
     const T_surface = fuel.temperature.surface;
 
     // 燃料中心温度计算（稳态）
-    const newT_center = T_surface + (q''' * r0 * r0) / (4 * fuel.thermalConductivity);
+    const newT_center =
+      T_surface + (q_volumetric * r0 * r0) / (4 * fuel.thermalConductivity);
     const newT_average = (2 * T_surface + T_center) / 3;
 
     // 更新燃料温度
@@ -215,21 +217,15 @@ export class ThermalStore {
    * 计算冷却剂传热
    * @param deltaTime 时间步长
    */
-  calculateCoolantHeatTransfer(deltaTime: number) {
+  calculateCoolantHeatTransfer (deltaTime: number) {
     log.trace('Calculating coolant heat transfer');
-    
-    const { fuel, coolant, cladding, thermal, flow } = this.state;
-    const h = this.state.boiling.heatTransferCoefficient;
 
-    // 计算包壳温度
-    const T_fuel_surface = fuel.temperature.surface;
-    const q'' = thermal.heatFlux;
-    const R_clad = cladding.thickness / cladding.thermalConductivity;
-    const T_clad_outer = T_fuel_surface - q'' * R_clad;
+    const { coolant, thermal } = this.state;
+    const h = this.state.boiling.heatTransferCoefficient;
 
     // 计算冷却剂温度
     const T_coolant = coolant.temperature;
-    const deltaT = q'' / h;
+    const deltaT = thermal.heatFlux / h;
     const newT_clad_outer = T_coolant + deltaT;
 
     // 更新温度
@@ -238,7 +234,8 @@ export class ThermalStore {
     // 更新冷却剂温度（简化）
     const m_dot = coolant.flowRate;
     const c_p = 4186; // 水的比热容
-    const deltaT_coolant = (q'' * Math.PI * 0.01 * 1) / (m_dot * c_p);
+    const deltaT_coolant =
+      (thermal.heatFlux * Math.PI * 0.01 * 1) / (m_dot * c_p);
     this.state.coolant.temperature += deltaT_coolant * deltaTime;
 
     log.debug('Coolant heat transfer calculated:', {
@@ -252,9 +249,9 @@ export class ThermalStore {
    * 计算流动参数
    * @param deltaTime 时间步长
    */
-  calculateFlowParameters(deltaTime: number) {
+  calculateFlowParameters (_deltaTime: number) {
     log.trace('Calculating flow parameters');
-    
+
     const { coolant } = this.state;
     const flowRate = coolant.flowRate;
     const density = 998; // 水的密度
@@ -289,7 +286,11 @@ export class ThermalStore {
 
     // 计算压降
     const pipeLength = 10; // 管道长度
-    const pressureDrop = frictionCoefficient * (pipeLength / pipeDiameter) * (density * velocity * velocity) / 2;
+    const pressureDrop =
+      (frictionCoefficient *
+        (pipeLength / pipeDiameter) *
+        (density * velocity * velocity)) /
+      2;
 
     // 更新流动参数
     this.state.flow = {
@@ -313,12 +314,11 @@ export class ThermalStore {
    * 计算泵性能
    * @param deltaTime 时间步长
    */
-  calculatePumpPerformance(deltaTime: number) {
+  calculatePumpPerformance (_deltaTime: number) {
     log.trace('Calculating pump performance');
-    
+
     const { pump } = this.state;
     const flowRate = pump.flowRate;
-    const speed = pump.speed;
 
     // 简化的泵性能计算
     const H_max = 100; // 最大扬程
@@ -349,9 +349,9 @@ export class ThermalStore {
    * 计算沸腾参数
    * @param deltaTime 时间步长
    */
-  calculateBoilingParameters(deltaTime: number) {
+  calculateBoilingParameters (_deltaTime: number) {
     log.trace('Calculating boiling parameters');
-    
+
     const { coolant, thermal } = this.state;
     const pressure = coolant.pressure * 1e6; // 转换为帕斯卡
     const heatFlux = thermal.heatFlux;
@@ -397,12 +397,11 @@ export class ThermalStore {
    * 计算冷却剂焓
    * @param deltaTime 时间步长
    */
-  calculateCoolantEnthalpy(deltaTime: number) {
+  calculateCoolantEnthalpy (_deltaTime: number) {
     log.trace('Calculating coolant enthalpy');
-    
+
     const { coolant } = this.state;
     const T = coolant.temperature;
-    const P = coolant.pressure;
 
     // 简化的焓计算
     const h = 4.186 * T + 2500 * coolant.voidFraction;
@@ -417,7 +416,7 @@ export class ThermalStore {
    * 更新热功率
    * @param power 热功率
    */
-  setThermalPower(power: number) {
+  setThermalPower (power: number) {
     this.state.thermal.power = power;
     // 更新热流密度
     this.state.thermal.heatFlux = power * 10000;
@@ -428,7 +427,7 @@ export class ThermalStore {
    * 更新冷却剂流量
    * @param flowRate 冷却剂流量
    */
-  setCoolantFlowRate(flowRate: number) {
+  setCoolantFlowRate (flowRate: number) {
     this.state.coolant.flowRate = flowRate;
     this.state.pump.flowRate = flowRate;
     log.debug(`Coolant flow rate set to ${flowRate} kg/s`);
@@ -438,7 +437,7 @@ export class ThermalStore {
    * 更新泵转速
    * @param speed 泵转速
    */
-  setPumpSpeed(speed: number) {
+  setPumpSpeed (speed: number) {
     this.state.pump.speed = speed;
     log.debug(`Pump speed set to ${speed} RPM`);
   }
@@ -447,7 +446,7 @@ export class ThermalStore {
    * 更新冷却剂压力
    * @param pressure 冷却剂压力
    */
-  setCoolantPressure(pressure: number) {
+  setCoolantPressure (pressure: number) {
     this.state.coolant.pressure = pressure;
     log.debug(`Coolant pressure set to ${pressure} MPa`);
   }
@@ -456,7 +455,7 @@ export class ThermalStore {
    * 更新空泡份额
    * @param voidFraction 空泡份额
    */
-  setVoidFraction(voidFraction: number) {
+  setVoidFraction (voidFraction: number) {
     this.state.coolant.voidFraction = voidFraction;
     log.debug(`Void fraction set to ${voidFraction}`);
   }
@@ -465,34 +464,34 @@ export class ThermalStore {
    * 更新热工水力计算
    * @param deltaTime 时间步长
    */
-  update(deltaTime: number) {
+  update (deltaTime: number) {
     log.time('Thermal hydraulic update');
-    
+
     // 计算流动参数
     this.calculateFlowParameters(deltaTime);
-    
+
     // 计算泵性能
     this.calculatePumpPerformance(deltaTime);
-    
+
     // 计算沸腾参数
     this.calculateBoilingParameters(deltaTime);
-    
+
     // 计算燃料热传导
     this.calculateFuelHeatConduction(deltaTime);
-    
+
     // 计算冷却剂传热
     this.calculateCoolantHeatTransfer(deltaTime);
-    
+
     // 计算冷却剂焓
     this.calculateCoolantEnthalpy(deltaTime);
-    
+
     log.timeEnd('Thermal hydraulic update');
   }
 
   /**
    * 重置状态
    */
-  reset() {
+  reset () {
     this.state = { ...initialState };
     log.info('Thermal store reset');
   }

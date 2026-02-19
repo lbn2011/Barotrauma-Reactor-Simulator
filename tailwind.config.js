@@ -113,36 +113,36 @@ export default {
           background: 'oklch(0.9800 0 0)', // #FFFFFF
           'background-secondary': 'oklch(0.9605 0 0)', // #F8F9FA
           'background-tertiary': 'oklch(0.9410 0 0)', // #F1F3F4
-          
+
           // 前景色
           foreground: 'oklch(0.1448 0 0)', // #1A1A1A
           'foreground-secondary': 'oklch(0.3000 0 0)', // #4D4D4D
           'foreground-tertiary': 'oklch(0.5000 0 0)', // #808080
-          
+
           // 卡片色
           card: 'oklch(0.9500 0 0)', // #F5F5F5
           'card-foreground': 'oklch(0.1448 0 0)', // #1A1A1A
-          
+
           // 弹出层色
           popover: 'oklch(0.9500 0 0)', // #F5F5F5
           'popover-foreground': 'oklch(0.1448 0 0)', // #1A1A1A
-          
+
           // 边框色
           border: 'oklch(0.8000 0 0)', // #CCCCCC
           'border-secondary': 'oklch(0.8500 0 0)', // #D9D9D9
-          
+
           // 输入框色
           input: 'oklch(0.9500 0 0)', // #F5F5F5
           'input-foreground': 'oklch(0.1448 0 0)', // #1A1A1A
-          
+
           // -muted色
           muted: 'oklch(0.8500 0 0)', // #D9D9D9
           'muted-foreground': 'oklch(0.5000 0 0)', // #808080
-          
+
           // 强调色
           accent: 'oklch(0.8000 0 0)', // #CCCCCC
           'accent-foreground': 'oklch(0.1448 0 0)', // #1A1A1A
-          
+
           // 阴影色
           shadow: 'oklch(0.0000 0 0 / 0.10)', // rgba(0, 0, 0, 0.10)
         },
@@ -152,36 +152,36 @@ export default {
           background: 'oklch(0.1448 0 0)', // #1A1A1A
           'background-secondary': 'oklch(0.1913 0 0)', // #262626
           'background-tertiary': 'oklch(0.2393 0 0)', // #333333
-          
+
           // 前景色
           foreground: 'oklch(0.9288 0 0)', // #F0F0F0
           'foreground-secondary': 'oklch(0.7155 0 0)', // #B5B5B5
           'foreground-tertiary': 'oklch(0.5000 0 0)', // #808080
-          
+
           // 卡片色
           card: 'oklch(0.1913 0 0)', // #262626
           'card-foreground': 'oklch(0.9288 0 0)', // #F0F0F0
-          
+
           // 弹出层色
           popover: 'oklch(0.1913 0 0)', // #262626
           'popover-foreground': 'oklch(0.9288 0 0)', // #F0F0F0
-          
+
           // 边框色
           border: 'oklch(0.2393 0 0)', // #333333
           'border-secondary': 'oklch(0.2873 0 0)', // #404040
-          
+
           // 输入框色
           input: 'oklch(0.1913 0 0)', // #262626
           'input-foreground': 'oklch(0.9288 0 0)', // #F0F0F0
-          
+
           // muted色
           muted: 'oklch(0.2393 0 0)', // #333333
           'muted-foreground': 'oklch(0.7155 0 0)', // #B5B5B5
-          
+
           // 强调色
           accent: 'oklch(0.2393 0 0)', // #333333
           'accent-foreground': 'oklch(0.9288 0 0)', // #F0F0F0
-          
+
           // 阴影色
           shadow: 'oklch(0.0000 0 0 / 0.30)', // rgba(0, 0, 0, 0.30)
         },
@@ -249,7 +249,7 @@ export default {
           from: { transform: 'translateY(10px)', opacity: '0' },
           to: { transform: 'translateY(0)', opacity: '1' },
         },
-        'pulse': {
+        pulse: {
           '0%, 100%': {
             opacity: '1',
           },
@@ -259,22 +259,22 @@ export default {
         },
       },
       transitionProperty: {
-        'color': 'color',
-        'bg': 'background-color',
-        'border': 'border-color',
-        'text': 'color, background-color, border-color',
-        'all': 'all',
+        color: 'color',
+        bg: 'background-color',
+        border: 'border-color',
+        text: 'color, background-color, border-color',
+        all: 'all',
       },
       transitionTimingFunction: {
-        'default': 'cubic-bezier(0.4, 0, 0.2, 1)',
-        'in': 'cubic-bezier(0.4, 0, 1, 1)',
-        'out': 'cubic-bezier(0, 0, 0.2, 1)',
+        default: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        in: 'cubic-bezier(0.4, 0, 1, 1)',
+        out: 'cubic-bezier(0, 0, 0.2, 1)',
         'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
       },
       transitionDuration: {
-        'default': '300ms',
-        'fast': '150ms',
-        'slow': '500ms',
+        default: '300ms',
+        fast: '150ms',
+        slow: '500ms',
       },
     },
   },

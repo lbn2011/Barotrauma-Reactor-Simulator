@@ -97,7 +97,7 @@ const initialState: NeutronState = {
     { lambda: 0.0316, beta: 0.001424, concentration: 0 },
     { lambda: 0.115, beta: 0.001274, concentration: 0 },
     { lambda: 0.311, beta: 0.002568, concentration: 0 },
-    { lambda: 1.40, beta: 0.000748, concentration: 0 },
+    { lambda: 1.4, beta: 0.000748, concentration: 0 },
     { lambda: 3.87, beta: 0.000273, concentration: 0 },
   ],
 
@@ -137,7 +137,7 @@ export class NeutronStore {
   state: NeutronState;
 
   // 构造函数
-  constructor() {
+  constructor () {
     this.state = { ...initialState };
     makeAutoObservable(this, {
       // 计算属性
@@ -148,18 +148,21 @@ export class NeutronStore {
   }
 
   // 总延迟中子份额
-  get totalBeta() {
-    return this.state.delayedNeutrons.reduce((sum, precursor) => sum + precursor.beta, 0);
+  get totalBeta () {
+    return this.state.delayedNeutrons.reduce(
+      (sum, precursor) => sum + precursor.beta,
+      0
+    );
   }
 
   // 有效增殖系数
-  get effectiveMultiplicationFactor() {
+  get effectiveMultiplicationFactor () {
     const ρ = this.state.reactivity.total;
     return ρ / (ρ - 1);
   }
 
   // 总中子通量
-  get neutronFlux() {
+  get neutronFlux () {
     return this.state.neutron.flux.fast + this.state.neutron.flux.thermal;
   }
 
@@ -167,30 +170,28 @@ export class NeutronStore {
    * 计算氙-135中毒效应
    * @param deltaTime 时间步长
    */
-  calculateXenonPoisoning(deltaTime: number) {
+  calculateXenonPoisoning (deltaTime: number) {
     log.trace('Calculating xenon poisoning');
-    
+
     const { xenon, neutron } = this.state;
     const φ = neutron.flux.thermal;
 
     // 氙-135动力学方程
-    const dXe_dt = 
-      xenon.λ_I * xenon.I - 
-      xenon.λ_Xe * xenon.Xe - 
-      xenon.σ_Xe * φ * xenon.Xe + 
+    const dXe_dt =
+      xenon.λ_I * xenon.I -
+      xenon.λ_Xe * xenon.Xe -
+      xenon.σ_Xe * φ * xenon.Xe +
       xenon.γ_Xe * neutron.Σ_f * φ;
 
     // 碘-135动力学方程
-    const dI_dt = 
-      xenon.γ_I * neutron.Σ_f * φ - 
-      xenon.λ_I * xenon.I;
+    const dI_dt = xenon.γ_I * neutron.Σ_f * φ - xenon.λ_I * xenon.I;
 
     // 更新浓度
     this.state.xenon.Xe += dXe_dt * deltaTime;
     this.state.xenon.I += dI_dt * deltaTime;
 
     // 计算氙中毒对反应性的影响
-    const ρ_Xe = -xenon.σ_Xe * this.state.xenon.Xe / neutron.Σ_f;
+    const ρ_Xe = (-xenon.σ_Xe * this.state.xenon.Xe) / neutron.Σ_f;
     this.state.reactivity.xenon = ρ_Xe;
 
     log.debug('Xenon poisoning calculated:', {
@@ -204,9 +205,9 @@ export class NeutronStore {
    * 计算空泡系数效应
    * @param deltaTime 时间步长
    */
-  calculateVoidCoefficient(deltaTime: number) {
+  calculateVoidCoefficient (_deltaTime: number) {
     log.trace('Calculating void coefficient');
-    
+
     const { void: voidParams } = this.state;
 
     // 计算空泡反应性
@@ -229,9 +230,9 @@ export class NeutronStore {
   /**
    * 计算控制棒物理特性
    */
-  calculateControlRodPhysics() {
+  calculateControlRodPhysics () {
     log.trace('Calculating control rod physics');
-    
+
     const { controlRod } = this.state;
     let ρ_tip = 0; // 石墨尖端效应反应性
     let ρ_absorption = 0; // 吸收效应反应性
@@ -245,7 +246,9 @@ export class NeutronStore {
       // 计算延迟的吸收效应（后80%插入深度）
       ρ_tip = 0; // 石墨尖端效应消失
       // 吸收效应与插入深度成正比
-      ρ_absorption = -controlRod.ρ_max * (controlRod.z - 0.2 * controlRod.L) / (0.8 * controlRod.L);
+      ρ_absorption =
+        (-controlRod.ρ_max * (controlRod.z - 0.2 * controlRod.L)) /
+        (0.8 * controlRod.L);
     }
 
     // 总反应性 = 石墨尖端效应 + 吸收效应
@@ -264,25 +267,29 @@ export class NeutronStore {
    * 计算多群扩散理论
    * @param deltaTime 时间步长
    */
-  calculateMultiGroupDiffusion(deltaTime: number) {
+  calculateMultiGroupDiffusion (deltaTime: number) {
     log.trace('Calculating multi-group diffusion');
-    
+
     // 简化的2群扩散模型
     const { neutron } = this.state;
     const φ_fast = neutron.flux.fast;
     const φ_thermal = neutron.flux.thermal;
 
     // 群常数（简化）
-    const D_fast = 1.0; // 快群扩散系数
-    const D_thermal = 0.1; // 热群扩散系数
     const Σ_a_fast = 1e-24; // 快群吸收截面
     const Σ_a_thermal = 1e-22; // 热群吸收截面
     const Σ_s_fast_to_thermal = 1e-23; // 快群到热群散射截面
     const νΣ_f_thermal = neutron.ν * neutron.Σ_f; // 热群中子产生截面
 
     // 简化的扩散方程（忽略空间依赖）
-    const dφ_fast_dt = (νΣ_f_thermal * φ_thermal - Σ_a_fast * φ_fast - Σ_s_fast_to_thermal * φ_fast) / neutron.generationTime;
-    const dφ_thermal_dt = (Σ_s_fast_to_thermal * φ_fast - Σ_a_thermal * φ_thermal) / neutron.generationTime;
+    const dφ_fast_dt =
+      (νΣ_f_thermal * φ_thermal -
+        Σ_a_fast * φ_fast -
+        Σ_s_fast_to_thermal * φ_fast) /
+      neutron.generationTime;
+    const dφ_thermal_dt =
+      (Σ_s_fast_to_thermal * φ_fast - Σ_a_thermal * φ_thermal) /
+      neutron.generationTime;
 
     // 更新通量
     this.state.neutron.flux.fast += dφ_fast_dt * deltaTime;
@@ -298,11 +305,12 @@ export class NeutronStore {
    * 更新控制棒位置
    * @param position 控制棒位置（%）
    */
-  setControlRodPosition(position: number) {
+  setControlRodPosition (position: number) {
     const clampedPosition = Math.max(0, Math.min(100, position));
     this.state.controlRod.position = clampedPosition;
     // 更新插入深度
-    this.state.controlRod.z = (100 - clampedPosition) * 0.01 * this.state.controlRod.L;
+    this.state.controlRod.z =
+      (100 - clampedPosition) * 0.01 * this.state.controlRod.L;
     // 重新计算控制棒物理
     this.calculateControlRodPhysics();
     log.debug(`Control rod position set to ${clampedPosition}%`);
@@ -312,7 +320,7 @@ export class NeutronStore {
    * 更新空泡份额变化
    * @param deltaAlpha 空泡份额变化
    */
-  setVoidFractionChange(deltaAlpha: number) {
+  setVoidFractionChange (deltaAlpha: number) {
     this.state.void.Δα = deltaAlpha;
     this.calculateVoidCoefficient(0);
     log.debug(`Void fraction change set to ${deltaAlpha}`);
@@ -322,7 +330,7 @@ export class NeutronStore {
    * 更新当前功率
    * @param power 当前功率（%）
    */
-  setCurrentPower(power: number) {
+  setCurrentPower (power: number) {
     this.state.void.P_current = power;
     log.debug(`Current power set to ${power}%`);
   }
@@ -331,7 +339,7 @@ export class NeutronStore {
    * 更新中子通量
    * @param flux 中子通量
    */
-  setNeutronFlux(flux: number) {
+  setNeutronFlux (flux: number) {
     this.state.neutron.flux.thermal = flux;
     log.debug(`Neutron flux set to ${flux}`);
   }
@@ -339,12 +347,12 @@ export class NeutronStore {
   /**
    * 计算总反应性
    */
-  calculateTotalReactivity() {
+  calculateTotalReactivity () {
     const { reactivity } = this.state;
-    this.state.reactivity.total = 
-      reactivity.void + 
-      reactivity.xenon + 
-      reactivity.controlRod + 
+    this.state.reactivity.total =
+      reactivity.void +
+      reactivity.xenon +
+      reactivity.controlRod +
       reactivity.temperature;
     log.debug('Total reactivity calculated:', this.state.reactivity.total);
   }
@@ -353,31 +361,31 @@ export class NeutronStore {
    * 更新中子物理计算
    * @param deltaTime 时间步长
    */
-  update(deltaTime: number) {
+  update (deltaTime: number) {
     log.time('Neutron physics update');
-    
+
     // 计算多群扩散
     this.calculateMultiGroupDiffusion(deltaTime);
-    
+
     // 计算氙中毒
     this.calculateXenonPoisoning(deltaTime);
-    
+
     // 计算空泡系数
     this.calculateVoidCoefficient(deltaTime);
-    
+
     // 计算控制棒物理
     this.calculateControlRodPhysics();
-    
+
     // 计算总反应性
     this.calculateTotalReactivity();
-    
+
     log.timeEnd('Neutron physics update');
   }
 
   /**
    * 重置状态
    */
-  reset() {
+  reset () {
     this.state = { ...initialState };
     log.info('Neutron store reset');
   }

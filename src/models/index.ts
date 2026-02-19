@@ -10,11 +10,7 @@ import * as thermal from './physics/thermal';
 import * as systems from './systems';
 
 // 导出模型
-export {
-  neutron,
-  thermal,
-  systems
-};
+export { neutron, thermal, systems };
 
 // 直接导出常用函数
 export * from './physics/neutron';

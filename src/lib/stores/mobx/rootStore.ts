@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import log from '@/lib/utils/logger';
 import { PhysicsStore, physicsStore } from './physicsStore';
 import { ReactorSystemStore, reactorSystemStore } from './reactorStore';
 import { NeutronStore, neutronStore } from './neutronStore';
@@ -18,7 +19,7 @@ export class RootStore {
   systems: SystemsStore;
 
   // 构造函数
-  constructor() {
+  constructor () {
     // 使用已有的单例实例
     this.physics = physicsStore;
     this.reactor = reactorSystemStore;
@@ -33,28 +34,27 @@ export class RootStore {
   /**
    * 初始化所有store
    */
-  initialize() {
-    console.log('RootStore initialized');
-    // 可以在这里添加初始化逻辑
+  initialize () {
+    log.info('RootStore initialized');
   }
 
   /**
    * 重置所有store到初始状态
    */
-  reset() {
+  reset () {
     this.physics.reset();
     this.reactor.reset();
     this.neutron.reset();
     this.thermal.reset();
     this.systems.reset();
-    console.log('All stores reset');
+    log.info('All stores reset');
   }
 
   /**
    * 更新所有物理计算
    * @param deltaTime 时间步长
    */
-  updatePhysics(deltaTime: number) {
+  updatePhysics (deltaTime: number) {
     // 按顺序更新物理计算
     this.neutron.update(deltaTime);
     this.thermal.update(deltaTime);

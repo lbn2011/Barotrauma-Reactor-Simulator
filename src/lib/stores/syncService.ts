@@ -13,7 +13,7 @@ export class SyncService {
   /**
    * 初始化同步服务
    */
-  initialize() {
+  initialize () {
     if (this.isInitialized) {
       log.warn('SyncService already initialized');
       return;
@@ -34,7 +34,7 @@ export class SyncService {
   /**
    * 初始化MobX → Svelte stores同步
    */
-  private initializeMobXToSvelteSync() {
+  private initializeMobXToSvelteSync () {
     log.trace('Initializing MobX → Svelte stores sync');
 
     // 同步中子物理状态
@@ -91,7 +91,7 @@ export class SyncService {
   /**
    * 初始化Svelte stores → MobX同步
    */
-  private initializeSvelteToMobXSync() {
+  private initializeSvelteToMobXSync () {
     log.trace('Initializing Svelte stores → MobX sync');
 
     // 订阅UI状态变化
@@ -116,27 +116,27 @@ export class SyncService {
    * @param type 更新类型
    * @param data 更新数据
    */
-  updateMobXFromUI(type: string, data: any) {
+  updateMobXFromUI (type: string, data: any) {
     log.trace('Updating MobX from UI:', { type, data });
 
     switch (type) {
-      case 'controlRodPosition':
-        rootStore.neutron.setControlRodPosition(data.position);
-        break;
-      case 'powerSetpoint':
-        rootStore.physics.updatePower(data.power);
-        break;
-      case 'coolantFlow':
-        rootStore.physics.updateCoolingFlowRate(data.flowRate);
-        break;
-      case 'waterLevelSetpoint':
-        rootStore.systems.setWaterLevelSetpoint(data.setpoint);
-        break;
-      case 'turbineLoad':
-        rootStore.systems.setTurbineLoad(data.load);
-        break;
-      default:
-        log.warn('Unknown update type:', type);
+    case 'controlRodPosition':
+      rootStore.neutron.setControlRodPosition(data.position);
+      break;
+    case 'powerSetpoint':
+      rootStore.physics.updatePower(data.power);
+      break;
+    case 'coolantFlow':
+      rootStore.physics.updateCoolingFlowRate(data.flowRate);
+      break;
+    case 'waterLevelSetpoint':
+      rootStore.systems.setWaterLevelSetpoint(data.setpoint);
+      break;
+    case 'turbineLoad':
+      rootStore.systems.setTurbineLoad(data.load);
+      break;
+    default:
+      log.warn('Unknown update type:', type);
     }
   }
 
@@ -145,41 +145,41 @@ export class SyncService {
    * @param type 更新类型
    * @param data 更新数据
    */
-  updateUIFromMobX(type: string, data: any) {
+  updateUIFromMobX (type: string, data: any) {
     log.trace('Updating UI from MobX:', { type, data });
 
     switch (type) {
-      case 'physicsStatus':
-        uiStore.update(state => ({
-          ...state,
-          systemStatus: {
-            ...state.systemStatus,
-            showSystemStatus: true,
-            statusMessage: `Power: ${data.power.toFixed(1)}%, Temp: ${data.temperature.toFixed(1)}°C`,
-            statusLevel: 'info',
-          },
-        }));
-        break;
-      case 'alarm':
-        uiStore.update(state => ({
-          ...state,
-          systemStatus: {
-            ...state.systemStatus,
-            showSystemStatus: true,
-            statusMessage: data.message,
-            statusLevel: data.level,
-          },
-        }));
-        break;
-      default:
-        log.warn('Unknown update type:', type);
+    case 'physicsStatus':
+      uiStore.update((state) => ({
+        ...state,
+        systemStatus: {
+          ...state.systemStatus,
+          showSystemStatus: true,
+          statusMessage: `Power: ${data.power.toFixed(1)}%, Temp: ${data.temperature.toFixed(1)}°C`,
+          statusLevel: 'info',
+        },
+      }));
+      break;
+    case 'alarm':
+      uiStore.update((state) => ({
+        ...state,
+        systemStatus: {
+          ...state.systemStatus,
+          showSystemStatus: true,
+          statusMessage: data.message,
+          statusLevel: data.level,
+        },
+      }));
+      break;
+    default:
+      log.warn('Unknown update type:', type);
     }
   }
 
   /**
    * 清理同步服务
    */
-  dispose() {
+  dispose () {
     if (this.unsubscribeFromUIStore) {
       this.unsubscribeFromUIStore();
     }

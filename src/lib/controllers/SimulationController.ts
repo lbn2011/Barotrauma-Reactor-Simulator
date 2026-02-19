@@ -9,26 +9,26 @@ export type PrecisionLevel = 'low' | 'medium' | 'high' | 'very-high';
 
 // 精度配置接口
 export interface PrecisionConfig {
-	level: PrecisionLevel;
-	iterationCount: number;
-	timeStep: number;
-	samplingRate: number;
-	performanceImpact: string;
-	description: string;
+  level: PrecisionLevel;
+  iterationCount: number;
+  timeStep: number;
+  samplingRate: number;
+  performanceImpact: string;
+  description: string;
 }
 
 // 模拟控制接口
 interface ISimulationController {
-	startSimulation: () => void;
-	stopSimulation: () => void;
-	resetSimulation: () => void;
-	isRunning: boolean;
-	simulationTime: number;
-	timeStep: number;
-	precisionLevel: PrecisionLevel;
-	precisionConfig: PrecisionConfig;
-	setPrecisionLevel: (level: PrecisionLevel) => void;
-	getPrecisionConfigs: () => PrecisionConfig[];
+  startSimulation: () => void;
+  stopSimulation: () => void;
+  resetSimulation: () => void;
+  isRunning: boolean;
+  simulationTime: number;
+  timeStep: number;
+  precisionLevel: PrecisionLevel;
+  precisionConfig: PrecisionConfig;
+  setPrecisionLevel: (level: PrecisionLevel) => void;
+  getPrecisionConfigs: () => PrecisionConfig[];
 }
 
 // 模拟控制器类
@@ -48,7 +48,7 @@ export class SimulationController implements ISimulationController {
       timeStep: 0.5,
       samplingRate: 10,
       performanceImpact: '极低',
-      description: '低精度，计算速度快，适合快速预览'
+      description: '低精度，计算速度快，适合快速预览',
     },
     {
       level: 'medium',
@@ -56,7 +56,7 @@ export class SimulationController implements ISimulationController {
       timeStep: 0.1,
       samplingRate: 50,
       performanceImpact: '中等',
-      description: '中等精度，平衡计算速度和准确性'
+      description: '中等精度，平衡计算速度和准确性',
     },
     {
       level: 'high',
@@ -64,7 +64,7 @@ export class SimulationController implements ISimulationController {
       timeStep: 0.05,
       samplingRate: 100,
       performanceImpact: '较高',
-      description: '高精度，计算结果准确'
+      description: '高精度，计算结果准确',
     },
     {
       level: 'very-high',
@@ -72,8 +72,8 @@ export class SimulationController implements ISimulationController {
       timeStep: 0.01,
       samplingRate: 200,
       performanceImpact: '很高',
-      description: '极高精度，计算结果非常准确，但速度较慢'
-    }
+      description: '极高精度，计算结果非常准确，但速度较慢',
+    },
   ];
 
   // 构造函数
@@ -199,7 +199,10 @@ export class SimulationController implements ISimulationController {
     // 获取当前精度配置
     const precisionConfig = this.precisionConfig;
     const iterationCount = precisionConfig.iterationCount;
-    log.debug('Physics simulation parameters:', { iterationCount, timeStep: this._timeStep });
+    log.debug('Physics simulation parameters:', {
+      iterationCount,
+      timeStep: this._timeStep,
+    });
 
     try {
       // 使用Worker进行中子物理计算
@@ -210,22 +213,30 @@ export class SimulationController implements ISimulationController {
           Σ_f: rootStore.neutron.state.neutron.Σ_f,
           ν: rootStore.neutron.state.neutron.ν,
           generationTime: rootStore.neutron.state.neutron.generationTime,
-          lifetime: rootStore.neutron.state.neutron.lifetime
+          lifetime: rootStore.neutron.state.neutron.lifetime,
         },
-        deltaTime: this._timeStep
+        deltaTime: this._timeStep,
       };
 
-      const xenonResult = await workerManager.sendMessage<any>('neutron', 'calculateXenonPoisoning', neutronParams);
+      const xenonResult = await workerManager.sendMessage<any>(
+        'neutron',
+        'calculateXenonPoisoning',
+        neutronParams
+      );
       log.debug('Xenon poisoning calculation result:', xenonResult);
 
       // 使用Worker进行热工水力计算
       const thermalParams = {
         fuel: rootStore.thermal.state.fuel,
         thermal: rootStore.thermal.state.thermal,
-        deltaTime: this._timeStep
+        deltaTime: this._timeStep,
       };
 
-      const fuelResult = await workerManager.sendMessage<any>('thermal', 'calculateFuelHeatConduction', thermalParams);
+      const fuelResult = await workerManager.sendMessage<any>(
+        'thermal',
+        'calculateFuelHeatConduction',
+        thermalParams
+      );
       log.debug('Fuel heat conduction calculation result:', fuelResult);
 
       // 更新功率（基于Worker计算结果）
@@ -244,16 +255,22 @@ export class SimulationController implements ISimulationController {
       // 更新功率
       const updatedPower = Math.max(0, newPower);
       rootStore.physics.updatePower(updatedPower);
-      log.debug('Updated power:', { oldPower: currentPower, newPower: updatedPower });
+      log.debug('Updated power:', {
+        oldPower: currentPower,
+        newPower: updatedPower,
+      });
 
       // 示例：简单的温度计算
       const currentTemperature = rootStore.physics.state.thermal.temperature;
-      const temperatureChange = (newPower - currentPower) * 0.01 * (iterationCount / 50);
+      const temperatureChange =
+        (newPower - currentPower) * 0.01 * (iterationCount / 50);
       const newTemperature = currentTemperature + temperatureChange;
       const updatedTemperature = Math.max(20, newTemperature);
       rootStore.physics.updateTemperature(updatedTemperature);
-      log.debug('Updated temperature:', { oldTemperature: currentTemperature, newTemperature: updatedTemperature });
-
+      log.debug('Updated temperature:', {
+        oldTemperature: currentTemperature,
+        newTemperature: updatedTemperature,
+      });
     } catch (error) {
       log.error('Error in physics simulation:', error);
       // 降级到主线程计算
@@ -319,13 +336,19 @@ export class SimulationController implements ISimulationController {
   }
 
   get precisionConfig (): PrecisionConfig {
-    return this._precisionConfigs.find(config => config.level === this._precisionLevel) || this._precisionConfigs[1];
+    return (
+      this._precisionConfigs.find(
+        (config) => config.level === this._precisionLevel
+      ) || this._precisionConfigs[1]
+    );
   }
 
   // 设置精度级别
   setPrecisionLevel (level: PrecisionLevel) {
     // 验证精度级别
-    const validLevel = this._precisionConfigs.some(config => config.level === level);
+    const validLevel = this._precisionConfigs.some(
+      (config) => config.level === level
+    );
     if (!validLevel) {
       log.warn(`Invalid precision level: ${level}, using medium instead`);
       this._precisionLevel = 'medium';

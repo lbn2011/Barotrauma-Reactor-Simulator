@@ -146,7 +146,9 @@ $effect(() => {
       {#if tooltipCtx.payload}
         {#each tooltipCtx.payload as item, i (item.key + i)}
           {@const key = `${nameKey || item.key || item.name || 'value'}`}
-          {@const itemConfig = chart ? getPayloadConfigFromPayload(chart.config, item, key) : undefined}
+          {@const itemConfig = chart
+            ? getPayloadConfigFromPayload(chart.config, item, key)
+            : undefined}
           {@const indicatorColor = color || item.payload?.color || item.color}
           <div
             class={cn(
