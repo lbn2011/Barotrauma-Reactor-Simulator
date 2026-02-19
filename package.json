@@ -55,6 +55,8 @@
     "consola": "^3.4.2",
     "echarts": "^6.0.0",
     "idb-keyval": "^6.2.2",
+    "mobx": "^6.15.0",
+    "mobx-react-lite": "^4.1.1",
     "tailwind-merge": "^3.4.0"
   }
 }

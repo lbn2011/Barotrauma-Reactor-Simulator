@@ -60,12 +60,12 @@ unsubscribe();
 
 #### 2.2.1 模拟控制
 
-| 函数名                 | 参数 | 返回值        | 功能描述                   |
-| ---------------------- | ---- | ------------- | -------------------------- |
-| `startSimulation()`    | 无   | void          | 启动模拟                   |
-| `stopSimulation()`     | 无   | void          | 停止模拟                   |
-| `resetSimulation()`    | 无   | void          | 重置模拟到初始状态         |
-| `updateReactorState()` | 无   | Promise<void> | 更新反应堆状态（内部使用） |
+| 函数名                          | 参数 | 返回值              | 功能描述                               |
+| --------------------------- | ---- | ------------------ | --------------------------------- |
+| `startSimulation()`         | 无   | void                  | 启动模拟                              |
+| `stopSimulation()`         | 无   | void                  | 停止模拟                              |
+| `resetSimulation()`        | 无   | void                  | 重置模拟到初始状态              |
+| `updateReactorState()`  | 无   | Promise<void> | 更新反应堆状态（内部使用） |
 
 **使用示例**:
 
@@ -111,16 +111,16 @@ setTargetPower(80);
 
 #### 2.2.4 泵控制
 
-| 函数名                                         | 参数                   | 返回值                                       | 功能描述               |
-| ---------------------------------------------- | ---------------------- | -------------------------------------------- | ---------------------- | ------------------ |
-| `toggleRecirculationPump(pumpNumber: 1         | 2)`                    | pumpNumber: 泵编号                           | void                   | 切换再循环泵状态   |
-| `setRecirculationPumpSpeed(pumpNumber: 1       | 2, speed: number)`     | pumpNumber: 泵编号<br>speed: 转速 (0-100)    | void                   | 设置再循环泵转速   |
-| `toggleEmergencyCoolingPump(pumpNumber: 1      | 2)`                    | pumpNumber: 泵编号                           | void                   | 切换应急冷却泵状态 |
-| `setEmergencyCoolingPumpFlowRate(pumpNumber: 1 | 2, flowRate: number)`  | pumpNumber: 泵编号<br>flowRate: 流量 (0-100) | void                   | 设置应急冷却泵流量 |
-| `toggleReactorDrain()`                         | 无                     | void                                         | 切换反应堆排水状态     |
-| `setReactorDrainFlowRate(flowRate: number)`    | flowRate: 流量 (0-100) | void                                         | 设置反应堆排水流量     |
-| `toggleCoreCoolingPump()`                      | 无                     | void                                         | 切换堆芯离线冷却泵状态 |
-| `setCoreCoolingPumpFlowRate(flowRate: number)` | flowRate: 流量 (0-100) | void                                         | 设置堆芯离线冷却泵流量 |
+| 函数名                                                                           | 参数                            | 返回值                                                                   | 功能描述               |
+| ----------------------------------------------------------------- | -------------------------- | ---------------------------------------------------------- | ---------------------- | ------------------ |
+| `toggleRecirculationPump(pumpNumber: 12)`                               | pumpNumber: 泵编号                                           | void                   | 切换再循环泵状态   |
+| `setRecirculationPumpSpeed(pumpNumber: 12, speed: number)`      | pumpNumber: 泵编号<br>speed: 转速 (0-100)       | void                   | 设置再循环泵转速   |
+| `toggleEmergencyCoolingPump(pumpNumber: 12)`                               | pumpNumber: 泵编号                                           | void                   | 切换应急冷却泵状态 |
+| `setEmergencyCoolingPumpFlowRate(pumpNumber: 12, flowRate: number)`  | pumpNumber: 泵编号<br>flowRate: 流量 (0-100)   | void                   | 设置应急冷却泵流量 |
+| `toggleReactorDrain()`                                                   | 无                               | void                                                                      | 切换反应堆排水状态     |
+| `setReactorDrainFlowRate(flowRate: number)`                | flowRate: 流量 (0-100) | void                                                                      | 设置反应堆排水流量     |
+| `toggleCoreCoolingPump()`                                           | 无                               | void                                                                      | 切换堆芯离线冷却泵状态 |
+| `setCoreCoolingPumpFlowRate(flowRate: number)`        | flowRate: 流量 (0-100) | void                                                                      | 设置堆芯离线冷却泵流量 |
 
 **使用示例**:
 

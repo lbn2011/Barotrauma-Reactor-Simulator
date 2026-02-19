@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { WebNavigation, WebSearchFlowAction } from '@/types';
-import { logger } from '../lib/utils/logger';
+import log from '../lib/utils/logger';
 
 import PlatformSelectorDropdown from '@/components/jet/web-navigation/PlatformSelectorDropdown.svelte';
 import FlowAction from '@/components/jet/action/FlowAction.svelte';
@@ -25,7 +25,7 @@ export let webNavigation: WebNavigation;
 export let config = defaultComponentConfig;
 
 // Log navigation component initialization
-logger.info('Navigation component initialized', {
+log.info('Navigation component initialized', {
   platformCount: webNavigation.platforms.length,
   hasSearchAction: !!webNavigation.searchAction,
 });
@@ -42,7 +42,7 @@ $: supportedLanguages = config.global?.supportedLanguages || ['zh-CN', 'en-US'];
 $: currentLanguage = i18n?.language || config.global?.defaultLanguage || 'zh-CN';
 
 function handleLanguageChange (language: string) {
-  logger.info('Language changed', { from: currentLanguage, to: language });
+  log.info('Language changed', { from: currentLanguage, to: language });
   setLanguage(language);
   languageDropdownOpen = false;
 }
