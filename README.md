@@ -5,6 +5,11 @@
 ## 功能特性
 
 - **现代化 UI 组件**：使用 shadcn-svelte 组件库提供美观一致的界面，支持深色主题
+- **完整的色彩系统**：提供浅色模式和暗色模式的完整配色方案，包含主色、辅助色、中性色和功能色
+- **主题切换功能**：支持手动切换浅色/暗色模式，以及跟随系统自动切换，提供平滑的过渡动画
+- **多语言支持**：集成中英文双语支持，默认中文，可随时切换语言
+- **模拟精度控制**：提供低、中、高三级模拟精度选择，适应不同性能需求
+- **模拟控制功能**：实现开始、暂停、重置模拟的完整控制流程
 - **全面的反应堆监控**：实时监控功率、温度、压力、水位等关键参数
 - **多面板控制系统**：包括控制棒、功率调节、循环泵、应急冷却等多个专业控制面板
 - **数据可视化**：使用 Apache ECharts 实现趋势图和实时数据展示，支持多参数对比分析
@@ -19,7 +24,7 @@
 - **堆芯冷却剂净化系统**：模拟冷却剂杂质去除过程
 - **Web Workers 优化**：使用 Web Workers 处理计算密集型物理模拟，提高性能
 - **实时日志系统**：详细记录系统运行状态和操作历史
-- **多语言支持**：集成 i18n 国际化支持
+- **可访问性标准**：符合 WCAG 对比度要求，确保良好的视觉体验
 
 ## 技术栈
 
@@ -132,72 +137,109 @@ npm run preview
 
 ```
 src/
-├── routes/                 # SvelteKit 路由
-│   ├── panels/            # 各种控制面板组件
-│   │   ├── alarm-crt/            # 警报 CRT 面板
-│   │   ├── condensate-system/    # 凝结水系统面板
-│   │   ├── condenser-circulation-pump/ # 凝汽器循环泵面板
-│   │   ├── condenser-vacuum/     # 凝汽器真空系统面板
-│   │   ├── control-rod/           # 控制棒面板
-│   │   ├── data-trend/            # 数据趋势图面板
-│   │   ├── deaerator-steam/       # 除氧器蒸汽面板
-│   │   ├── drain-control/         # 排水控制面板
-│   │   ├── emergency-cooling-pump/ # 应急冷却泵面板
-│   │   ├── feedwater-pump/        # 给水泵面板
-│   │   ├── hepa-filter/           # HEPA 过滤器面板
-│   │   ├── hotwell-level/         # 热井液位面板
-│   │   ├── makeup-water/          # 补水系统面板
-│   │   ├── offline-cooling-pump/  # 离线冷却泵面板
-│   │   ├── power-control/         # 功率控制面板
-│   │   ├── recirculation-pump/    # 再循环泵面板
-│   │   ├── schematic-crt/         # 系统示意图 CRT
-│   │   ├── steam-exhaust/         # 蒸汽排汽面板
-│   │   ├── turbine-auxiliary/     # 汽轮机辅助系统面板
-│   │   ├── turbine-control/       # 汽轮机控制面板
-│   │   └── ...                    # 更多面板
-│   ├── Overview.svelte    # 概述页面
-│   ├── SaveEditor.svelte  # 存档编辑器
-│   └── +page.svelte       # 主页路由
-├── lib/                   # 共享库和工具函数
-│   ├── components/        # 可复用组件
-│   │   └── ui/            # shadcn-svelte UI 组件
-│   │       ├── button/            # 按钮组件
-│   │       ├── card/              # 卡片组件
-│   │       ├── chart/             # 图表组件
-│   │       ├── confirmation-dialog/ # 确认对话框
-│   │       ├── history-viewer/    # 历史查看器
-│   │       ├── input/             # 输入组件
-│   │       ├── quick-actions/     # 快速操作
-│   │       ├── slider/            # 滑块组件
-│   │       ├── system-schematic/  # 系统示意图
-│   │       └── ...                # 更多组件
-│   ├── stores/            # Svelte stores
-│   │   └── reactorStore.ts # 反应堆状态管理
-│   └── utils.ts           # 工具函数
-├── models/                # 物理模型
-│   ├── neutron/           # 中子物理模型
-│   │   ├── controlRodPhysics.ts   # 控制棒物理
-│   │   ├── voidCoefficient.ts     # 空泡系数
-│   │   └── xenonPoisoning.ts       # 氙中毒
-│   ├── systems/           # 系统模型
-│   │   ├── control/       # 控制系统
-│   │   ├── corePurification.ts     # 堆芯净化
-│   │   ├── faultSimulation.ts      # 故障模拟
-│   │   ├── reactorCore.ts          # 反应堆核心
-│   │   └── steamBypass.ts          # 汽轮机旁路
-│   └── thermal/           # 热工模型
-│       ├── energyBalance.ts        # 能量平衡
-│       ├── flowResistance.ts       # 流动阻力
-│       ├── iapws97.ts              # 水蒸汽性质
-│       ├── massBalance.ts          # 质量平衡
-│       └── waterSteamProperties.ts # 水蒸汽性质
-├── workers/               # Web Workers
-│   ├── dataProcessing.worker.ts    # 数据处理
-│   ├── physicsCalculation.worker.ts # 物理计算
-│   └── workerManager.ts            # Worker 管理
-├── app.css                # 应用样式
-├── app.html               # 应用主 HTML 模板
-└── vite-env.d.ts          # Vite 环境类型定义
+├── actions/              # SvelteKit actions
+│   └── portal.ts        # Portal actions
+├── assets/              # 静态资源
+│   └── svelte.svg       # Svelte logo
+├── components/          # 可复用组件
+│   ├── jet/            # Jet UI 组件库
+│   │   ├── action/     # 操作组件
+│   │   ├── today-card/ # 今日卡片组件
+│   │   ├── web-navigation/ # 网页导航
+│   │   └── ...
+│   ├── navigation/     # 导航组件
+│   │   ├── LanguageSelector.svelte # 语言选择器
+│   │   └── SearchInput.svelte    # 搜索输入
+│   ├── shared/        # 共享组件
+│   │   ├── LazyComponent.svelte      # 懒加载组件
+│   │   ├── ResponsiveContainer.svelte # 响应式容器
+│   │   └── VirtualList.svelte       # 虚拟列表
+│   ├── structure/     # 结构组件
+│   │   └── MetaTags.svelte         # 元数据标签
+│   └── ...            # 更多通用组件
+├── config/              # 配置文件
+│   ├── examples/       # 配置示例
+│   ├── components.ts   # 组件配置
+│   └── design.ts      # 设计系统配置
+├── jet/                # Jet 框架
+│   └── index.ts       # Jet 入口
+├── lib/                # 共享库和工具函数
+│   ├── components/     # 可复用组件
+│   │   ├── ui/        # shadcn-svelte UI 组件
+│   │   │   ├── button/            # 按钮组件
+│   │   │   ├── card/              # 卡片组件
+│   │   │   ├── chart/             # 图表组件
+│   │   │   ├── confirmation-dialog/ # 确认对话框
+│   │   │   ├── history-viewer/    # 历史查看器
+│   │   │   ├── input/             # 输入组件
+│   │   │   ├── quick-actions/     # 快速操作
+│   │   │   ├── slider/            # 滑块组件
+│   │   │   └── system-schematic/  # 系统示意图
+│   │   └── TopBar.svelte         # 顶部导航栏
+│   ├── controllers/    # 控制器
+│   │   ├── ReactorController.ts    # 反应堆控制器
+│   │   ├── SimulationController.ts # 模拟控制器
+│   │   └── index.ts              # 控制器入口
+│   ├── stores/         # 状态管理
+│   │   ├── mobx/      # MobX stores
+│   │   │   ├── neutronStore.ts    # 中子物理状态
+│   │   │   ├── physicsStore.ts    # 物理计算状态
+│   │   │   ├── reactorStore.ts    # 反应堆状态
+│   │   │   ├── rootStore.ts      # 根状态
+│   │   │   ├── systemsStore.ts    # 系统状态
+│   │   │   └── thermalStore.ts    # 热工状态
+│   │   ├── index.ts              # 状态管理入口
+│   │   ├── syncService.ts        # 同步服务
+│   │   └── uiStore.ts           # UI 状态
+│   ├── utils/          # 工具函数
+│   │   ├── i18n.ts             # 国际化工具
+│   │   ├── logger.ts           # 日志工具
+│   │   ├── storageManager.ts    # 存储管理
+│   │   └── workerManager.ts    # Worker 管理
+│   ├── workers/        # Web Workers
+│   │   ├── neutronWorker.ts    # 中子物理 Worker
+│   │   ├── systemsWorker.ts    # 系统模型 Worker
+│   │   ├── thermalWorker.ts    # 热工模型 Worker
+│   │   └── workerManager.ts   # Worker 管理器
+│   └── utils.ts        # 通用工具函数
+├── models/             # 物理模型
+│   ├── physics/       # 物理模型
+│   │   ├── neutron.ts  # 中子物理模型
+│   │   └── thermal.ts  # 热工模型
+│   ├── systems/       # 系统模型
+│   │   ├── faultSimulation.ts # 故障模拟
+│   │   ├── reactorCore.ts     # 反应堆核心
+│   │   └── index.ts          # 系统模型入口
+│   └── index.ts      # 模型入口
+├── routes/             # SvelteKit 路由
+│   ├── components/    # 路由组件
+│   │   ├── ControlButtons.svelte    # 控制按钮
+│   │   ├── DataTrendChart.svelte   # 数据趋势图
+│   │   ├── MainDashboard.svelte     # 主仪表板
+│   │   ├── Panel.svelte           # 面板容器
+│   │   └── PrecisionControl.svelte # 精度控制
+│   ├── data-trend/   # 数据趋势页面
+│   │   └── +page.svelte
+│   └── +page.svelte    # 主页路由
+├── styles/            # 样式文件
+│   └── global.css    # 全局样式
+├── types/             # TypeScript 类型定义
+│   └── index.ts      # 类型入口
+├── utils/             # 工具函数
+│   ├── color.ts              # 颜色工具
+│   ├── component-factory.ts   # 组件工厂
+│   ├── config-loader.ts      # 配置加载器
+│   ├── data-fetch.ts         # 数据获取
+│   ├── i18n.ts             # 国际化
+│   ├── media-queries.ts     # 媒体查询
+│   ├── performance.ts        # 性能工具
+│   ├── responsive.ts         # 响应式工具
+│   └── transition.ts        # 过渡动画
+├── workers/           # Web Workers
+│   └── physicsWorker.ts # 物理计算 Worker
+├── app.css            # 应用样式
+├── app.html           # 应用主 HTML 模板
+└── vite-env.d.ts      # Vite 环境类型定义
 ```
 
 ## 控制面板说明
@@ -399,15 +441,39 @@ binding = "ASSETS"
 
 ### 自定义主题
 
-应用使用 Tailwind CSS 和 shadcn-svelte 组件库进行样式设计，主要颜色方案包括：
+应用使用 Tailwind CSS 和 shadcn-svelte 组件库进行样式设计，实现了完整的色彩系统：
 
-- 主色：#00bcd4 (青色)
-- 背景色：#121212 (深灰)
-- 边框色：#333 (中灰)
-- 强调色：#ff9800 (橙色)
-- 成功色：#4caf50 (绿色)
-- 警告色：#ff5722 (红色)
-- 信息色：#2196f3 (蓝色)
+#### 色彩系统特点
+
+- **完整的色彩体系**：包含主色、辅助色、中性色和功能色
+- **浅色模式和暗色模式**：提供两种完整的主题方案
+- **WCAG 可访问性标准**：确保文本与背景对比度满足要求（正常文本 ≥4.5:1，大文本 ≥3:1）
+- **平滑过渡动画**：主题切换时提供 0.3s 的平滑过渡效果
+- **系统主题跟随**：支持跟随系统自动切换主题
+
+#### 浅色模式配色
+
+- **主色**：蓝色系 (#0ea5e9)，用于品牌标识和关键交互元素
+- **辅助色**：紫色、粉色、橙色、绿色，用于补充主色
+- **中性色**：从浅灰到深灰的完整灰度色板
+- **功能色**：成功色 (#10b981)、警告色 (#f59e0b)、错误色 (#ef4444)、信息色 (#3b82f6)
+
+#### 暗色模式配色
+
+- **主色**：蓝色系 (#3b82f6)，适配暗色环境的视觉体验
+- **辅助色**：亮度更高的紫色、粉色、橙色、绿色
+- **中性色**：从深色背景到浅色文本的完整灰度色板
+- **功能色**：亮度更高的成功色 (#34d399)、警告色 (#fbbf24)、错误色 (#f87171)、信息色 (#60a5fa)
+
+#### 主题切换
+
+应用支持三种主题模式：
+
+1. **浅色模式**：强制使用浅色主题
+2. **暗色模式**：强制使用暗色主题
+3. **跟随系统**：自动跟随操作系统的主题设置
+
+主题偏好会保存到本地存储，刷新页面后保持不变。
 
 #### 使用 shadcn-svelte 组件
 
@@ -549,13 +615,26 @@ binding = "ASSETS"
 - 改进数据可视化
 - 添加故障模拟功能
 
-### v1.2.0 (计划)
+### v1.2.0 (2026-02-19)
 
-- 添加多语言支持
+- 实现完整的色彩系统，包含浅色模式和暗色模式
+- 添加主题切换功能，支持手动切换和跟随系统
+- 实现多语言支持，提供中英文双语界面
+- 添加模拟精度控制，支持低、中、高三级精度
+- 实现模拟控制功能，包括开始、暂停、重置操作
+- 优化用户体验，添加平滑的过渡动画效果
+- 符合 WCAG 可访问性标准，确保良好的视觉体验
+- 更新 TopBar 组件，集成所有新功能
+- 添加详细的日志记录，便于调试和监控
+
+### v1.3.0 (计划)
+
 - 实现更复杂的故障场景
 - 改进性能和用户体验
 - 添加更多详细的物理模型
 - 增强数据导出和分析功能
+- 添加更多语言支持
+- 优化移动端体验
 
 ---
 
