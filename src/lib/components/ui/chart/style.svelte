@@ -20,7 +20,8 @@ const themeContents = $derived.by(() => {
 
   const themeContents = [];
   for (let [_theme, prefix] of Object.entries(THEMES)) {
-    let content = `${prefix} [data-chart=${id}] {\n`;
+    let content = `${prefix} [data-chart=${id}] {
+`;
     const color = colorConfig.map(([key, itemConfig]) => {
       const theme = _theme as keyof typeof itemConfig.theme;
       const color = itemConfig.theme?.[theme] || itemConfig.color;
@@ -35,7 +36,10 @@ const themeContents = $derived.by(() => {
   return themeContents.join('\n');
 });
 
-logger.debug('ChartStyle', `Initialized for chart ID: ${id}`);
+// Log initialization after props are initialized
+$effect(() => {
+  logger.debug('ChartStyle', `Initialized for chart ID: ${id}`);
+});
 </script>
 
 <!--

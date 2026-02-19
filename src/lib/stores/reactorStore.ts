@@ -691,6 +691,7 @@ export async function updateReactorState () {
 
     if (!currentState.isRunning) {
       log.trace('Simulation not running, skipping state update');
+      log.timeEnd('Physics model calculation');
       return;
     }
 

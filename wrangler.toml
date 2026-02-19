@@ -18,6 +18,21 @@ ENVIRONMENT = "production"
 directory = "./.svelte-kit/cloudflare/static"
 binding = "ASSETS"
 
+[observability]
+enabled = false
+head_sampling_rate = 1
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+persist = true
+invocation_logs = true
+
+[observability.traces]
+enabled = true
+persist = true
+head_sampling_rate = 1
+
 # 如果你需要绑定 KV namespaces, D1 databases, R2 buckets 等，请取消下面的注释并配置
 # [[env.production.kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"

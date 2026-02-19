@@ -22,7 +22,7 @@ import { isNamedColor } from '@/utils/color';
 import { logger } from '../lib/utils/logger';
 
 export let artwork: ArtworkType;
-export let profile: Profile;
+export let profile: Profile | string;
 export let alt: string = '';
 export let topRoundedSecondary: boolean = false;
 export let useContainerStyle: boolean = false;

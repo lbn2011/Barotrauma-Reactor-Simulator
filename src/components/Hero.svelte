@@ -269,8 +269,8 @@ if (collectionIcons && collectionIcons.length > 1) {
     <div
       class="collection-icons-background-gradient"
       style={collectionIconsBackgroundGradientCssVars}
-    />
+    ></div>
   {/if}
-  <div class="gradient" style="--color: {color};" />
+  <div class="gradient" style="--color: {color};"></div>
   <slot />
 </div>
