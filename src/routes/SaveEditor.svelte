@@ -21,7 +21,7 @@ function parseSaveCode () {
   log.info('Starting to parse save code');
 
   if (!saveCodeInput.trim()) {
-    log.warning('Save code input is empty');
+    log.warn('Save code input is empty');
     errorMessage = 'Please enter save code';
     parsedState = null;
     return;
@@ -63,7 +63,7 @@ function encodeSaveCode () {
   log.info('Starting to encode save code');
 
   if (!parsedState) {
-    log.warning('No data to encode');
+    log.warn('No data to encode');
     errorMessage = 'No data to encode';
     return;
   }
@@ -110,7 +110,7 @@ async function copyToClipboard () {
       errorMessage = 'Cannot copy to clipboard';
     }
   } else {
-    log.warning('No save code to copy');
+    log.warn('No save code to copy');
   }
 }
 
@@ -129,7 +129,7 @@ function updateValue (path: string, value: any) {
   log.debug('Starting to update parameter value', { path, value });
 
   if (!parsedState) {
-    log.warning('Cannot update value: parsedState is null');
+    log.warn('Cannot update value: parsedState is null');
     return;
   }
 
